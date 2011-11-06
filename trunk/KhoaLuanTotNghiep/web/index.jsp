@@ -13,7 +13,5 @@
     </head>
     <body>
         <h1>Chao mung den voi he thong dang ky hoc phan</h1>
-        
-        <a href="./test">Test</a>
     </body>
 </html>
