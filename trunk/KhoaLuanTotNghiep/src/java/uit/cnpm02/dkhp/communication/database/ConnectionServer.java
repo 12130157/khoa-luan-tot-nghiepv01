@@ -13,7 +13,7 @@ import java.sql.SQLException;
 public class ConnectionServer {
 
     public static Connection getConnection() throws NamingException, SQLException {
-        DataSource ds = (DataSource) new InitialContext().lookup("KLTNPool");
+        DataSource ds = (DataSource) new InitialContext().lookup("poolkhoaluan");
         Connection con = ds.getConnection();
         return con;
     }
