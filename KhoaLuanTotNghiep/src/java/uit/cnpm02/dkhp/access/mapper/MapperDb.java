@@ -5,6 +5,8 @@
 package uit.cnpm02.dkhp.access.mapper;
 
 import java.sql.Connection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import uit.cnpm02.dkhp.communication.database.ConnectionServer;
 
 /**
@@ -27,6 +29,14 @@ public class MapperDb {
     }
 
     public Connection getConnection() {
+        try {
+            if (connection == null) {
+                connection = ConnectionServer.getConnection();
+            }
+        } catch (Exception e) {
+            Logger.getLogger(MapperDb.class.getName()).log(Level.SEVERE, "Can not get connection.");
+        }
+        
         return connection;
     }
 
