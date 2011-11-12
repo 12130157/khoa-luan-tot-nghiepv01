@@ -37,7 +37,7 @@ public class BanTinMapper extends MapperDb {
         List<BanTin> listResult = new ArrayList<BanTin>();
         try {
             StringBuffer sql = new StringBuffer();
-            sql.append("Select DISTINCT * from " + MapperConstant.DB_NAME + "." + TABLE_NAME + "BanTin");
+            sql.append("Select DISTINCT * from " + MapperConstant.DB_NAME + "." + TABLE_NAME);
             PreparedStatement stmt = getConnection().prepareStatement(sql.toString());
             ResultSet rs = stmt.executeQuery();
             while ((rs != null) && rs.next()) {
