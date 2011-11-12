@@ -22,7 +22,8 @@ public class News extends AbstractJdbcModel<String> {
     }
 
     public News(String id, String title, String content, String author, Date createdDate, int type) {
-        this.idNews = id;
+        //this.idNews = id;
+        setId(id);
         this.title = title;
         this.content = content;
         this.author = author;
