@@ -8,7 +8,7 @@ import uit.cnpm02.dkhp.access.util.AbstractJdbcModel;
  *
  * @author LocNguyen
  */
-public class News extends AbstractJdbcModel<String> {
+public class News extends AbstractJdbcModel<Integer> {
 
     private String idNews;
     private String title;
@@ -22,8 +22,8 @@ public class News extends AbstractJdbcModel<String> {
     }
 
     public News(String id, String title, String content, String author, Date createdDate, int type) {
-        //this.idNews = id;
-        setId(id);
+        this.idNews = id;
+        //setId(id);
         this.title = title;
         this.content = content;
         this.author = author;
@@ -80,24 +80,15 @@ public class News extends AbstractJdbcModel<String> {
     }
 
     @Override
-    public String getIdColumnName() {
-        return "MaTin";
-    }
-
-    @Override
     public String getTableName() {
         return MapperConstant.DB_NAME
                 + ".BanTin";
     }
 
     @Override
-    public boolean isIdAutoIncrement() {
-        return false;
-    }
-
-    @Override
     public String[] getColumnNames() {
         return new String[]{
+                    "MaTin",
                     "TieuDe",
                     "NoiDung",
                     "NguoiDang",
@@ -109,6 +100,7 @@ public class News extends AbstractJdbcModel<String> {
     @Override
     public Object[] getColumnValues() {
         return new Object[]{
+                    idNews,
                     title,
                     content,
                     author,
@@ -123,11 +115,12 @@ public class News extends AbstractJdbcModel<String> {
         //DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         //System.out.println("Formatted date: " + df.format(date));
         try {
-            title = values[0].toString();
-            content = values[1].toString();
-            author = values[2].toString();
-            createdDate = (Date)values[3];
-            type = Integer.parseInt(values[4].toString());
+            idNews = values[0].toString();
+            title = values[1].toString();
+            content = values[2].toString();
+            author = values[3].toString();
+            createdDate = (Date)values[4];
+            type = Integer.parseInt(values[5].toString());
 
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
