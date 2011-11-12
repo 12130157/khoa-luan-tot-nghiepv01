@@ -4,69 +4,78 @@
  */
 package uit.cnpm02.dkhp.dto;
 
+import java.util.Date;
+
 /**
  *
  * @author thanh
  */
 public class BanTin {
-    String maTin;
-    String tieuDe;
-    String noiDung;
-    String nguoiDang;
-    String ngayTao;
-    int loai;
+    private String maTin;
+    private String tieuDe;
+    private String noiDung;
+    private String nguoiDang;
+    private Date ngayTao;
+    private int loai;
+    
     public BanTin(){
         
     }
-    public BanTin(String _maTin, String _tieuDe, String _noiDung, String _nguoiDang, String _ngayTao, int _loai){
-        this.maTin=_maTin;
-        this.tieuDe=_tieuDe;
-        this.noiDung=_noiDung;
-        this.nguoiDang=_nguoiDang;
-        this.ngayTao=_ngayTao;
-        this.loai=_loai;
+
+    public BanTin(String maTin, String tieuDe, String noiDung, String nguoiDang, Date ngayTao, int loai) {
+        this.maTin = maTin;
+        this.tieuDe = tieuDe;
+        this.noiDung = noiDung;
+        this.nguoiDang = nguoiDang;
+        this.ngayTao = ngayTao;
+        this.loai = loai;
     }
-    //******
-    //set parameter
-    //******
-    public void setMaTin(String _maTin){
-        this.maTin=_maTin;
+
+    public int getLoai() {
+        return loai;
     }
-     public void setTieuDe(String _tieuDe){
-        this.tieuDe=_tieuDe;
+
+    public void setLoai(int loai) {
+        this.loai = loai;
     }
-      public void setNoiDung(String _noiDung){
-        this.noiDung=_noiDung;
+
+    public String getMaTin() {
+        return maTin;
     }
-       public void setNguoiDang(String _nguoiDang){
-        this.nguoiDang=_nguoiDang;
+
+    public void setMaTin(String maTin) {
+        this.maTin = maTin;
     }
-        public void setNgayTao(String _ngayTao){
-        this.ngayTao=_ngayTao;
+
+    public Date getNgayTao() {
+        return ngayTao;
     }
-        public void setLoai(int _Loai){
-        this.loai=_Loai;
+
+    public void setNgayTao(Date ngayTao) {
+        this.ngayTao = ngayTao;
     }
-        //******
-    //get parameter
-    //******
-    public String getMaTin(){
-        return this.maTin;
+
+    public String getNguoiDang() {
+        return nguoiDang;
     }
-     public String getTieuDe(){
-        return this.tieuDe;
+
+    public void setNguoiDang(String nguoiDang) {
+        this.nguoiDang = nguoiDang;
     }
-      public String getNoiDung(){
-        return this.noiDung;
+
+    public String getNoiDung() {
+        return noiDung;
     }
-       public String getNguoiDang(){
-        return this.nguoiDang;
+
+    public void setNoiDung(String noiDung) {
+        this.noiDung = noiDung;
     }
-        public String getNgayTao(){
-        return this.ngayTao;
+
+    public String getTieuDe() {
+        return tieuDe;
     }
-        public int getLoai(){
-       return this.loai;
+
+    public void setTieuDe(String tieuDe) {
+        this.tieuDe = tieuDe;
     }
-    
 }
