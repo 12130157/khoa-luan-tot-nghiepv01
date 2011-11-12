@@ -7,7 +7,7 @@ import uit.cnpm02.dkhp.access.util.AbstractJdbcModel;
  *
  * @author thanh
  */
-public class Account extends AbstractJdbcModel<Integer> {
+public class Account extends AbstractJdbcModel<String> {
     private String userName;
     private String password;
     private String fullName;
@@ -77,7 +77,7 @@ public class Account extends AbstractJdbcModel<Integer> {
 
     @Override
     public String getIdColumnName() {
-        return "ID";
+        return "TenDangNhap";
     }
 
     @Override
@@ -88,7 +88,7 @@ public class Account extends AbstractJdbcModel<Integer> {
 
     @Override
     public boolean isIdAutoIncrement() {
-        return true;
+        return false;
     }
 
     @Override
