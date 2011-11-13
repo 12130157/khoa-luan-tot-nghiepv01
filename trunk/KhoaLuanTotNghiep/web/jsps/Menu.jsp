@@ -74,10 +74,10 @@
                 String username = (String) session.getAttribute("username");
                 if (username == null) {
             %>
-            <li><a href="jspLogin.jsp">Đăng nhập |</a></li>
+            <li><a href="Login.jsp">Đăng nhập |</a></li>
             <%} else {
             %>
-            <li><a href="../servLogin?login=false">Đăng xuất |</a></li>
+            <li><a href="../AccountController?function=logout">Đăng xuất |</a></li>
             <%}%>
 
             <li><a href="jspLienHe.jsp">Liên Hệ</a></li>
