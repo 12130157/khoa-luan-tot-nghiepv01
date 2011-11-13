@@ -2,9 +2,6 @@ package uit.cnpm02.dkhp.access.util;
 
 /**
  * Definition of sql queries.
- *  
- * @author See4sys
- *
  */
 public interface Queries {
 

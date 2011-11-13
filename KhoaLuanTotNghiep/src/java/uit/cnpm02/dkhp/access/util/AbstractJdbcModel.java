@@ -5,9 +5,6 @@ import java.lang.reflect.ParameterizedType;
 
 /**
  * AbstractJdbcModel
- * 
- * @author See4sys
- * 
  * @param <ID> model's id type.
  */
 public abstract class AbstractJdbcModel<ID extends Serializable> implements
