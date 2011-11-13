@@ -94,7 +94,7 @@ public class Account extends AbstractJdbcModel<String> {
     @Override
     public String[] getColumnNames() {
         return new String[]{
-                    "TenDangNhap",
+                    //"TenDangNhap",
                     "MatKhau",
                     "HoTen",
                     "DangDangNhap",
@@ -118,13 +118,14 @@ public class Account extends AbstractJdbcModel<String> {
     @Override
     public void setColumnValues(Object[] values) {
         try {
-            userName = values[0].toString();
-            password = values[1].toString();
-            fullName = values[2].toString();
-            isLogined = Integer.parseInt(values[3].toString());
-            status = values[4].toString();
+            //userName = values[0].toString();
+            password = values[0].toString();
+            fullName = values[1].toString();
+            isLogined = Integer.parseInt(values[2].toString());
+            status = values[3].toString();
             type = Integer.parseInt(values[4].toString());
-
+            
+            userName = getId();
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
