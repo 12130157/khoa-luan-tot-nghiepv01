@@ -70,6 +70,11 @@ public class News extends AbstractJdbcModel<String> {
     }
 
     @Override
+    public String getIdColumnName() {
+        return "MaTin";
+    }
+
+    @Override
     public String getTableName() {
         return MapperConstant.DB_NAME
                 + ".BanTin";
@@ -99,9 +104,6 @@ public class News extends AbstractJdbcModel<String> {
 
     @Override
     public void setColumnValues(Object[] values) {
-        //Date date = results.getDate(column);
-        //DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        //System.out.println("Formatted date: " + df.format(date));
         try {
             title = values[0].toString();
             content = values[1].toString();
