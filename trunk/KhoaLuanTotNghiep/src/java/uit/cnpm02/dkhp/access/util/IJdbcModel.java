@@ -3,8 +3,6 @@ package uit.cnpm02.dkhp.access.util;
 import java.io.Serializable;
 
 /**
- * @author See4sys
- *
  * @param <ID> model id type.
  */
 public interface IJdbcModel<ID extends Serializable> extends IModel<ID> {
