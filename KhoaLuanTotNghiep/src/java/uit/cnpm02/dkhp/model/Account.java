@@ -11,14 +11,14 @@ public class Account extends AbstractJdbcModel<String> {
     private String userName;
     private String password;
     private String fullName;
-    private int isLogined;//1 dang dang nhap, 0 chua dang nhap
+    private boolean isLogined;//true dang dang nhap, false chua dang nhap
     private String status;
     private int type;
 
     public Account() {
     }
 
-    public Account(String userName, String password, String fullName, int isLogined, String status, int type) {
+    public Account(String userName, String password, String fullName, boolean isLogined, String status, int type) {
         this.userName = userName;
         this.password = password;
         this.fullName = fullName;
@@ -35,11 +35,11 @@ public class Account extends AbstractJdbcModel<String> {
         this.fullName = fullName;
     }
 
-    public int getIsLogined() {
+    public boolean getIsLogined() {
         return isLogined;
     }
 
-    public void setIsLogined(int isLogined) {
+    public void setIsLogined(boolean isLogined) {
         this.isLogined = isLogined;
     }
 
@@ -106,7 +106,7 @@ public class Account extends AbstractJdbcModel<String> {
     @Override
     public Object[] getColumnValues() {
         return new Object[]{
-                    userName,
+                    //userName,
                     password,
                     fullName,
                     isLogined,
@@ -121,7 +121,7 @@ public class Account extends AbstractJdbcModel<String> {
             //userName = values[0].toString();
             password = values[0].toString();
             fullName = values[1].toString();
-            isLogined = Integer.parseInt(values[2].toString());
+            isLogined = Boolean.parseBoolean(values[2].toString());
             status = values[3].toString();
             type = Integer.parseInt(values[4].toString());
             
