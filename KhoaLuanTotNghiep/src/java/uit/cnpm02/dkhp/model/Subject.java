@@ -4,11 +4,11 @@ package uit.cnpm02.dkhp.model;
  *
  * @author LocNguyen
  */
-public class MonHoc {
-    /**Mã môn học**/
-    private String maMH;
-    /**Tên môn học**/
-    private String tenMH;
+public class Subject {
+    /**Subject code**/
+    private String subjectCode;
+    /**Subject name**/
+    private String subjectName;
     
     /**Số tín chỉ**/
     private int soTC;
@@ -17,22 +17,22 @@ public class MonHoc {
     /**Số tín chỉ thực hành**/
     private int soTCTH;
 
-    public MonHoc() {
+    public Subject() {
     }
 
-    public MonHoc(String maMH, String tenMH, int soTC, int soTCLT) {
-        this.maMH = maMH;
-        this.tenMH = tenMH;
+    public Subject(String subjectCode, String subjectName, int soTC, int soTCLT) {
+        this.subjectCode = subjectCode;
+        this.subjectName = subjectName;
         this.soTC = soTC;
         this.soTCLT = soTCLT;
     }
 
-    public String getMaMH() {
-        return maMH;
+    public String getSubjectCode() {
+        return subjectCode;
     }
 
-    public void setMaMH(String maMH) {
-        this.maMH = maMH;
+    public void setSubjectCode(String subjectCode) {
+        this.subjectCode = subjectCode;
     }
 
     public int getSoTC() {
@@ -59,12 +59,12 @@ public class MonHoc {
         this.soTCTH = soTCTH;
     }
 
-    public String getTenMH() {
-        return tenMH;
+    public String getSubjectName() {
+        return subjectName;
     }
 
-    public void setTenMH(String tenMH) {
-        this.tenMH = tenMH;
+    public void setSubjectName(String subjectName) {
+        this.subjectName = subjectName;
     }
     
 }
