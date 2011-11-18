@@ -63,6 +63,15 @@ public interface IGenericDAO<T extends IModel<ID>, ID extends Serializable> {
 	 */
 	List<T> findByIds(Collection<ID> ids) throws Exception;
 
+        /**
+         * Get all record on a page.
+         * @param recordPerPage number record per page.
+         * @param currentPage current page.
+         * @return list entities on the current page.
+         * @throws Exception occur while execute query.
+         */
+        List<T> findAll(int recordPerPage, int currentPage, String orderBy, String order) throws Exception;
+        
 	/**
 	 * Select all available model objects in database.
 	 * @return found objects or empty list.
