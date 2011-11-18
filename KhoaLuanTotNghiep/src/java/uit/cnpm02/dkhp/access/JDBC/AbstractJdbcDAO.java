@@ -1,5 +1,6 @@
 package uit.cnpm02.dkhp.access.JDBC;
 
+import uit.cnpm02.dkhp.utilities.LangUtils;
 import uit.cnpm02.dkhp.access.mapper.Queries;
 import uit.cnpm02.dkhp.communication.database.ConnectionServer;
 import java.io.Serializable;
@@ -12,9 +13,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.NamingException;

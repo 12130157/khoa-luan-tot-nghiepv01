@@ -1,4 +1,4 @@
-package uit.cnpm02.dkhp.access.JDBC;
+package uit.cnpm02.dkhp.utilities;
 
 import java.util.List;
 import java.util.Set;
