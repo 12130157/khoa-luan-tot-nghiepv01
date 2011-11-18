@@ -3,7 +3,6 @@ package uit.cnpm02.dkhp.controllers;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -13,14 +12,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import uit.cnpm02.dkhp.DAO.AccountDAO;
 import uit.cnpm02.dkhp.DAO.NewsDAO;
+import uit.cnpm02.dkhp.DAO.PreSubjectDAO;
 import uit.cnpm02.dkhp.model.Account;
 import uit.cnpm02.dkhp.model.News;
+import uit.cnpm02.dkhp.model.PreSubID;
+import uit.cnpm02.dkhp.model.PreSubject;
+
 /**
  *
  * @author LocNguyen
  */
 @WebServlet(name = "Test1", urlPatterns = {"/Test1"})
 public class Test1 extends HttpServlet {
+
     private AccountDAO accountDao = new AccountDAO();
     private NewsDAO newsDao = new NewsDAO();
 
@@ -35,12 +39,12 @@ public class Test1 extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        
-        testAddNews(out);
-        
+
+        //testAddNews(out);
+
         try {
-            List<News> news = newsDao.findAll();
-            
+            /*List<News> news = newsDao.findAll();
+
             out.println("<html>");
             out.println("<head>");
             out.println("<title>Servlet Test</title>");
@@ -65,7 +69,8 @@ public class Test1 extends HttpServlet {
             }
             out.println("</body>");
             out.println("</html>");
-
+             */
+            testAdvancedDAO(out);
         } catch (Exception ex) {
             Logger.getLogger(Test1.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -111,7 +116,7 @@ public class Test1 extends HttpServlet {
 
     private void testAddNews(PrintWriter out) {
         News news = new News("BT06", "Nghi hoc chieu thu 7", "Thong bao cho sinh vien CNPM 02, tat ca dc nghi ngay chu nhat.", "Loc Nguyen", new Date(), 0);
-        int id = 0;
+        String id = "";
         try {
             id = newsDao.add(news);
         } catch (Exception ex) {
@@ -119,19 +124,19 @@ public class Test1 extends HttpServlet {
         }
         try {
             News result = newsDao.findById(id);
-            
-            if(result != null) {
+
+            if (result != null) {
                 out.println(result.getTitle() + " --- " + result.getContent());
             }
         } catch (Exception ex) {
             Logger.getLogger(Test1.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
-    
+
     private void testAdd(PrintWriter out) {
-        Account acc = new Account("locnv", "123", "Nguyen Van Loc", 0, "Normal", 1);
-        int id = -1;
+        Account acc = new Account("locnv", "123", "Nguyen Van Loc", false, "Normal", 1);
+        String id = null;
         try {
             id = accountDao.add(acc);
         } catch (Exception ex) {
@@ -139,13 +144,31 @@ public class Test1 extends HttpServlet {
         }
         try {
             Account result = accountDao.findById(id);
-            
-            if(result != null) {
+
+            if (result != null) {
                 out.println(result.getUserName() + " --- " + result.getPassword());
             }
         } catch (Exception ex) {
             Logger.getLogger(Test1.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+    }
+
+    private void testAdvancedDAO(PrintWriter out) throws Exception {
+        PreSubject preSub = new PreSubject();
+        preSub.setId(new PreSubID("H00", "H01"));
+        PreSubjectDAO preSubDao = new PreSubjectDAO();
+
+        PreSubID id = preSubDao.add(preSub);
+
+        if (id != null) {
+            out.println("---------------------------</br>");
+            out.println("---------------------------</br>");
+            out.println("---------------------------</br>");
+            out.println(id.getSudId() + " ----------- " + id.getPreSudId() + "</br>");
+            out.println("---------------------------</br>");
+            out.println("---------------------------</br>");
+            out.println("---------------------------</br>");
+        }
+
     }
 }
