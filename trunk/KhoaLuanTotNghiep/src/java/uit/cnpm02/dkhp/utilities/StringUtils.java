@@ -1,4 +1,4 @@
-package uit.cnpm02.dkhp.access.JDBC;
+package uit.cnpm02.dkhp.utilities;
 
 /**
  * Most functions are copied from Apache common lang - StringUtils
