@@ -32,8 +32,7 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
      * Default id generate query of mysql
      */
     private String idGenerateQuery = "";
-    
-     private String[][] queryName = new String[][] {
+    private String[][] queryName = new String[][]{
         {"sql.delete", "delete from {0} where {1} = {2}"},
         {"sql.delete.multi", "delete from {0} where {1} in ({2})"},
         {"sql.insert", "insert into {0}({1}) values ({2})"},
@@ -49,7 +48,6 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
         {"sql.select.rowsCount", "select count(*) from {0}"},
         {"sql.select.rows", "select * from {0} order by {1} {2} limit {3} offset {4}"}
     };
-    
     private Map<String, String> sqlQuery;
 
     /**
@@ -61,10 +59,10 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
         // isSupportAutoIncrementDB = true;//configurable
         modelClazz = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
-    
+
     private void loadQuery() {
         sqlQuery = new HashMap<String, String>();
-        for(int i = 0; i < queryName.length; i++) {
+        for (int i = 0; i < queryName.length; i++) {
             sqlQuery.put(queryName[i][0], queryName[i][1]);
         }
     }
@@ -466,7 +464,7 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
                 columnValues = lEntities.get(i).getColumnValues();
                 for (j = 0; j < columnValues.length; j++) {
                     setObject(statement, j + 1, columnValues[j]);
-//					statement.setObject(j + 1, columnValues[j]);
+                    //statement.setObject(j + 1, columnValues[j]);
                 }
                 statement.setObject(j + 1, lEntities.get(i).getId());
 
@@ -481,6 +479,59 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
             close(statement);
             close(con);
         }
+    }
+
+    @Override
+    public List<T> findAll(int recordPerPage, int currentPage, String orderBy, String order) throws Exception {
+        checkModelWellDefined();
+
+        ArrayList<T> results = new ArrayList<T>();
+
+        T t = createModel();
+
+        if (t == null) {
+            throw new Exception("Cannot initialize the " + modelClazz.getName()
+                    + " class");
+        }
+        
+        if (order == null) {
+            order = "ASC";
+        }
+        
+        int offset = (currentPage - 1) * recordPerPage;
+        String selectQuery = LangUtils.bind(getSql(Queries.SQL_SELECT_ROWS),
+                new String[] {  t.getTableName(), 
+                                orderBy, 
+                                order, 
+                                Integer.toString(recordPerPage), 
+                                Integer.toString(offset)});
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        try {
+            con = getConnection();
+            statement = con.prepareStatement(selectQuery);
+            rs = statement.executeQuery();
+
+            while (rs.next()) {
+                T ti = createModel();
+                Object[] obj = new Object[t.getColumnNames().length];
+                for (int i = 0; i < obj.length; i++) {
+                    obj[i] = rs.getObject(ti.getColumnNames()[i]);
+                }
+                ID id = (ID) rs.getObject(ti.getIdColumnName());
+
+                ti.setId(id);
+                ti.setColumnValues(obj);
+                results.add(ti);
+            }
+        } catch (SQLException ex) {
+            throw new Exception(ex);
+        } finally {
+            close(rs, statement);
+            close(con);
+        }
+        return results;
     }
 
     @SuppressWarnings("unchecked")
