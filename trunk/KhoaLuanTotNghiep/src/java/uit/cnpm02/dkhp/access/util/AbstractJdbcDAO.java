@@ -1,5 +1,6 @@
 package uit.cnpm02.dkhp.access.util;
 
+import uit.cnpm02.dkhp.access.mapper.Queries;
 import uit.cnpm02.dkhp.communication.database.ConnectionServer;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.NamingException;
+import uit.cnpm02.dkhp.access.mapper.SQLUtils;
 
 /**
  * A Base Jdbc DAO contains common Jdbc functionalities.
@@ -32,40 +34,17 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
      * Default id generate query of mysql
      */
     private String idGenerateQuery = "";
-    private String[][] queryName = new String[][]{
-        {"sql.delete", "delete from {0} where {1} = {2}"},
-        {"sql.delete.multi", "delete from {0} where {1} in ({2})"},
-        {"sql.insert", "insert into {0}({1}) values ({2})"},
-        {"sql.insert.multi", "insert into {0} ({1}) values {2}"},
-        {"sql.select", "select * from {0} where {1} = {2}"},
-        {"sql.select.multi", "select * from {0} where {1} in ({2})"},
-        {"sql.select.all", "select * from {0}"},
-        {"sql.maxId", "select max({0}) from {1}"},
-        {"sql.update", "update {0} set {1} where {2} = {3}"},
-        {"sql.update.multi", "update {0} set {1} where {2} in ({3})"},
-        {"log.insert", "insert into Log(col1, col2) values (?,?)"},
-        {"log.update", "update Log set col1=value1 where id = ?"},
-        {"sql.select.rowsCount", "select count(*) from {0}"},
-        {"sql.select.rows", "select * from {0} order by {1} {2} limit {3} offset {4}"}
-    };
-    private Map<String, String> sqlQuery;
-
+    
     /**
      * Default constructor.
      */
     @SuppressWarnings(value = {"unchecked"})
     public AbstractJdbcDAO() {
-        loadQuery();
         // isSupportAutoIncrementDB = true;//configurable
         modelClazz = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
-    private void loadQuery() {
-        sqlQuery = new HashMap<String, String>();
-        for (int i = 0; i < queryName.length; i++) {
-            sqlQuery.put(queryName[i][0], queryName[i][1]);
-        }
-    }
+    
 
     protected PreparedStatement getStatement(String queryName, Connection conn,
             boolean generateId) throws SQLException {
@@ -214,14 +193,6 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
         this.idGenerateQuery = idGenerateQuery;
     }
 
-    /**
-     * @param queryName query name.
-     * @return found query or null if not found.
-     */
-    public String getSql(String queryName) {
-        return sqlQuery.get(queryName);
-    }
-
     protected Connection getConnection() throws SQLException {
         Connection conn = null;
         try {
@@ -310,7 +281,7 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
         try {
             con = getConnection();
             con.setAutoCommit(false);
-            String insertQuery = LangUtils.bind(getSql(Queries.SQL_INSERT),
+            String insertQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_INSERT),
                     new String[]{lEntities.get(0).getTableName(), sbColumn.toString(),
                         sbValue.toString()});
             statement = con.prepareStatement(insertQuery);
@@ -385,7 +356,7 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
             sbValue.append("," + "?");
         }
 
-        String insertQuery = LangUtils.bind(getSql(Queries.SQL_INSERT),
+        String insertQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_INSERT),
                 new String[]{t.getTableName(), sbColumn.toString(),
                     sbValue.toString()});
 
@@ -451,7 +422,7 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
         Connection con = null;
         PreparedStatement statement = null;
         try {
-            String updateQuery = LangUtils.bind(getSql(Queries.SQL_UPDATE),
+            String updateQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_UPDATE),
                     new String[]{lEntities.get(0).getTableName(),
                         sb.toString(),
                         lEntities.get(0).getIdColumnName(),
@@ -499,7 +470,7 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
         }
         
         int offset = (currentPage - 1) * recordPerPage;
-        String selectQuery = LangUtils.bind(getSql(Queries.SQL_SELECT_ROWS),
+        String selectQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_SELECT_ROWS),
                 new String[] {  t.getTableName(), 
                                 orderBy, 
                                 order, 
@@ -548,7 +519,7 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
                     + " class");
         }
 
-        String selectQuery = LangUtils.bind(getSql(Queries.SQL_SELECT_ALL), t.getTableName());
+        String selectQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_SELECT_ALL), t.getTableName());
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -600,7 +571,7 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
         PreparedStatement statement = null;
         ResultSet rs = null;
         try {
-            String selectQuery = LangUtils.bind(getSql(Queries.SQL_SELECT),
+            String selectQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_SELECT),
                     new String[]{t.getTableName(), t.getIdColumnName(), "?"});
 
             con = getConnection();
@@ -660,7 +631,7 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
         PreparedStatement statement = null;
         ResultSet rs = null;
         try {
-            String strQuery = LangUtils.bind(getSql(Queries.SQL_SELECT_MULTI),
+            String strQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_SELECT_MULTI),
                     new String[]{t.getTableName(), t.getIdColumnName(), strId});
 
             con = getConnection();
@@ -714,7 +685,7 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
             throw new IllegalArgumentException(
                     "Cannot get maxId for ID string type");
         }
-        String selectQuery = LangUtils.bind(getSql(Queries.SQL_MAX_ID), t.getIdColumnName(), t.getTableName());
+        String selectQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_MAX_ID), t.getIdColumnName(), t.getTableName());
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -770,7 +741,7 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
         Connection con = null;
         PreparedStatement statement = null;
         try {
-            String updateQuery = LangUtils.bind(getSql(Queries.SQL_UPDATE),
+            String updateQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_UPDATE),
                     new String[]{t.getTableName(), sb.toString(), t.getIdColumnName(), "?"});
 
             con = getConnection();
@@ -813,7 +784,7 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
         Connection con = null;
         PreparedStatement statement = null;
         try {
-            String delQuery = LangUtils.bind(getSql(Queries.SQL_DELETE), new String[]{
+            String delQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_DELETE), new String[]{
                         t.getTableName(), t.getIdColumnName(), "?"});
 
             con = getConnection();
@@ -865,7 +836,7 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
 
         final T ot = listEntities.get(0);
 
-        String delQuery = LangUtils.bind(getSql(Queries.SQL_DELETE_MULTI), new String[]{
+        String delQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_DELETE_MULTI), new String[]{
                     ot.getTableName(), ot.getIdColumnName(), strMark});
         Connection con = null;
         PreparedStatement statement = null;
@@ -907,7 +878,7 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
     @Override
     public int getRowsCount() throws Exception {
         T t = createModel();
-        String query = LangUtils.bind(getSql(Queries.SQL_SELECT_ROWS_COUNT), t.getTableName());
+        String query = LangUtils.bind(SQLUtils.getSql(Queries.SQL_SELECT_ROWS_COUNT), t.getTableName());
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -932,7 +903,7 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
         List<T> lstResult = new ArrayList<T>();
         T t = createModel();
         String asc = sortOrder ? "ASC" : "DESC";
-        String query = LangUtils.bind(getSql(Queries.SQL_SELECT_ROWS),
+        String query = LangUtils.bind(SQLUtils.getSql(Queries.SQL_SELECT_ROWS),
                 new String[]{t.getTableName(),
                     t.getColumnNames()[sortColumn], asc,
                     String.valueOf(rowsCount), String.valueOf(startRow)});
