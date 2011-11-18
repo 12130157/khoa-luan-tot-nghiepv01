@@ -12,9 +12,10 @@
         <title>Dang ki hoc phan</title>
     </head>
     <body>
+        
         <%
             response.sendRedirect("./HomepageController?action=view");
         %>
-        <%-- <h2>Click <a href="./Test1">here</a> test application</h2> --%>
+        <!-- h2>Click <a href="./Test1">here</a> test application</h2 -->
     </body>
 </html>
