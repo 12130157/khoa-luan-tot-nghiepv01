@@ -5,7 +5,7 @@
 package uit.cnpm02.dkhp.model;
 
 import uit.cnpm02.dkhp.access.mapper.MapperConstant;
-import uit.cnpm02.dkhp.access.util.AbstractJdbcModel;
+import uit.cnpm02.dkhp.access.JDBC.AbstractJdbcModel;
 
 /**
  *
