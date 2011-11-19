@@ -30,7 +30,7 @@ public class AccountBO {
         return false;
     }
 
-    public boolean isLogined(String user) {
+    public boolean  isLogined(String user) {
         try {
             Account acc = accDao.findById(user);
             if(acc != null) {
