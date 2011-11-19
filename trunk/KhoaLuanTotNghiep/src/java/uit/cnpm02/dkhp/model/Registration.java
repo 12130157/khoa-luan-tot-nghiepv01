@@ -4,11 +4,14 @@
  */
 package uit.cnpm02.dkhp.model;
 
+import uit.cnpm02.dkhp.access.mapper.MapperConstant;
+import uit.cnpm02.dkhp.access.util.AbstractJdbcModel;
+
 /**
  * Information about registry of student
  * @author LocNguyen
  */
-public class Registration {
+public class Registration  extends  AbstractJdbcModel<String>{
     private String studentCode;    
     private String classCode;
     private String year;
@@ -84,5 +87,48 @@ public class Registration {
      */
     public void setNoRegisty(int noRegisty) {
         this.noRegisty = noRegisty;
+    }
+     @Override
+    public String getIdColumnName() {
+        return "MSSV";
+    }
+     @Override
+    public String getTableName() {
+        return MapperConstant.DB_NAME
+                + ".DangKyHocPhan";
+    }
+    @Override
+    public String[] getColumnNames() {
+        return new String[]{
+                    "MaLopHoc",
+                    "HocKy",
+                    "NamHoc",
+                    "STTDK",
+                    "Diem"
+                };
+    }
+
+   @Override
+    public void setColumnValues(Object[] values) {
+        try {
+            classCode = values[0].toString();
+            semester =Integer.parseInt(values[1].toString());
+            year = values[2].toString();
+            noRegisty =Integer.parseInt(values[3].toString());
+            mark=Float.parseFloat(values[0].toString());
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+     @Override
+    public Object[] getColumnValues() {
+        return new Object[]{
+                    classCode,
+                    semester,
+                    year,
+                    noRegisty,
+                    mark
+                };
     }
 }

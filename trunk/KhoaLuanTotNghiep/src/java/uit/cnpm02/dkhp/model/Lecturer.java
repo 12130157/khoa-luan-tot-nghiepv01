@@ -4,6 +4,7 @@
  */
 package uit.cnpm02.dkhp.model;
 
+import java.util.Date;
 import uit.cnpm02.dkhp.access.mapper.MapperConstant;
 import uit.cnpm02.dkhp.access.JDBC.AbstractJdbcModel;
 
@@ -15,7 +16,7 @@ public class Lecturer extends  AbstractJdbcModel<String>{
    String lecturerCode;
    String fullName;
    String facultyCode;
-   String birthday;
+   Date birthday;
    String address;
    String identityCard;
    String phone;
@@ -27,7 +28,7 @@ public class Lecturer extends  AbstractJdbcModel<String>{
    public Lecturer(){
        
    }
-   public Lecturer(String _lecturerCode, String _fullName, String _facultyCode, String _birthday, String _address, 
+   public Lecturer(String _lecturerCode, String _fullName, String _facultyCode, Date _birthday, String _address, 
            String _identityCard, String _phone, String _email, String _gender, String _hocHam, String _hocVi){
        this.lecturerCode=_lecturerCode;
        this.fullName=_fullName;
@@ -54,7 +55,7 @@ public class Lecturer extends  AbstractJdbcModel<String>{
    public void setFacultyCode(String _facultyCode){
        this.facultyCode=_facultyCode;
    }
-   public void setBirthday(String _birthday){
+   public void setBirthday(Date _birthday){
        this.birthday=_birthday;
    }
    public void setAddress(String _address){
@@ -93,7 +94,7 @@ public class Lecturer extends  AbstractJdbcModel<String>{
    public String getFacultyCode(){
        return this.facultyCode;
    }
-   public String getBirthday(){
+   public Date getBirthday(){
        return this.birthday;
    }
    public String getAddress(){
@@ -145,6 +146,7 @@ public class Lecturer extends  AbstractJdbcModel<String>{
                     "GhiChu"
                 
                 };
+        
     }
 
    @Override
@@ -152,7 +154,7 @@ public class Lecturer extends  AbstractJdbcModel<String>{
         try {
             fullName = values[0].toString();
             facultyCode = values[1].toString();
-            birthday = values[2].toString();
+            birthday =(Date)values[2];
             address = values[3].toString();
             identityCard=values[4].toString();
             phone=values[5].toString();

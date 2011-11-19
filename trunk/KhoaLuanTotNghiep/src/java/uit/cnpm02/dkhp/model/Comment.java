@@ -4,6 +4,7 @@
  */
 package uit.cnpm02.dkhp.model;
 
+import java.util.Date;
 import uit.cnpm02.dkhp.access.mapper.MapperConstant;
 import uit.cnpm02.dkhp.access.JDBC.AbstractJdbcModel;
 
@@ -15,12 +16,12 @@ public class Comment extends  AbstractJdbcModel<String>{
     String commentCode;
     String content;
     String author;
-    String createDate;
+    Date createDate;
     String status;
     public Comment(){
         
     }
-    public Comment(String _commentCode, String _content, String _author, String _createDate, String _status){
+    public Comment(String _commentCode, String _content, String _author, Date _createDate, String _status){
         this.commentCode=_commentCode;
         this.content=_content;
         this.author=_author;
@@ -39,7 +40,7 @@ public class Comment extends  AbstractJdbcModel<String>{
     public void setAuthor(String _author){
         this.author=_author;
     }
-    public void setCreateDate(String _createDate){
+    public void setCreateDate(Date _createDate){
         this.createDate=_createDate;
     }
     public void setStatus(String _status){
@@ -57,7 +58,7 @@ public class Comment extends  AbstractJdbcModel<String>{
     public String getAuthor(){
         return this.author;
     }
-    public String getCreateDate(){
+    public Date getCreateDate(){
         return this.createDate;
     }
     public String getStatus(){
@@ -87,7 +88,7 @@ public class Comment extends  AbstractJdbcModel<String>{
         try {
             content = values[0].toString();
             author = values[1].toString();
-            createDate = values[2].toString();
+            createDate = (Date)values[2];
             status = values[3].toString();
 
         } catch (Exception e) {

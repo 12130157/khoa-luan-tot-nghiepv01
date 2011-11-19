@@ -4,11 +4,14 @@
  */
 package uit.cnpm02.dkhp.model;
 
+import uit.cnpm02.dkhp.access.mapper.MapperConstant;
+import uit.cnpm02.dkhp.access.util.AbstractJdbcModel;
+
 /**
  * Training program
  * @author LocNguyen
  */
-public class TrainProgram {
+public class TrainProgram extends  AbstractJdbcModel<String>{
 
     /**Training program**/
     private String programCode;
@@ -45,5 +48,38 @@ public class TrainProgram {
 
     public void setCourseCode(String courseCode) {
         this.courseCode = courseCode;
+    }
+     @Override
+    public String getIdColumnName() {
+        return "MaCTDT";
+    }
+     @Override
+    public String getTableName() {
+        return MapperConstant.DB_NAME
+                + ".ChuongTrinhDaoTao";
+    }
+    @Override
+    public String[] getColumnNames() {
+        return new String[]{
+                    "MaKhoa",
+                    "MaKhoaHoc"
+               };
+    }
+
+   @Override
+    public void setColumnValues(Object[] values) {
+        try {
+            facultyCode = values[0].toString();
+            courseCode = values[1].toString();
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+     @Override
+    public Object[] getColumnValues() {
+        return new Object[]{
+                    facultyCode,
+                    courseCode
+        };
     }
 }

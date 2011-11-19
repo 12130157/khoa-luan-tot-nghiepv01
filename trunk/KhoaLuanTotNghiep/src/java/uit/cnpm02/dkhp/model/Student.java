@@ -4,14 +4,18 @@
  */
 package uit.cnpm02.dkhp.model;
 
+import java.util.Date;
+import uit.cnpm02.dkhp.access.mapper.MapperConstant;
+import uit.cnpm02.dkhp.access.util.AbstractJdbcModel;
+
 /**
  *
  * @author thanh
  */
-public class Student {
+public class Student extends  AbstractJdbcModel<String>{
     private String studentCode;
     private String fullName;
-    private String birthday;
+    private Date birthday;
     private String gender;
     private String identityCard;
     private String home;
@@ -23,7 +27,7 @@ public class Student {
     private String courseCode;
     private String status;
     private String studyLevel;
-    private String dateStart;
+    private Date dateStart;
     private String studyType;
     private String note;
     public Student(){
@@ -50,9 +54,9 @@ public class Student {
      * @param _note 
      */
     
-    public Student(String _studentCode, String _fullName, String _birthday, String _gender, String _identityCard, String _home,
+    public Student(String _studentCode, String _fullName, Date _birthday, String _gender, String _identityCard, String _home,
             String _address, String _phone, String _email, String _classCode, String _facultyCode, String _courseCode, 
-            String _status, String _studyLevel, String _dateStart, String _loaiHinHoc, String _note)   {
+            String _status, String _studyLevel, Date _dateStart, String _loaiHinHoc, String _note)   {
      this.studentCode=_studentCode;
      this.fullName=_fullName;
      this.birthday=_birthday;
@@ -80,7 +84,7 @@ public class Student {
    public void setFullName(String _fullName){
         this.fullName=_fullName;
     }
-   public void setBirthday(String _birthday){
+   public void setBirthday(Date _birthday){
         this.birthday=_birthday;
     }
     public void setGender(String _gender){
@@ -116,7 +120,7 @@ public class Student {
     public void setStudyLevel(String _studyLevel){
         this.studyLevel=_studyLevel;
     }
-    public void setDateStart(String _dateStart){
+    public void setDateStart(Date _dateStart){
         this.dateStart=_dateStart;
     }
     public void setStudyType(String _studyType){
@@ -134,7 +138,7 @@ public class Student {
     public String getFullName(){
        return this.fullName;
     }
-   public String getBirthday(){
+   public Date getBirthday(){
        return  this.birthday;
     }
    public String getGender(){
@@ -170,7 +174,7 @@ public class Student {
     public String getstudyLevel(){
         return this.studyLevel;
     }
-    public String getDateStart(){
+    public Date getDateStart(){
         return this.dateStart;
     }
     public String getStudyType(){
@@ -178,6 +182,82 @@ public class Student {
     }
     public String getNote(){
        return this.note;
+    }
+     @Override
+    public String getIdColumnName() {
+        return "MSSV";
+    }
+     @Override
+    public String getTableName() {
+        return MapperConstant.DB_NAME
+                + ".SinhVien";
+    }
+    @Override
+    public String[] getColumnNames() {
+        return new String[]{
+                    "HoTen",
+                    "NgaySinh",
+                    "GioiTinh",
+                    "CMND",
+                    "QueQuan",
+                    "DiaChi",
+                    "DienThoai",
+                    "Email",
+                    "MaLop",
+                    "MaKhoa",
+                    "MaKhoaHoc",
+                    "TinhTrang",
+                    "BacHoc",
+                    "NgayNhapHoc",
+                    "LoaiHinhHoc",
+                    "GhiChu"
+                };
+    }
+
+   @Override
+    public void setColumnValues(Object[] values) {
+        try {
+            fullName = values[0].toString();
+            birthday =(Date)values[1];
+            gender = values[2].toString();
+            identityCard = values[3].toString();
+            home = values[4].toString();
+            address = values[5].toString();
+            phone = values[6].toString();
+            email = values[7].toString();
+            classCode = values[8].toString();
+            facultyCode = values[9].toString();
+            courseCode = values[10].toString();
+            status = values[11].toString();
+            studyLevel = values[12].toString();
+            dateStart =(Date)values[13];
+            studyType = values[14].toString();
+            note = values[15].toString();
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+     @Override
+    public Object[] getColumnValues() {
+        return new Object[]{
+                    fullName,
+                    birthday,
+                    gender,
+                    identityCard,
+                    home,
+                    address,
+                    phone,
+                    email,
+                    classCode,
+                    facultyCode,
+                    courseCode,
+                    status,
+                    studyLevel,
+                    dateStart,
+                    studyType,
+                    note
+                };
     }
     
 }
