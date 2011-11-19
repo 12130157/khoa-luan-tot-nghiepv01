@@ -22,6 +22,7 @@ public class SQLUtils {
         {"sql.select.all", "select * from {0}"},
         {"sql.maxId", "select max({0}) from {1}"},
         {"sql.update", "update {0} set {1} where {2} = {3}"},
+        {"sql.update.advanced", "update {0} set {1} where {2}"},
         {"sql.update.multi", "update {0} set {1} where {2} in ({3})"},
         {"log.insert", "insert into Log(col1, col2) values (?,?)"},
         {"log.update", "update Log set col1=value1 where id = ?"},

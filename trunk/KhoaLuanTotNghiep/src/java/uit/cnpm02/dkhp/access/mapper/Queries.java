@@ -21,6 +21,8 @@ public interface Queries {
     public String SQL_SELECT_ALL = "sql.select.all";
     /***/
     public String SQL_UPDATE = "sql.update";
+    /****/
+    public String SQL_UPDATE_ADVANCED = "sql.update.advanced";
     /***/
     public String SQL_UPDATE_MULTI = "sql.update.multi";
     /***/
