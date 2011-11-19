@@ -1,10 +1,13 @@
 package uit.cnpm02.dkhp.model;
 
+import uit.cnpm02.dkhp.access.mapper.MapperConstant;
+import uit.cnpm02.dkhp.access.util.AbstractJdbcModel;
+
 /**
  *
  * @author LocNguyen
  */
-public class Subject {
+public class Subject extends  AbstractJdbcModel<String>{
     /**Subject code**/
     private String subjectCode;
     /**Subject name**/
@@ -66,6 +69,45 @@ public class Subject {
     public void setSubjectName(String subjectName) {
         this.subjectName = subjectName;
     }
-    
+     @Override
+    public String getIdColumnName() {
+        return "MaMH";
+    }
+     @Override
+    public String getTableName() {
+        return MapperConstant.DB_NAME
+                + ".MonHoc";
+    }
+    @Override
+    public String[] getColumnNames() {
+        return new String[]{
+                    "TenMH",
+                    "SoTC",
+                    "SoTCLT",
+                    "SoTCTH"
+                };
+    }
+
+   @Override
+    public void setColumnValues(Object[] values) {
+        try {
+            subjectName = values[0].toString();
+            soTC = Integer.parseInt(values[1].toString());
+            soTCLT = Integer.parseInt(values[2].toString());
+            soTCTH = Integer.parseInt(values[3].toString());
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+     @Override
+    public Object[] getColumnValues() {
+        return new Object[]{
+                    subjectName,
+                    soTC,
+                    soTCLT,
+                    soTCTH,
+                };
+    }
 }
 

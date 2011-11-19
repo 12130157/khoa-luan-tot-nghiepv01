@@ -4,11 +4,14 @@
  */
 package uit.cnpm02.dkhp.model;
 
+import uit.cnpm02.dkhp.access.mapper.MapperConstant;
+import uit.cnpm02.dkhp.access.util.AbstractJdbcModel;
+
 /**
  *
  * @author LocNguyen
  */
-public class Rule {
+public class Rule extends  AbstractJdbcModel<String>{
     
     private String ruleCode;
     private int value;
@@ -35,6 +38,36 @@ public class Rule {
 
     public void setRuleCode(String ruleCode) {
         this.ruleCode = ruleCode;
+    }
+     @Override
+    public String getIdColumnName() {
+        return "Ma";
+    }
+     @Override
+    public String getTableName() {
+        return MapperConstant.DB_NAME
+                + ".QuyDinh";
+    }
+    @Override
+    public String[] getColumnNames() {
+        return new String[]{
+                    "GiaTri"
+                };
+    }
+
+   @Override
+    public void setColumnValues(Object[] values) {
+        try {
+            value =Integer.parseInt(values[0].toString());
+          } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+     @Override
+    public Object[] getColumnValues() {
+        return new Object[]{
+                  value
+        };
     }
     
 }

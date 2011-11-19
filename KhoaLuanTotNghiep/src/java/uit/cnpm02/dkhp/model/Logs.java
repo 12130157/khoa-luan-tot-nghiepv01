@@ -4,6 +4,8 @@
  */
 package uit.cnpm02.dkhp.model;
 
+import java.sql.Time;
+import java.util.Date;
 import uit.cnpm02.dkhp.access.mapper.MapperConstant;
 import uit.cnpm02.dkhp.access.JDBC.AbstractJdbcModel;
 
@@ -16,12 +18,12 @@ public class Logs extends  AbstractJdbcModel<String> {
     private String logCode;
     private String account;
     private String content;
-    private String createDate;
-    private String createHours;   
+    private Date createDate;
+    private Time createHours;   
     public Logs() {
     }
 
-    public Logs(String logCode, String account, String content, String createDate, String createHours) {
+    public Logs(String logCode, String account, String content, Date createDate, Time createHours) {
         this.logCode = logCode;
         this.account = account;
         this.content = content;
@@ -37,11 +39,11 @@ public class Logs extends  AbstractJdbcModel<String> {
         this.logCode = logCode;
     }
 
-    public String getCreateDate() {
+    public Date getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(String createDate) {
+    public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
 
@@ -60,11 +62,11 @@ public class Logs extends  AbstractJdbcModel<String> {
     public void setAccount(String account) {
         this.account = account;
     }
-     public String getCreateHours() {
+     public Time getCreateHours() {
         return createHours;
     }
 
-    public void setCreateHours(String createHours) {
+    public void setCreateHours(Time createHours) {
         this.createHours = createHours;
     }
      @Override
@@ -91,8 +93,8 @@ public class Logs extends  AbstractJdbcModel<String> {
         try {
             account = values[0].toString();
             content = values[1].toString();
-            createDate = values[2].toString();
-            createHours = values[3].toString();
+            createDate =(Date)values[2];
+            createHours =Time.valueOf(values[3].toString());
 
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
