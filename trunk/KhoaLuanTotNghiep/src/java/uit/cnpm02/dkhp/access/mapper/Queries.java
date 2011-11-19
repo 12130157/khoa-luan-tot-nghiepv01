@@ -8,6 +8,8 @@ public interface Queries {
     /***/
     public String SQL_DELETE = "sql.delete";
     /****/
+    public String SQL_DELETE_ADVANCED = "sql.delete.advanced";
+    /****/
     public String SQL_DELETE_MULTI = "sql.delete.multi";
     /***/
     public String SQL_INSERT = "sql.insert";
@@ -15,6 +17,8 @@ public interface Queries {
     public String SQL_INSERT_MULTI = "sql.insert.multi";
     /***/
     public String SQL_SELECT = "sql.select";
+    /****/
+    public String SQL_SELECT_ADVANCED = "sql.select.advanced";
     /****/
     public String SQL_SELECT_MULTI = "sql.select.multi";
     /****/

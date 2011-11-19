@@ -14,10 +14,12 @@ import java.util.Map;
 public class SQLUtils {
     private static String[][] queryName = new String[][]{
         {"sql.delete", "delete from {0} where {1} = {2}"},
+        {"sql.delete.advanced", "delete from {0} where {1}"},
         {"sql.delete.multi", "delete from {0} where {1} in ({2})"},
         {"sql.insert", "insert into {0}({1}) values ({2})"},
         {"sql.insert.multi", "insert into {0} ({1}) values {2}"},
         {"sql.select", "select * from {0} where {1} = {2}"},
+        {"sql.select.advanced", "select * from {0} where {1}"},
         {"sql.select.multi", "select * from {0} where {1} in ({2})"},
         {"sql.select.all", "select * from {0}"},
         {"sql.maxId", "select max({0}) from {1}"},
