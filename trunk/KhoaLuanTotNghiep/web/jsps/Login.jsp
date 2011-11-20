@@ -17,9 +17,9 @@
         <style media="all" type="text/css">
             table{
                 margin-left: 200px;
-                margin-top: 30px;
+                margin-top: 10px;
                 margin-bottom: 120px;
-                padding-top: 20px;
+                padding-top: 10px;
                 padding-left: 25px;
                 padding-right: 25px;
                 padding-bottom: 120px;
@@ -33,7 +33,7 @@
                 width: 75px;
                 border: 2px solid #175F6E;
             }
-        </style>
+           </style>
     </head>
     <body>
         <!--Div Wrapper-->
