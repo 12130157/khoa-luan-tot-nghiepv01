@@ -42,7 +42,7 @@ public class HomepageController extends HttpServlet {
                 session.setAttribute("news", news);
             }
 
-            String path = "./jsps/Homepage.jsp";
+            String path = "./jsps/StartUp.jsp";
             response.sendRedirect(path);
         } catch (Exception ex) {
             Logger.getLogger(HomepageController.class.getName()).log(Level.SEVERE, null, ex);
