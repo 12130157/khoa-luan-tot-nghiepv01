@@ -600,9 +600,79 @@ public abstract class AdvancedAbstractJdbcDAO<T extends IAdvancedJdbcModel<ID>, 
     public List<T> findByIds(Collection<ID> ids) throws Exception {
         checkModelWellDefined();
 
-        //TODO: 
+        if ((ids == null) || (ids.size() == 0)) {
+            throw new NullPointerException("Ids list is incorrect.");
+        }
+
+        int numID = ids.size();
+        ArrayList<T> listResult = new ArrayList<T>();
+        List<ID> idl = (List<ID>) ids;
+
+        T t = createModel();
+        if (t == null) {
+            throw new Exception("Cannot initialize the " + modelClazz.getName()
+                    + " class");
+        }
+        String[] idNames = t.getIdColumnName();
+        Object[] idValues = null;
         
-        return null;
+        StringBuffer sbIdValues = new StringBuffer();
+        
+        for (int i = 0; i < idl.size(); i ++) {
+            if (i > 0) {
+                sbIdValues.append(" or ");
+            }
+            sbIdValues.append("(" + idNames[0] + "=" + "?");
+            for (int j = 1; j < idNames.length; j++) {
+                sbIdValues.append(" and " + idNames[j] + "=" + "?");
+            }
+            sbIdValues.append(") ");
+        }
+        
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        try {
+            String strQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_SELECT_ADVANCED),
+                    new String[]{t.getTableName(), sbIdValues.toString()});
+
+            con = getConnection();
+            statement = con.prepareStatement(strQuery);
+            int count = 1;
+            for (int i = 0; i < numID; i++) {
+                idValues = idl.get(i).getIDValues();
+                for (int j = 0; j < idNames.length; j++) {
+                    statement.setObject(count, idValues[j]);
+                    count ++;
+                }
+            }
+
+            rs = statement.executeQuery();
+            while (rs.next()) {
+                Object[] obj = new Object[t.getColumnNames().length];
+                for (int j = 0; j < obj.length; j++) {
+                    obj[j] = rs.getObject(t.getColumnNames()[j]);
+                }
+                T ti = createModel();
+                ID id = createID();
+                for (int k = 0; k < idNames.length; k ++) {
+                    idValues[k] = rs.getObject(idNames[k]);
+                } 
+                id.setIDValues(idValues);
+
+                ti.setId(id);
+                ti.setColumnValues(obj);
+                listResult.add(ti);
+            }
+
+            return listResult;
+
+        } catch (SQLException e) {
+            throw new Exception(e);
+        } finally {
+            close(rs, statement);
+            close(con);
+        }
     }
 
     @Override
@@ -735,7 +805,62 @@ public abstract class AdvancedAbstractJdbcDAO<T extends IAdvancedJdbcModel<ID>, 
     public void delete(Collection<T> t) throws Exception {
         checkModelWellDefined();
 
-        //TODO: 
+        if ((t == null) || (t.isEmpty())) {
+            throw new NullPointerException("List model is incorrect.");
+        }
+
+        List<T> listEntities = (List<T>) t;
+        int numEntities = listEntities.size();
+
+        for (int i = 0; i < numEntities; i++) {
+            final T obj = listEntities.get(i);
+
+            if (obj == null) {
+                throw new NullPointerException("Model is null");
+            }
+            if (obj.getId() == null) {
+                throw new NullPointerException("ID is null");
+            }
+
+            if (!obj.validate()) {
+                throw new IllegalArgumentException("T model is not validated.");
+            }
+        }
+        
+        final T ot = listEntities.get(0);
+        String[] idNames = ot.getIdColumnName();
+        Object[] idValues;
+        
+        StringBuffer sbIdValues = new StringBuffer();
+        sbIdValues.append(idNames[0] + "=" + "?");
+        for (int i = 1; i < idNames.length; i++) {
+            sbIdValues.append(" and " + idNames[i] + "=" + "?");
+        }
+
+        String delQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_DELETE_ADVANCED), new String[]{
+                    ot.getTableName(), sbIdValues.toString()});
+        Connection con = null;
+        PreparedStatement statement = null;
+        try {
+            con = getConnection();
+            con.setAutoCommit(false);
+            statement = con.prepareStatement(delQuery);
+            for (int i = 0; i < numEntities; i++) {
+                idValues = listEntities.get(i).getIdColumnValues();
+                for (int j = 0; j < idNames.length; j ++) {
+                    statement.setObject(j + 1, idValues[j]);
+                }
+                statement.addBatch();
+            }
+            statement.executeBatch();
+            con.commit();
+        } catch (SQLException e) {
+            rollBack(con);
+            throw new Exception(e);
+        } finally {
+            close(statement);
+            close(con);
+        }
     }
 
     @SuppressWarnings("unchecked")
