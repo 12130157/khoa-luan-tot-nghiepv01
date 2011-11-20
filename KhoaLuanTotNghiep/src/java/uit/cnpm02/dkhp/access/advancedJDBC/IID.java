@@ -18,4 +18,11 @@ public interface IID extends Serializable {
      * @return id's values.
      */
     Object[] getIDValues();
+    
+    /**
+     * Set id values
+     * @param idValues id values.
+     */
+    void setIDValues(Object[] idValues);
+    
 }

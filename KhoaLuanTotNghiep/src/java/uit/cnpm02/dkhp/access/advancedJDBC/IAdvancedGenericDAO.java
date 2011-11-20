@@ -8,6 +8,12 @@ import java.util.Collection;
  * @author LocNguyen
  */
 public interface IAdvancedGenericDAO<T extends IAdvancedModel<ID>, ID extends IID> {
+    
+    /**
+     * Create new id
+     * @return an instance of id.
+     */
+    ID createID();
 
     /**
      * Find a model object by id.

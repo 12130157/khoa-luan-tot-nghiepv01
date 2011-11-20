@@ -52,4 +52,10 @@ public class PreSubID implements IID {
         };
     }
 
+    @Override
+    public void setIDValues(Object[] idValues) {
+        sudId = idValues[0].toString();
+        preSudId = idValues[1].toString();
+    }
+
 }
