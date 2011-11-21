@@ -36,9 +36,9 @@
             <li><a href="../ServHompage?action=view"> Giới thiệu |</a></li>
             <li><a href="../ServHompage?action=view"> Công Nghệ Phần Mềm |</a></li>
             <li><a href="../ServHompage?action=view"> Khoa Học Máy Tính |</a></li>
-            <li><a href="GVTest.jsp"> Giảng viên(Test) |</a></li>
-            <li><a href="PDTTest.jsp"> PĐT (Test) |</a></li>
-            <li><a href="DangKyHocPhan.jsp"> Sinh viên (test) |</a></li>
+            <li><a href="GiangVien/GVStart.jsp"> Giảng viên(Test) |</a></li>
+            <li><a href="PDT/PDTStart.jsp"> PĐT (Test) |</a></li>
+            <li><a href="SinhVien/SVStart.jsp"> Sinh viên (test) |</a></li>
             <li><a href="Login.jsp">Đăng nhập |</a></li>
             <li><a href="jspLienHe.jsp">Liên Hệ </a></li>
         </ul>

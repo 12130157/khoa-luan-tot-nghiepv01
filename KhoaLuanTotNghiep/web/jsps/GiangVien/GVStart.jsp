@@ -18,7 +18,7 @@
 %>
 <html>
     <head>
-        <link href="../csss/general.css" rel="stylesheet" type="text/css" media="screen">
+        <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Trang Chủ</title>
         <style media="all" type="text/css">
@@ -32,7 +32,7 @@
         <!--Div Wrapper-->
         <div id="wrapper">            
             <div id="mainNav"><!--Main Navigation-->
-                <%@include file="MainNav.jsp" %>
+                <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
                 <br><br>
@@ -55,7 +55,7 @@
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
-                <%@include file="Footer.jsp" %>
+                <%@include file="../Footer.jsp" %>
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->

@@ -68,7 +68,7 @@ public class AccountController extends HttpServlet {
         String user = request.getParameter("txtUsername");
         String pass = request.getParameter("txtPassword");
         AccountBO accBo = new AccountBO();
-        
+        int a;
         String path = "./HomepageController";
         if (accBo.Login(user, pass)) {
             if (accBo.isLogined(user)) {
@@ -85,7 +85,12 @@ public class AccountController extends HttpServlet {
                 Account acc = accDao.findById(user);
                 acc.setIsLogined(true);
                 accDao.update(acc);
-            }
+              if(acc.getType()==1)
+                   path="./jsps/PDT/PDTStart.jsp";
+               else if(acc.getType()==2)
+                   path="./jsps/SinhVien/SVStart.jsp";
+               else path="./jsps/GiangVien/GVStart.jsp";
+             }
         } else {
             session.setAttribute("error", "Tên đăng nhập hoặc mật khẩu không hợp lệ");
             path = "./jsps/Login.jsp";
