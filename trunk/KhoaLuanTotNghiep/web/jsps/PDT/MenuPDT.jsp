@@ -11,7 +11,7 @@
 
 <html>
     <head>
-        <link href="../csss/menupdt.css" rel="stylesheet" type="text/css" media="screen">
+        <link href="../../csss/menupdt.css" rel="stylesheet" type="text/css" media="screen">
 
     </head>
     <body>
@@ -32,7 +32,7 @@
     </div>
     <div id = "menupdt">
         <ul>
-             <li><a href="../HomepageController?action=view"> Trang chủ |</a></li>
+             <li><a href="../../HomepageController?action=view"> Trang chủ |</a></li>
              <li><a href=""> Quản lý con người |</a>
                  <ul>
                      <li><a href="../ServHompage?action=view"> Quản lý sinh viên</a></li>

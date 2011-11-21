@@ -11,7 +11,7 @@
 
 <html>
     <head>
-        <link href="../csss/menusv.css" rel="stylesheet" type="text/css" media="screen">
+        <link href="../../csss/menugv.css" rel="stylesheet" type="text/css" media="screen">
 
     </head>
     <body>
@@ -30,30 +30,11 @@
             </OBJECT>
         </DIV>
     </div>
-    <div id = "menusv">
+    <div id = "menugv">
         <ul>
-             <li><a href="../HomepageController?action=view"> Trang chủ |</a></li>
-             <li><a href=""> Học Tập |</a>
-                 <ul>
-                      <li><a href="../ServHompage?action=view"> Đăng ký học phần</a></li>
-                      <li><a href="../ServHompage?action=view"> Kết quả học tập</a></li>
-                 </ul>
-             </li>
-             <li><a href="../ServHompage?action=view"> Chương trình đào tạo |</a></li>
-             <li><a href="../ServHompage?action=view"> Thời khóa biểu |</a></li>
-             <li><a href="../ServHompage?action=view"> Danh sách lớp học |</a></li>
-             <li><a href=""> Quy định |</a>
-                 <ul>
-                     <li><a href="../ServHompage?action=view"> Môn học tiên quyết</a></li>
-                     <li><a href="../ServHompage?action=view"> Quy định</a></li>
-                 </ul>
-             </li>
-             <li><a href=""> Cá nhân |</a>
-                 <ul>
-                     <li><a href="../ServHompage?action=view"> Thông tin cá nhân</a></li>
-                     <li><a href="../ServHompage?action=view"> Đổi mật khẩu</a></li>
-                 </ul>
-             </li>
+             <li><a href="../../HomepageController?action=view"> Trang chủ |</a></li>
+             <li><a href="../HomepageController?action=view"> Thời khóa biểu |</a></li>
+             <li><a href="../HomepageController?action=view"> Cập nhật điểm |</a></li>
              <li><a href="../ServHompage?action=view"> Đăng xuất |</a></li>
              <li><a href="../ServHompage?action=view"> Liên hệ </a></li>
         </ul>
