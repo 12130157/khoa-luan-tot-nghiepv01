@@ -19,7 +19,7 @@ ol, ul{
 }
 
 #wrapper{
-    width: 1200px;
+    width: 1020px;
     margin: 0 auto;
     border: 10px solid #73726E;
     border-top: 30px solid #73726E;
@@ -53,7 +53,7 @@ ol, ul{
 
 #content{
     
-    width: 954px;
+    width: 964px;
     background: url("../imgs/sep_vertical.png") repeat-y scroll 0 0 transparent;
     padding-left: 1.5em;
     float: right;
