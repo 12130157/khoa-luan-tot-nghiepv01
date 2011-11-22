@@ -32,7 +32,7 @@
     </div>
     <div id = "menupdt">
         <ul>
-             <li><a href="../../HomepageController?action=view"> Trang chủ |</a></li>
+             <li><a href="PDTStart.jsp"> Trang chủ |</a></li>
              <li><a href=""> Quản lý con người |</a>
                  <ul>
                      <li><a href="../ServHompage?action=view"> Quản lý sinh viên</a></li>
@@ -65,7 +65,7 @@
              </li>
              <li><a href=""> Giao tiếp |</a>
                  <ul>
-                     <li><a href="../ServHompage?action=view"> Quản lý tin tức</a></li>
+                     <li><a href="../../NewsController?action=manager"> Quản lý tin tức</a></li>
                      <li><a href="../ServHompage?action=view"> Quản lý yêu cầu</a></li>
                  </ul>
              </li>

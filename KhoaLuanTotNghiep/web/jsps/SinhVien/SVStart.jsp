@@ -20,13 +20,7 @@
     <head>
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Trang Chủ</title>
-        <style media="all" type="text/css">
-            #frmimg{
-                margin-left: 50px;
-                border: 5px solid #98AFC7;
-            }
-        </style>
+        <title>Trang sinh viên</title>
     </head>
     <body>
         <!--Div Wrapper-->
@@ -35,23 +29,18 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <br><br>
-
-                <%
+           <%
                     if (listNews != null) {
                         for (int i = 0; i < listNews.size(); i++) {
                             News n = listNews.get(i);
-                            if (listNews.get(i).getType() == 0) {
+                            if (listNews.get(i).getType() == 1) {
                 %>
-                <h4><%=(n.getContent().length() >= 100 ? n.getContent().substring(0, 100) : n.getContent())%>
-                    ...<a href="../ServHompage?action=detail&Id=<%=n.getId()%>">Chi tiết
-                    </a></h4>
-                    <%}
+                <a href="../../NewsController?Actor=Student&action=detail&Id=<%=n.getId()%>"><%=n.getTitle()%></a><br>
+                <%=(n.getContent().length() >= 200 ? n.getContent().substring(0, 200)+"..." : n.getContent())%><br>
+                <%}
                             }
                         }
                     %>
-
-                <%--<img src="../imgs/hpimg.JPG" alt="Angry face" id="frmimg"/>--%>
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
