@@ -19,7 +19,7 @@ ol, ul{
 }
 
 #wrapper{
-    width: 1020px;
+    width: 1200px;
     margin: 0 auto;
     border: 10px solid #73726E;
     border-top: 30px solid #73726E;
@@ -28,7 +28,7 @@ ol, ul{
 }
 #header{
     margin-top: -140px;
-    width: 800px;
+    width: 1200px;
     height: 140px;
     background-color: #4792b8;
 }
@@ -37,7 +37,7 @@ ol, ul{
     background: url("../imgs/opaque_10.png") repeat-x scroll 0 0 transparent;
     border-right: 1px solid #5F676D;
     padding-top: 10px;
-    width: 223px;
+    width: 210px;
     float: left;
 }
 #mainNav li{
