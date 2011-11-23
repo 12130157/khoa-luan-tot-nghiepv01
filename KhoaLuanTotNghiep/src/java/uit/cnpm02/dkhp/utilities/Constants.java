@@ -11,6 +11,8 @@ public class Constants {
     public static int ROLE_LECTURE = 1;
     public static int ROLE_PDT = 2;
     
-    /****/
-    
+    /**Account type**/
+    public static int ACCOUNT_TYPE_LECTURE = 0;
+    public static int ACCOUNT_TYPE_PDT = 1;
+    public static int ACCOUNT_TYPE_STUDENT = 2;
 }
