@@ -32,7 +32,7 @@
     </div>
     <div id = "menusv">
         <ul>
-             <li><a href="../../HomepageController?action=view"> Trang chủ |</a></li>
+             <li><a href="../../HomepageController?action=view&actor=Student"> Trang chủ |</a></li>
              <li><a href=""> Học Tập |</a>
                  <ul>
                       <li><a href="../ServHompage?action=view"> Đăng ký học phần</a></li>
@@ -54,7 +54,7 @@
                      <li><a href="../ServHompage?action=view"> Đổi mật khẩu</a></li>
                  </ul>
              </li>
-             <li><a href="../ServHompage?action=view"> Đăng xuất |</a></li>
+             <li><a href="../../Login?function=logout"> Đăng xuất |</a></li>
              <li><a href="../ServHompage?action=view"> Liên hệ </a></li>
         </ul>
     </div>       
