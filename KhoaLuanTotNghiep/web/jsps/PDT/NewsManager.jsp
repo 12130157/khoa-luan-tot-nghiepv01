@@ -12,6 +12,7 @@
     "http://www.w3.org/TR/html4/loose.dtd">
 <%
     List<News> listNews = (List<News>) session.getAttribute("newsList");
+     Integer numpage = (Integer) session.getAttribute("numpage");
 
  %>
 <html>
@@ -44,6 +45,9 @@
             #page{
                 text-align: center;
             }
+            a {
+                 color: violet;
+            }
         </style>
     </head>
     <body>
@@ -61,7 +65,7 @@
                  <hr/><hr/><br>
                 <div id="NewsList">
                 <form id="formdetail" name="formdetail">
-                    <table id="detail" name="detail" border="2" bordercolor="yellow" >
+                    <table id="Newsdetail" name="Newsdetail" border="2" bordercolor="yellow" >
                         <tr>
                             <th>STT</th><th>Ngày đăng</th><th >Tiêu đề</th><th>Tình trạng</th><th>Sửa</th><th>Xem</th><th>Xóa</th>
                         </tr>
@@ -91,10 +95,11 @@
                     }%>
                     </table>
                     <div id="page">
-                        <a href="">Trang đầu</a>... 
-                        <a href="">Trước</a> ...
-                        <a href="">Sau</a> ...
-                        <a href="">Trang cuối</a> 
+                         <input type="button" value="|<<" onclick="FirstPage()"/>- 
+                         <input type="button" value="<<" onclick="PrePage()"/>-
+                         <input type="button" value=">>" onclick="NextPage()"/>-
+                         <input type="button" value=">>|" onclick="EndPage()"/>
+                         <input type="hidden" value="<%=numpage%>" id="numpage" />
                     </div>
                     <br/>
                 </form>
@@ -107,4 +112,33 @@
         </div>
         <!--End Wrapper-->
     </body>
+    <script src="../../javascripts/NewsManage.js"></script>
+     <script  type = "text/javascript" >
+         var currentpage=1;
+         var http = createRequestObject();
+         numpage=document.getElementById("numpage").value;
+         function FirstPage(){
+             currentpage=1;
+             SendRequest();
+         }
+         function PrePage(){
+             currentpage=currentpage-1;
+             if(currentpage<1) currentpage=1;
+             SendRequest();
+         }
+         function NextPage(){
+              currentpage=currentpage+1;
+              if(currentpage>numpage)currentpage=numpage;
+              SendRequest();
+         }
+         function EndPage(){
+             currentpage=numpage;
+             SendRequest();
+         }
+         function SendRequest(){
+              if(http){
+              ajaxfunction("../../NewsController?action=Filter&curentPage="+currentpage);
+             }
+         }
+    </script>
 </html>
