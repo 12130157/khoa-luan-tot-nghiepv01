@@ -34,6 +34,8 @@ public class HomepageController extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession();
         PrintWriter out = response.getWriter();
+        String path="";
+        String actor=request.getParameter("actor") ;
         try {
             NewsDAO newsDao = new NewsDAO();
             List<News> news = newsDao.findAll();
@@ -41,8 +43,14 @@ public class HomepageController extends HttpServlet {
             if((news != null) && (news.size() > 0)) {
                 session.setAttribute("news", news);
             }
-
-            String path = "./jsps/StartUp.jsp";
+            if(actor.equalsIgnoreCase("All"))
+            path = "./jsps/StartUp.jsp";
+            else if(actor.equalsIgnoreCase("Student"))
+                path = "./jsps/SinhVien/SVStart.jsp";
+            else if(actor.equalsIgnoreCase("PDT"))
+                path = "./jsps/PDT/PDTStart.jsp";
+            else if(actor.equalsIgnoreCase("Lecturer"))
+                 path = "./jsps/GiangVien/GVStart.jsp";
             response.sendRedirect(path);
         } catch (Exception ex) {
             Logger.getLogger(HomepageController.class.getName()).log(Level.SEVERE, null, ex);
