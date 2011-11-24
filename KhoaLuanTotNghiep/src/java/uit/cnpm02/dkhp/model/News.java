@@ -8,19 +8,19 @@ import uit.cnpm02.dkhp.access.JDBC.AbstractJdbcModel;
  *
  * @author LocNguyen
  */
-public class News extends AbstractJdbcModel<String> {
+public class News extends AbstractJdbcModel<Integer> {
 
     private String title;
     private String content;
     private String author;
-    private Date createdDate;
+    private String createdDate;
     private int type;
 
     public News() {
         super();
     }
 
-    public News(String id, String title, String content, String author, Date createdDate, int type) {
+    public News(int id, String title, String content, String author, String createdDate, int type) {
         setId(id);
         this.title = title;
         this.content = content;
@@ -45,11 +45,11 @@ public class News extends AbstractJdbcModel<String> {
         this.content = content;
     }
 
-    public Date getCreatedDate() {
+    public String getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -108,7 +108,7 @@ public class News extends AbstractJdbcModel<String> {
             title = values[0].toString();
             content = values[1].toString();
             author = values[2].toString();
-            createdDate = (Date)values[3];
+            createdDate =values[3].toString();
             type = Integer.parseInt(values[4].toString());
 
         } catch (Exception e) {
