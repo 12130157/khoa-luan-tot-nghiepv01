@@ -53,10 +53,45 @@ public class NewsController extends HttpServlet {
                 deleteNews(response, request, session);
             else if(action.equalsIgnoreCase("insert"))
                 insertNew(response, request, session);
-        } finally {            
+            else if(action.equalsIgnoreCase("Filter"))
+                filterNews(request, response);
+         } finally {            
             out.close();
         }
     }
+    private void filterNews(HttpServletRequest request, HttpServletResponse response) throws Exception{
+        PrintWriter out = response.getWriter();
+        int currentPage=Integer.parseInt(request.getParameter("curentPage"));
+        NewsDAO newsDao=new NewsDAO();
+        List<News> newsList=newsDao.findAll(10, currentPage, "MaTin", "ASC");
+        if (newsList.isEmpty()==false) {
+            out.println("<tr><th>STT</th><th>Ngày đăng</th><th >Tiêu đề</th><th>Tình trạng</th><th>Sửa</th><th>Xem</th><th>Xóa</th></tr>");
+            for (int i = 0; i < newsList.size(); i++) {
+                StringBuffer str = new StringBuffer();
+                str.append("<tr><td>").append((currentPage-1)*10 + 1 + i).append("</td>");
+                str.append("<td>").append(newsList.get(i).getCreatedDate()).append("</td>");
+                str.append("<td>").append(newsList.get(i).getTitle()).append("</td>");
+                if(newsList.get(i).getType()==0){
+                str.append("<td>Không đăng</td>");   
+                str.append("<td><a href='../../NewsController?action=update&Id=").append(newsList.get(i) .getId()).append("'>Đăng</a></td>");
+                }
+                else {
+                    str.append("<td>Đang đăng</td>"); 
+                    str.append("<td><a href='../../NewsController?action=update&Id=").append(newsList.get(i) .getId()).append("'>Gỡ bỏ</a></td>");
+                }
+                str.append("<td><a href='../../NewsController?Actor=PDT&action=detail&Id=").append(newsList.get(i) .getId()).append("'>Xem</a></td>");
+                str.append("<td><a href='../../NewsController?action=delete&Id=").append(newsList.get(i) .getId()).append("'>Xóa</a></td>");
+                out.println(str.toString());
+            }
+        }
+    }
+    /**
+     * 
+     * @param response
+     * @param request
+     * @param session
+     * @throws Exception 
+     */
     private void insertNew(HttpServletResponse response, HttpServletRequest request, HttpSession session) throws Exception{
         NewsDAO newsDao=new NewsDAO();
         int id=newsDao.getMaxID()+1;
@@ -110,12 +145,17 @@ public class NewsController extends HttpServlet {
      * @param response
      * @param session 
      */
-    private void NewsManeger(HttpServletResponse response, HttpSession session){
+    private void NewsManeger(HttpServletResponse response, HttpSession session) throws Exception{
         NewsDAO newsDao=new NewsDAO();
+        int rows=newsDao.getRowsCount();
+        int numpage=0;
+        if(rows%10==0) numpage=rows/10;
+        else numpage=rows/10+1;
         String path="./jsps/PDT/NewsManager.jsp";
         try {
-            List<News> newsList=newsDao.findAll();
+            List<News> newsList=newsDao.findAll(10, 1, "MaTin", "ASC");
             session.setAttribute("newsList", newsList);
+            session.setAttribute("numpage", numpage);
             response.sendRedirect(path);
         } catch (Exception ex) {
             Logger.getLogger(NewsController.class.getName()).log(Level.SEVERE, null, ex);
