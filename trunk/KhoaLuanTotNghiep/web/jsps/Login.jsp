@@ -42,7 +42,7 @@
                 <%@include file="MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <form name="myform" id="myform" method="post" action="../AccountController?function=login">
+                <form name="myform" id="myform" method="post" action="../Login?function=login">
                     <table>
                         <tr>
                             <td>Tên Đăng Nhập</td>

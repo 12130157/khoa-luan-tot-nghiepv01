@@ -32,7 +32,7 @@
     </div>
     <div id = "menu">
         <ul>
-            <li><a href="../HomepageController?action=view"> Trang chủ |</a></li>
+            <li><a href="../HomepageController?action=view&actor=All"> Trang chủ |</a></li>
             <li><a href="../ServHompage?action=view"> Giới thiệu |</a></li>
             <li><a href="../ServHompage?action=view"> Công Nghệ Phần Mềm |</a></li>
             <li><a href="../ServHompage?action=view"> Khoa Học Máy Tính |</a></li>
