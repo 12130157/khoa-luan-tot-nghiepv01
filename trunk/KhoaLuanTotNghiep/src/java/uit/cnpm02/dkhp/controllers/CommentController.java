@@ -9,7 +9,6 @@ import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -18,22 +17,23 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import uit.cnpm02.dkhp.DAO.NewsDAO;
-import uit.cnpm02.dkhp.model.News;
+import uit.cnpm02.dkhp.DAO.CommentDao;
+import uit.cnpm02.dkhp.model.Comment;
+import java.util.List;
 
 /**
  *
  * @author thanh
  */
-@WebServlet(name = "NewsController", urlPatterns = {"/NewsController"})
-public class NewsController extends HttpServlet {
+@WebServlet(name = "CommentController", urlPatterns = {"/CommentController"})
+public class CommentController extends HttpServlet {
 
     /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException 
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, Exception {
@@ -46,11 +46,11 @@ public class NewsController extends HttpServlet {
             if(action.equalsIgnoreCase("detail"))
                 NewsDetail(response, request, session);
             else if(action.equalsIgnoreCase("manager"))
-                NewsManeger(response, session);
+                CommentManeger(response, session);
             else if(action.equalsIgnoreCase("update"))
                 updateNews(response, request, session);
             else if(action.equalsIgnoreCase("delete"))
-                deleteNews(response, request, session);
+                deleteCommnet(response, request, session);
             else if(action.equalsIgnoreCase("insert"))
                 insertNew(response, request, session);
             else if(action.equalsIgnoreCase("Filter"))
@@ -59,28 +59,26 @@ public class NewsController extends HttpServlet {
             out.close();
         }
     }
-    private void filterNews(HttpServletRequest request, HttpServletResponse response) throws Exception{
+ private void filterNews(HttpServletRequest request, HttpServletResponse response) throws Exception{
         PrintWriter out = response.getWriter();
         int currentPage=Integer.parseInt(request.getParameter("curentPage"));
-        NewsDAO newsDao=new NewsDAO();
-        List<News> newsList=newsDao.findAll(10, currentPage, "NgayTao", "DESC");
-        if (newsList.isEmpty()==false) {
-            out.println("<tr><th>STT</th><th>Ngày đăng</th><th >Tiêu đề</th><th>Tình trạng</th><th>Sửa</th><th>Xem</th><th>Xóa</th></tr>");
-            for (int i = 0; i < newsList.size(); i++) {
+        CommentDao commentDao=new CommentDao();
+        List<Comment> commentList=commentDao.findAll(10, currentPage, "NgayGui", "DESC");
+        if (commentList.isEmpty()==false) {
+            out.println("<tr><th>STT</th><th>Người gửi</th><th>Nội dung</th><th>Ngày gửi</th><th>Tình trạng</th><th>Xem</th><th>Xóa</th></tr>");
+            for (int i = 0; i < commentList.size(); i++) {
                 StringBuffer str = new StringBuffer();
                 str.append("<tr><td>").append((currentPage-1)*10 + 1 + i).append("</td>");
-                str.append("<td>").append(newsList.get(i).getCreatedDate()).append("</td>");
-                str.append("<td>").append(newsList.get(i).getTitle()).append("</td>");
-                if(newsList.get(i).getType()==0){
-                str.append("<td>Không đăng</td>");   
-                str.append("<td><a href='../../NewsController?action=update&Id=").append(newsList.get(i) .getId()).append("'>Đăng</a></td>");
-                }
-                else {
-                    str.append("<td>Đang đăng</td>"); 
-                    str.append("<td><a href='../../NewsController?action=update&Id=").append(newsList.get(i) .getId()).append("'>Gỡ bỏ</a></td>");
-                }
-                str.append("<td><a href='../../NewsController?Actor=PDT&action=detail&Id=").append(newsList.get(i) .getId()).append("'>Xem</a></td>");
-                str.append("<td><a href='../../NewsController?action=delete&Id=").append(newsList.get(i) .getId()).append("'>Xóa</a></td>");
+                str.append("<td>").append(commentList.get(i).getAuthor()).append("</td>");
+                str.append("<td>").append(commentList.get(i).getContent()).append("</td>");
+                str.append("<td>").append(commentList.get(i).getCreateDate()).append("</td>");
+                if(commentList.get(i).getStatus()==1)
+                    str.append("<td>Đã xem</td>");   
+                else 
+                    str.append("<td>Chưa xem</td>"); 
+                
+                str.append("<td><a href='../../CommentController?action=detail&Id=").append(commentList.get(i) .getId()).append("'>Xem</a></td>");
+                str.append("<td><a href='../../CommentController?action=delete&Id=").append(commentList.get(i) .getId()).append("'>Xóa</a></td>");
                 out.println(str.toString());
             }
         }
@@ -93,8 +91,8 @@ public class NewsController extends HttpServlet {
      * @throws Exception 
      */
     private void insertNew(HttpServletResponse response, HttpServletRequest request, HttpSession session) throws Exception{
-        NewsDAO newsDao=new NewsDAO();
-        int id=newsDao.getMaxID()+1;
+        CommentDao commentDao=new CommentDao();
+        int id=commentDao.getMaxID()+1;
         String tille=request.getParameter("NewsTiltle");
         String content=request.getParameter("newscontent");
         int type=Integer.parseInt(request.getParameter("Type"));
@@ -102,9 +100,9 @@ public class NewsController extends HttpServlet {
         Date todayD = new Date(System.currentTimeMillis());
         SimpleDateFormat dayFormat = new SimpleDateFormat("yyyy-MM-dd");
         String createDate = dayFormat.format(todayD.getTime());
-        News news=new News(id, tille, content, author, createDate, type);
-        newsDao.add(news);
-        NewsManeger(response, session);
+        
+        
+        CommentManeger(response, session);
     }
     /**
      * 
@@ -113,12 +111,12 @@ public class NewsController extends HttpServlet {
      * @param session
      * @throws Exception 
      */
-    private void deleteNews(HttpServletResponse response, HttpServletRequest request, HttpSession session) throws Exception{
+    private void deleteCommnet(HttpServletResponse response, HttpServletRequest request, HttpSession session) throws Exception{
         int id= Integer.parseInt(request.getParameter("Id"));
-        NewsDAO newsDao=new NewsDAO();
+        CommentDao commentDao=new CommentDao();
         try {
-            newsDao.deleteNewsByID(id);
-            NewsManeger(response, session);
+            commentDao.deleteCommentByID(id);
+            CommentManeger(response, session);
         } catch (SQLException ex) {
             Logger.getLogger(NewsController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -131,10 +129,10 @@ public class NewsController extends HttpServlet {
      */
     private void updateNews(HttpServletResponse response, HttpServletRequest request, HttpSession session){
         int id= Integer.parseInt(request.getParameter("Id"));
-        NewsDAO newsDao=new NewsDAO();
+        CommentDao commentDao=new CommentDao();
         try {
-            newsDao.updateNewsStatus(id);
-            NewsManeger(response, session);
+            commentDao.updateCommentStatus(id);
+            CommentManeger(response, session);
         } catch (Exception ex) {
             Logger.getLogger(NewsController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -145,16 +143,16 @@ public class NewsController extends HttpServlet {
      * @param response
      * @param session 
      */
-    private void NewsManeger(HttpServletResponse response, HttpSession session) throws Exception{
-        NewsDAO newsDao=new NewsDAO();
-        int rows=newsDao.getRowsCount();
+    private void CommentManeger(HttpServletResponse response, HttpSession session) throws Exception{
+        CommentDao commentDao= new CommentDao();
+        int rows=commentDao.getRowsCount();
         int numpage=0;
         if(rows%10==0) numpage=rows/10;
         else numpage=rows/10+1;
-        String path="./jsps/PDT/NewsManager.jsp";
+        String path="./jsps/PDT/CommentManager.jsp";
         try {
-            List<News> newsList=newsDao.findAll(10, 1, "NgayTao", "DESC");
-            session.setAttribute("newsList", newsList);
+            List<Comment> commnetList=commentDao.findAll(10, 1, "NgayGui", "DESC");
+            session.setAttribute("commentList", commnetList);
             session.setAttribute("numpage", numpage);
             response.sendRedirect(path);
         } catch (Exception ex) {
@@ -172,45 +170,37 @@ private void NewsDetail(HttpServletResponse response, HttpServletRequest request
      int id= Integer.parseInt(request.getParameter("Id"));
     String actor=request.getParameter("Actor");
     String path="";
-    NewsDAO newsDao=new NewsDAO();
-    News news=newsDao.findById(id);
-    session.setAttribute("newsdetail", news);
-    if(actor.equalsIgnoreCase("normal"))
-         path = "./jsps/NewsDetail.jsp";
-    else if(actor.equalsIgnoreCase("Student"))
-        path = "./jsps/SinhVien/NewsDetail.jsp";
-    else if(actor.equalsIgnoreCase("Lecturer"))
-        path = "./jsps/GiangVien/NewsDetail.jsp";
-    else if(actor.equalsIgnoreCase("PDT"))
-        path = "./jsps/PDT/NewsDetail.jsp";
+    CommentDao commentDao=new CommentDao();
+    Comment comment=commentDao.findById(id);
+    commentDao.updateCommentStatus(id);
+    session.setAttribute("commentdetail", comment);
+     path = "./jsps/PDT/CommentDetail.jsp";
      response.sendRedirect(path);
 }
-
-
-
-    /**
- * 
- * @param request
- * @param response
- * @throws ServletException
- * @throws IOException 
- */
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /** 
+     * Handles the HTTP <code>GET</code> method.
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             processRequest(request, response);
         } catch (Exception ex) {
-            Logger.getLogger(NewsController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CommentController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     /** 
-     * 
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException 
+     * Handles the HTTP <code>POST</code> method.
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -218,7 +208,7 @@ private void NewsDetail(HttpServletResponse response, HttpServletRequest request
         try {
             processRequest(request, response);
         } catch (Exception ex) {
-            Logger.getLogger(NewsController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CommentController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
