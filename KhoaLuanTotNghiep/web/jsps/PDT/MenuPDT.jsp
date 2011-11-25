@@ -66,7 +66,7 @@
              <li><a href=""> Giao tiếp |</a>
                  <ul>
                      <li><a href="../../NewsController?action=manager"> Quản lý tin tức</a></li>
-                     <li><a href="../ServHompage?action=view"> Quản lý yêu cầu</a></li>
+                     <li><a href="../../CommentController?action=manager"> Quản lý yêu cầu</a></li>
                  </ul>
              </li>
              <li><a href="../../Login?function=logout"> Đăng xuất</a></li>

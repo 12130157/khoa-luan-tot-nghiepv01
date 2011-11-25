@@ -4,7 +4,6 @@
  */
 package uit.cnpm02.dkhp.model;
 
-import java.util.Date;
 import uit.cnpm02.dkhp.access.mapper.MapperConstant;
 import uit.cnpm02.dkhp.access.JDBC.AbstractJdbcModel;
 
@@ -12,17 +11,16 @@ import uit.cnpm02.dkhp.access.JDBC.AbstractJdbcModel;
  *
  * @author thanh
  */
-public class Comment extends  AbstractJdbcModel<String>{
-    String commentCode;
+public class Comment extends  AbstractJdbcModel<Integer>{
     String content;
     String author;
-    Date createDate;
-    String status;
+    String createDate;
+    int status;
     public Comment(){
         
     }
-    public Comment(String _commentCode, String _content, String _author, Date _createDate, String _status){
-        this.commentCode=_commentCode;
+    public Comment(int id, String _content, String _author, String _createDate, int _status){
+       setId(id);
         this.content=_content;
         this.author=_author;
         this.createDate=_createDate;
@@ -31,37 +29,31 @@ public class Comment extends  AbstractJdbcModel<String>{
     //************
     //set parameter
     //************
-    public void setCommentCode(String _commentCode){
-        this.commentCode=_commentCode;
-    }
-    public void setContent(String _content){
+     public void setContent(String _content){
         this.content=_content;
     }
     public void setAuthor(String _author){
         this.author=_author;
     }
-    public void setCreateDate(Date _createDate){
+    public void setCreateDate(String _createDate){
         this.createDate=_createDate;
     }
-    public void setStatus(String _status){
+    public void setStatus(int _status){
         this.status=_status;
     }
     //************
     //get parameter
     //************
-    public String getCommentCode(){
-        return this.commentCode;
-    }
-    public String getContent(){
+     public String getContent(){
         return this.content;
     }
     public String getAuthor(){
         return this.author;
     }
-    public Date getCreateDate(){
+    public String getCreateDate(){
         return this.createDate;
     }
-    public String getStatus(){
+    public int getStatus(){
         return this.status;
     }
      @Override
@@ -88,8 +80,8 @@ public class Comment extends  AbstractJdbcModel<String>{
         try {
             content = values[0].toString();
             author = values[1].toString();
-            createDate = (Date)values[2];
-            status = values[3].toString();
+            createDate = values[2].toString();
+            status =Integer.parseInt(values[3].toString());
 
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
@@ -98,7 +90,6 @@ public class Comment extends  AbstractJdbcModel<String>{
      @Override
     public Object[] getColumnValues() {
         return new Object[]{
-                    commentCode,
                     content,
                     author,
                     createDate,

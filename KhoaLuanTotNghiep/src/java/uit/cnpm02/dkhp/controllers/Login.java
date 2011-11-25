@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import uit.cnpm02.dkhp.DAO.AccountDAO;
 import uit.cnpm02.dkhp.bo.AccountBO;
 import uit.cnpm02.dkhp.model.Account;
+import uit.cnpm02.dkhp.utilities.Constants;
 
 /**
  *
@@ -71,7 +72,6 @@ public class Login extends HttpServlet {
         String user = request.getParameter("txtUsername");
         String pass = request.getParameter("txtPassword");
         AccountBO accBo = new AccountBO();
-        int a;
         String path = "./HomepageController";
         if (accBo.Login(user, pass)) {
             if (accBo.isLogined(user)) {
@@ -88,11 +88,12 @@ public class Login extends HttpServlet {
                 Account acc = accDao.findById(user);
                 acc.setIsLogined(true);
                 accDao.update(acc);
-              if(acc.getType()==1)
+              if(acc.getType()==Constants.ACCOUNT_TYPE_PDT)
                    path="./jsps/PDT/PDTStart.jsp";
-               else if(acc.getType()==2)
+               else if(acc.getType()==Constants.ACCOUNT_TYPE_STUDENT)
                    path="./jsps/SinhVien/SVStart.jsp";
-               else path="./jsps/GiangVien/GVStart.jsp";
+               else if(acc.getType()==Constants.ACCOUNT_TYPE_LECTURE) 
+                   path="./jsps/GiangVien/GVStart.jsp";
              }
         } else {
             session.setAttribute("error", "Tên đăng nhập hoặc mật khẩu không hợp lệ");

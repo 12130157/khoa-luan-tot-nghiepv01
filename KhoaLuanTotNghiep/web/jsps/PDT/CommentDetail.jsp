@@ -5,20 +5,20 @@
 --%>
 
 <%@page import="java.util.List"%>
-<%@page import="uit.cnpm02.dkhp.model.News"%>
+<%@page import="uit.cnpm02.dkhp.model.Comment"%>
 <%@include file="MenuPDT.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 <%
-    News newsDetail = (News) session.getAttribute("newsdetail");
+    Comment commentDetail = (Comment) session.getAttribute("commentdetail");
     
 %>
 <html>
     <head>
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Chi tiết tin tức</title>
+        <title>Chi tiết ý kiến</title>
         <style media="all" type="text/css">
             #frmimg{
                 margin-left: 50px;
@@ -34,10 +34,10 @@
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
                 <%
-                    if (newsDetail != null) {
+                    if (commentDetail != null) {
                         %>
-                        <h1><%=newsDetail.getTitle()%></h1><br>
-                        <%=newsDetail.getContent()%>
+                        <h1>Người gửi:  <%=commentDetail.getAuthor()%></h1><br>
+                        <%=commentDetail.getContent()%>
                    <% }
                         
                 %>
