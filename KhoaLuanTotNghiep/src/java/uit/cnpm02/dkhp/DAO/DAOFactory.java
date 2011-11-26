@@ -9,7 +9,16 @@ public class DAOFactory {
     private static AccountDAO accountDao = null;
     private static NewsDAO newsDao = null;
     private static StudentDAO studentDao = null;
+    private static FacultyDAO facultyDao = null;
 
+    public static FacultyDAO getFacultyDao() {
+        if (facultyDao == null) {
+            facultyDao = new FacultyDAO();
+        }
+        
+        return facultyDao;
+    }
+    
     public static StudentDAO getStudentDao() {
         if (studentDao == null) {
             studentDao = new StudentDAO();
