@@ -91,7 +91,7 @@ public class Course extends AbstractJdbcModel<String> {
         try {
             yearIn = Integer.parseInt(values[0].toString());
             yearOut = Integer.parseInt(values[1].toString());
-            numOfSemester = Integer.parseInt(values[2].toString());
+            numOfSemester = Float.parseFloat(values[2].toString());
             numOfStudent = Integer.parseInt(values[3].toString());
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
