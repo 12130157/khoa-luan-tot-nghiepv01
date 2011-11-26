@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uit.cnpm02.dkhp.model;
 
 import uit.cnpm02.dkhp.access.mapper.MapperConstant;
@@ -11,78 +7,86 @@ import uit.cnpm02.dkhp.access.JDBC.AbstractJdbcModel;
  *
  * @author thanh
  */
-public class Course extends  AbstractJdbcModel<String>{
-    String courseCode;
-    int yearIn;
-    int yearOut;
-    float numOfSemester;
-    int numOfStudent;
-    public Course(){
-        
+public class Course extends AbstractJdbcModel<String> {
+
+    private String courseCode;
+    private int yearIn;
+    private int yearOut;
+    private float numOfSemester;
+    private int numOfStudent;
+
+    public Course() {
     }
-    public Course(String _courseCode, int _yearIn, int _yearOut, float _numOfSemester, int _numOfStudent){
-        this.courseCode=_courseCode;
-        this.yearIn=_yearIn;
-        this.yearOut=_yearOut;
-        this.numOfSemester=_numOfSemester;
-        this.numOfStudent=_numOfStudent;
+
+    public Course(String courseCode, int yearIn, int yearOut, float numOfSemester, int numOfStudent) {
+        this.courseCode = courseCode;
+        this.yearIn = yearIn;
+        this.yearOut = yearOut;
+        this.numOfSemester = numOfSemester;
+        this.numOfStudent = numOfStudent;
     }
-    //************
-    //set parameter
-    //************
-    public void setCourseCode(String _maKhoa){
-        this.courseCode=_maKhoa;
+
+    public String getCourseCode() {
+        return courseCode;
     }
-    public void setYearIn(int _yearIn){
-        this.yearIn=_yearIn;
+
+    public void setCourseCode(String courseCode) {
+        this.courseCode = courseCode;
     }
-    public void setYearOut(int _yearOut){
-        this.yearOut=_yearOut;
+
+    public float getNumOfSemester() {
+        return numOfSemester;
     }
-    public void setNoOfSemester(float _noOfSemester){
-        this.numOfSemester=_noOfSemester;
+
+    public void setNumOfSemester(float numOfSemester) {
+        this.numOfSemester = numOfSemester;
     }
-    public void setNoOfStudent(int _noOfStudent){
-        this.numOfStudent=_noOfStudent;
+
+    public int getNumOfStudent() {
+        return numOfStudent;
     }
-    //************
-    //get parameter
-    //************
-    public String getMaKhoa(){
-        return this.courseCode;
+
+    public void setNumOfStudent(int numOfStudent) {
+        this.numOfStudent = numOfStudent;
     }
-    public int getYearIn(){
-        return this.yearIn;
+
+    public int getYearIn() {
+        return yearIn;
     }
-    public int getYearOut(){
-        return this.yearOut;
+
+    public void setYearIn(int yearIn) {
+        this.yearIn = yearIn;
     }
-    public float getNumOfSemester(){
-       return this.numOfSemester;
+
+    public int getYearOut() {
+        return yearOut;
     }
-    public int getNumOfStudent(){
-        return this.numOfStudent;
+
+    public void setYearOut(int yearOut) {
+        this.yearOut = yearOut;
     }
-     @Override
+    
+    @Override
     public String getIdColumnName() {
         return "MaKhoaHoc";
     }
-     @Override
+
+    @Override
     public String getTableName() {
         return MapperConstant.DB_NAME
                 + ".KhoaHoc";
     }
+
     @Override
     public String[] getColumnNames() {
         return new String[]{
                     "NamVao",
                     "NamRa",
                     "HocKy",
-                    "SoSinhVien",
-                };
+                    "SoSinhVien",};
     }
 
-   @Override
+    @Override
     public void setColumnValues(Object[] values) {
         try {
             yearIn = Integer.parseInt(values[0].toString());
@@ -93,13 +97,13 @@ public class Course extends  AbstractJdbcModel<String>{
             throw new IllegalArgumentException(e);
         }
     }
-     @Override
+
+    @Override
     public Object[] getColumnValues() {
         return new Object[]{
                     yearIn,
                     yearOut,
                     numOfSemester,
-                    numOfStudent,
-                };
+                    numOfStudent,};
     }
 }
