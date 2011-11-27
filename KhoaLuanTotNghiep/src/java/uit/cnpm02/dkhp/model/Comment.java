@@ -20,7 +20,7 @@ public class Comment extends  AbstractJdbcModel<Integer>{
         
     }
     public Comment(int id, String _content, String _author, String _createDate, int _status){
-       setId(id);
+        setId(id);
         this.content=_content;
         this.author=_author;
         this.createDate=_createDate;
