@@ -26,17 +26,13 @@ public class Student extends AbstractJdbcModel<String> {
     private Date dateStart;
     private String studyType;
     private String note;
-<<<<<<< .mine
+
     
     public Student(){
         
-=======
-
-    public Student() {
->>>>>>> .r102
     }
-<<<<<<< .mine
-    /**
+
+     /**
      * Constructor with parameter input:
      * @param _studentCode: 
      * @param _fullName
@@ -57,15 +53,15 @@ public class Student extends AbstractJdbcModel<String> {
      * @param _note 
      */
     
-    public Student(String id, String _fullName, Date _birthday, String _gender, String _identityCard, String _home,
+    public Student(String id, String _fullName, Date _birthday, String _gender, String _identityNumber, String _home,
             String _address, String _phone, String _email, String _classCode, String _facultyCode, String _courseCode, 
-            String _status, String _studyLevel, Date _dateStart, String _loaiHinHoc, String _note)   {
+            String _status, String _studyLevel, Date _dateStart, String _typeStydy, String _note){
      setId(id);
      this.fullName=_fullName;
      this.birthday=_birthday;
      this.gender=_gender;
-     this.identityCard=_identityCard;
-     this.home=_home;
+     this.identityNumber=_identityNumber;
+     this.homeAddr=_home;
      this.address=_address;
      this.phone=_phone;
      this.email=_email;
@@ -75,34 +71,15 @@ public class Student extends AbstractJdbcModel<String> {
      this.status=_status;
      this.studyLevel=_studyLevel;
      this.dateStart=_dateStart;
-     this.studyType=_loaiHinHoc;
+     this.studyType=_typeStydy;
      this.note="";
     }     
     //****
     //get parameter
     //****
-=======
 
-    public Student(String studentCode, String fullName, Date birthday, String gender, String identityNumber, String homeAddr, String address, String phone, String email, String classCode, String facultyCode, String courseCode, String status, String studyLevel, Date dateStart, String studyType, String note) {
-        this.studentCode = studentCode;
-        this.fullName = fullName;
-        this.birthday = birthday;
-        this.gender = gender;
-        this.identityNumber = identityNumber;
-        this.homeAddr = homeAddr;
-        this.address = address;
-        this.phone = phone;
-        this.email = email;
-        this.classCode = classCode;
-        this.facultyCode = facultyCode;
-        this.courseCode = courseCode;
-        this.status = status;
-        this.studyLevel = studyLevel;
-        this.dateStart = dateStart;
-        this.studyType = studyType;
-        this.note = note;
-    }
->>>>>>> .r102
+
+   
 
     public String getAddress() {
         return address;
@@ -167,23 +144,18 @@ public class Student extends AbstractJdbcModel<String> {
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
-<<<<<<< .mine
+
     //*****
     // get parameter
     //****
-   public String getFullName(){
-       return this.fullName;
-=======
-
-    public String getGender() {
-        return gender;
-    }
-
     public void setGender(String gender) {
         this.gender = gender;
->>>>>>> .r102
-    }
 
+    }
+   public String getGender() {
+        return this.gender;
+
+    }
     public String getHomeAddr() {
         return homeAddr;
     }
@@ -224,23 +196,10 @@ public class Student extends AbstractJdbcModel<String> {
         this.status = status;
     }
 
-    public String getStudentCode() {
-        return studentCode;
-    }
-<<<<<<< .mine
+   
     public String getStudyLevel(){
         return this.studyLevel;
-=======
-
-    public void setStudentCode(String studentCode) {
-        this.studentCode = studentCode;
->>>>>>> .r102
     }
-
-    public String getStudyLevel() {
-        return studyLevel;
-    }
-
     public void setStudyLevel(String studyLevel) {
         this.studyLevel = studyLevel;
     }
@@ -306,13 +265,11 @@ public class Student extends AbstractJdbcModel<String> {
             studyType = values[14].toString();
             try{
             note = values[15].toString();
-<<<<<<< .mine
+
             }catch(Exception ex){
                 note="";
             }
 
-=======
->>>>>>> .r102
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }

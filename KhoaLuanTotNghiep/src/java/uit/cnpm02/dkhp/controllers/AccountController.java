@@ -72,10 +72,9 @@ public class AccountController extends HttpServlet {
          String home=request.getParameter("home");
          String address=request.getParameter("address");
          String  phone =request.getParameter("phone");
-         String email=request.getParameter("email");
-         student.setIdentityCard(IndentityCard);
+         student.setIdentityNumber(IndentityCard);
          student.setGender(gender);
-         student.setHome(home);
+         student.setHomeAddr(home);
          student.setAddress(address);
          student.setPhone(phone);
          studentDao.update(student);

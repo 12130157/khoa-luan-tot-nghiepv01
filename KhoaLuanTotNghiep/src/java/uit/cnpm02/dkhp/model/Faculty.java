@@ -7,14 +7,9 @@ import uit.cnpm02.dkhp.access.JDBC.AbstractJdbcModel;
  *
  * @author thanh
  */
-<<<<<<< .mine
-public class Faculty extends  AbstractJdbcModel<String>{
-    String facultyName;
-    String dean;
-    int numOfStudent;
-    public Faculty(){
-        
-=======
+
+   
+
 public class Faculty extends AbstractJdbcModel<String> {
 
     private String facultyCode;
@@ -23,30 +18,22 @@ public class Faculty extends AbstractJdbcModel<String> {
     private int numOfStudent;
 
     public Faculty() {
->>>>>>> .r103
+
     }
-<<<<<<< .mine
+
     public Faculty(String id, String _facultyName, String _dean, int _numOfStudent){
         setId(id);
         this.facultyName=_facultyName;
         this.dean=_dean;
         this.numOfStudent=_numOfStudent;
-=======
+ }
 
-    public Faculty(String facultyCode, String facultyName, String dean, int numOfStudent) {
-        this.facultyCode = facultyCode;
-        this.facultyName = facultyName;
-        this.dean = dean;
-        this.numOfStudent = numOfStudent;
->>>>>>> .r103
-    }
-<<<<<<< .mine
     //***********
     // set parameter
     //***********
      public void setFacultyName(String _facultyName){
         this.facultyName=_facultyName;
-=======
+     }
 
     public String getDean() {
         return dean;
@@ -54,7 +41,7 @@ public class Faculty extends AbstractJdbcModel<String> {
 
     public void setDean(String dean) {
         this.dean = dean;
->>>>>>> .r103
+
     }
 
     public String getFacultyCode() {
@@ -64,20 +51,16 @@ public class Faculty extends AbstractJdbcModel<String> {
     public void setFacultyCode(String facultyCode) {
         this.facultyCode = facultyCode;
     }
-<<<<<<< .mine
+
     //************
     // get parameter
     //************
-=======
+
 
     public String getFacultyName() {
         return facultyName;
     }
->>>>>>> .r103
 
-    public void setFacultyName(String facultyName) {
-        this.facultyName = facultyName;
-    }
 
     public int getNumOfStudent() {
         return numOfStudent;

@@ -91,11 +91,11 @@ Student student=(Student) session.getAttribute("student");
                         </tr>
                         <tr>
                             <td><i>CMND </i></td>
-                            <th><input type="text" name="IdentityCard" id="IdentityCard" value="<%=student.getIdentityCard()%>"/></th>
+                            <th><input type="text" name="IdentityCard" id="IdentityCard" value="<%=student.getIdentityNumber()%>"/></th>
                         </tr>
                         <tr>
                             <td><i>Quê quán</i> </td>
-                            <th><input type="text" name="home" id="home" value="<%=student.getHome()%>" size="100"/></th>
+                            <th><input type="text" name="home" id="home" value="<%=student.getHomeAddr()%>" size="100"/></th>
                         </tr>
                         <tr>
                             <td><i>Đại chỉ liên lạc</i> </td>
