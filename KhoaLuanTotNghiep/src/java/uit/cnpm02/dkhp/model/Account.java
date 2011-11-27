@@ -94,7 +94,6 @@ public class Account extends AbstractJdbcModel<String> {
     @Override
     public String[] getColumnNames() {
         return new String[]{
-                    //"TenDangNhap",
                     "MatKhau",
                     "HoTen",
                     "DangDangNhap",
@@ -106,7 +105,6 @@ public class Account extends AbstractJdbcModel<String> {
     @Override
     public Object[] getColumnValues() {
         return new Object[]{
-                    //userName,
                     password,
                     fullName,
                     isLogined,
@@ -118,7 +116,6 @@ public class Account extends AbstractJdbcModel<String> {
     @Override
     public void setColumnValues(Object[] values) {
         try {
-            //userName = values[0].toString();
             password = values[0].toString();
             fullName = values[1].toString();
             isLogined =Boolean.valueOf(values[2].toString());
