@@ -177,6 +177,19 @@ public class CommentController extends HttpServlet {
      * @param session
      * @throws Exception 
      */
+<<<<<<< .mine
+private void NewsDetail(HttpServletResponse response, HttpServletRequest request, HttpSession session) throws Exception{
+    int id= Integer.parseInt(request.getParameter("Id"));
+    String actor=request.getParameter("Actor");
+    String path="";
+    CommentDao commentDao=new CommentDao();
+    Comment comment=commentDao.findById(id);
+    commentDao.updateCommentStatus(id);
+    session.setAttribute("commentdetail", comment);
+     path = "./jsps/PDT/CommentDetail.jsp";
+     response.sendRedirect(path);
+}
+=======
     private void NewsDetail(HttpServletResponse response, HttpServletRequest request, HttpSession session) throws Exception {
         int id = Integer.parseInt(request.getParameter("Id"));
         String actor = request.getParameter("Actor");
@@ -188,6 +201,7 @@ public class CommentController extends HttpServlet {
         path = "./jsps/PDT/CommentDetail.jsp";
         response.sendRedirect(path);
     }
+>>>>>>> .r101
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
 
     /** 
