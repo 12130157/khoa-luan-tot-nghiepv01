@@ -7,6 +7,15 @@ import uit.cnpm02.dkhp.access.JDBC.AbstractJdbcModel;
  *
  * @author thanh
  */
+<<<<<<< .mine
+public class Course extends  AbstractJdbcModel<String>{
+    int yearIn;
+    int yearOut;
+    float numOfSemester;
+    int numOfStudent;
+    public Course(){
+        
+=======
 public class Course extends AbstractJdbcModel<String> {
 
     private String courseCode;
@@ -16,7 +25,16 @@ public class Course extends AbstractJdbcModel<String> {
     private int numOfStudent;
 
     public Course() {
+>>>>>>> .r103
     }
+<<<<<<< .mine
+    public Course(String id, int _yearIn, int _yearOut, float _numOfSemester, int _numOfStudent){
+        setId(id);
+        this.yearIn=_yearIn;
+        this.yearOut=_yearOut;
+        this.numOfSemester=_numOfSemester;
+        this.numOfStudent=_numOfStudent;
+=======
 
     public Course(String courseCode, int yearIn, int yearOut, float numOfSemester, int numOfStudent) {
         this.courseCode = courseCode;
@@ -24,11 +42,18 @@ public class Course extends AbstractJdbcModel<String> {
         this.yearOut = yearOut;
         this.numOfSemester = numOfSemester;
         this.numOfStudent = numOfStudent;
+>>>>>>> .r103
     }
+<<<<<<< .mine
+    //************
+    //set parameter
+    //************
+=======
 
     public String getCourseCode() {
         return courseCode;
     }
+>>>>>>> .r103
 
     public void setCourseCode(String courseCode) {
         this.courseCode = courseCode;
@@ -45,10 +70,16 @@ public class Course extends AbstractJdbcModel<String> {
     public int getNumOfStudent() {
         return numOfStudent;
     }
+<<<<<<< .mine
+    //************
+    //get parameter
+    //************
+=======
 
     public void setNumOfStudent(int numOfStudent) {
         this.numOfStudent = numOfStudent;
     }
+>>>>>>> .r103
 
     public int getYearIn() {
         return yearIn;
