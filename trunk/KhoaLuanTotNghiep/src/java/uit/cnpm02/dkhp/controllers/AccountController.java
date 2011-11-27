@@ -11,9 +11,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import uit.cnpm02.dkhp.DAO.AccountDAO;
-import uit.cnpm02.dkhp.bo.AccountBO;
+import uit.cnpm02.dkhp.DAO.StudentDAO;
 import uit.cnpm02.dkhp.model.Account;
-import uit.cnpm02.dkhp.utilities.Constants;
+import uit.cnpm02.dkhp.model.Student;
+import uit.cnpm02.dkhp.DAO.ClassDAO;
+import uit.cnpm02.dkhp.DAO.CourseDAO;
+import uit.cnpm02.dkhp.DAO.FacultyDAO;
+import uit.cnpm02.dkhp.model.Class;
+import uit.cnpm02.dkhp.model.Course;
+import uit.cnpm02.dkhp.model.Faculty;
+
 
 /**
  *
@@ -23,7 +30,10 @@ import uit.cnpm02.dkhp.utilities.Constants;
 public class AccountController extends HttpServlet {
 
     private AccountDAO accDao = new AccountDAO();
-
+    private StudentDAO studentDao=new StudentDAO();
+    private ClassDAO classDao= new ClassDAO();
+    private FacultyDAO facultyDao=new FacultyDAO();
+    private CourseDAO courseDao=new CourseDAO();
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
@@ -37,20 +47,16 @@ public class AccountController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
         PrintWriter out = response.getWriter();
-        String function = (String) request.getParameter("function");
+        String action=request.getParameter("action");
         try {
-            if (function != null) {
-                if (function.equals("login")) {
-                    Login(session, request, response);
-                } else if (function.equals("logout")) {
-                    LogOut(session, response);
-                }
-            } else {
-                session.setAttribute("error", "Lỗi hệ thống. Vui lòng quay lại sau.");
-                String path = "./jsps/Login.jsp";
-                response.sendRedirect(path);
-            }
-
+            if(action.equalsIgnoreCase("changePass"))
+                changePass(request, response, session);
+            else if(action.equalsIgnoreCase("Info"))
+                getInfo(response, session);
+            else if(action.equals("changeinfo"))
+                changeInfo(response, session);
+            else if(action.equalsIgnoreCase("update"))
+                updateInfo(request, response, session);
         } catch (Exception ex) {
             Logger.getLogger(AccountController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -58,65 +64,79 @@ public class AccountController extends HttpServlet {
         }
 
     }
-
+    private void updateInfo(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception{
+         String user=(String)session.getAttribute("username");
+         Student student=studentDao.findById(user);
+         String IndentityCard=request.getParameter("IdentityCard");
+         String gender=request.getParameter("gender");
+         String home=request.getParameter("home");
+         String address=request.getParameter("address");
+         String  phone =request.getParameter("phone");
+         String email=request.getParameter("email");
+         student.setIdentityCard(IndentityCard);
+         student.setGender(gender);
+         student.setHome(home);
+         student.setAddress(address);
+         student.setPhone(phone);
+         studentDao.update(student);
+         getInfo(response, session);
+    }
     /**
-     *
+     * 
+     * @param response
      * @param session
+     * @throws Exception 
+     */
+    private void changeInfo(HttpServletResponse response, HttpSession session) throws Exception{
+        String path="./jsps/SinhVien/UpdateInfo.jsp";
+        String user=(String)session.getAttribute("username");
+        Student student=studentDao.findById(user);
+        session.setAttribute("student", student);
+        response.sendRedirect(path);
+    }
+    /**
+     * 
+     * @param response
+     * @param session
+     * @throws Exception 
+     */
+    private void getInfo(HttpServletResponse response, HttpSession session) throws Exception{
+        String path="./jsps/SinhVien/Info.jsp";
+        String user=(String)session.getAttribute("username");
+        Student student=studentDao.findById(user);
+        Class classes=classDao.findById(student.getClassCode());
+        Faculty faculty=facultyDao.findById(student.getFacultyCode());
+        Course course=courseDao.findById(student.getCourseCode());
+        session.setAttribute("student", student);
+        session.setAttribute("classes", classes);
+        session.setAttribute("faculty", faculty);
+        session.setAttribute("course", course);
+        response.sendRedirect(path);
+    }
+    /**
+     * 
      * @param request
      * @param response
-     * @throws Exception
+     * @param session
+     * @throws Exception 
      */
-    private void Login(HttpSession session, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String user = request.getParameter("txtUsername");
-        String pass = request.getParameter("txtPassword");
-        AccountBO accBo = new AccountBO();
-        int a;
-        String path = "./HomepageController";
-        if (accBo.Login(user, pass)) {
-            if (accBo.isLogined(user)) {
-                session.setAttribute("error", "Tài khoản của bạn đang được đăng nhập ở một máy khác!");
-                path = "./jsps/Login.jsp";
-            } else if (accBo.isLock(user)) {
-                session.setAttribute("error", "Tài khoản của bạn đang bị khóa vui lòng liên hệ quản lý khoa để giải quyết!");
-                path = "./jsps/Login.jsp";
-            } else {
-                session.setAttribute("username", user);
-                session.setAttribute("password", pass);
-
-                //Set to logined.
-                Account acc = accDao.findById(user);
-                acc.setIsLogined(true);
-                accDao.update(acc);
-                if (acc.getType() == Constants.ACCOUNT_TYPE_PDT) {
-                    path = "./jsps/PDT/PDTStart.jsp";
-                } else if (acc.getType() == Constants.ACCOUNT_TYPE_STUDENT) {
-                    path = "./jsps/SinhVien/SVStart.jsp";
-                } else if (acc.getType() == Constants.ACCOUNT_TYPE_LECTURE) {
-                    path = "./jsps/GiangVien/GVStart.jsp";
-                }
-            }
-        } else {
-            session.setAttribute("error", "Tên đăng nhập hoặc mật khẩu không hợp lệ");
-            path = "./jsps/Login.jsp";
-        }
-
+private void changePass(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception{
+   String path="./jsps/SinhVien/ChangePass.jsp";
+    try{
+    String user=(String) session.getAttribute("username");
+    Account account=accDao.findById(user);
+    String newPass=request.getParameter("newpass");
+    account.setPassword(newPass);
+    accDao.update(account);
+     session.setAttribute("password", newPass);
+     session.setAttribute("message", "Đổi mật khẩu thành công");
+     response.sendRedirect(path);
+    }catch(Exception ex){
+        session.setAttribute("message", "Đổi mật khẩu thất bại");
         response.sendRedirect(path);
     }
+}
 
-    private void LogOut(HttpSession session, HttpServletResponse response) throws IOException, Exception {
-        String user = (String) session.getAttribute("username");
-        Account acc = accDao.findById(user);
-
-        if (acc != null) {
-            acc.setIsLogined(false);
-            accDao.update(acc);
-        }
-
-        session.removeAttribute("username");
-        session.removeAttribute("pass");
-        String path = "./index.jsp";
-        response.sendRedirect(path);
-    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
