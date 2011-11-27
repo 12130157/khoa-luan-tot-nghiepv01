@@ -50,8 +50,8 @@
              </li>
              <li><a href=""> Cá nhân |</a>
                  <ul>
-                     <li><a href="../ServHompage?action=view"> Thông tin cá nhân</a></li>
-                     <li><a href="../ServHompage?action=view"> Đổi mật khẩu</a></li>
+                     <li><a href="../../AccountController?action=Info"> Thông tin cá nhân</a></li>
+                     <li><a href="ChangePass.jsp"> Đổi mật khẩu</a></li>
                  </ul>
              </li>
              <li><a href="../../Login?function=logout"> Đăng xuất |</a></li>
