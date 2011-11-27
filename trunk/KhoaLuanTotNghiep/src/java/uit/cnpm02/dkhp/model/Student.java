@@ -10,7 +10,6 @@ import uit.cnpm02.dkhp.access.mapper.MapperConstant;
  */
 public class Student extends AbstractJdbcModel<String> {
 
-    private String studentCode;
     private String fullName;
     private Date birthday;
     private String gender;
@@ -27,9 +26,62 @@ public class Student extends AbstractJdbcModel<String> {
     private Date dateStart;
     private String studyType;
     private String note;
+<<<<<<< .mine
+    
+    public Student(){
+        
+=======
 
     public Student() {
+>>>>>>> .r102
     }
+<<<<<<< .mine
+    /**
+     * Constructor with parameter input:
+     * @param _studentCode: 
+     * @param _fullName
+     * @param _birthday
+     * @param _gender
+     * @param _identityCard
+     * @param _home
+     * @param _address
+     * @param _phone
+     * @param _email
+     * @param _classCode
+     * @param _facultyCode
+     * @param _courseCode
+     * @param _status
+     * @param _studyLevel
+     * @param _dateStart
+     * @param _loaiHinHoc
+     * @param _note 
+     */
+    
+    public Student(String id, String _fullName, Date _birthday, String _gender, String _identityCard, String _home,
+            String _address, String _phone, String _email, String _classCode, String _facultyCode, String _courseCode, 
+            String _status, String _studyLevel, Date _dateStart, String _loaiHinHoc, String _note)   {
+     setId(id);
+     this.fullName=_fullName;
+     this.birthday=_birthday;
+     this.gender=_gender;
+     this.identityCard=_identityCard;
+     this.home=_home;
+     this.address=_address;
+     this.phone=_phone;
+     this.email=_email;
+     this.classCode=_classCode;
+     this.facultyCode=_facultyCode;
+     this.courseCode=_courseCode;
+     this.status=_status;
+     this.studyLevel=_studyLevel;
+     this.dateStart=_dateStart;
+     this.studyType=_loaiHinHoc;
+     this.note="";
+    }     
+    //****
+    //get parameter
+    //****
+=======
 
     public Student(String studentCode, String fullName, Date birthday, String gender, String identityNumber, String homeAddr, String address, String phone, String email, String classCode, String facultyCode, String courseCode, String status, String studyLevel, Date dateStart, String studyType, String note) {
         this.studentCode = studentCode;
@@ -50,6 +102,7 @@ public class Student extends AbstractJdbcModel<String> {
         this.studyType = studyType;
         this.note = note;
     }
+>>>>>>> .r102
 
     public String getAddress() {
         return address;
@@ -114,6 +167,13 @@ public class Student extends AbstractJdbcModel<String> {
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
+<<<<<<< .mine
+    //*****
+    // get parameter
+    //****
+   public String getFullName(){
+       return this.fullName;
+=======
 
     public String getGender() {
         return gender;
@@ -121,6 +181,7 @@ public class Student extends AbstractJdbcModel<String> {
 
     public void setGender(String gender) {
         this.gender = gender;
+>>>>>>> .r102
     }
 
     public String getHomeAddr() {
@@ -166,9 +227,14 @@ public class Student extends AbstractJdbcModel<String> {
     public String getStudentCode() {
         return studentCode;
     }
+<<<<<<< .mine
+    public String getStudyLevel(){
+        return this.studyLevel;
+=======
 
     public void setStudentCode(String studentCode) {
         this.studentCode = studentCode;
+>>>>>>> .r102
     }
 
     public String getStudyLevel() {
@@ -238,7 +304,15 @@ public class Student extends AbstractJdbcModel<String> {
             studyLevel = values[12].toString();
             dateStart = (Date) values[13];
             studyType = values[14].toString();
+            try{
             note = values[15].toString();
+<<<<<<< .mine
+            }catch(Exception ex){
+                note="";
+            }
+
+=======
+>>>>>>> .r102
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
