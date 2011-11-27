@@ -104,11 +104,11 @@ Course course=(Course)session.getAttribute("course");
                         </tr>
                         <tr>
                             <td><i>CMND </i></td>
-                            <th><%=student.getIdentityCard()%></th>
+                            <th><%=student.getIdentityNumber()%></th>
                         </tr>
                         <tr>
                             <td><i>Quê quán</i> </td>
-                            <th><%=student.getHome()%></th>
+                            <th><%=student.getHomeAddr()%></th>
                         </tr>
                         <tr>
                             <td><i>Đại chỉ liên lạc</i> </td>
