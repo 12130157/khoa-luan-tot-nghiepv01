@@ -8,7 +8,6 @@ import uit.cnpm02.dkhp.access.JDBC.AbstractJdbcModel;
  * @author thanh
  */
 public class Class extends  AbstractJdbcModel<String>{
-    private String classCode;
     private String className;
     private String facultyCode;
     
@@ -24,8 +23,8 @@ public class Class extends  AbstractJdbcModel<String>{
     public Class() {
     }
 
-    public Class(String ClassCode, String className, String facultyCode, String courseCode, String homeroom, int numOfStudent) {
-        this.classCode = ClassCode;
+    public Class(String id, String className, String facultyCode, String courseCode, String homeroom, int numOfStudent) {
+        setId(id);
         this.className = className;
         this.facultyCode = facultyCode;
         this.courseCode = courseCode;
@@ -65,15 +64,7 @@ public class Class extends  AbstractJdbcModel<String>{
         this.courseCode = courseCodeoc;
     }
 
-    public String getClassCode() {
-        return classCode;
-    }
-
-    public void setClassCode(String ClassCode) {
-        this.classCode = ClassCode;
-    }
-
-    public String getClassName() {
+   public String getClassName() {
         return className;
     }
 
