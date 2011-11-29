@@ -2,6 +2,9 @@ package uit.cnpm02.dkhp.controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -71,12 +74,17 @@ public class AccountController extends HttpServlet {
          String gender=request.getParameter("gender");
          String home=request.getParameter("home");
          String address=request.getParameter("address");
-         String  phone =request.getParameter("phone");
+         String phone =request.getParameter("phone");
+         DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+         Date birthday=df.parse(request.getParameter("birthday"));
+         Date startDate=df.parse(request.getParameter("startdate"));
          student.setIdentityNumber(IndentityCard);
          student.setGender(gender);
          student.setHomeAddr(home);
          student.setAddress(address);
          student.setPhone(phone);
+         student.setBirthday(birthday);
+         student.setDateStart(startDate);
          studentDao.update(student);
          getInfo(response, session);
     }
