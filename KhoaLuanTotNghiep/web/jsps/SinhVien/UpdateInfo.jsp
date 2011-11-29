@@ -50,6 +50,7 @@ Student student=(Student) session.getAttribute("student");
         </style>
     </head>
     <body>
+         <script src="../../javascripts/DateTimePicker.js" type="text/javascript"></script>
         <!--Div Wrapper-->
         <div id="wrapper">            
             <div id="mainNav"><!--Main Navigation-->
@@ -67,7 +68,10 @@ Student student=(Student) session.getAttribute("student");
                     <table>
                         <tr>
                             <td><i>Ngày sinh</i> </td>
-                            <th><%=student.getBirthday()%></th>
+                            <th>
+                                <input type="text" id="birthday" name="birthday" readonly="readonly" value="<%=student.getBirthday()%>">
+                                <img src="../../imgs/cal.gif" style="cursor: pointer;" onclick="javascript:NewCssCal('birthday','YYMMMDD')" />
+                            </th>
                         </tr>  
                         <tr>
                             <td><i>Giới tính</i> </td>
@@ -87,7 +91,10 @@ Student student=(Student) session.getAttribute("student");
                         </tr>
                         <tr>
                             <td><i>Ngày nhập học</i> </td>
-                            <th><%=student.getDateStart()%></th>
+                            <th>
+                                <input type="text" id="startdate" name="startdate" readonly="readonly" value="<%=student.getDateStart()%>">
+                                <img src="../../imgs/cal.gif" style="cursor: pointer;" onclick="javascript:NewCssCal('startdate','YYMMMDD')" />
+                            </th>
                         </tr>
                         <tr>
                             <td><i>CMND </i></td>
@@ -103,7 +110,7 @@ Student student=(Student) session.getAttribute("student");
                         </tr>
                         <tr>
                             <td><i>Điện thoại</i> </td>
-                            <th><input type="text" name="phone" id="phone" value="<%=student.getPhone()%>"/></th>
+                            <th><input type="text" name="phone" id="phone" onkeypress="return checknumber(event)" value="<%=student.getPhone()%>"/></th>
                         </tr>
                      </table>
                         <div id="button">
@@ -148,6 +155,15 @@ Student student=(Student) session.getAttribute("student");
            else{
                 document.forms["formdetail"].submit();
             }
+        }
+        function checknumber(evt){
+           var e = event || evt; // for trans-browser compatibility
+	var charCode = e.which || e.keyCode;
+
+	if (charCode > 31 && (charCode < 48 || charCode > 57))
+		return false;
+
+	return true;
         }
     </script>
 </html>
