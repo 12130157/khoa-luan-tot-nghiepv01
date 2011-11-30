@@ -1,4 +1,4 @@
- html, body, div, span, h1, h2, h3, h4, strong, ol, ul, li{
+html, body, div, span, h1, h2, h3, h4, strong, ol, ul, li{
     margin-left: 0;
     padding: 0;
     border: 0;
@@ -6,7 +6,7 @@
     font-size: 100%;
     color: #ffffff;
     vertical-align: baseline;
-    
+
     background: url("../imgs/background.jpg") repeat fixed center center #474C52;
 }
 body{
@@ -52,18 +52,18 @@ ol, ul{
 }
 
 #content{
-    
+
     width: 964px;
     background: url("../imgs/sep_vertical.png") repeat-y scroll 0 0 transparent;
     padding-left: 1.5em;
     float: right;
-    
+
 }
 
 
 
 #footer{
-    
+
     height: 60px;
     clear: both;
     background: url("../imgs/opaque_10.png") repeat-x scroll 0 0 transparent;
@@ -78,4 +78,13 @@ ol, ul{
     margin-bottom: 0.5em;
     padding: 0.4em;
     width: 20em;
+}
+
+#error {
+    background-color: #73726E;
+    color: #ffffff;
+    border-width: 2px;
+    border-color: #9f8d39;
+    font-size: 10px;
+    float: right;
 }
