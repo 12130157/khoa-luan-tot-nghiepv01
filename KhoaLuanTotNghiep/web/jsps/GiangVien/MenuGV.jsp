@@ -32,7 +32,7 @@
     </div>
     <div id = "menugv">
         <ul>
-             <li><a href="../../HomepageController?action=view&actor=Lecturer"> Trang chủ |</a></li>
+             <li><a href="../../HomepageController?actor=Lecturer"> Trang chủ |</a></li>
              <li><a href="../HomepageController?action=view"> Thời khóa biểu |</a></li>
              <li><a href="../HomepageController?action=view"> Cập nhật điểm |</a></li>
              <li><a href="../../Login?function=logout"> Đăng xuất |</a></li>

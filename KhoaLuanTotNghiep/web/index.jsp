@@ -14,7 +14,7 @@
     <body>
         
         <%
-            response.sendRedirect("./HomepageController?action=view&actor=all");
+            response.sendRedirect("./HomepageController?actor=All");
         %>
         <!-- h2>Click <a href="./Test1">here</a> test application</h2 -->
     </body>

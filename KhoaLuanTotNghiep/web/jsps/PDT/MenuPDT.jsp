@@ -32,7 +32,7 @@
     </div>
     <div id = "menupdt">
         <ul>
-             <li><a href="../../HomepageController?action=view&actor=PDT"> Trang chủ |</a></li>
+             <li><a href="../../HomepageController?actor=PDT"> Trang chủ |</a></li>
              <li><a href=""> Quản lý con người |</a>
                  <ul>
                      <li><a href="../ServHompage?action=view"> Quản lý sinh viên</a></li>
