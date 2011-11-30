@@ -4,6 +4,7 @@
     Author     : LocNguyen
 --%>
 
+<%@page import="uit.cnpm02.dkhp.model.Student"%>
 <%@page import="java.util.Map"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 
@@ -16,13 +17,14 @@
 <%
     List<uit.cnpm02.dkhp.model.Class> clazz = DAOFactory.getClassDao().findAll();
     List<Faculty> faculties = DAOFactory.getFacultyDao().findAll();
-    
+    List<Student> students = (List<Student>)session.getAttribute("liststudent");
+
     String searchBy = "All";
     String searchValue = "All";
-    
+
     String sortBy = "MSSV";
     String sort = "ASC";
-    
+
     int currentPage = 0;
 %>
 <html>
@@ -91,66 +93,78 @@
                 <form id = "formsearch" name="formsearch" action="#" method="post">
                     <table>
                         <tr>
-                            <td><input type="radio" name="radiooption" checked="true" onclick="selectAll()" ></td>
-                            <td>All</td>
+                        <td><input type="radio" name="radiooption" checked="true" onclick="selectAll()" ></td>
+                        <td>All</td>
                         </tr>
                         <tr>
-                            <td><input type="radio" name="radiooption" onclick="selectClass()"></td>
-                            <td>
-                                <select name="sClass" id="sClass">
-                                    <%
-                                    if ((clazz != null) && (clazz.size() > 0)) {
-                                        for (int i = 0; i < clazz.size(); i++) {%>
-                                        <option value="<%=clazz.get(i).getId()%>"><%=clazz.get(i).getId()%></option>
-                                        <%}
-                                    }%>
-                                </select> Tìm theo lớp
-                            </td>
+                        <td><input type="radio" name="radiooption" onclick="selectClass()"></td>
+                        <td>
+                            <select name="sClass" id="sClass">
+                                <%
+                                        if ((clazz != null) && (clazz.size() > 0)) {
+                                            for (int i = 0; i < clazz.size(); i++) {%>
+                                            <option value="<%=clazz.get(i).getId()%>"><%=clazz.get(i).getId()%></option>
+                                <%}
+                                            }%>
+                            </select> Tìm theo lớp
+                        </td>
                         </tr>
                         <tr>
-                            <td><input type="radio" name="radiooption" onclick="selectCode()"></td>
-                            <td>
-                                <input type="text" name="txtcode" id="txtcode"> Tìm theo MSSV
-                            </td>
+                        <td><input type="radio" name="radiooption" onclick="selectCode()"></td>
+                        <td>
+                            <input type="text" name="txtcode" id="txtcode"> Tìm theo MSSV
+                        </td>
                         </tr>
                         <tr>
-                            <td><input type="radio" name="radiooption" onclick="selectName()"></td>
-                            <td>
-                                <input type="text" name="txtName" id="txtName"> Tìm theo tên
-                            </td>
+                        <td><input type="radio" name="radiooption" onclick="selectName()"></td>
+                        <td>
+                            <input type="text" name="txtName" id="txtName"> Tìm theo tên
+                        </td>
                         </tr>
                         <tr>
-                            <td colspan="2"><input type="button" onclick="search()" value="Tìm Kiếm"></td>
+                        <td colspan="2"><input type="button" onclick="search()" value="Tìm Kiếm"></td>
                         </tr>
                     </table>
                 </form>
-                <p align="right"><b><a href="../servStudentManager?action=create">Tiếp nhận sinh viên</a></b></p>
+                <p align="right"><b><a href="./ImportStudent.jsp">Tiếp nhận sinh viên</a></b></p>
                 <hr><hr>
-                
+
                 <form id="formdown" name="formdown" action="../DownloadFile?action=test" method="post">
                     Danh sách sinh viên:<br/>
                     <table id="tableliststudent" name="tableliststudent">
                         <tr>
-                            <th> STT </th> <th> <a href=""> MSSV </a> </th><th> <a href=""> Họ Tên </a> </th><th> <a href=""> Lớp </a> </th><th>Ngày sinh</th><th>Giới tính</th><th>Loại</th><th>Sửa</th><th>Xóa</th><th>Cập nhật</th>
-                            <%--Should be sorted when click on table's header--%>
+                        <th> STT </th>
+                        <th> <a href=""> MSSV </a></th>
+                        <th> <a href=""> Họ Tên </a></th>
+                        <th> <a href=""> Lớp </a> </th>
+                        <th> <a href=""> Khoa </a> </th>
+                        <th>Ngày sinh</th>
+                        <th>Giới tính</th>
+                        <th>Loại</th>
+                        <th>Sửa</th>
+                        <th>Xóa</th>
+                        <th>Cập nhật</th>
+                        <%--Should be sorted when click on table's header--%>
                         </tr>
-                        <%-- for (int i = 0; i < listStudent.size(); i++) { --%>
+                        <%if ((students != null) && !students.isEmpty()) {%>
+                        <% for (int i = 0; i < students.size(); i++) { %>
                         <tr>
-                            <td> STT </td>
-                            <td> MSSV </td> 
-                            <td> Ho Ten </td>
-                            <td> Lop </td>
-                            <td> Ngay sinh </td>
-                            <td> Gioi Tinh </td>
-                            <td> Loai </td>
-                            <td><a href="">Sửa</a></td>
-                            <td><a href="">Xóa</a></td>
-                            <td>Không</td>
-                            <%-- } --%>
+                        <td> <%= (i + 1)%> </td>
+                        <td> <%= students.get(i).getId() %> </td> 
+                        <td> <%= students.get(i).getFullName() %> </td>
+                        <td> <%= students.get(i).getClassCode() %> </td>
+                        <td> <%= students.get(i).getFacultyCode() %> </td>
+                        <td> <%= students.get(i).getBirthday() %> </td>
+                        <td> <%= students.get(i).getGender() %> </td>
+                        <td> <%= students.get(i).getStudyType() %> </td>
+                        <td><a href="../../ManageStudentController?function=editstudent&mssv=<%= students.get(i).getId() %>">Sửa</a></td>
+                        <td><a href="">Xóa</a></td>
+                        <td>Không</td>
+                        <% } %>
                         </tr>
-                        <%--}--%>
+                        <%}%>
                     </table>
-                    <input style="position:absolute; left:650px;" type="button" value="|<<" onclick="">
+                    <input style="position:absolute; left:650px;" type="button" value="|<<" onclick="moveToPage(<%=currentPage%>, <%=sortBy%>, <%=sort%>) ">
                     <input style="position:absolute; left:680px;" type="button" value="<<" onclick="">
                     <input style="position:absolute; left:710px;" type="button" value=">>" onclick="">
                     <input style="position:absolute; left:740px;" type="button" value=">>|" onclick=""><br>
@@ -164,4 +178,49 @@
         <!--End Wrapper-->
     </body>
 
+    <SCRIPT language="javascript">
+        var http = createRequestObject();
+        //
+        // Function for ajax
+        //
+        function createRequestObject(){
+            var req;
+            if(window.XMLHttpRequest){
+                req = new XMLHttpRequest();
+            } else if(window.ActiveXObject){
+                req = new ActiveXObject("Microsoft.XMLHTTP");
+            } else{
+                alert('Functions does not support you Brower');
+            }
+            return req;
+        }
+ 
+        function submit(pagename){
+            if(http){
+                http.open("GET", pagename ,true);
+                http.onreadystatechange = handleResponse;
+                http.send(null);
+                
+            }
+        }
+        
+        function handleResponse(){
+            if(http.readyState == 4 && http.status == 200){
+                var detail = document.getElementById("tableliststudent");
+                detail.innerHTML = http.responseText;
+            }
+        }
+        
+        function moveToPage(page, sortby, sort) {
+            var controller = pagename + '&data=' + datas;
+            var fullPage = page + '&sortby=' + sortby + '&sort' + sort;
+            if(http){
+                http.open("GET", fullPage, true);
+                http.onreadystatechange = handleResponse;
+                http.send(null);
+                
+            }
+        }
+        
+    </SCRIPT>
 </html>
