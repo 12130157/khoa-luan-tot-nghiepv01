@@ -4,6 +4,10 @@
     Author     : LocNguyen
 --%>
 
+<%@page import="uit.cnpm02.dkhp.model.Course"%>
+<%@page import="uit.cnpm02.dkhp.DAO.DAOFactory"%>
+<%@page import="uit.cnpm02.dkhp.model.Faculty"%>
+<%@page import="java.util.List"%>
 <%@page import="java.util.Date"%>
 <%@include file="MenuPDT.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -11,6 +15,39 @@
     "http://www.w3.org/TR/html4/loose.dtd">
 
 <%
+    String listFaculties = "";
+    String listCourse = "";
+    String listClass = "";
+    List<Faculty> faculties = DAOFactory.getFacultyDao().findAll();
+    List<Course> courses = DAOFactory.getCourseDao().findAll();
+    List<uit.cnpm02.dkhp.model.Class> clazz = DAOFactory.getClassDao().findAll();
+
+
+    int i;
+    if ((faculties != null) && !faculties.isEmpty()) {
+        for (i = 0; i < faculties.size(); i++) {
+            if (i > 0) {
+                listFaculties += "-";
+            }
+            listFaculties += faculties.get(i).getId();
+        }
+    }
+    if ((courses != null) && !courses.isEmpty()) {
+        for (i = 0; i < courses.size(); i++) {
+            if (i > 0) {
+                listCourse += "-";
+            }
+            listCourse += courses.get(i).getId();
+        }
+    }
+    if ((clazz != null) && !clazz.isEmpty()) {
+        for (i = 0; i < clazz.size(); i++) {
+            if (i > 0) {
+                listClass += "-";
+            }
+            listClass += clazz.get(i).getId();
+        }
+    }
 %>
 <html>
     <head>
@@ -58,29 +95,49 @@
             #sidebar {
                 height:400px;
                 overflow:auto;
-            } 
+            }
+
+            #error {
+                background-color: #73726E;
+                color: #ffffff;
+                border-width: 2px;
+                border-color: #9f8d39;
+                font-size: 10px;
+                float: right;
+            }
         </style>
     </head>
-    <body onload="addRow('dataTable');">
+    <body onload="pageLoad('dataTable', 'faculties', 'course', 'clazz');">
+        <input type="hidden" name="faculties" id="faculties" value="<%=listFaculties%>">
+        <input type="hidden" name="clazz" id="clazz" value="<%=listClass%>">
+        <input type="hidden" name="course" id="course" value="<%=listCourse%>">
+
         <!--Div Wrapper-->
         <div id="wrapper">
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
+                <p id="error">
 
+                </p>
+
+                <p>
                 <INPUT type="button" value="Thêm hàng" onclick="addRow('dataTable')" />
                 <INPUT type="button" value="Xóa mục đã chọn" onclick="deleteRow('dataTable')" />
-                <INPUT type="submit" value="Hoàn thành" onclick="" />
+                <INPUT type="submit" value="Hoàn thành" onclick="submit('../../ManageStudentController?function=import', 'dataTable')" />
+                </p>
+                <hr/><hr/>
                 <div id="sidebar">
                     <table id="dataTable" width="450px" border="1">
                         <tr style="width: 800px">
-                            <td style="width: 10px;"><INPUT type="checkbox" name="chkAll"/></td>
-                            <td style="width: 10px; align: center"> STT </td>
-                            <td width="15px" align="center"> MSSV </td>
+                            <td><INPUT type="checkbox" name="chkAll"/></td>
+                            <td align: center> STT </td>
+                            <td align="center"> MSSV </td>
                             <td align="center"> Họ Và Tên </td>
                             <td align="center"> Ngày Sinh </td>
                             <td align="center"> Giới Tính </td>
+                            <td align="center"> CMND </td>
                             <td align="center"> Quê quán </td>
                             <td align="center"> Địa chỉ </td>
                             <td align="center"> Điện thoại </td>
@@ -100,7 +157,7 @@
 
                 <br />
                 <hr /><hr />
-                <form id="importFromFile" action="#" method="post" name="importFromFile" enctype="multipart/form-data">
+                <form id="importFromFile" action="../../ManageStudentController?function=importfromfile" method="post" name="importFromFile" enctype="multipart/form-data">
                     <u>Thêm Sinh Viên Từ File</u><br/>
 
                     <table id="tblFromFile">
@@ -108,7 +165,7 @@
                             <td><input type="file" name="txtPath" id="txtPath"></td>
                         </tr>
                         <tr>
-                            <td><input type="button" onclick="" value="Hoàn thành."></td>
+                            <td><input type="submit" value="Hoàn thành."></td>
                         </tr>
                     </table>
                 </form><br>
@@ -123,8 +180,15 @@
     </body>
 
     <SCRIPT language="javascript">
+        var http = createRequestObject();
+        var facultiesArray = new Array();
+        var courseArray = new Array();
+        var clazzsArray = new Array();
+        
+        //
+        // Util functions for edit table.
+        //
         function addRow(tableID) {
- 
             var table = document.getElementById(tableID);
             var rowCount = table.rows.length;
             var row = table.insertRow(rowCount);
@@ -141,78 +205,78 @@
             cellIndex.innerHTML = rowCount;
 
             //MSSV
-            createNewInputCell(row, 'txtMSSV', 2, '10px');
+            createNewInputCell(row, 'txtMSSV', 2);
                 
             //Họ Và Tên
-            createNewInputCell(row, 'txtName', 3, '10px');
-            
+            createNewInputCell(row, 'txtName', 3);
             //Ngày Sinh
             // ==> share be update to calenda
-            createNewInputCell(row, 'txtBirthDay', 4, '10px');
+            createNewInputCell(row, 'txtBirthDay', 4);
             
             //Giới Tính
-            var cellSex = row.insertCell(5);
-            var elementSex = document.createElement("select");
-            elementSex.name = "selectSex";
-            elementSex.options[0] = new Option("Nam","nam");
-            elementSex.options[1] = new Option("N\u1eef","nu");
-            cellSex.appendChild(elementSex);
+            createNewSelectionCell(row, 'selectSex', 5, new Array("Nam", "Nữ"));
+            
+            //CMND
+            createNewInputCell(row, 'txtCMND', 6);
             
             //Quê quán
-            createNewInputCell(row, 'txtHomeAddr', 6, '10px');
+            createNewInputCell(row, 'txtHomeAddr', 7);
             
             //Địa chỉ
-            createNewInputCell(row, 'txtAddr', 7, '10px');
+            createNewInputCell(row, 'txtAddr', 8);
             
             //Điện thoại
-            createNewInputCell(row, 'txtPhone', 8);
+            createNewInputCell(row, 'txtPhone', 9);
             
             //Email
-            createNewInputCell(row, 'txtEmail', 9);
+            createNewInputCell(row, 'txtEmail', 10);
             
             //Lớp
-            // ==> share be update to select input
-            createNewInputCell(row, 'selectCourse', 10);
+            createNewSelectionCell(row, 'selectClass', 11, clazzsArray);
             
             //Khoa
-            // ==> share be update to select input
-            createNewInputCell(row, 'selectFaculty', 11);
+            createNewSelectionCell(row, 'selectFaculty', 12, facultiesArray);
             
             //Khóa học
-            // ==> share be update to select input
-            createNewInputCell(row, 'selectCourse', 12);
+            createNewSelectionCell(row, 'selectCourse', 13, courseArray);
             
             //Tình Trạng
-            // ==> share be update to select input
-            createNewInputCell(row, 'selectStatus', 13);
+            createNewSelectionCell(row, 'selectStatus', 14, new Array('Đang học', 'Đang Bảo Lưu Kq', 'Đã Ra Trường'));
             
             //Bậc học
-            // ==> share be update to select input
-            createNewInputCell(row, 'selectLevel', 14);
+            createNewSelectionCell(row, 'selectLevel', 15, new Array('Đại Học', 'Cao Đẳng', 'Trung Cấp'));
             
             //Ngày nhập học
             // ==> share be update to calendar input
-            createNewInputCell(row, 'txtEnterDay', 15);
+            createNewInputCell(row, 'txtEnterDay', 16);
             
             //Loại hình học
-            // ==> share be update to select input
-            createNewInputCell(row, 'selectStudyType', 16);
+            createNewSelectionCell(row, 'selectType', 17, new Array('Tập chung', 'Đào tạo từ xa'));
             
             //Ghi chú
-            createNewInputCell(row, 'txtPhone', 17);
+            createNewInputCell(row, 'txtPhone', 18);
         }
         
-        function createNewInputCell (row, name, index, width) {
+        function createNewInputCell(row, name, index) {
             var cell = row.insertCell(index);
             var element = document.createElement("input");
-            //if (width != null) {
-            //    cell.width = width;
-            //}
-            cell.setAttribute("border", "2");
-            element.style.width = 10;
-            element.width = 5;
             element.name = name;
             element.type = "text";
+            element.id = name;
+            cell.appendChild(element);
+        }
+        
+        function createNewSelectionCell(row, name, index, values) {
+            var cell = row.insertCell(index);
+            var element = document.createElement("select");
+            element.name = name;
+            element.id = name;
+            var i = 0;
+            for(e in values) {
+                element.options[i] = new Option(values[i], name + values[i]);
+                element.options[i].value = values[i];
+                i ++;
+            }
             cell.appendChild(element);
         }
  
@@ -234,14 +298,146 @@
                         table.deleteRow(i);
                         rowCount--;
                         i--;
-                        
                     }
- 
                 }
             }catch(e) {
                 alert(e);
             }
         }
+        
+        function pageLoad(tableID, listFaculties, listCourse, listClazz) {
+            var faculties = document.getElementById(listFaculties).value ;
+            var courses = document.getElementById(listCourse).value ;
+            var clazz = document.getElementById(listClazz).value ;
+            facultiesArray = faculties. split("-");
+            courseArray = courses. split("-");
+            clazzsArray = clazz. split("-");
+            
+            addRow(tableID);
+        }
  
+        //
+        // Function for ajax
+        //
+        function createRequestObject(){
+            var req;
+            if(window.XMLHttpRequest){
+                req = new XMLHttpRequest();
+            } else if(window.ActiveXObject){
+                req = new ActiveXObject("Microsoft.XMLHTTP");
+            } else{
+                alert('Functions does not support you Brower');
+            }
+            return req;
+        }
+ 
+        function submit(pagename, tableData){
+            datas = getListStudentFromTable(tableData);
+            
+            if (datas == 'fail') {
+                return;
+            }
+                
+            var controller = pagename + '&data=' + datas;
+            if(http){
+                http.open("GET", controller ,true);
+                http.onreadystatechange = handleResponse;
+                http.send(null);
+                
+            }
+        }
+        
+        function submitInsertFromFile(pagename) {
+            if(http){
+                http.open("GET", pagename ,true);
+                http.onreadystatechange = handleResponse;
+                http.send(null);
+            }
+        }
+
+        function handleResponse(){
+            if(http.readyState == 4 && http.status == 200){
+                var detail = document.getElementById("error");
+                detail.innerHTML = http.responseText;
+            }
+        }
+        
+        //
+        // Util functions for update data
+        //
+        function getListStudentFromTable(tableID) {
+            try {
+                var table = document.getElementById(tableID);
+                var rowCount = table.rows.length;
+                var datas = '';
+                
+                for(var i = 1; i < rowCount; i++) {
+                    var row = table.rows[i];
+                    var chkbox = row.cells[0].childNodes[0];
+                    if(null != chkbox && true == chkbox.checked) {
+                        if (validateInputValue(row) == false) {
+                            alert('Vui lòng nhập đầy thông tin cần thiết cho dòng ' + i);
+                            return 'fail'; //fail
+                        }
+                        var elTableCells = row. getElementsByTagName('td');
+                        var currentData = '';
+                        currentData += elTableCells[2].childNodes[0].value + ','; //MSSV
+                        currentData += elTableCells[3].childNodes[0].value + ','; //Ho Ten
+                        currentData += elTableCells[4].childNodes[0].value + ','; //Ngay Sinh
+                        currentData += row.cells[5].childNodes[0].value + ','; //Gioi Tinh
+                        currentData += row.cells[6].childNodes[0].value + ','; //CMND
+                        currentData += row.cells[7].childNodes[0].value + ','; //Que quan
+                        if (row.cells[8].childNodes[0].value == '')
+                            currentData += 'x,';
+                        else
+                            currentData += row.cells[8].childNodes[0].value + ','; //Dia chi
+                        if (row.cells[9].childNodes[0].value == '')
+                            currentData += 'x,';
+                        else
+                            currentData += row.cells[9].childNodes[0].value + ','; //Dien thoai
+                        if (row.cells[10].childNodes[0].value == '')
+                            currentData += 'x,';
+                        else
+                            currentData += row.cells[10].childNodes[0].value + ','; //Email
+                        currentData += row.cells[11].childNodes[0].value + ','; //Lop
+                        currentData += row.cells[12].childNodes[0].value + ','; //Khoa
+                        currentData += row.cells[13].childNodes[0].value + ','; //KhoaHoc
+                        currentData += row.cells[14].childNodes[0].value + ','; //TinhTrang
+                        currentData += row.cells[15].childNodes[0].value + ','; //Bac hoc
+                        currentData += row.cells[16].childNodes[0].value + ','; //Ngay Nhap Hoc
+                        currentData += row.cells[17].childNodes[0].value + ','; //Loai hinh hoc
+                        if (row.cells[8].childNodes[0].value == '')
+                            currentData += 'x';
+                        else
+                            currentData += row.cells[8].childNodes[0].value ; //Ghi chu
+                        
+                        if (i < (rowCount - 1)) {
+                            currentData += ';';
+                        }
+                        
+                        datas += currentData;
+                    }
+                }
+            }catch(e) {
+                alert(e);
+            }
+            return datas;
+        }
+        
+        function validateInputValue(row) {
+            var elTableCells = row. getElementsByTagName('td');
+            if ((elTableCells[2].childNodes[0].value == '') ||
+                (elTableCells[3].childNodes[0].value == '') ||
+                (elTableCells[4].childNodes[0].value == '') ||
+                (elTableCells[6].childNodes[0].value == '') ||
+                (elTableCells[7].childNodes[0].value == '') ||
+                (elTableCells[6].childNodes[0].value == '')
+            ) {
+                return false;
+            }
+            
+            return true;
+        }
+        
     </SCRIPT>
 </html>
