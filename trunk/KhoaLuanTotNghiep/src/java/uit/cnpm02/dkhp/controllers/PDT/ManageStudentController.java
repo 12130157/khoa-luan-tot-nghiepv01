@@ -29,6 +29,7 @@ import uit.cnpm02.dkhp.utilities.FileUtils;
  */
 @WebServlet(name = "ManageStudentController", urlPatterns = {"/ManageStudentController"})
 public class ManageStudentController extends HttpServlet {
+    private StudentDAO studentDao = DAOFactory.getStudentDao();
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
 
@@ -52,9 +53,14 @@ public class ManageStudentController extends HttpServlet {
             String action = request.getParameter("function");
             String datas = request.getParameter("data");
             if (action.equalsIgnoreCase("liststudent")) {
-                listStudent();
+                listStudent(request, response);
      
                 String path="./jsps/PDT/ListStudent.jsp";
+                response.sendRedirect(path);
+            } else if (action.equalsIgnoreCase("editstudent")) {
+                editStudent(request, response);
+     
+                String path="./jsps/PDT/EditStudent.jsp";
                 response.sendRedirect(path);
             } else if (action.equalsIgnoreCase("import")) {
                 //Data input in format: student1; student2; student 3 ...
@@ -74,27 +80,12 @@ public class ManageStudentController extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
-     * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /** 
-     * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -253,7 +244,18 @@ public class ManageStudentController extends HttpServlet {
      * This function will be called at the first time go
      * to manager student page.
      */
-    private void listStudent() {
+    private void listStudent(HttpServletRequest request, HttpServletResponse response) throws Exception {
         
+        List<Student> students = studentDao.findAll();
+        
+        HttpSession session = request.getSession();
+        session.setAttribute("liststudent", students);
+    }
+
+    private void editStudent(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String mssv = request.getParameter("mssv");
+        Student s = studentDao.findById(mssv);
+        HttpSession session = request.getSession();
+        session.setAttribute("student", s);
     }
 }
