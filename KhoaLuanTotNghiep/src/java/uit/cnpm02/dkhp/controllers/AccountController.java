@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -19,11 +20,11 @@ import uit.cnpm02.dkhp.model.Account;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.DAO.ClassDAO;
 import uit.cnpm02.dkhp.DAO.CourseDAO;
+import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.FacultyDAO;
 import uit.cnpm02.dkhp.model.Class;
 import uit.cnpm02.dkhp.model.Course;
 import uit.cnpm02.dkhp.model.Faculty;
-
 
 /**
  *
@@ -32,11 +33,12 @@ import uit.cnpm02.dkhp.model.Faculty;
 @WebServlet(name = "AccountController", urlPatterns = {"/AccountController"})
 public class AccountController extends HttpServlet {
 
-    private AccountDAO accDao = new AccountDAO();
-    private StudentDAO studentDao=new StudentDAO();
-    private ClassDAO classDao= new ClassDAO();
-    private FacultyDAO facultyDao=new FacultyDAO();
-    private CourseDAO courseDao=new CourseDAO();
+    private AccountDAO accDao = DAOFactory.getAccountDao();
+    private StudentDAO studentDao = DAOFactory.getStudentDao();
+    private ClassDAO classDao = DAOFactory.getClassDao();
+    private FacultyDAO facultyDao = DAOFactory.getFacultyDao();
+    private CourseDAO courseDao = DAOFactory.getCourseDao();
+
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
@@ -50,16 +52,19 @@ public class AccountController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
         PrintWriter out = response.getWriter();
-        String action=request.getParameter("action");
+        String action = request.getParameter("action");
         try {
-            if(action.equalsIgnoreCase("changePass"))
+            if (action.equalsIgnoreCase("changePass")) {
                 changePass(request, response, session);
-            else if(action.equalsIgnoreCase("Info"))
+            } else if (action.equalsIgnoreCase("Info")) {
                 getInfo(response, session);
-            else if(action.equals("changeinfo"))
+            } else if (action.equals("changeinfo")) {
                 changeInfo(response, session);
-            else if(action.equalsIgnoreCase("update"))
+            } else if (action.equalsIgnoreCase("update")) {
                 updateInfo(request, response, session);
+            } else if (action.equalsIgnoreCase("manager")) {
+                listAccount(request, response, session);
+            }
         } catch (Exception ex) {
             Logger.getLogger(AccountController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -67,59 +72,63 @@ public class AccountController extends HttpServlet {
         }
 
     }
-    private void updateInfo(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception{
-         String user=(String)session.getAttribute("username");
-         Student student=studentDao.findById(user);
-         String IndentityCard=request.getParameter("IdentityCard");
-         String gender=request.getParameter("gender");
-         String home=request.getParameter("home");
-         String address=request.getParameter("address");
-         String phone =request.getParameter("phone");
-         DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
-         Date birthday=df.parse(request.getParameter("birthday"));
-         Date startDate=df.parse(request.getParameter("startdate"));
-         student.setIdentityNumber(IndentityCard);
-         student.setGender(gender);
-         student.setHomeAddr(home);
-         student.setAddress(address);
-         student.setPhone(phone);
-         student.setBirthday(birthday);
-         student.setDateStart(startDate);
-         studentDao.update(student);
-         getInfo(response, session);
+
+    private void updateInfo(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
+        String user = (String) session.getAttribute("username");
+        Student student = studentDao.findById(user);
+        String IndentityCard = request.getParameter("IdentityCard");
+        String gender = request.getParameter("gender");
+        String home = request.getParameter("home");
+        String address = request.getParameter("address");
+        String phone = request.getParameter("phone");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        Date birthday = df.parse(request.getParameter("birthday"));
+        Date startDate = df.parse(request.getParameter("startdate"));
+        student.setIdentityNumber(IndentityCard);
+        student.setGender(gender);
+        student.setHomeAddr(home);
+        student.setAddress(address);
+        student.setPhone(phone);
+        student.setBirthday(birthday);
+        student.setDateStart(startDate);
+        studentDao.update(student);
+        getInfo(response, session);
     }
+
     /**
      * 
      * @param response
      * @param session
      * @throws Exception 
      */
-    private void changeInfo(HttpServletResponse response, HttpSession session) throws Exception{
-        String path="./jsps/SinhVien/UpdateInfo.jsp";
-        String user=(String)session.getAttribute("username");
-        Student student=studentDao.findById(user);
+    private void changeInfo(HttpServletResponse response, HttpSession session) throws Exception {
+        String path = "./jsps/SinhVien/UpdateInfo.jsp";
+        String user = (String) session.getAttribute("username");
+        Student student = studentDao.findById(user);
         session.setAttribute("student", student);
         response.sendRedirect(path);
     }
+
     /**
      * 
      * @param response
      * @param session
      * @throws Exception 
      */
-    private void getInfo(HttpServletResponse response, HttpSession session) throws Exception{
-        String path="./jsps/SinhVien/Info.jsp";
-        String user=(String)session.getAttribute("username");
-        Student student=studentDao.findById(user);
-        Class classes=classDao.findById(student.getClassCode());
-        Faculty faculty=facultyDao.findById(student.getFacultyCode());
-        Course course=courseDao.findById(student.getCourseCode());
+    private void getInfo(HttpServletResponse response, HttpSession session) throws Exception {
+        String path = "./jsps/SinhVien/Info.jsp";
+        String user = (String) session.getAttribute("username");
+        Student student = studentDao.findById(user);
+        Class classes = classDao.findById(student.getClassCode());
+        Faculty faculty = facultyDao.findById(student.getFacultyCode());
+        Course course = courseDao.findById(student.getCourseCode());
         session.setAttribute("student", student);
         session.setAttribute("classes", classes);
         session.setAttribute("faculty", faculty);
         session.setAttribute("course", course);
         response.sendRedirect(path);
     }
+
     /**
      * 
      * @param request
@@ -127,23 +136,22 @@ public class AccountController extends HttpServlet {
      * @param session
      * @throws Exception 
      */
-private void changePass(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception{
-   String path="./jsps/SinhVien/ChangePass.jsp";
-    try{
-    String user=(String) session.getAttribute("username");
-    Account account=accDao.findById(user);
-    String newPass=request.getParameter("newpass");
-    account.setPassword(newPass);
-    accDao.update(account);
-     session.setAttribute("password", newPass);
-     session.setAttribute("message", "Đổi mật khẩu thành công");
-     response.sendRedirect(path);
-    }catch(Exception ex){
-        session.setAttribute("message", "Đổi mật khẩu thất bại");
-        response.sendRedirect(path);
+    private void changePass(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
+        String path = "./jsps/SinhVien/ChangePass.jsp";
+        try {
+            String user = (String) session.getAttribute("username");
+            Account account = accDao.findById(user);
+            String newPass = request.getParameter("newpass");
+            account.setPassword(newPass);
+            accDao.update(account);
+            session.setAttribute("password", newPass);
+            session.setAttribute("message", "Đổi mật khẩu thành công");
+            response.sendRedirect(path);
+        } catch (Exception ex) {
+            session.setAttribute("message", "Đổi mật khẩu thất bại");
+            response.sendRedirect(path);
+        }
     }
-}
-
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
@@ -180,4 +188,12 @@ private void changePass(HttpServletRequest request, HttpServletResponse response
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private void listAccount(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
+        List<Account> accounts = accDao.findAll();
+        session.setAttribute("account", accounts);
+        
+        String path = "./jsps/PDT/AccountManager.jsp";
+        response.sendRedirect(path);
+    }
 }
