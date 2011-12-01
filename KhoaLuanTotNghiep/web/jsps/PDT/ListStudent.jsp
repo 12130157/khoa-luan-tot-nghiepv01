@@ -15,17 +15,10 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <%
-    List<uit.cnpm02.dkhp.model.Class> clazz = DAOFactory.getClassDao().findAll();
-    List<Faculty> faculties = DAOFactory.getFacultyDao().findAll();
-    List<Student> students = (List<Student>)session.getAttribute("liststudent");
-
-    String searchBy = "All";
-    String searchValue = "All";
-
-    String sortBy = "MSSV";
-    String sort = "ASC";
-
-    int currentPage = 0;
+    List<Student> listStudent = (List<Student>) session.getAttribute("liststudent");
+    //List<String> listClass = (ArrayList<String>) session.getAttribute("listClass");
+    Integer numStudent = (Integer) session.getAttribute("numStudent");
+    List<uit.cnpm02.dkhp.model.Class> listClass = DAOFactory.getClassDao().findAll();
 %>
 <html>
     <head>
@@ -93,36 +86,33 @@
                 <form id = "formsearch" name="formsearch" action="#" method="post">
                     <table>
                         <tr>
-                        <td><input type="radio" name="radiooption" checked="true" onclick="selectAll()" ></td>
-                        <td>All</td>
+                            <td><input type="radio" name="radiooption" checked="true" onclick="selectAll()" ></td>
+                            <td>All</td>
                         </tr>
                         <tr>
-                        <td><input type="radio" name="radiooption" onclick="selectClass()"></td>
-                        <td>
-                            <select name="sClass" id="sClass">
-                                <%
-                                        if ((clazz != null) && (clazz.size() > 0)) {
-                                            for (int i = 0; i < clazz.size(); i++) {%>
-                                            <option value="<%=clazz.get(i).getId()%>"><%=clazz.get(i).getId()%></option>
-                                <%}
-                                            }%>
-                            </select> Tìm theo lớp
-                        </td>
+                            <td><input type="radio" name="radiooption" onclick="selectClass()"></td>
+                            <td>
+                                <select name="sClass" id="sClass">
+                                    <%for (int i = 0; i < listClass.size(); i++) {%>
+                                    <option value="<%=listClass.get(i)%>"><%=listClass.get(i).getId()%></option>
+                                    <%}%>
+                                </select> Tìm theo lớp
+                            </td>
                         </tr>
                         <tr>
-                        <td><input type="radio" name="radiooption" onclick="selectCode()"></td>
-                        <td>
-                            <input type="text" name="txtcode" id="txtcode"> Tìm theo MSSV
-                        </td>
+                            <td><input type="radio" name="radiooption" onclick="selectCode()"></td>
+                            <td>
+                                <input type="text" name="txtcode" id="txtcode"> Tìm theo MSSV
+                            </td>
                         </tr>
                         <tr>
-                        <td><input type="radio" name="radiooption" onclick="selectName()"></td>
-                        <td>
-                            <input type="text" name="txtName" id="txtName"> Tìm theo tên
-                        </td>
+                            <td><input type="radio" name="radiooption" onclick="selectName()"></td>
+                            <td>
+                                <input type="text" name="txtName" id="txtName"> Tìm theo tên
+                            </td>
                         </tr>
                         <tr>
-                        <td colspan="2"><input type="button" onclick="search()" value="Tìm Kiếm"></td>
+                            <td colspan="2"><input type="button" onclick="search()" value="Tìm Kiếm"></td>
                         </tr>
                     </table>
                 </form>
@@ -146,28 +136,30 @@
                         <th>Cập nhật</th>
                         <%--Should be sorted when click on table's header--%>
                         </tr>
-                        <%if ((students != null) && !students.isEmpty()) {%>
-                        <% for (int i = 0; i < students.size(); i++) { %>
+                        <%if ((listStudent != null) && !listStudent.isEmpty()) {%>
+                        <% for (int i = 0; i < listStudent.size(); i++) {%>
                         <tr>
                         <td> <%= (i + 1)%> </td>
-                        <td> <%= students.get(i).getId() %> </td> 
-                        <td> <%= students.get(i).getFullName() %> </td>
-                        <td> <%= students.get(i).getClassCode() %> </td>
-                        <td> <%= students.get(i).getFacultyCode() %> </td>
-                        <td> <%= students.get(i).getBirthday() %> </td>
-                        <td> <%= students.get(i).getGender() %> </td>
-                        <td> <%= students.get(i).getStudyType() %> </td>
-                        <td><a href="../../ManageStudentController?function=editstudent&mssv=<%= students.get(i).getId() %>">Sửa</a></td>
+                        <td> <%= listStudent.get(i).getId()%> </td> 
+                        <td> <%= listStudent.get(i).getFullName()%> </td>
+                        <td> <%= listStudent.get(i).getClassCode()%> </td>
+                        <td> <%= listStudent.get(i).getFacultyCode()%> </td>
+                        <td> <%= listStudent.get(i).getBirthday()%> </td>
+                        <td> <%= listStudent.get(i).getGender()%> </td>
+                        <td> <%= listStudent.get(i).getStudyType()%> </td>
+                        <td><a href="../../ManageStudentController?function=editstudent&mssv=<%= listStudent.get(i).getId()%>">Sửa</a></td>
                         <td><a href="">Xóa</a></td>
                         <td>Không</td>
-                        <% } %>
+                        <% }%>
                         </tr>
                         <%}%>
                     </table>
-                    <input style="position:absolute; left:650px;" type="button" value="|<<" onclick="moveToPage(<%=currentPage%>, <%=sortBy%>, <%=sort%>) ">
-                    <input style="position:absolute; left:680px;" type="button" value="<<" onclick="">
-                    <input style="position:absolute; left:710px;" type="button" value=">>" onclick="">
-                    <input style="position:absolute; left:740px;" type="button" value=">>|" onclick=""><br>
+                    <input style="position:absolute; left:650px;" type="button" value="|<<" onclick="nprepage()">
+                    <input style="position:absolute; left:680px;" type="button" value="<<" onclick="prepage()">
+                    <input style="position:absolute; left:710px;" type="button" value=">>" onclick="nextpage()">
+                    <input style="position:absolute; left:740px;" type="button" value=">>|" onclick="nnextpage()"><br>
+                    <input type="hidden" value="<%=numStudent%>" id="numstu" />
+                    <input type="button" value="Tải file" onclick="load()"/>
                 </form>
             </div><!--End Contents-->
 
@@ -179,10 +171,106 @@
     </body>
 
     <SCRIPT language="javascript">
+        var typesearch = "All";
+        var name = "All";
+        var action = "search";
+        var action1 = "studentlist";
+        var start = 0;
+        var end = document.getElementById("numstu").value;
         var http = createRequestObject();
-        //
-        // Function for ajax
-        //
+        function search(){
+            if(http){
+                start = 0;
+                if(typesearch == "name"){
+                    name = document.formsearch.txtName.value;
+                }else if(typesearch == "mssv") {
+                    name = document.formsearch.txtcode.value;
+                }else if(typesearch == "classname"){
+                    name = document.formsearch.sClass.value;
+                }
+                ajaxfunction("../servStudentManager?action="+action+"&type="+typesearch+"&name="+name+"&start="+start);
+            }
+        }
+        
+        function nprepage(){
+            search();
+        }
+        
+        function prepage(){
+            start = start - 5;
+            if(start < 0) {
+                start = 0;
+            }
+            if(typesearch == "name") {
+                name = document.formsearch.txtName.value;
+            } else if(typesearch == "mssv") {
+                name = document.formsearch.txtcode.value;
+            } else if(typesearch == "classname") {
+                name = document.formsearch.sClass.value;
+            }
+            ajaxfunction("../servStudentManager?action="+action+"&type="+typesearch+"&name="+name+"&start="+start);
+            
+        }
+        function nextpage(){
+            start=start+5;
+            if(start+5>end){
+                start=end-5;
+            }
+            if(start<0){
+                start=0;
+            }
+            if(typesearch=="name"){
+                name=document.formsearch.txtName.value;
+            }else if(typesearch == "mssv"){
+                name=document.formsearch.txtcode.value;
+            }else if(typesearch == "classname"){
+                name = document.formsearch.sClass.value;
+            }
+            ajaxfunction("../servStudentManager?action="+action+"&type="+typesearch+"&name="+name+"&start="+start);
+        }
+        function nnextpage(){
+            start=end-5;
+            if(start<0){
+                start=0;
+            }
+            if(typesearch=="name"){
+                name=document.formsearch.txtName.value;
+            }else if(typesearch == "mssv"){
+                name=document.formsearch.txtcode.value;
+            }else if(typesearch == "classname"){
+                name = document.formsearch.sClass.value;
+            }
+            ajaxfunction("../servStudentManager?action="+action+"&type="+typesearch+"&name="+name+"&start="+start);
+            
+        }
+        function selectCode(){
+            typesearch = "mssv";
+        }
+        function selectName(){
+            typesearch = "name";
+        }
+        function selectClass(){
+            typesearch = "classname";
+        }
+        function selectAll(){
+            typesearch = "All";
+        }
+        
+        function load() {
+            if(start < 0) {
+                start = 0;
+            }
+            if(typesearch == "name") {
+                name = document.formsearch.txtName.value;
+            } else if(typesearch == "mssv") {
+                name = document.formsearch.txtcode.value;
+            } else if(typesearch == "classname") {
+                name = document.formsearch.sClass.value;
+            }
+            document.forms["formdown"].action="../DownloadFile?action=studentlist&type="+typesearch+"&name="+name;
+            document.forms["formdown"].submit();
+        }
+        
         function createRequestObject(){
             var req;
             if(window.XMLHttpRequest){
@@ -190,37 +278,26 @@
             } else if(window.ActiveXObject){
                 req = new ActiveXObject("Microsoft.XMLHTTP");
             } else{
-                alert('Functions does not support you Brower');
+                alert('Your browser is not IE 5 or higher, or Firefox or Safari or Opera');
             }
+            
             return req;
         }
  
-        function submit(pagename){
+        function ajaxfunction(pagename){
             if(http){
                 http.open("GET", pagename ,true);
                 http.onreadystatechange = handleResponse;
                 http.send(null);
-                
             }
         }
-        
+
         function handleResponse(){
             if(http.readyState == 4 && http.status == 200){
                 var detail = document.getElementById("tableliststudent");
                 detail.innerHTML = http.responseText;
+                end = document.getElementById("numstuafter").value;
             }
         }
-        
-        function moveToPage(page, sortby, sort) {
-            var controller = pagename + '&data=' + datas;
-            var fullPage = page + '&sortby=' + sortby + '&sort' + sort;
-            if(http){
-                http.open("GET", fullPage, true);
-                http.onreadystatechange = handleResponse;
-                http.send(null);
-                
-            }
-        }
-        
     </SCRIPT>
 </html>
