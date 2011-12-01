@@ -48,6 +48,7 @@ public class ManageStudentController extends HttpServlet {
 
         PrintWriter out = response.getWriter();
         HttpSession session = request.getSession();
+        
         try {
             //addStudent(null, out);
             String action = request.getParameter("function");
@@ -98,8 +99,6 @@ public class ManageStudentController extends HttpServlet {
      * @throws Exception 
      */
     private void updateStudent(List<Student> students) throws Exception {
-        StudentDAO studentDao = DAOFactory.getStudentDao();
-
         if (studentDao != null) {
             studentDao.update(students);
         } else {
@@ -113,8 +112,6 @@ public class ManageStudentController extends HttpServlet {
      * @throws Exception 
      */
     private void deleteStudent(List<Student> students) throws Exception {
-        StudentDAO studentDao = DAOFactory.getStudentDao();
-
         if (studentDao != null) {
 
             // Xoa account
