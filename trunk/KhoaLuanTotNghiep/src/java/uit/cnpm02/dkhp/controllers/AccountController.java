@@ -27,6 +27,7 @@ import uit.cnpm02.dkhp.model.Course;
 import uit.cnpm02.dkhp.model.Faculty;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.Log;
+import uit.cnpm02.dkhp.utilities.StringUtils;
 
 /**
  *
@@ -40,6 +41,7 @@ public class AccountController extends HttpServlet {
     private ClassDAO classDao = DAOFactory.getClassDao();
     private FacultyDAO facultyDao = DAOFactory.getFacultyDao();
     private CourseDAO courseDao = DAOFactory.getCourseDao();
+    private int numpage = 0;
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -55,7 +57,10 @@ public class AccountController extends HttpServlet {
         HttpSession session = request.getSession();
         PrintWriter out = response.getWriter();
         String action = request.getParameter("action");
+
         try {
+           
+
             if (action.equalsIgnoreCase("changePass")) {
                 changePass(request, response, session);
             } else if (action.equalsIgnoreCase("Info")) {
@@ -65,17 +70,23 @@ public class AccountController extends HttpServlet {
             } else if (action.equalsIgnoreCase("update")) {
                 updateInfo(request, response, session);
             } else if (action.equalsIgnoreCase("manager")) {
+                session.setAttribute("numpage", getNumberPage());
                 listAccount(request, response, session);
             } else if (action.equalsIgnoreCase("createnew")) {
+                session.setAttribute("numpage", getNumberPage());
                 createNewAccount(request, response, session);
             } else if (action.equalsIgnoreCase("editaccount")) {
                 editAccount(request, response, session);
             } else if (action.equalsIgnoreCase("deleteaccount")) {
+                session.setAttribute("numpage", getNumberPage());
                 deleteAccount(request, response, session);
             } else if (action.equalsIgnoreCase("search")) {
                 search(request, response, session);
+            } else if (action.equalsIgnoreCase("Filter")) {
+                filterAccount(request, response);
             }
 
+            //
         } catch (Exception ex) {
             Logger.getLogger(AccountController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -201,7 +212,13 @@ public class AccountController extends HttpServlet {
     }// </editor-fold>
 
     private void listAccount(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
-        List<Account> accounts = accDao.findAll();
+        int currentPage = 1;
+        try {
+            currentPage = Integer.parseInt(request.getParameter("curentPage"));
+        } catch (Exception ex) {
+        }
+
+        List<Account> accounts = accDao.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, currentPage, "TenDangNhap", "DESC");
         session.setAttribute("account", accounts);
 
         String path = "./jsps/PDT/AccountManager.jsp";
@@ -227,13 +244,13 @@ public class AccountController extends HttpServlet {
             error = "Thông tin không hợp lệ";
         }
 
-        
+
         try {
             Account acc = new Account(userName, pwd, fullName, false, "Bình Thường", getType(type));
             accDao.add(acc);
-            
+
             String editor = (String) session.getAttribute("logineduser");
-            
+
             Log.getInstance().log(editor, "Tạo mới tài khoản " + userName);
         } catch (Exception ex) {
             error = "Đã có lỗi xảy ra. " + ex.toString();
@@ -279,7 +296,7 @@ public class AccountController extends HttpServlet {
             try {
                 Account acc = new Account(userName, pwd, fullName, false, status, getType(type));
                 accDao.update(acc);
-                
+
                 String editor = (String) session.getAttribute("logineduser");
                 Log.getInstance().log(editor, "Cập nhật thông tin tài khoản " + userName);
             } catch (Exception ex) {
@@ -305,7 +322,6 @@ public class AccountController extends HttpServlet {
                 }
 
             } catch (Exception ex) {
-                
             }
             //session.setAttribute("error", "Xóa thành công.");
             listAccount(request, response, session);
@@ -344,5 +360,53 @@ public class AccountController extends HttpServlet {
         }
 
         return -1;
+    }
+
+    private void filterAccount(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        PrintWriter out = response.getWriter();
+        int currentPage = 1;
+        try {
+            currentPage = Integer.parseInt(request.getParameter("curentPage"));
+        } catch (Exception ex) {
+        }
+        List<Account> accounts = accDao.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, currentPage, "TenDangNhap", "DESC");
+
+        if ((accounts != null) && (!accounts.isEmpty())) {
+            out.println("<tr>"
+                    + "<th>STT</th>"
+                    + "<th>Tên đăng nhập</th>"
+                    + "<th>Họ tên NSD</th>"
+                    + "<th>Tình Trạng</th>"
+                    + "<th>Loại Tài khoản</th>"
+                    + "<th>Sửa</th>"
+                    + "<th>Xóa</th>"
+                    + "</tr>");
+
+            for (int i = 0; i < accounts.size(); i++) {
+                StringBuffer str = new StringBuffer();
+                str.append("<tr><td>").append((currentPage - 1) * 10 + 1 + i).append("</td>");
+                str.append("<td>").append(accounts.get(i).getId()).append("</td>");
+                str.append("<td>").append(accounts.get(i).getFullName()).append("</td>");
+                str.append("<td>").append(accounts.get(i).getStatus()).append("</td>");
+                String type = StringUtils.getAccountTypeDescription(accounts.get(i).getType());
+                str.append("<td> " + type + "</td>");
+
+                str.append("<td><a href='../../AccountController?action=editaccount&username=").append(accounts.get(i).getId()).append("'>Sửa</a></td>");
+                str.append("<td><a href='../../AccountController?action=deleteaccount&username=").append(accounts.get(i).getId()).append("'>Xóa</a></td>");
+                out.println(str.toString());
+            }
+        }
+    }
+
+    private int getNumberPage() throws Exception {
+        int rows = accDao.getRowsCount();
+
+        int rowsPerPage = Constants.ELEMENT_PER_PAGE_DEFAULT;
+        if (rows % rowsPerPage == 0) {
+            numpage = rows / rowsPerPage;
+        } else {
+            numpage = rows / rowsPerPage + 1;
+        }
+        return numpage;
     }
 }

@@ -23,4 +23,10 @@ public class Constants {
     public static int STUDENT_STATUS_reservations = 1;
     
     //...
+    /**Define number row tobe showed on a page**/
+    public static int ELEMENT_PER_PAGE_DEFAULT = 10;
+    
+    /**Some page allowed to show more then default value
+     you should define below session**/
+    //...
 }
