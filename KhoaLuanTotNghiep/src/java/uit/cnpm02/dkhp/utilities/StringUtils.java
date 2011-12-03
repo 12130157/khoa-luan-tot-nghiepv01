@@ -84,4 +84,14 @@ public class StringUtils {
         buf.append(text.substring(start));
         return buf.toString();
     }
+    
+    public static String getAccountTypeDescription(int type) {
+        if (type == 1) {
+            return "Sinh Vien";
+        } else if (type == 2) {
+            return "Giang vien";
+        } else {
+            return "PDT";
+        }
+    }
 }

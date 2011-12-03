@@ -4,6 +4,7 @@
     Author     : LocNguyen
 --%>
 
+<%@page import="uit.cnpm02.dkhp.utilities.StringUtils"%>
 <%@page import="uit.cnpm02.dkhp.DAO.DAOFactory"%>
 <%@page import="uit.cnpm02.dkhp.model.Account"%>
 <%@page import="java.util.List"%>
@@ -12,19 +13,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <%
     List<Account> accounts = (List<Account>) session.getAttribute("account");
-      
+    Integer numpage = (Integer) session.getAttribute("numpage");
+
 %>
-<%!
-        public String getAccountTypeDescription(int type){
-            if (type == 1) {
-                return "Sinh Vien";
-            } else if (type == 2){
-                return "Giang vien";
-            } else {
-                return "PDT";
-            }
-        }
-    %>
 <html>
     <head>
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
@@ -63,7 +54,7 @@
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
-            
+
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
@@ -81,9 +72,9 @@
                         <input type="text" name="txtSearch" id="txtSearch" />
                         <input type="submit" value="Tìm kiếm">
                     </form>
-                    
+
                     <form id="formdetail" name="formdetail">
-                        <table id="Commentdetail" name="Commentdetail" border="2" bordercolor="yellow" >
+                        <table id="accountdetail" name="accountdetail" border="2" bordercolor="yellow" >
                             <tr>
                             <th>STT</th>
                             <th>Tên đăng nhập</th>
@@ -103,13 +94,21 @@
                             <td><%= acc.getUserName()%></td>
                             <td><%= acc.getFullName()%></td>
                             <td><%= acc.getStatus()%></td>
-                            <td><%= getAccountTypeDescription(acc.getType()) %></td>
+                            <td><%= StringUtils.getAccountTypeDescription(acc.getType())%></td>
                             <td><a href="../../AccountController?action=editaccount&username=<%= acc.getId()%>">Sửa</a> </td>
                             <td><a href="../../AccountController?action=deleteaccount&username=<%= acc.getId()%>">Xóa</a> </td>
                             </tr>
                             <%}
-                          }%>
+                                }%>
                         </table>
+                        <div id="page">
+                            <input type="button" value="|<<" onclick="FirstPage()"/>- 
+                            <input type="button" value="<<" onclick="PrePage()"/>-
+                            <input type="button" value=">>" onclick="NextPage()"/>-
+                            <input type="button" value=">>|" onclick="EndPage()"/>
+                            <input type="hidden" value="<%=numpage%>" id="numpage" />
+                        </div>
+                        <br/>
                     </form>
                 </div>      
             </div><!--End Contents-->
@@ -120,33 +119,34 @@
         </div>
         <!--End Wrapper-->
     </body>
-  
-    <script src="../../javascripts/CommentManager.js"></script>
+
+    <script src="../../javascripts/AccountManager.js"></script>
     <script  type = "text/javascript" >
-        var currentpage=1;
+        var currentpage = 1;
         var http = createRequestObject();
-        numpage=document.getElementById("numpage").value;
+        numpage = document.getElementById("numpage").value;
         function FirstPage(){
-            currentpage=1;
+            currentpage = 1;
             SendRequest();
         }
         function PrePage(){
-            currentpage=currentpage-1;
-            if(currentpage<1) currentpage=1;
+            currentpage--;
+            if(currentpage < 1) currentpage = 1;
             SendRequest();
         }
         function NextPage(){
-            currentpage=currentpage+1;
-            if(currentpage>numpage)currentpage=numpage;
+            currentpage ++;
+            if(currentpage > numpage)
+                currentpage = numpage;
             SendRequest();
         }
         function EndPage(){
-            currentpage=numpage;
+            currentpage = numpage;
             SendRequest();
         }
         function SendRequest(){
             if(http){
-                ajaxfunction("../../CommentController?action=Filter&curentPage="+currentpage);
+                ajaxfunction("../../AccountController?action=Filter&curentPage="+currentpage);
             }
         }
     </script>
