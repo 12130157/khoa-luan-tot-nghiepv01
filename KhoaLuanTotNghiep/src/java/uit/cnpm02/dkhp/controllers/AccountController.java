@@ -26,6 +26,7 @@ import uit.cnpm02.dkhp.model.Class;
 import uit.cnpm02.dkhp.model.Course;
 import uit.cnpm02.dkhp.model.Faculty;
 import uit.cnpm02.dkhp.utilities.Constants;
+import uit.cnpm02.dkhp.utilities.Log;
 
 /**
  *
@@ -216,24 +217,29 @@ public class AccountController extends HttpServlet {
 
         String path = "./jsps/PDT/CreateNewAccount.jsp";
         session.removeAttribute("error");
+        String error = "Tạo tài khoản thành công";
 
         if ((userName == null) || (userName.isEmpty())
                 || (pwd == null)
                 || (rePwd == null)
                 || (!pwd.equals(rePwd))
                 || pwd.isEmpty()) {
-            session.setAttribute("error", "Thông tin không hợp lệ");
+            error = "Thông tin không hợp lệ";
         }
 
-        session.setAttribute("error", "Tạo tài khoản thành công");
+        
         try {
             Account acc = new Account(userName, pwd, fullName, false, "Bình Thường", getType(type));
-
             accDao.add(acc);
+            
+            String editor = (String) session.getAttribute("logineduser");
+            
+            Log.getInstance().log(editor, "Tạo mới tài khoản " + userName);
         } catch (Exception ex) {
-            session.setAttribute("error", "Đã có lỗi xảy ra.");
+            error = "Đã có lỗi xảy ra. " + ex.toString();
         }
 
+        session.setAttribute("error", error);
         response.sendRedirect(path);
     }
 
@@ -273,6 +279,9 @@ public class AccountController extends HttpServlet {
             try {
                 Account acc = new Account(userName, pwd, fullName, false, status, getType(type));
                 accDao.update(acc);
+                
+                String editor = (String) session.getAttribute("logineduser");
+                Log.getInstance().log(editor, "Cập nhật thông tin tài khoản " + userName);
             } catch (Exception ex) {
                 session.setAttribute("error", "Đã có lỗi xảy ra.");
             }
@@ -281,7 +290,6 @@ public class AccountController extends HttpServlet {
     }
 
     private void deleteAccount(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
-        String path = "./jsps/PDT/AccountManager.jsp";
         session.removeAttribute("error");
         String userName = request.getParameter("username");
         if ((userName != null) && (!userName.isEmpty())) {
@@ -291,13 +299,15 @@ public class AccountController extends HttpServlet {
 
                 if (acc != null) {
                     accDao.delete(acc);
+                    //logineduser
+                    String editor = (String) session.getAttribute("logineduser");
+                    Log.getInstance().log(editor, "Xóa tài khoản " + userName);
                 }
 
             } catch (Exception ex) {
-                session.setAttribute("error", "Đã có lỗi xảy ra.");
+                
             }
-            session.setAttribute("error", "Xóa thành công.");
-
+            //session.setAttribute("error", "Xóa thành công.");
             listAccount(request, response, session);
         }
     }
