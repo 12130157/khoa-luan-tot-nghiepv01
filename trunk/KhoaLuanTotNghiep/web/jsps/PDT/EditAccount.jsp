@@ -71,9 +71,8 @@
 
                 <div id="error">
                     <%
-
                         if ((error != null) && (!error.isEmpty())) {%>
-                    <%= error%>
+                            <%= error%>
                     <%}
                     %>
                 </div>

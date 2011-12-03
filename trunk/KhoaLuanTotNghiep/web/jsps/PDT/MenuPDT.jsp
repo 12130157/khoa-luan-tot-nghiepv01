@@ -35,32 +35,32 @@
              <li><a href="../../HomepageController?actor=PDT"> Trang chủ |</a></li>
              <li><a href=""> Quản lý con người |</a>
                  <ul>
-                     <li><a href="../ServHompage?action=view"> Quản lý sinh viên</a></li>
-                     <li><a href="../ServHompage?action=view"> Quản lý giảng viên</a></li>
+                     <li><a href="#"> Quản lý sinh viên</a></li>
+                     <li><a href="#"> Quản lý giảng viên</a></li>
                  </ul>
              </li>
-             <li><a href="../ServHompage?action=view"> Quản lý tài khoản |</a></li>
-             <li><a href="../ServHompage?action=view"> Quản lý học vụ |</a>
+             <li><a href="../../AccountController?action=manager"> Quản lý tài khoản |</a></li>
+             <li><a href="#"> Quản lý học vụ |</a>
                  <ul>
-                     <li><a href="../ServHompage?action=view"> Quản lý môn học</a></li>
-                     <li><a href="../ServHompage?action=view"> Quản lý lớp học</a></li>
+                     <li><a href="#"> Quản lý môn học</a></li>
+                     <li><a href="#"> Quản lý lớp học</a></li>
              
              
                  </ul>
              </li>
              <li><a href=""> Đào tạo |</a>
                  <ul>
-                     <li><a href="../ServHompage?action=view"> Khóa học</a></li>
-                     <li><a href="../ServHompage?action=view"> Quản lý khoa</a></li>
-                     <li><a href="../ServHompage?action=view"> Chương trình đào tạo</a></li>
-                     <li><a href="../ServHompage?action=view"> Quản lý lớp</a></li>
+                     <li><a href="#"> Khóa học</a></li>
+                     <li><a href="#"> Quản lý khoa</a></li>
+                     <li><a href="#"> Chương trình đào tạo</a></li>
+                     <li><a href="#"> Quản lý lớp</a></li>
                  </ul>
              </li>
-             <li><a href="../ServHompage?action=view"> Điểm cuối kỳ |</a></li>
+             <li><a href="#"> Điểm cuối kỳ |</a></li>
              <li><a href=""> Quy định |</a>
                  <ul>
-                     <li><a href="../ServHompage?action=view"> Môn học tiên quyết</a></li>
-                     <li><a href="../ServHompage?action=view"> Quy định</a></li>
+                     <li><a href="#"> Môn học tiên quyết</a></li>
+                     <li><a href="#"> Quy định</a></li>
                  </ul>
              </li>
              <li><a href=""> Giao tiếp |</a>
