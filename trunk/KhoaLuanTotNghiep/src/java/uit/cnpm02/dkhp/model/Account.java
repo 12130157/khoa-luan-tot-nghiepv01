@@ -25,6 +25,7 @@ public class Account extends AbstractJdbcModel<String> {
         this.isLogined = isLogined;
         this.status = status;
         this.type = type;
+        setId(userName);
     }
 
     public String getFullName() {
