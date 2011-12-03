@@ -25,6 +25,7 @@ import uit.cnpm02.dkhp.DAO.FacultyDAO;
 import uit.cnpm02.dkhp.model.Class;
 import uit.cnpm02.dkhp.model.Course;
 import uit.cnpm02.dkhp.model.Faculty;
+import uit.cnpm02.dkhp.utilities.Constants;
 
 /**
  *
@@ -64,7 +65,16 @@ public class AccountController extends HttpServlet {
                 updateInfo(request, response, session);
             } else if (action.equalsIgnoreCase("manager")) {
                 listAccount(request, response, session);
+            } else if (action.equalsIgnoreCase("createnew")) {
+                createNewAccount(request, response, session);
+            } else if (action.equalsIgnoreCase("editaccount")) {
+                editAccount(request, response, session);
+            } else if (action.equalsIgnoreCase("deleteaccount")) {
+                deleteAccount(request, response, session);
+            } else if (action.equalsIgnoreCase("search")) {
+                search(request, response, session);
             }
+
         } catch (Exception ex) {
             Logger.getLogger(AccountController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -192,8 +202,137 @@ public class AccountController extends HttpServlet {
     private void listAccount(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
         List<Account> accounts = accDao.findAll();
         session.setAttribute("account", accounts);
-        
+
         String path = "./jsps/PDT/AccountManager.jsp";
         response.sendRedirect(path);
+    }
+
+    private void createNewAccount(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
+        String userName = request.getParameter("txtUsername");
+        String pwd = request.getParameter("txtPassword");
+        String rePwd = request.getParameter("txtRePassword");
+        String fullName = request.getParameter("txtFullName");
+        String type = request.getParameter("selectType");
+
+        String path = "./jsps/PDT/CreateNewAccount.jsp";
+        session.removeAttribute("error");
+
+        if ((userName == null) || (userName.isEmpty())
+                || (pwd == null)
+                || (rePwd == null)
+                || (!pwd.equals(rePwd))
+                || pwd.isEmpty()) {
+            session.setAttribute("error", "Thông tin không hợp lệ");
+        }
+
+        session.setAttribute("error", "Tạo tài khoản thành công");
+        try {
+            Account acc = new Account(userName, pwd, fullName, false, "Bình Thường", getType(type));
+
+            accDao.add(acc);
+        } catch (Exception ex) {
+            session.setAttribute("error", "Đã có lỗi xảy ra.");
+        }
+
+        response.sendRedirect(path);
+    }
+
+    private void editAccount(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
+        String path = "./jsps/PDT/EditAccount.jsp";
+        session.removeAttribute("error");
+        String userName = request.getParameter("username");
+        if ((userName != null) && (!userName.isEmpty())) {
+            try {
+                //Prepare data for edit.
+                Account acc = accDao.findById(userName);
+                if (acc != null) {
+                    session.setAttribute("account", acc);
+                }
+            } catch (Exception ex) {
+                session.setAttribute("error", "Đã có lỗi xảy ra.");
+            }
+        } else {
+
+            userName = request.getParameter("txtUsername");
+            String pwd = request.getParameter("txtPassword");
+            String rePwd = request.getParameter("txtRePassword");
+            String fullName = request.getParameter("txtFullName");
+            String type = request.getParameter("selectType");
+            String status = request.getParameter("selectStatus");
+
+            if ((userName == null) || (userName.isEmpty())
+                    || (pwd == null)
+                    || (rePwd == null)
+                    || (!pwd.equals(rePwd))
+                    || pwd.isEmpty()) {
+
+                session.setAttribute("error", "Thông tin không hợp lệ");
+            }
+
+            session.setAttribute("error", "Cập nhật thành công");
+            try {
+                Account acc = new Account(userName, pwd, fullName, false, status, getType(type));
+                accDao.update(acc);
+            } catch (Exception ex) {
+                session.setAttribute("error", "Đã có lỗi xảy ra.");
+            }
+        }
+        response.sendRedirect(path);
+    }
+
+    private void deleteAccount(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
+        String path = "./jsps/PDT/AccountManager.jsp";
+        session.removeAttribute("error");
+        String userName = request.getParameter("username");
+        if ((userName != null) && (!userName.isEmpty())) {
+            try {
+                //Prepare data for edit.
+                Account acc = accDao.findById(userName);
+
+                if (acc != null) {
+                    accDao.delete(acc);
+                }
+
+            } catch (Exception ex) {
+                session.setAttribute("error", "Đã có lỗi xảy ra.");
+            }
+            session.setAttribute("error", "Xóa thành công.");
+
+            listAccount(request, response, session);
+        }
+    }
+
+    private void search(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
+        String path = "./jsps/PDT/AccountManager.jsp";
+        session.removeAttribute("error");
+        String search = request.getParameter("txtSearch");
+
+        if ((search == null) || (search.isEmpty()) || (search.equals("*")) || (search.equalsIgnoreCase("all"))) {
+            listAccount(request, response, session);
+        } else {
+            if ((search != null) && (!search.isEmpty())) {
+                try {
+                    List<Account> acc = accDao.search(search);
+                    if (acc != null) {
+                        session.setAttribute("account", acc);
+                        response.sendRedirect(path);
+                    }
+                } catch (Exception ex) {
+                }
+            }
+        }
+        response.sendRedirect(path);
+    }
+
+    private int getType(String typeDescription) {
+        if ((typeDescription.equals("PDT")) || (typeDescription.equals("PĐT"))) {
+            return Constants.ACCOUNT_TYPE_PDT;
+        } else if ((typeDescription.equals("Giang Vien")) || (typeDescription.equals("Giảng Viên"))) {
+            return Constants.ACCOUNT_TYPE_LECTURE;
+        } else if ((typeDescription.equals("Sinh Vien")) || (typeDescription.equals("Sinh Viên"))) {
+            return Constants.ACCOUNT_TYPE_STUDENT;
+        }
+
+        return -1;
     }
 }
