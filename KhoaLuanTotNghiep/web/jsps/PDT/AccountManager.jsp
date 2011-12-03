@@ -77,6 +77,11 @@
                 <div id="accounts">
                     <a href="CreateNewAccount.jsp"> Tạo mới tài khoản </a>
                     <br /><br />
+                    <form action="../../AccountController?action=search" method="post">
+                        <input type="text" name="txtSearch" id="txtSearch" />
+                        <input type="submit" value="Tìm kiếm">
+                    </form>
+                    
                     <form id="formdetail" name="formdetail">
                         <table id="Commentdetail" name="Commentdetail" border="2" bordercolor="yellow" >
                             <tr>
@@ -99,8 +104,8 @@
                             <td><%= acc.getFullName()%></td>
                             <td><%= acc.getStatus()%></td>
                             <td><%= getAccountTypeDescription(acc.getType()) %></td>
-                            <td><a href="../../CommentController?action=detail&Id=<%= acc.getId()%>">Sửa</a> </td>
-                            <td><a href="../../CommentController?action=delete&Id=<%= acc.getId()%>">Xóa</a> </td>
+                            <td><a href="../../AccountController?action=editaccount&username=<%= acc.getId()%>">Sửa</a> </td>
+                            <td><a href="../../AccountController?action=deleteaccount&username=<%= acc.getId()%>">Xóa</a> </td>
                             </tr>
                             <%}
                           }%>
