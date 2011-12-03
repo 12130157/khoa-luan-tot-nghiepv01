@@ -25,7 +25,9 @@ import uit.cnpm02.dkhp.utilities.Constants;
  */
 @WebServlet(name = "Login", urlPatterns = {"/Login"})
 public class Login extends HttpServlet {
- private AccountDAO accDao = new AccountDAO();
+
+    private AccountDAO accDao = new AccountDAO();
+
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
@@ -35,7 +37,7 @@ public class Login extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         request.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
         PrintWriter out = response.getWriter();
@@ -45,14 +47,14 @@ public class Login extends HttpServlet {
                 if (function.equals("login")) {
                     Login(session, request, response);
                 } else if (function.equals("logout")) {
-                  LogOut(session, response);
-               }
+                    LogOut(session, response);
+                }
             } else {
                 session.setAttribute("error", "Lỗi hệ thống. Vui lòng quay lại sau.");
                 String path = "./jsps/Login.jsp";
                 response.sendRedirect(path);
             }
-            
+
         } catch (Exception ex) {
             Logger.getLogger(AccountController.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -82,19 +84,22 @@ public class Login extends HttpServlet {
                 path = "./jsps/Login.jsp";
             } else {
                 session.setAttribute("username", user);
+                session.setAttribute("logineduser", user);
                 session.setAttribute("password", pass);
-                
+
                 //Set to logined.
                 Account acc = accDao.findById(user);
                 acc.setIsLogined(true);
                 accDao.update(acc);
-              if(acc.getType()==Constants.ACCOUNT_TYPE_PDT)
-                   path="./jsps/PDT/PDTStart.jsp";
-               else if(acc.getType()==Constants.ACCOUNT_TYPE_STUDENT)
-                   path="./jsps/SinhVien/SVStart.jsp";
-               else if(acc.getType()==Constants.ACCOUNT_TYPE_LECTURE) 
-                   path="./jsps/GiangVien/GVStart.jsp";
-             }
+                
+                if (acc.getType() == Constants.ACCOUNT_TYPE_PDT) {
+                    path = "./jsps/PDT/PDTStart.jsp";
+                } else if (acc.getType() == Constants.ACCOUNT_TYPE_STUDENT) {
+                    path = "./jsps/SinhVien/SVStart.jsp";
+                } else if (acc.getType() == Constants.ACCOUNT_TYPE_LECTURE) {
+                    path = "./jsps/GiangVien/GVStart.jsp";
+                }
+            }
         } else {
             session.setAttribute("error", "Tên đăng nhập hoặc mật khẩu không hợp lệ");
             path = "./jsps/Login.jsp";
@@ -104,15 +109,16 @@ public class Login extends HttpServlet {
     }
 
     private void LogOut(HttpSession session, HttpServletResponse response) throws IOException, Exception {
-       // String user=(String) session.getAttribute("username");
-       // Account acc = accDao.findById(user);
-        
+        // String user=(String) session.getAttribute("username");
+        // Account acc = accDao.findById(user);
+
         //if(acc != null) {
-         //   acc.setIsLogined(false);
-         //   accDao.update(acc);
-       // }
+        //   acc.setIsLogined(false);
+        //   accDao.update(acc);
+        // }
 
         session.removeAttribute("username");
+        session.removeAttribute("logineduser");
         session.removeAttribute("pass");
         String path = "./index.jsp";
         response.sendRedirect(path);
