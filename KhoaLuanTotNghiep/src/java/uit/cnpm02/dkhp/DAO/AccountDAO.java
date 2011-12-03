@@ -28,10 +28,10 @@ public class AccountDAO extends AbstractJdbcDAO<Account, String> {
         PreparedStatement statement = null;
         ResultSet rs = null;
         try {
-            String selectQuery = "Select * from " + t.getTableName() + " where TenDangNhap like '%?%'";
+            String selectQuery = "Select * from " + t.getTableName() + " where TenDangNhap like '%" + idstr + "%'";
             con = getConnection();
             statement = con.prepareStatement(selectQuery);
-            statement.setObject(1, idstr);
+            //statement.setObject(1, idstr);
             rs = statement.executeQuery();
             while (rs.next()) {
                 Account ti = new Account();
@@ -67,10 +67,10 @@ public class AccountDAO extends AbstractJdbcDAO<Account, String> {
         PreparedStatement statement = null;
         ResultSet rs = null;
         try {
-            String selectQuery = "Select * from " + t.getTableName() + " where HoTen like '%?%'";
+            String selectQuery = "Select * from " + t.getTableName() + " where HoTen like '%" + name + "%'";
             con = getConnection();
             statement = con.prepareStatement(selectQuery);
-            statement.setObject(1, name);
+            //statement.setObject(1, name);
             rs = statement.executeQuery();
             while (rs.next()) {
                 Account ti = new Account();
