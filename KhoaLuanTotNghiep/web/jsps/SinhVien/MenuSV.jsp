@@ -16,7 +16,7 @@
     </head>
     <body>
     <MARQUEE onmouseover="this.stop();" onmouseout="this.start();" HEIGHT=25 BGCOLOR=transparent BEHAVIOR=scroll SCROLLAMOUNT="4">
-        <h3>Đại Học Quốc Gia Tp. Hồ Chí Minh-Trường Đại Học Công Nghệ Thông Tin-Khoa Kỹ Thuật Phần Mềm.</h3>
+        <h3>Đại Học Quốc Gia Tp. Hồ Chí Minh-Trường Đại Học Công Nghệ Thông Tin.</h3>
     </MARQUEE>
 
     <div id="logo">
@@ -33,19 +33,19 @@
     <div id = "menusv">
         <ul>
              <li><a href="../../HomepageController?actor=Student"> Trang chủ |</a></li>
-             <li><a href=""> Học Tập |</a>
+             <li><a href=""> Học tập |</a>
                  <ul>
                       <li><a href="../ServHompage?action=view"> Đăng ký học phần</a></li>
                       <li><a href="../ServHompage?action=view"> Kết quả học tập</a></li>
                  </ul>
              </li>
-             <li><a href="TrainingProgram.jsp"> Chương trình đào tạo |</a></li>
+             <li><a href="../../TrainProgramController?action=view"> Chương trình đào tạo |</a></li>
              <li><a href="../ServHompage?action=view"> Thời khóa biểu |</a></li>
              <li><a href="../ServHompage?action=view"> Danh sách lớp học |</a></li>
              <li><a href=""> Quy định |</a>
                  <ul>
                      <li><a href="../ServHompage?action=view"> Môn học tiên quyết</a></li>
-                     <li><a href="../ServHompage?action=view"> Quy định</a></li>
+                     <li><a href="../../RuleController?action=view"> Quy định</a></li>
                  </ul>
              </li>
              <li><a href=""> Cá nhân |</a>

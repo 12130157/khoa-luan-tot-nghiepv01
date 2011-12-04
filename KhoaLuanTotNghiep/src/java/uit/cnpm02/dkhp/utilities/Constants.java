@@ -10,6 +10,7 @@ public class Constants {
     public static int ACCOUNT_TYPE_LECTURE = 2;
     public static int ACCOUNT_TYPE_PDT = 3;
     public static int ACCOUNT_TYPE_STUDENT = 1;
+
     public static String ACCOUNT_STATUS_NORMAL = "Bình thường";
     public static String ACCOUNT_STATUS_SPECIAL = "Đặc biệt";
     

@@ -732,9 +732,9 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
         Object[] columnValues = t.getColumnValues();
 
         StringBuffer sb = new StringBuffer();
-        sb.append(columnNames[0] + "=" + "?");
+        sb.append(columnNames[0]).append("=" + "?");
         for (int i = 1; i < columnValues.length; i++) {
-            sb.append(", " + columnNames[i] + "=" + "?");
+            sb.append(", ").append(columnNames[i]).append("=" + "?");
         }
 
         Connection con = null;

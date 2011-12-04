@@ -74,7 +74,7 @@ public class Login extends HttpServlet {
         String user = request.getParameter("txtUsername");
         String pass = request.getParameter("txtPassword");
         AccountBO accBo = new AccountBO();
-        String path = "./HomepageController";
+        String path = "";
         if (accBo.Login(user, pass)) {
             if (accBo.isLogined(user)) {
                 session.setAttribute("error", "Tài khoản của bạn đang được đăng nhập ở một máy khác!");

@@ -4,6 +4,7 @@
  */
 package uit.cnpm02.dkhp.controllers;
 
+import com.sun.corba.se.impl.orbutil.closure.Constant;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import uit.cnpm02.dkhp.DAO.NewsDAO;
 import uit.cnpm02.dkhp.model.News;
+import uit.cnpm02.dkhp.utilities.Constants;
 
 /**
  *
@@ -63,12 +65,12 @@ public class NewsController extends HttpServlet {
         PrintWriter out = response.getWriter();
         int currentPage=Integer.parseInt(request.getParameter("curentPage"));
         NewsDAO newsDao=new NewsDAO();
-        List<News> newsList=newsDao.findAll(10, currentPage, "NgayTao", "DESC");
+        List<News> newsList=newsDao.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, currentPage, "NgayTao", "DESC");
         if (newsList.isEmpty()==false) {
             out.println("<tr><th>STT</th><th>Ngày đăng</th><th >Tiêu đề</th><th>Tình trạng</th><th>Sửa</th><th>Xem</th><th>Xóa</th></tr>");
             for (int i = 0; i < newsList.size(); i++) {
                 StringBuffer str = new StringBuffer();
-                str.append("<tr><td>").append((currentPage-1)*10 + 1 + i).append("</td>");
+                str.append("<tr><td>").append((currentPage-1)*Constants.ELEMENT_PER_PAGE_DEFAULT + 1 + i).append("</td>");
                 str.append("<td>").append(newsList.get(i).getCreatedDate()).append("</td>");
                 str.append("<td>").append(newsList.get(i).getTitle()).append("</td>");
                 if(newsList.get(i).getType()==0){
