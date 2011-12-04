@@ -56,20 +56,20 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Quản lý sinh viên</title>
         <style media="all" type="text/css">
-            #tableliststudent{
+            #dataTable{
                 margin-left: 10px;
                 margin-top: 20px;
                 margin-bottom: 20px;
                 width: 740px;
                 border: 3px solid #73726E;
             }
-            #tableliststudent th{
+            #dataTable-th{
                 height: 32px;
                 font-weight: bold;
-                background: url("../../imgs/opaque_10.png") repeat scroll 0 0 transparent;
+                background-color: #175F6E;
                 text-align: center;
             }
-            #tableliststudent td{
+            #dataTable td{
                 background: url("../../imgs/opaque_10.png") repeat scroll 0 0 transparent;
                 padding: 2px 5px 2px 5px;
                 text-align: left;
@@ -118,20 +118,33 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <p id="error">
+                <div style="text-align: center;">
+                    <u><h3>Trang nhập Sinh Viên</h3></u>
+                </div>
 
+                <br>
+                <hr/><hr/><br>
+                <p id="error">
+                    <%
+                        String error = (String) session.getAttribute("error");
+                        if ((error != null) && !error.isEmpty()) {
+                            session.removeAttribute("error");
+                    %>
+                    <%= error%>
+                    <%  }
+                    %>
                 </p>
 
                 <p>
-                <INPUT type="button" value="Thêm hàng" onclick="addRow('dataTable')" />
-                <INPUT type="button" value="Xóa mục đã chọn" onclick="deleteRow('dataTable')" />
-                <INPUT type="submit" value="Hoàn thành" onclick="submit('../../ManageStudentController?function=import', 'dataTable')" />
+                    <INPUT type="button" value="Thêm hàng" onclick="addRow('dataTable')" />
+                    <INPUT type="button" value="Xóa mục đã chọn" onclick="deleteRow('dataTable')" />
+                    <INPUT type="submit" value="Hoàn thành" onclick="submit('../../ManageStudentController?function=import', 'dataTable')" />
                 </p>
                 <hr/><hr/>
                 <div id="sidebar">
                     <table id="dataTable" width="450px" border="1">
-                        <tr style="width: 800px">
-                            <td><INPUT type="checkbox" name="chkAll"/></td>
+                        <tr id="dataTable-th">
+                            <td><INPUT type="checkbox" name="chkAll" onclick="selectAll('dataTable')" /></td>
                             <td align: center> STT </td>
                             <td align="center"> MSSV </td>
                             <td align="center"> Họ Và Tên </td>
@@ -179,6 +192,7 @@
         <!--End Wrapper-->
     </body>
 
+    <script src="../../javascripts/UtilTable.js"></script>
     <SCRIPT language="javascript">
         var http = createRequestObject();
         var facultiesArray = new Array();
@@ -366,11 +380,11 @@
         // Util functions for update data
         //
         function getListStudentFromTable(tableID) {
+            var datas = '';
+            var selectOne = false;
             try {
                 var table = document.getElementById(tableID);
                 var rowCount = table.rows.length;
-                var datas = '';
-                
                 for(var i = 1; i < rowCount; i++) {
                     var row = table.rows[i];
                     var chkbox = row.cells[0].childNodes[0];
@@ -379,7 +393,9 @@
                             alert('Vui lòng nhập đầy thông tin cần thiết cho dòng ' + i);
                             return 'fail'; //fail
                         }
-                        var elTableCells = row. getElementsByTagName('td');
+                        if (selectOne == false)
+                            selectOne = true;
+                        var elTableCells = row.getElementsByTagName('td');
                         var currentData = '';
                         currentData += elTableCells[2].childNodes[0].value + ','; //MSSV
                         currentData += elTableCells[3].childNodes[0].value + ','; //Ho Ten
@@ -421,6 +437,11 @@
             }catch(e) {
                 alert(e);
             }
+            if (selectOne == false) {
+                alert('Vui lòng chọn ít nhất một hàng.');
+                return 'fail';
+            }
+            
             return datas;
         }
         
@@ -432,7 +453,7 @@
                 (elTableCells[6].childNodes[0].value == '') ||
                 (elTableCells[7].childNodes[0].value == '') ||
                 (elTableCells[6].childNodes[0].value == '')
-            ) {
+        ) {
                 return false;
             }
             
