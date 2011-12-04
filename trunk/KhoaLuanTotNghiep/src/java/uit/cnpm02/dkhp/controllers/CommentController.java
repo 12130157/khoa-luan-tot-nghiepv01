@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
 import uit.cnpm02.dkhp.DAO.CommentDao;
 import uit.cnpm02.dkhp.model.Comment;
 import java.util.List;
+import uit.cnpm02.dkhp.utilities.Constants;
 
 /**
  *
@@ -65,12 +66,12 @@ public class CommentController extends HttpServlet {
         PrintWriter out = response.getWriter();
         int currentPage = Integer.parseInt(request.getParameter("curentPage"));
         CommentDao commentDao = new CommentDao();
-        List<Comment> commentList = commentDao.findAll(10, currentPage, "NgayGui", "DESC");
+        List<Comment> commentList = commentDao.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, currentPage, "NgayGui", "DESC");
         if (commentList.isEmpty() == false) {
             out.println("<tr><th>STT</th><th>Người gửi</th><th>Nội dung</th><th>Ngày gửi</th><th>Tình trạng</th><th>Xem</th><th>Xóa</th></tr>");
             for (int i = 0; i < commentList.size(); i++) {
                 StringBuffer str = new StringBuffer();
-                str.append("<tr><td>").append((currentPage - 1) * 10 + 1 + i).append("</td>");
+                str.append("<tr><td>").append((currentPage - 1) * Constants.ELEMENT_PER_PAGE_DEFAULT + 1 + i).append("</td>");
                 str.append("<td>").append(commentList.get(i).getAuthor()).append("</td>");
                 str.append("<td>").append(commentList.get(i).getContent()).append("</td>");
                 str.append("<td>").append(commentList.get(i).getCreateDate()).append("</td>");

@@ -9,33 +9,27 @@ import uit.cnpm02.dkhp.access.mapper.MapperConstant;
  */
 public class Rule extends  AbstractJdbcModel<String>{
     
-    private String ruleCode;
-    private int value;
+    private float value;
 
     public Rule() {
     }
 
-    public Rule(String ruleCode, int value) {
-        this.ruleCode = ruleCode;
+    public Rule(String id, int value) {
+        setId(id);
         this.value = value;
     }
 
-    public int getValue() {
+    public float getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(float value) {
         this.value = value;
     }
 
-    public String getRuleCode() {
-        return ruleCode;
-    }
+  
 
-    public void setRuleCode(String ruleCode) {
-        this.ruleCode = ruleCode;
-    }
-     @Override
+   @Override
     public String getIdColumnName() {
         return "Ma";
     }
@@ -54,7 +48,7 @@ public class Rule extends  AbstractJdbcModel<String>{
    @Override
     public void setColumnValues(Object[] values) {
         try {
-            value =Integer.parseInt(values[0].toString());
+            value =Float.parseFloat(values[0].toString());
           } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
