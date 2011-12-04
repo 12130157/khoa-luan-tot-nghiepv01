@@ -87,16 +87,16 @@
                 <form>
                     <table>
                         <tr><td>
-                            <input type="text" placeholder="Nhap ten SV"/>
-                            <input type="button" onclick="" value="Tìm theo tên SV"/>
+                            <input type="text" name="txtName" id="txtName" placeholder="Nhap ten SV"/>
+                            <input type="button" onclick="searchByName()" value="Tìm theo tên SV"/>
                         </td></tr>
                         <tr><td>
-                            <input type="text" placeholder="Nhap ma lop"/>
-                            <input type="button" onclick="" value="Tìm theo lớp"/>
+                            <input type="text" name="txtClass" id="txtClass" placeholder="Nhap ma lop"/>
+                            <input type="button" onclick="searchByClass()" value="Tìm theo lớp"/>
                         </td></tr>
                         <tr><td>
-                            <input type="text" placeholder="Nhap ma khoa"/>
-                            <input type="button" onclick="" value="Tìm theo khoa"/>
+                            <input type="text" name="txtCourse" id="txtCourse" placeholder="Nhap ma khoa"/>
+                            <input type="button" onclick="searchByCourse()" value="Tìm theo khoa"/>
                         </td></tr>
                     </table>
                 </form>
@@ -156,11 +156,6 @@
 
     <script src="../../javascripts/UtilTable.js"></script>
     <SCRIPT language="javascript">
-        var typesearch = "All";
-        var name = "All";
-        var action = "search";
-        var action1 = "studentlist";
-        var start = 0;
         var end = document.getElementById("numstu").value;
         var http = createRequestObject();
         function search(){
@@ -230,12 +225,61 @@
         }
         function selectCode(){
             typesearch = "mssv";
+            
         }
         function selectName(){
             typesearch = "name";
         }
         function selectClass(){
             typesearch = "classname";
+        }
+        
+        function searchHandler() {
+            if(http.readyState == 4 && http.status == 200){
+                location.reload(true);
+            }
+        }
+        
+        function searchByName(){
+            var name = document.getElementById("txtName").value;
+            if (name == null) {
+                alert('Vui lòng nhập tên tìm kiếm.');
+                return;
+            }
+            var pagename = "../../ManageStudentController?function=liststudent&searchtype=name&searchvalue=" + name;
+            if(http){
+                http.open("GET", pagename ,true);
+                http.onreadystatechange = searchHandler;
+                http.send(null);
+            }
+        }
+        
+        function searchByClass(){
+            var clazz = document.getElementById("txtClass").value;
+            if (clazz == null) {
+                alert('Vui lòng nhập tên tìm kiếm.');
+                return;
+            }
+            var pagename = "../../ManageStudentController?function=liststudent&searchtype=clazz&searchvalue=" + clazz;
+            if(http){
+                http.open("GET", pagename ,true);
+                http.onreadystatechange = searchHandler;
+                http.send(null);
+            }            
+        }
+        
+        function searchByCourse(){
+            var course = document.getElementById("txtCourse").value;
+            if (course == null) {
+                alert('Vui lòng nhập tên tìm kiếm.');
+                return;
+            }
+            var pagename = "../../ManageStudentController?function=liststudent&searchtype=course&searchvalue=" + course;
+            if(http){
+                http.open("GET", pagename ,true);
+                http.onreadystatechange = searchHandler;
+                http.send(null);
+            }    
         }
         
         function load() {
