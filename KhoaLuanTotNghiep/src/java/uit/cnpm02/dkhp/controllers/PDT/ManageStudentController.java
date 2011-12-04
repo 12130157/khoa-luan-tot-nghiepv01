@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -29,8 +30,8 @@ import uit.cnpm02.dkhp.utilities.FileUtils;
  */
 @WebServlet(name = "ManageStudentController", urlPatterns = {"/ManageStudentController"})
 public class ManageStudentController extends HttpServlet {
-    private StudentDAO studentDao = DAOFactory.getStudentDao();
 
+    private StudentDAO studentDao = DAOFactory.getStudentDao();
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
 
     /** 
@@ -48,31 +49,37 @@ public class ManageStudentController extends HttpServlet {
 
         PrintWriter out = response.getWriter();
         HttpSession session = request.getSession();
-        
+        session.removeAttribute("error");
+
         try {
-            //addStudent(null, out);
             String action = request.getParameter("function");
             String datas = request.getParameter("data");
             if (action.equalsIgnoreCase("liststudent")) {
                 listStudent(request, response);
-     
-                String path="./jsps/PDT/ListStudent.jsp";
+                String path = "./jsps/PDT/ListStudent.jsp";
                 response.sendRedirect(path);
             } else if (action.equalsIgnoreCase("editstudent")) {
                 editStudent(request, response);
-     
-                String path="./jsps/PDT/EditStudent.jsp";
+                String path = "./jsps/PDT/EditStudent.jsp";
                 response.sendRedirect(path);
             } else if (action.equalsIgnoreCase("import")) {
                 //Data input in format: student1; student2; student 3 ...
                 //Student: mssv, hoten, ...
                 String result = importStudentFromDataString(datas);
-                out.println(result);
+                session.setAttribute("error", result);
+                String path = "./jsps/PDT/ImportStudent.jsp";
+                response.sendRedirect(path);
             } else if (action.equalsIgnoreCase("importfromfile")) {
                 String result = importStudentFromFile(request, response);
-                out.println(result);
-            } else {
-                // Unknown function request.
+                session.setAttribute("error", result);
+                String path = "./jsps/PDT/ImportStudent.jsp";
+                response.sendRedirect(path);
+            } else if (action.equalsIgnoreCase("delete")) {
+                String result = deleteStudent(request, response);
+                session.setAttribute("error", result);
+                listStudent(request, response);
+                String path = "./jsps/PDT/ListStudent.jsp";
+                response.sendRedirect(path);
             }
         } catch (Exception ex) {
             out.println("Đã xảy ra sự cố: </br>" + ex);
@@ -111,21 +118,26 @@ public class ManageStudentController extends HttpServlet {
      * @param students
      * @throws Exception 
      */
-    private void deleteStudent(List<Student> students) throws Exception {
-        if (studentDao != null) {
+    private String deleteStudent(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        String result = "";
+        String data = (String) req.getParameter("data");
 
-            // Xoa account
-
-
-            // Xoa cac ban DKHP cua cac SV nay
-
-
-            //
-
-            studentDao.delete(students);
-        } else {
-            throw new Exception("Couldn't create Student DAO");
+        if ((data == null) || data.isEmpty()) {
+            return "Xóa không thành công.";
         }
+        String[] mssv = data.split("-");
+        if (studentDao == null) {
+            studentDao = DAOFactory.getStudentDao();
+        }
+
+        List<Student> students = studentDao.findByIds(mssv);
+        if (!students.isEmpty()) {
+            studentDao.delete(students);
+            result = "Đã xóa " + students.size() + " sinh viên";
+        }
+        result = "Chưa xóa SV nào.";
+
+        return result;
     }
 
     private String importStudentFromDataString(String datas) throws Exception {
@@ -173,19 +185,14 @@ public class ManageStudentController extends HttpServlet {
     }
 
     private String importStudentFromFile(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        List<Student> students = new ArrayList<Student>();
         try {
-            HttpSession session = request.getSession();
-            int numerror = 0;
             HSSFWorkbook wb = FileUtils.getWorkbook(request, response);
             HSSFSheet sheet = wb.getSheetAt(0);
-            int rows = sheet.getPhysicalNumberOfRows();
             HSSFRow rowTemp;
             HSSFCell cellTemp;
 
-            String datas = "";
             int cellType;
-            String strValue = "";
-
             Iterator rowIter = sheet.rowIterator();
             while (rowIter.hasNext()) {
                 rowTemp = (HSSFRow) rowIter.next();
@@ -200,40 +207,106 @@ public class ManageStudentController extends HttpServlet {
                 cellTemp = rowTemp.getCell(0);
                 cellType = cellTemp.getCellType();
                 //check the first cell of data must be a number
-
                 if (cellType != HSSFCell.CELL_TYPE_NUMERIC) {
                     continue;
                 } else {
-                    //STT-MSSV-Họ và tên-Ngày sinh-Giới tính-CMND-Quê quán
-                    //-Địa chỉ-Điện thoại-Email-Mã lớp-Mã khoa-Mã khóa học-Tình trạng
-                    //-Bậc học-Ngày nhập học-Loại hình học-Ghi chú
-                    String currentData = "";
-                    String date = "";
-                    for (int j = 1; j < 18; j++) {
-                        if (j > 1) {
-                            currentData += ",";
-                        }
-                        cellTemp = rowTemp.getCell(j);
-                        if (cellTemp == null) {
-                            return "Lỗi đọc file";
-                        }
-
-                        if (j == 3 || j == 15) {
-                            date = cellTemp.getDateCellValue().toString();
-                            currentData += "10/04/1987";//dateFormat.parse(date).toString();
-                        } else {
-                            cellTemp.setCellType(HSSFCell.CELL_TYPE_STRING);
-                            currentData += cellTemp.getStringCellValue();
-                        }
-                    }
-
-                    datas += currentData + ";";
+                    Student s = initStudentFromHSSFRow(rowTemp);
+                    students.add(s);
                 }
             }
 
-            return importStudentFromDataString(datas.substring(0, datas.lastIndexOf(';')));
+            Collection<String> id_Students = DAOFactory.getStudentDao().addAll(students);
+            if (id_Students == null) {
+                return "Thêm không thành công";
+            }
+            return "Thêm thành công.";
+
         } catch (Exception ex) {
             throw ex;
+        }
+    }
+
+    private Student initStudentFromHSSFRow(HSSFRow rowTemp) {
+        try {
+            Student s = new Student();
+            //STT-MSSV-Họ và tên-Ngày sinh-Giới tính-CMND-Quê quán
+            //-Địa chỉ-Điện thoại-Email-Mã lớp-Mã khoa-Mã khóa học-Tình trạng
+            //-Bậc học-Ngày nhập học-Loại hình học-Ghi chú
+            HSSFCell cellTemp = null;
+
+            cellTemp = rowTemp.getCell(1);
+            String mssv = cellTemp.getStringCellValue();
+            s.setId(mssv);
+
+            cellTemp = rowTemp.getCell(2);
+            String fullName = cellTemp.getStringCellValue();
+            s.setFullName(fullName);
+
+            cellTemp = rowTemp.getCell(3);
+            //String birthDay = cellTemp.getStringCellValue();
+            s.setBirthday(new Date());
+
+            cellTemp = rowTemp.getCell(4);
+            String gender = cellTemp.getStringCellValue();
+            s.setGender(gender);
+
+            cellTemp = rowTemp.getCell(5);
+            cellTemp.setCellType(HSSFCell.CELL_TYPE_STRING);
+            String cmnd = cellTemp.getStringCellValue();
+            s.setIdentityNumber(cmnd);
+
+            cellTemp = rowTemp.getCell(6);
+            String homeAddr = cellTemp.getStringCellValue();
+            s.setHomeAddr(homeAddr);
+
+            cellTemp = rowTemp.getCell(7);
+            String address = cellTemp.getStringCellValue();
+            s.setAddress(address);
+
+            cellTemp = rowTemp.getCell(8);
+            cellTemp.setCellType(HSSFCell.CELL_TYPE_STRING);
+            String phone = cellTemp.getStringCellValue();
+            s.setPhone(phone);
+
+            cellTemp = rowTemp.getCell(9);
+            String email = cellTemp.getStringCellValue();
+            s.setEmail(email);
+
+            cellTemp = rowTemp.getCell(10);
+            String clazz = cellTemp.getStringCellValue();
+            s.setClassCode(clazz);
+
+            cellTemp = rowTemp.getCell(11);
+            String facult = cellTemp.getStringCellValue();
+            s.setFacultyCode(facult);
+
+            cellTemp = rowTemp.getCell(12);
+            String course = cellTemp.getStringCellValue();
+            s.setCourseCode(course);
+
+            cellTemp = rowTemp.getCell(13);
+            String status = cellTemp.getStringCellValue();
+            s.setStatus(status);
+
+            cellTemp = rowTemp.getCell(14);
+            String level = cellTemp.getStringCellValue();
+            s.setStudyLevel(level);
+
+            cellTemp = rowTemp.getCell(15);
+            //String enterDate = cellTemp.getStringCellValue();
+            s.setDateStart(new Date());
+
+            cellTemp = rowTemp.getCell(16);
+            String type = cellTemp.getStringCellValue();
+            s.setStudyType(type);
+
+            cellTemp = rowTemp.getCell(17);
+            String note = cellTemp.getStringCellValue();
+            s.setNote(note);
+
+            return s;
+        } catch (Exception ex) {
+            return null;
         }
     }
 
@@ -242,9 +315,9 @@ public class ManageStudentController extends HttpServlet {
      * to manager student page.
      */
     private void listStudent(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        
+
         List<Student> students = studentDao.findAll();
-        
+
         HttpSession session = request.getSession();
         session.setAttribute("liststudent", students);
     }
