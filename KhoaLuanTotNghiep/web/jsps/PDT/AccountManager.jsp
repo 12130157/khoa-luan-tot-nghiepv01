@@ -14,6 +14,9 @@
 <%
     List<Account> accounts = (List<Account>) session.getAttribute("account");
     Integer numpage = (Integer) session.getAttribute("numpage");
+    if (numpage == null) {
+        numpage = 1;
+    }
 
 %>
 <html>
