@@ -35,7 +35,7 @@
              <li><a href="../../HomepageController?actor=PDT"> Trang chủ |</a></li>
              <li><a href=""> Quản lý con người |</a>
                  <ul>
-                     <li><a href="#"> Quản lý sinh viên</a></li>
+                     <li><a href="../../ManageStudentController?function=liststudent"> Quản lý sinh viên</a></li>
                      <li><a href="#"> Quản lý giảng viên</a></li>
                  </ul>
              </li>
