@@ -1,5 +1,6 @@
 package uit.cnpm02.dkhp.controllers.PDT;
 
+import java.io.Console;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
@@ -22,6 +23,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.StudentDAO;
 import uit.cnpm02.dkhp.model.Student;
+import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.FileUtils;
 
 /**
@@ -33,6 +35,8 @@ public class ManageStudentController extends HttpServlet {
 
     private StudentDAO studentDao = DAOFactory.getStudentDao();
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
+    private int rowPerPage = Constants.ELEMENT_PER_PAGE_DEFAULT;
+    private int currentPage = 1;
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -316,8 +320,27 @@ public class ManageStudentController extends HttpServlet {
      */
     private void listStudent(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        List<Student> students = studentDao.findAll();
+        List<Student> students;
+        String searchType = (String) request.getParameter("searchtype");
+        String searchValue = (String) request.getParameter("searchvalue");
 
+        if ((searchType == null) || searchType.isEmpty()
+                || (searchValue == null) || searchValue.isEmpty()
+                || searchValue.equalsIgnoreCase("*")
+                || searchValue.equalsIgnoreCase("all")) {
+            students = studentDao.findAll(rowPerPage, currentPage, "HoTen", null);
+        } else {
+
+            String searchTypeStr = "";
+            if (searchType.equals("name")) {
+                searchTypeStr = "HoTen";
+            } else if (searchType.equals("clazz")) {
+                searchTypeStr = "MaLop";
+            } else if (searchType.equals("course")) {
+                searchTypeStr = "MaKhoa";
+            }
+            students = studentDao.findAll(rowPerPage, currentPage, searchTypeStr, "'%" + searchValue + "%'", "HoTen", null);
+        }
         HttpSession session = request.getSession();
         session.setAttribute("liststudent", students);
     }
