@@ -69,6 +69,9 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
+                <div style="text-align: center;">
+                    <u> <h3> Trang chỉnh sửa thông tin Sinh Viên </h3></u>
+                </div>
                 <p id="error">
 
                 </p>

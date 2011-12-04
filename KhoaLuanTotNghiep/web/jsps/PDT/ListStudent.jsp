@@ -31,19 +31,20 @@
                 margin-left: 10px;
                 margin-top: 20px;
                 margin-bottom: 20px;
-                width: 740px;
+                width: 95%;
                 border: 3px solid #73726E;
             }
-            #tableliststudent th{
+            #tableliststudent-th{
                 height: 32px;
                 font-weight: bold;
-                background: url("../../imgs/opaque_10.png") repeat scroll 0 0 transparent;
+                background-color: #175F6E;
                 text-align: center;
             }
             #tableliststudent td{
                 background: url("../../imgs/opaque_10.png") repeat scroll 0 0 transparent;
                 padding: 2px 5px 2px 5px;
-                text-align: left;
+                text-align: center;
+                width: auto;
             }
             #formsearch{
                 margin-top: 10px;
@@ -83,37 +84,20 @@
                 <br/>
 
                 <h1>Tìm kiếm sinh viên:</h1>
-                <form id = "formsearch" name="formsearch" action="#" method="post">
+                <form>
                     <table>
-                        <tr>
-                            <td><input type="radio" name="radiooption" checked="true" onclick="selectAll()" ></td>
-                            <td>All</td>
-                        </tr>
-                        <tr>
-                            <td><input type="radio" name="radiooption" onclick="selectClass()"></td>
-                            <td>
-                                <select name="sClass" id="sClass">
-                                    <%for (int i = 0; i < listClass.size(); i++) {%>
-                                    <option value="<%=listClass.get(i)%>"><%=listClass.get(i).getId()%></option>
-                                    <%}%>
-                                </select> Tìm theo lớp
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="radio" name="radiooption" onclick="selectCode()"></td>
-                            <td>
-                                <input type="text" name="txtcode" id="txtcode"> Tìm theo MSSV
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="radio" name="radiooption" onclick="selectName()"></td>
-                            <td>
-                                <input type="text" name="txtName" id="txtName"> Tìm theo tên
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2"><input type="button" onclick="search()" value="Tìm Kiếm"></td>
-                        </tr>
+                        <tr><td>
+                            <input type="text" placeholder="Nhap ten SV"/>
+                            <input type="button" onclick="" value="Tìm theo tên SV"/>
+                        </td></tr>
+                        <tr><td>
+                            <input type="text" placeholder="Nhap ma lop"/>
+                            <input type="button" onclick="" value="Tìm theo lớp"/>
+                        </td></tr>
+                        <tr><td>
+                            <input type="text" placeholder="Nhap ma khoa"/>
+                            <input type="button" onclick="" value="Tìm theo khoa"/>
+                        </td></tr>
                     </table>
                 </form>
                 <p align="right"><b><a href="./ImportStudent.jsp">Tiếp nhận sinh viên</a></b></p>
@@ -121,24 +105,26 @@
 
                 <form id="formdown" name="formdown" action="../DownloadFile?action=test" method="post">
                     Danh sách sinh viên:<br/>
+                    <input type="button" onclick="deleteStudent('tableliststudent')" value="Xóa mục đã chọn" />
                     <table id="tableliststudent" name="tableliststudent">
-                        <tr>
-                        <th> STT </th>
-                        <th> <a href=""> MSSV </a></th>
-                        <th> <a href=""> Họ Tên </a></th>
-                        <th> <a href=""> Lớp </a> </th>
-                        <th> <a href=""> Khoa </a> </th>
-                        <th>Ngày sinh</th>
-                        <th>Giới tính</th>
-                        <th>Loại</th>
-                        <th>Sửa</th>
-                        <th>Xóa</th>
-                        <th>Cập nhật</th>
+                        <tr id="tableliststudent-th">
+                        <td><INPUT type="checkbox" name="chkAll" onclick="selectAll('tableliststudent')" /></td>
+                        <td> STT </td>
+                        <td> MSSV </td>
+                        <td> Họ Tên </td>
+                        <td> Lớp </td>
+                        <td> Khoa </td>
+                        <td> Ngày sinh </td>
+                        <td> Giới tính </td>
+                        <td> Loại </td>
+                        <td> Sửa </td>
+                        <td> Xóa </td>
                         <%--Should be sorted when click on table's header--%>
                         </tr>
                         <%if ((listStudent != null) && !listStudent.isEmpty()) {%>
                         <% for (int i = 0; i < listStudent.size(); i++) {%>
                         <tr>
+                        <td><INPUT type="checkbox" name="chk<%= i%>"/></td>
                         <td> <%= (i + 1)%> </td>
                         <td> <%= listStudent.get(i).getId()%> </td> 
                         <td> <%= listStudent.get(i).getFullName()%> </td>
@@ -148,8 +134,7 @@
                         <td> <%= listStudent.get(i).getGender()%> </td>
                         <td> <%= listStudent.get(i).getStudyType()%> </td>
                         <td><a href="../../ManageStudentController?function=editstudent&mssv=<%= listStudent.get(i).getId()%>">Sửa</a></td>
-                        <td><a href="">Xóa</a></td>
-                        <td>Không</td>
+                        <td><a href="../../ManageStudentController?function=delete&data=<%= listStudent.get(i).getId()%>">Xóa</a></td>
                         <% }%>
                         </tr>
                         <%}%>
@@ -159,7 +144,6 @@
                     <input style="position:absolute; left:710px;" type="button" value=">>" onclick="nextpage()">
                     <input style="position:absolute; left:740px;" type="button" value=">>|" onclick="nnextpage()"><br>
                     <input type="hidden" value="<%=numStudent%>" id="numstu" />
-                    <input type="button" value="Tải file" onclick="load()"/>
                 </form>
             </div><!--End Contents-->
 
@@ -170,6 +154,7 @@
         <!--End Wrapper-->
     </body>
 
+    <script src="../../javascripts/UtilTable.js"></script>
     <SCRIPT language="javascript">
         var typesearch = "All";
         var name = "All";
@@ -252,9 +237,6 @@
         function selectClass(){
             typesearch = "classname";
         }
-        function selectAll(){
-            typesearch = "All";
-        }
         
         function load() {
             if(start < 0) {
@@ -297,6 +279,45 @@
                 var detail = document.getElementById("tableliststudent");
                 detail.innerHTML = http.responseText;
                 end = document.getElementById("numstuafter").value;
+            }
+        }
+        
+        function deleteStudent(tableId) {
+            try {
+                var table = document.getElementById(tableId);
+                var rowCount = table.rows.length;
+                var data = '';
+                
+                var selectOne = false;
+                for(var i = 1; i < rowCount; i++) {
+                    var row = table.rows[i];
+                    var chkbox = row.cells[0].childNodes[0];
+                    if(null != chkbox && true == chkbox.checked) {
+                        if (selectOne == false) {
+                            selectOne = true;
+                        } else {
+                            data += '-';
+                        }
+                        data += row.cells[2].innerHTML;
+                    }
+                }
+                data = data.replace(/\s/g,'');
+                var controller = '../../ManageStudentController?function=delete' + '&data=' + data;
+                if(http){
+                    http.open("GET", controller ,true);
+                    http.onreadystatechange = handleResponseDelete;
+                    http.send(null);
+                }
+            }catch(e) {
+                alert(e);
+            }
+        }
+        function handleResponseDelete(){
+            if(http.readyState == 4 && http.status == 200){
+                location.reload(true);
+                //var detail = document.getElementById("tableliststudent");
+                //detail.innerHTML = http.responseText;
+                //end = document.getElementById("numstuafter").value;
             }
         }
     </SCRIPT>
