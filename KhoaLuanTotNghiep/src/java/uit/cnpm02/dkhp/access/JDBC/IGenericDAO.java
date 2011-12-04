@@ -72,6 +72,8 @@ public interface IGenericDAO<T extends IModel<ID>, ID extends Serializable> {
          */
         List<T> findAll(int recordPerPage, int currentPage, String orderBy, String order) throws Exception;
         
+        List<T> findAll(int recordPerPage, int currentPage, String whereStrColumn, String whereValue, String orderBy, String order) throws Exception;
+        
 	/**
 	 * Select all available model objects in database.
 	 * @return found objects or empty list.

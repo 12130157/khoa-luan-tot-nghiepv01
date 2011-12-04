@@ -503,6 +503,63 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
         }
         return results;
     }
+    
+    @Override
+    public List<T> findAll(int recordPerPage, int currentPage, String whereStrColumn, String whereValue, String orderBy, String order) throws Exception {
+        checkModelWellDefined();
+
+        ArrayList<T> results = new ArrayList<T>();
+
+        T t = createModel();
+
+        if (t == null) {
+            throw new Exception("Cannot initialize the " + modelClazz.getName()
+                    + " class");
+        }
+        
+        if (order == null) {
+            order = "ASC";
+        }
+        
+        int offset = (currentPage - 1) * recordPerPage;
+        String selectQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_SELECT_ROWS_WHERE),
+                new String[] {  t.getTableName(),
+                                //"select * from {0} where {1} like '%{2}%' order by {3} {4} limit {5} offset {6}"
+                                whereStrColumn,
+                                whereValue,
+                                orderBy,
+                                order,
+                                Integer.toString(recordPerPage),
+                                Integer.toString(offset)});
+        //selectQuery = selectQuery.replace("{2}", "'" + whereValue + "'");
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        try {
+            con = getConnection();
+            statement = con.prepareStatement(selectQuery);
+            rs = statement.executeQuery();
+
+            while (rs.next()) {
+                T ti = createModel();
+                Object[] obj = new Object[t.getColumnNames().length];
+                for (int i = 0; i < obj.length; i++) {
+                    obj[i] = rs.getObject(ti.getColumnNames()[i]);
+                }
+                ID id = (ID) rs.getObject(ti.getIdColumnName());
+
+                ti.setId(id);
+                ti.setColumnValues(obj);
+                results.add(ti);
+            }
+        } catch (SQLException ex) {
+            throw new Exception(ex);
+        } finally {
+            close(rs, statement);
+            close(con);
+        }
+        return results;
+    }
 
     @SuppressWarnings("unchecked")
     @Override
