@@ -4,25 +4,26 @@
  */
 package uit.cnpm02.dkhp.controllers.SV;
 
+import java.util.List;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import uit.cnpm02.dkhp.DAO.RuleDAO;
-import uit.cnpm02.dkhp.model.Rule;
+import uit.cnpm02.dkhp.DAO.PreSubjectDAO;
+import uit.cnpm02.dkhp.DAO.SubjectDAO;
+import uit.cnpm02.dkhp.model.PreSubject;
 
 /**
  *
  * @author thanh
  */
-@WebServlet(name = "RuleController", urlPatterns = {"/RuleController"})
-public class RuleController extends HttpServlet {
-    RuleDAO ruleDao=new RuleDAO();
+@WebServlet(name = "PreSubjectController", urlPatterns = {"/PreSubjectController"})
+public class PreSubjectController extends HttpServlet {
+PreSubjectDAO preDao=new PreSubjectDAO();
     /** 
      * 
      * @param request
@@ -32,38 +33,44 @@ public class RuleController extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
+       request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
          HttpSession session = request.getSession();
         PrintWriter out = response.getWriter();
         try {
-            String action = request.getParameter("action");
+             String action = request.getParameter("action");
             if(action.equalsIgnoreCase("view"))
-              viewRule(response, session);
+            viewPreSubject(response, session);
         } finally {            
             out.close();
         }
     }
-private void viewRule(HttpServletResponse response, HttpSession session) throws IOException{
-     String path="";  
+private void viewPreSubject(HttpServletResponse response, HttpSession session) throws IOException{
+    String path="";  
        try{
-        List<Rule> rule = ruleDao.findAll();
-        session.setAttribute("rule", rule);
-         path = "./jsps/SinhVien/Rule.jsp";
+           List<PreSubject> preSub=preDao.findAll();
+           setSubjectName(preSub);
+           session.setAttribute("preSub", preSub);
+         path = "./jsps/SinhVien/PreSubject.jsp";
        }catch(Exception ex){
            path= "./jsps/Message.jsp";
        }
         response.sendRedirect(path);
 }
-        
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
-     * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+private void setSubjectName(List<PreSubject> preSub) throws Exception{
+    SubjectDAO subjectDao=new SubjectDAO();
+    for(int i=0;i<preSub.size();i++){
+        preSub.get(i).setPreSubjectName(subjectDao.findById(preSub.get(i).getId().getPreSudId()).getSubjectName());
+        preSub.get(i).setSubjectName(subjectDao.findById(preSub.get(i).getId().getSudId()).getSubjectName());
+    }
+}
+/**
+ * 
+ * @param request
+ * @param response
+ * @throws ServletException
+ * @throws IOException 
+ */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -71,11 +78,11 @@ private void viewRule(HttpServletResponse response, HttpSession session) throws 
     }
 
     /** 
-     * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException 
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

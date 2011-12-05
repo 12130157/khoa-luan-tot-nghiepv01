@@ -98,7 +98,7 @@ Student student=(Student) session.getAttribute("student");
                         </tr>
                         <tr>
                             <td><i>CMND </i></td>
-                            <th><input type="text" name="IdentityCard" id="IdentityCard" value="<%=student.getIdentityNumber()%>"/></th>
+                            <th><input type="text" name="IdentityCard" id="IdentityCard" onkeypress="return checknumber(event)" value="<%=student.getIdentityNumber()%>"/></th>
                         </tr>
                         <tr>
                             <td><i>Quê quán</i> </td>

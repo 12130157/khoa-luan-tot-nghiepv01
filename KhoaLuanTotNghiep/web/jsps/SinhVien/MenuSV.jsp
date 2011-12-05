@@ -44,7 +44,7 @@
              <li><a href="../ServHompage?action=view"> Danh sách lớp học |</a></li>
              <li><a href=""> Quy định |</a>
                  <ul>
-                     <li><a href="../ServHompage?action=view"> Môn học tiên quyết</a></li>
+                     <li><a href="../../PreSubjectController?action=view"> Môn học tiên quyết</a></li>
                      <li><a href="../../RuleController?action=view"> Quy định</a></li>
                  </ul>
              </li>
