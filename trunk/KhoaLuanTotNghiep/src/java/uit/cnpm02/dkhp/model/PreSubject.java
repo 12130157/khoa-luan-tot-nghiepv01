@@ -9,9 +9,22 @@ import uit.cnpm02.dkhp.access.mapper.MapperConstant;
  */
 public class PreSubject extends AdvancedAbstractJdbcModel<PreSubID> {
 
+    private String preSubjectName;
+    private String subjectName;
     public PreSubject() {
     }
-
+    public String getPreSubjectName(){
+        return this.preSubjectName;
+    }
+    public void setPreSubjectName(String _preSubjectName){
+        this.preSubjectName=_preSubjectName;
+    }
+     public String getSubjectName(){
+        return this.subjectName;
+    }
+    public void setSubjectName(String _subjectName){
+        this.subjectName=_subjectName;
+    }
     @Override
     public String[] getColumnNames() {
         return new String[]{};

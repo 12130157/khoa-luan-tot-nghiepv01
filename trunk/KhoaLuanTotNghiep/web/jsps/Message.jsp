@@ -23,7 +23,7 @@
                 <%@include file="MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <p>Vui lòng đăng nhập đăng nhập để em trang này.</p>
+                <p>Vui lòng đăng nhập đăng nhập để xem trang này.</p>
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
