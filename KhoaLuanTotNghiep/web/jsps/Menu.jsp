@@ -16,7 +16,7 @@
     </head>
     <body>
     <MARQUEE onmouseover="this.stop();" onmouseout="this.start();" HEIGHT=25 BGCOLOR=transparent BEHAVIOR=scroll SCROLLAMOUNT="4">
-        <h3>Đại Học Quốc Gia Tp. Hồ Chí Minh-Trường Đại Học Công Nghệ Thông Tin.</h3>
+        <h3>Đại Học Quốc Gia Tp. Hồ Chí Minh - Trường Đại Học Công Nghệ Thông Tin.</h3>
     </MARQUEE>
 
     <div id="logo">
