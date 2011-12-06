@@ -6,6 +6,8 @@ package uit.cnpm02.dkhp.controllers.SV;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -49,16 +51,47 @@ public class StudyResultController extends HttpServlet {
             String action = request.getParameter("action");
            if(action.equalsIgnoreCase("view"))
             getStudyResult(response, session);
+           else if(action.equalsIgnoreCase("reload"))
+               reloadData(request, response, session);
         } finally {            
             out.close();
         }
+    }
+    private void reloadData(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException{
+        try{
+            SubjectDAO subjectDao=new SubjectDAO();
+            int numTC = 0;
+            float SumMark = 0;
+            float Average = 0;
+            PrintWriter out = response.getWriter();
+            String user = (String) session.getAttribute("username");
+            String year = request.getParameter("year");
+            int semester = Integer.parseInt(request.getParameter("semester"));
+            List<StudyResult> studyResult=studyResultDao.findAllByYearAndSemester(user, year, semester);
+            setSubjectName(studyResult);
+            out.println("<tr><th width='100px'>Năm học</th><th width='70px'>Học kỳ</th><th width='100px'>Mã môn</th><th width='300px'>Tên môn học</th><th width='70px'>Số TC</th><th width='80px'>Điểm</th><th width='100px'>Nhân hệ số</th></tr>");
+            for (int i = 0; i < studyResult.size(); i++) {
+                int numTCSubject=subjectDao.findById(studyResult.get(i).getId().getSubjectCode()).getnumTC();
+                float markSubject=(subjectDao.findById(studyResult.get(i).getId().getSubjectCode()).getnumTC() * studyResult.get(i).getMark());
+                
+                out.println("<tr><td>" + studyResult.get(i).getYear() + "</td><td>" + studyResult.get(i).getSemester() + "</td><td>" + studyResult.get(i).getId().getSubjectCode() + "</td><td>" + studyResult.get(i).getSubjectName() + "</td><td>" + numTCSubject + "</td><td>" + studyResult.get(i).getMark() + "</td><td>" + markSubject + "</td></tr>");
+                
+                numTC += numTCSubject;
+                SumMark += markSubject;
+                Average = (float) Math.round(SumMark * 100 / numTC) / 100;
+        }  
+           out.println("<tr><th>Tổng kết</th><th></th><th></th><th>Trung bình: " + Average + "</th><th>" + numTC + "</th><th></th><th>" + SumMark + "</th></tr>"); 
+         }catch(Exception ex){
+           String path= "./jsps/Message.jsp";
+           response.sendRedirect(path);
+       }
     }
 private void getStudyResult(HttpServletResponse response, HttpSession session) throws IOException{
      String path=""; 
       try{
           String user = (String) session.getAttribute("username");
           StudyResultID studyResultId=new StudyResultID(user, "");
-          List<StudyResult> studyResult=studyResultDao.findAll("NamHoc, HocKy", "ASC");
+           List<StudyResult> studyResult=studyResultDao.findByOther("MSSV", user, "NamHoc, HocKy", "ASC");
            ClassDAO classDao = DAOFactory.getClassDao();
            FacultyDAO facultyDao = DAOFactory.getFacultyDao();
            StudentDAO studentDao=new StudentDAO();
@@ -66,15 +99,34 @@ private void getStudyResult(HttpServletResponse response, HttpSession session) t
            Class classes = classDao.findById(student.getClassCode());
            Faculty faculty = facultyDao.findById(student.getFacultyCode());
            setSubjectName(studyResult);
+           List<String> yearList=getYear(studyResult);
            session.setAttribute("studyResult", studyResult);
            session.setAttribute("student", student);
            session.setAttribute("classes", classes);
            session.setAttribute("faculty", faculty);
+           session.setAttribute("yearList", yearList);
            path = "./jsps/SinhVien/StudyResult.jsp";
        }catch(Exception ex){
            path= "./jsps/Message.jsp";
        }
         response.sendRedirect(path);
+}
+private List<String> getYear(List<StudyResult> studyResult){
+    ArrayList<String> yearList=new ArrayList<String>();
+    for(int i=0; i<studyResult.size();i++){
+     if(checkStringExist(studyResult.get(i).getYear(), yearList)==false)
+         yearList.add(studyResult.get(i).getYear());
+    }
+
+   return yearList;         
+}
+private boolean checkStringExist(String value, List<String> list){
+    boolean result=false;
+    for(int i=0;i<list.size();i++){
+       if(value.equalsIgnoreCase(list.get(i)))
+           result=true;
+    }
+    return result;
 }
 private void setSubjectName(List<StudyResult> studyResult) throws Exception{
     SubjectDAO subjectDao=new SubjectDAO();

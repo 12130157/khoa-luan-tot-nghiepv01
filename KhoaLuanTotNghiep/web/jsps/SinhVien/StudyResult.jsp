@@ -16,6 +16,7 @@
     "http://www.w3.org/TR/html4/loose.dtd">
 <%
 List<StudyResult> studyResult=(List<StudyResult>) session.getAttribute("studyResult");
+List<String> yearList=(List<String>) session.getAttribute("yearList");
 Student student=(Student) session.getAttribute("student");
 Class classes=(Class) session.getAttribute("classes");
 Faculty faculty=(Faculty)session.getAttribute("faculty");
@@ -97,6 +98,9 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
             #detail{
                 width: 90%;
             }
+             #detail th{
+               text-align: center;
+            }
         </style>
         </style>
     </head>
@@ -135,8 +139,8 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
                             <td>
                                 <select style="width:90px" name="year" id="year" onchange="reloadResult()">
                                     <option value="All">Tất cả</option>
-                                    <% for (i = 0; i < studyResult.size(); i++) {%>
-                                    <option value="<%=studyResult.get(i).getYear()%>"><%=studyResult.get(i).getYear()%></option>
+                                    <% for (i = 0; i < yearList.size(); i++) {%>
+                                    <option value="<%=yearList.get(i)%>"><%=yearList.get(i)%></option>
                                     <%}%>
                                 </select>
                             </td>
@@ -158,7 +162,7 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
                     <u>Chi tiết</u>
                     <table id="detail" name="detail" border="1" bordercolor="yellow" >
                      <tr>
-                            <th align="center" width="100px">Năm học</th><th align="center" width="70px">Học kỳ</th><th align="center" width="100px">Mã môn</th><th align="center" width="300px">Tên môn học</th><th align="center" width="70px">Số TC</th><th align="center" width="80px">Điểm</th><th align="center" width="100px">Nhân hệ số</th>
+                            <th width="100px">Năm học</th><th width="70px">Học kỳ</th><th width="100px">Mã môn</th><th width="300px">Tên môn học</th><th width="70px">Số TC</th><th width="80px">Điểm</th><th width="100px">Nhân hệ số</th>
                      </tr>   
                       <%
                                  numTC = 0;
@@ -197,4 +201,20 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
         </div>
         <!--End Wrapper-->
     </body>
+    <script src="../../javascripts/StudyResult.js"></script>
+    <script  type = "text/javascript" >
+        var http = createRequestObject();
+        var year="2007-2008";
+        var semester=1;
+        function reloadResult(){
+             year=document.formstudent.year.value;
+             semester=document.formstudent.semester.value;
+            SendRequest();
+        }
+        function SendRequest(){
+              if(http){
+              ajaxfunction("../../StudyResultController?action=reload&year="+year+"&semester="+semester );
+             }
+         }
+    </script>
 </html>
