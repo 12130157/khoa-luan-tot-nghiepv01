@@ -16,7 +16,7 @@
     </head>
     <body>
     <MARQUEE onmouseover="this.stop();" onmouseout="this.start();" HEIGHT=25 BGCOLOR=transparent BEHAVIOR=scroll SCROLLAMOUNT="4">
-        <h3>Đại Học Quốc Gia Tp. Hồ Chí Minh-Trường Đại Học Công Nghệ Thông Tin.</h3>
+        <h3>Đại Học Quốc Gia Tp. Hồ Chí Minh - Trường Đại Học Công Nghệ Thông Tin.</h3>
     </MARQUEE>
 
     <div id="logo">
@@ -36,7 +36,7 @@
              <li><a href=""> Học tập |</a>
                  <ul>
                       <li><a href="../ServHompage?action=view"> Đăng ký học phần</a></li>
-                      <li><a href="../ServHompage?action=view"> Kết quả học tập</a></li>
+                      <li><a href="../../StudyResultController?action=view"> Kết quả học tập</a></li>
                  </ul>
              </li>
              <li><a href="../../TrainProgramController?action=view"> Chương trình đào tạo |</a></li>
