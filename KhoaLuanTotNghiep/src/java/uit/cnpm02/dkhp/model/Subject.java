@@ -7,58 +7,48 @@ import uit.cnpm02.dkhp.access.mapper.MapperConstant;
  * @author LocNguyen
  */
 public class Subject extends  AbstractJdbcModel<String>{
-    /**Subject code**/
-    private String subjectCode;
     /**Subject name**/
     private String subjectName;
     
     /**Số tín chỉ**/
-    private int soTC;
+    private int numTC;
     /**Số tín chỉ lý thuyết**/
-    private int soTCLT;
+    private int numTCLT;
     /**Số tín chỉ thực hành**/
-    private int soTCTH;
+    private int numTCTH;
 
     public Subject() {
     }
 
-    public Subject(String subjectCode, String subjectName, int soTC, int soTCLT) {
-        this.subjectCode = subjectCode;
+    public Subject(String id, String subjectName, int numTC, int numTCLT) {
+        setId(id);
         this.subjectName = subjectName;
-        this.soTC = soTC;
-        this.soTCLT = soTCLT;
+        this.numTC = numTC;
+        this.numTCLT = numTCLT;
     }
 
-    public String getSubjectCode() {
-        return subjectCode;
+    public int getnumTC() {
+        return numTC;
     }
 
-    public void setSubjectCode(String subjectCode) {
-        this.subjectCode = subjectCode;
+    public void setnumTC(int numTC) {
+        this.numTC = numTC;
     }
 
-    public int getSoTC() {
-        return soTC;
+    public int getnumTCLT() {
+        return numTCLT;
     }
 
-    public void setSoTC(int soTC) {
-        this.soTC = soTC;
+    public void setnumTCLT(int numTCLT) {
+        this.numTCLT = numTCLT;
     }
 
-    public int getSoTCLT() {
-        return soTCLT;
+    public int getnumTCTH() {
+        return numTCTH;
     }
 
-    public void setSoTCLT(int soTCLT) {
-        this.soTCLT = soTCLT;
-    }
-
-    public int getSoTCTH() {
-        return soTCTH;
-    }
-
-    public void setSoTCTH(int soTCTH) {
-        this.soTCTH = soTCTH;
+    public void setnumTCTH(int numTCTH) {
+        this.numTCTH = numTCTH;
     }
 
     public String getSubjectName() {
@@ -91,9 +81,9 @@ public class Subject extends  AbstractJdbcModel<String>{
     public void setColumnValues(Object[] values) {
         try {
             subjectName = values[0].toString();
-            soTC = Integer.parseInt(values[1].toString());
-            soTCLT = Integer.parseInt(values[2].toString());
-            soTCTH = Integer.parseInt(values[3].toString());
+            numTC = Integer.parseInt(values[1].toString());
+            numTCLT = Integer.parseInt(values[2].toString());
+            numTCTH = Integer.parseInt(values[3].toString());
 
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
@@ -103,9 +93,9 @@ public class Subject extends  AbstractJdbcModel<String>{
     public Object[] getColumnValues() {
         return new Object[]{
                     subjectName,
-                    soTC,
-                    soTCLT,
-                    soTCTH,
+                    numTC,
+                    numTCLT,
+                    numTCTH,
                 };
     }
 }
