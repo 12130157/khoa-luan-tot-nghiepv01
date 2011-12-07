@@ -1,15 +1,15 @@
 package uit.cnpm02.dkhp.controllers.PDT;
 
-import java.io.Console;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -36,7 +36,9 @@ public class ManageStudentController extends HttpServlet {
     private StudentDAO studentDao = DAOFactory.getStudentDao();
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
     private int rowPerPage = Constants.ELEMENT_PER_PAGE_DEFAULT;
+    private int numPage = 1;
     private int currentPage = 1;
+    private boolean isNumPageGetted = false;
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -56,6 +58,12 @@ public class ManageStudentController extends HttpServlet {
         session.removeAttribute("error");
 
         try {
+            //if (!isNumPageGetted) {
+                numPage = getNumberPage();
+                session.setAttribute("numpage", numPage);
+             //   isNumPageGetted = true;
+            //}
+
             String action = request.getParameter("function");
             String datas = request.getParameter("data");
             if (action.equalsIgnoreCase("liststudent")) {
@@ -138,9 +146,9 @@ public class ManageStudentController extends HttpServlet {
         if (!students.isEmpty()) {
             studentDao.delete(students);
             result = "Đã xóa " + students.size() + " sinh viên";
+            return result;
         }
         result = "Chưa xóa SV nào.";
-
         return result;
     }
 
@@ -319,10 +327,20 @@ public class ManageStudentController extends HttpServlet {
      * to manager student page.
      */
     private void listStudent(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
         List<Student> students;
         String searchType = (String) request.getParameter("searchtype");
         String searchValue = (String) request.getParameter("searchvalue");
+        String ajaxRespone = (String) request.getParameter("ajax");
+        try {
+            currentPage = Integer.parseInt(request.getParameter("currentpage"));
+            if (currentPage < 0) {
+                currentPage = 0;
+            } else if (currentPage > numPage) {
+                currentPage = numPage;
+            }
+        } catch (Exception ex) {
+            currentPage = 1;
+        }
 
         if ((searchType == null) || searchType.isEmpty()
                 || (searchValue == null) || searchValue.isEmpty()
@@ -330,7 +348,6 @@ public class ManageStudentController extends HttpServlet {
                 || searchValue.equalsIgnoreCase("all")) {
             students = studentDao.findAll(rowPerPage, currentPage, "HoTen", null);
         } else {
-
             String searchTypeStr = "";
             if (searchType.equals("name")) {
                 searchTypeStr = "HoTen";
@@ -341,8 +358,45 @@ public class ManageStudentController extends HttpServlet {
             }
             students = studentDao.findAll(rowPerPage, currentPage, searchTypeStr, "'%" + searchValue + "%'", "HoTen", null);
         }
-        HttpSession session = request.getSession();
-        session.setAttribute("liststudent", students);
+        if ((ajaxRespone == null) 
+                || ajaxRespone.isEmpty()
+                || ajaxRespone.equals("false")){
+            HttpSession session = request.getSession();
+            session.setAttribute("liststudent", students);
+        } else {
+            PrintWriter out = response.getWriter();
+            String respStr = "<tr id=\"tableliststudent-th\">"
+                    + "<td><INPUT type=\"checkbox\" name=\"chkAll\" onclick=\"selectAll('tableliststudent')\" /></td>"
+                        + "<td> STT </td>"
+                        + "<td> MSSV </td>"
+                        + "<td> Họ Tên </td>"
+                        + "<td> Lớp </td>"
+                        + "<td> Khoa </td>"
+                        + "<td> Ngày sinh </td>"
+                        + "<td> Giới tính </td>"
+                        + "<td> Loại </td>"
+                        + "<td> Sửa </td>"
+                        + "<td> Xóa </td>"
+                        + "</tr>";
+            out.println(respStr);
+            for (int i = 0; i < students.size(); i++) {
+                respStr = "<tr>"
+                + "<td><INPUT type=\"checkbox\" name=\"chk" + i + "\"/></td>"
+                + "<td> " + (i + 1) + " </td>"
+                + "<td> " + students.get(i).getId() + "</td> "
+                + "<td> " + students.get(i).getFullName() + "</td>"
+                + "<td> " + students.get(i).getClassCode() + "</td>"
+                + "<td> " + students.get(i).getFacultyCode() + "</td>"
+                + "<td> " + students.get(i).getBirthday() + "</td>"
+                + "<td> " + students.get(i).getGender() + "</td>"
+                + "<td> " + students.get(i).getStudyType() + "</td>"
+                + "<td> <a href=\"../../ManageStudentController?function=editstudent&mssv=" + students.get(i).getId() + "\">Sửa</a></td>"
+                + "<td> <a href=\"../../ManageStudentController?function=delete&ajax=true&data=" + students.get(i).getId() + "\"> Xóa</a></td>"
+                + "</tr>";
+                out.println(respStr);
+            }
+            out.close();
+        }
     }
 
     private void editStudent(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -350,5 +404,17 @@ public class ManageStudentController extends HttpServlet {
         Student s = studentDao.findById(mssv);
         HttpSession session = request.getSession();
         session.setAttribute("student", s);
+    }
+
+    private int getNumberPage() throws Exception {
+        int rows = studentDao.getRowsCount();
+
+        int rowsPerPage = Constants.ELEMENT_PER_PAGE_DEFAULT;
+        if (rows % rowsPerPage == 0) {
+            numPage = rows / rowsPerPage;
+        } else {
+            numPage = rows / rowsPerPage + 1;
+        }
+        return numPage;
     }
 }
