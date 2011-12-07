@@ -25,7 +25,6 @@ import uit.cnpm02.dkhp.model.Faculty;
 import uit.cnpm02.dkhp.model.Class;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.model.StudyResult;
-import uit.cnpm02.dkhp.model.StudyResultID;
 
 /**
  *
@@ -89,8 +88,7 @@ public class StudyResultController extends HttpServlet {
 private void getStudyResult(HttpServletResponse response, HttpSession session) throws IOException{
      String path=""; 
       try{
-          String user = (String) session.getAttribute("username");
-          StudyResultID studyResultId=new StudyResultID(user, "");
+           String user = (String) session.getAttribute("username");
            List<StudyResult> studyResult=studyResultDao.findByOther("MSSV", user, "NamHoc, HocKy", "ASC");
            ClassDAO classDao = DAOFactory.getClassDao();
            FacultyDAO facultyDao = DAOFactory.getFacultyDao();
