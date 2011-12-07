@@ -193,6 +193,9 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
                         </tr>
                     </table>
                  </form>
+                        <form action="" method="post" id="frmexport">
+                    <a href="../../DownloadController?action=studentresult&mssv=<%=student.getId()%>">Tải bảng điểm</a>
+                </form>
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
