@@ -13,7 +13,15 @@ public class DAOFactory {
     private static CourseDAO courseDao = null;
     private static ClassDAO classDao = null;
     private static DiaryDAO diaryDao = null;
+    private static SubjectDAO subjectDao = null;
 
+    public static SubjectDAO getSubjectDao() {
+        if (subjectDao == null) {
+            subjectDao = new SubjectDAO();
+        }
+        return subjectDao;
+    }
+    
     public static DiaryDAO getDiaryDao() {
         if (diaryDao == null) {
             diaryDao = new DiaryDAO();
