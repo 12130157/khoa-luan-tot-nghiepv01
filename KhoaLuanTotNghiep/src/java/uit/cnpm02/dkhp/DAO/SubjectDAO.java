@@ -9,8 +9,8 @@ import uit.cnpm02.dkhp.model.Subject;
 
 /**
  *
- * @author thanh
+ * @author LocNguyen
  */
-public class SubjectDAO extends AbstractJdbcDAO<Subject, String>{
+public class SubjectDAO  extends AbstractJdbcDAO<Subject, String>{
     
 }
