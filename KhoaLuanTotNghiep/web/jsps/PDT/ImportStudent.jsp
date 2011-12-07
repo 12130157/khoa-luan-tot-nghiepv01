@@ -22,7 +22,6 @@
     List<Course> courses = DAOFactory.getCourseDao().findAll();
     List<uit.cnpm02.dkhp.model.Class> clazz = DAOFactory.getClassDao().findAll();
 
-
     int i;
     if ((faculties != null) && !faculties.isEmpty()) {
         for (i = 0; i < faculties.size(); i++) {
@@ -371,8 +370,7 @@
 
         function handleResponse(){
             if(http.readyState == 4 && http.status == 200){
-                var detail = document.getElementById("error");
-                detail.innerHTML = http.responseText;
+                location.reload(true);
             }
         }
         

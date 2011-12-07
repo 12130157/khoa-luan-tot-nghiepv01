@@ -17,7 +17,7 @@
 <%
     List<Student> listStudent = (List<Student>) session.getAttribute("liststudent");
     //List<String> listClass = (ArrayList<String>) session.getAttribute("listClass");
-    Integer numStudent = (Integer) session.getAttribute("numStudent");
+    Integer numpage = (Integer) session.getAttribute("numpage");
     List<uit.cnpm02.dkhp.model.Class> listClass = DAOFactory.getClassDao().findAll();
 %>
 <html>
@@ -134,16 +134,18 @@
                         <td> <%= listStudent.get(i).getGender()%> </td>
                         <td> <%= listStudent.get(i).getStudyType()%> </td>
                         <td><a href="../../ManageStudentController?function=editstudent&mssv=<%= listStudent.get(i).getId()%>">Sửa</a></td>
-                        <td><a href="../../ManageStudentController?function=delete&data=<%= listStudent.get(i).getId()%>">Xóa</a></td>
+                        <td><a href="../../ManageStudentController?function=delete&ajax=true&data=<%= listStudent.get(i).getId()%>">Xóa</a></td>
                         <% }%>
                         </tr>
                         <%}%>
                     </table>
-                    <input style="position:absolute; left:650px;" type="button" value="|<<" onclick="nprepage()">
-                    <input style="position:absolute; left:680px;" type="button" value="<<" onclick="prepage()">
-                    <input style="position:absolute; left:710px;" type="button" value=">>" onclick="nextpage()">
-                    <input style="position:absolute; left:740px;" type="button" value=">>|" onclick="nnextpage()"><br>
-                    <input type="hidden" value="<%=numStudent%>" id="numstu" />
+                    <form id="testid">
+                    </form>
+                    <input style="position:absolute; left:650px;" type="button" value="|<<" onclick="firstPage()">
+                    <input style="position:absolute; left:680px;" type="button" value="<<" onclick="prePage()">
+                    <input style="position:absolute; left:710px;" type="button" value=">>" onclick="nextPage()">
+                    <input style="position:absolute; left:740px;" type="button" value=">>|" onclick="endPage()"><br>
+                    <input type="hidden" value="<%= numpage %>" id="numpage" />
                 </form>
             </div><!--End Contents-->
 
@@ -155,147 +157,13 @@
     </body>
 
     <script src="../../javascripts/UtilTable.js"></script>
-    <SCRIPT language="javascript">
-        var end = document.getElementById("numstu").value;
+    <script  type = "text/javascript" >
+        var ajax = false;
+        var currentpage = 1;
+        var numpage = document.getElementById("numpage").value;
+        var searchType = 'none';
+        var searchValue = 'all';
         var http = createRequestObject();
-        function search(){
-            if(http){
-                start = 0;
-                if(typesearch == "name"){
-                    name = document.formsearch.txtName.value;
-                }else if(typesearch == "mssv") {
-                    name = document.formsearch.txtcode.value;
-                }else if(typesearch == "classname"){
-                    name = document.formsearch.sClass.value;
-                }
-                ajaxfunction("../servStudentManager?action="+action+"&type="+typesearch+"&name="+name+"&start="+start);
-            }
-        }
-        
-        function nprepage(){
-            search();
-        }
-        
-        function prepage(){
-            start = start - 5;
-            if(start < 0) {
-                start = 0;
-            }
-            if(typesearch == "name") {
-                name = document.formsearch.txtName.value;
-            } else if(typesearch == "mssv") {
-                name = document.formsearch.txtcode.value;
-            } else if(typesearch == "classname") {
-                name = document.formsearch.sClass.value;
-            }
-            ajaxfunction("../servStudentManager?action="+action+"&type="+typesearch+"&name="+name+"&start="+start);
-            
-        }
-        function nextpage(){
-            start=start+5;
-            if(start+5>end){
-                start=end-5;
-            }
-            if(start<0){
-                start=0;
-            }
-            if(typesearch=="name"){
-                name=document.formsearch.txtName.value;
-            }else if(typesearch == "mssv"){
-                name=document.formsearch.txtcode.value;
-            }else if(typesearch == "classname"){
-                name = document.formsearch.sClass.value;
-            }
-            ajaxfunction("../servStudentManager?action="+action+"&type="+typesearch+"&name="+name+"&start="+start);
-        }
-        function nnextpage(){
-            start=end-5;
-            if(start<0){
-                start=0;
-            }
-            if(typesearch=="name"){
-                name=document.formsearch.txtName.value;
-            }else if(typesearch == "mssv"){
-                name=document.formsearch.txtcode.value;
-            }else if(typesearch == "classname"){
-                name = document.formsearch.sClass.value;
-            }
-            ajaxfunction("../servStudentManager?action="+action+"&type="+typesearch+"&name="+name+"&start="+start);
-            
-        }
-        function selectCode(){
-            typesearch = "mssv";
-            
-        }
-        function selectName(){
-            typesearch = "name";
-        }
-        function selectClass(){
-            typesearch = "classname";
-        }
-        
-        function searchHandler() {
-            if(http.readyState == 4 && http.status == 200){
-                location.reload(true);
-            }
-        }
-        
-        function searchByName(){
-            var name = document.getElementById("txtName").value;
-            if (name == null) {
-                alert('Vui lòng nhập tên tìm kiếm.');
-                return;
-            }
-            var pagename = "../../ManageStudentController?function=liststudent&searchtype=name&searchvalue=" + name;
-            if(http){
-                http.open("GET", pagename ,true);
-                http.onreadystatechange = searchHandler;
-                http.send(null);
-            }
-        }
-        
-        function searchByClass(){
-            var clazz = document.getElementById("txtClass").value;
-            if (clazz == null) {
-                alert('Vui lòng nhập tên tìm kiếm.');
-                return;
-            }
-            var pagename = "../../ManageStudentController?function=liststudent&searchtype=clazz&searchvalue=" + clazz;
-            if(http){
-                http.open("GET", pagename ,true);
-                http.onreadystatechange = searchHandler;
-                http.send(null);
-            }            
-        }
-        
-        function searchByCourse(){
-            var course = document.getElementById("txtCourse").value;
-            if (course == null) {
-                alert('Vui lòng nhập tên tìm kiếm.');
-                return;
-            }
-            var pagename = "../../ManageStudentController?function=liststudent&searchtype=course&searchvalue=" + course;
-            if(http){
-                http.open("GET", pagename ,true);
-                http.onreadystatechange = searchHandler;
-                http.send(null);
-            }    
-        }
-        
-        function load() {
-            if(start < 0) {
-                start = 0;
-            }
-            if(typesearch == "name") {
-                name = document.formsearch.txtName.value;
-            } else if(typesearch == "mssv") {
-                name = document.formsearch.txtcode.value;
-            } else if(typesearch == "classname") {
-                name = document.formsearch.sClass.value;
-            }
-            document.forms["formdown"].action="../DownloadFile?action=studentlist&type="+typesearch+"&name="+name;
-            document.forms["formdown"].submit();
-        }
         
         function createRequestObject(){
             var req;
@@ -309,30 +177,79 @@
             
             return req;
         }
- 
-        function ajaxfunction(pagename){
+
+        function firstPage(){
+            ajax = true;
+            currentpage = 1;
+            submitSearch();
+        }
+        
+        function prePage(){
+            ajax = true;
+            currentpage--;
+            if(currentpage < 1) {
+                currentpage = 1;
+                return;
+            }
+            submitSearch();
+        }
+        
+        function nextPage(){
+            ajax = true;
+            currentpage ++;
+            if(currentpage > numpage) {
+                currentpage = numpage;
+                return;
+            }
+            submitSearch();
+        }
+        
+        function endPage(){
+            ajax = true;
+            currentpage = numpage;
+            submitSearch();
+        }
+        
+        function searchHandler() {
+            if(http.readyState == 4 && http.status == 200){
+                location.reload(true);
+            }
+        }
+        
+        function searchByName(){
+            searchType = 'name';
+            searchValue = document.getElementById("txtName").value;
+            submitSearch();
+        }
+        
+        function searchByClass(){
+            searchType = 'clazz';
+            searchValue = document.getElementById("txtclass").value;
+            submitSearch();
+        }
+        
+        function searchByCourse(){
+            searchType = "course";
+            searchValue = document.getElementById("txtCourse").value;
+            submitSearch();
+        }
+        
+        function submitSearch() {
+            var pagename = "../../ManageStudentController?function=liststudent&searchtype=" + searchType + "&searchvalue=" + searchValue + "&currentpage=" + currentpage + "&ajax=true";
             if(http){
-                http.open("GET", pagename ,true);
-                http.onreadystatechange = handleResponse;
+                http.open("GET", pagename, true);
+                http.onreadystatechange = handleResponseDelete;
                 http.send(null);
             }
         }
 
-        function handleResponse(){
-            if(http.readyState == 4 && http.status == 200){
-                var detail = document.getElementById("tableliststudent");
-                detail.innerHTML = http.responseText;
-                end = document.getElementById("numstuafter").value;
-            }
-        }
-        
         function deleteStudent(tableId) {
             try {
                 var table = document.getElementById(tableId);
                 var rowCount = table.rows.length;
                 var data = '';
-                
                 var selectOne = false;
+                
                 for(var i = 1; i < rowCount; i++) {
                     var row = table.rows[i];
                     var chkbox = row.cells[0].childNodes[0];
@@ -346,9 +263,10 @@
                     }
                 }
                 data = data.replace(/\s/g,'');
-                var controller = '../../ManageStudentController?function=delete' + '&data=' + data;
+                var controller = '../../ManageStudentController?function=delete' + '&data=' + data + "&ajax=true";
                 if(http){
-                    http.open("GET", controller ,true);
+                    alert('aaaaaaaa');
+                    http.open("GET", controller, true);
                     http.onreadystatechange = handleResponseDelete;
                     http.send(null);
                 }
@@ -356,13 +274,12 @@
                 alert(e);
             }
         }
+
         function handleResponseDelete(){
-            if(http.readyState == 4 && http.status == 200){
-                location.reload(true);
-                //var detail = document.getElementById("tableliststudent");
-                //detail.innerHTML = http.responseText;
-                //end = document.getElementById("numstuafter").value;
+            if((http.readyState == 4) && (http.status == 200)){
+                var detail = document.getElementById("tableliststudent");
+                detail.innerHTML = http.responseText;
             }
         }
-    </SCRIPT>
+    </script>
 </html>
