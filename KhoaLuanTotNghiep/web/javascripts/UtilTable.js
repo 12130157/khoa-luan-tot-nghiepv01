@@ -29,7 +29,7 @@ function deleteRow(tableID) {
             return;
         }
 
-        for(var i=1; i<rowCount; i++) {
+        for(var i = 1; i < rowCount; i++) {
             var row = table.rows[i];
             row. cells[1].innerHTML = i;
             var chkbox = row.cells[0].childNodes[0];
