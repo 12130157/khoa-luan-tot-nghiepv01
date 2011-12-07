@@ -38,7 +38,6 @@ public class ManageStudentController extends HttpServlet {
     private int rowPerPage = Constants.ELEMENT_PER_PAGE_DEFAULT;
     private int numPage = 1;
     private int currentPage = 1;
-    private boolean isNumPageGetted = false;
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -58,12 +57,8 @@ public class ManageStudentController extends HttpServlet {
         session.removeAttribute("error");
 
         try {
-            //if (!isNumPageGetted) {
-                numPage = getNumberPage();
-                session.setAttribute("numpage", numPage);
-             //   isNumPageGetted = true;
-            //}
-
+            numPage = getNumberPage();
+            session.setAttribute("numpage", numPage);
             String action = request.getParameter("function");
             String datas = request.getParameter("data");
             if (action.equalsIgnoreCase("liststudent")) {
@@ -358,41 +353,41 @@ public class ManageStudentController extends HttpServlet {
             }
             students = studentDao.findAll(rowPerPage, currentPage, searchTypeStr, "'%" + searchValue + "%'", "HoTen", null);
         }
-        if ((ajaxRespone == null) 
+        if ((ajaxRespone == null)
                 || ajaxRespone.isEmpty()
-                || ajaxRespone.equals("false")){
+                || ajaxRespone.equals("false")) {
             HttpSession session = request.getSession();
             session.setAttribute("liststudent", students);
         } else {
             PrintWriter out = response.getWriter();
             String respStr = "<tr id=\"tableliststudent-th\">"
                     + "<td><INPUT type=\"checkbox\" name=\"chkAll\" onclick=\"selectAll('tableliststudent')\" /></td>"
-                        + "<td> STT </td>"
-                        + "<td> MSSV </td>"
-                        + "<td> Họ Tên </td>"
-                        + "<td> Lớp </td>"
-                        + "<td> Khoa </td>"
-                        + "<td> Ngày sinh </td>"
-                        + "<td> Giới tính </td>"
-                        + "<td> Loại </td>"
-                        + "<td> Sửa </td>"
-                        + "<td> Xóa </td>"
-                        + "</tr>";
+                    + "<td> STT </td>"
+                    + "<td> MSSV </td>"
+                    + "<td> Họ Tên </td>"
+                    + "<td> Lớp </td>"
+                    + "<td> Khoa </td>"
+                    + "<td> Ngày sinh </td>"
+                    + "<td> Giới tính </td>"
+                    + "<td> Loại </td>"
+                    + "<td> Sửa </td>"
+                    + "<td> Xóa </td>"
+                    + "</tr>";
             out.println(respStr);
             for (int i = 0; i < students.size(); i++) {
                 respStr = "<tr>"
-                + "<td><INPUT type=\"checkbox\" name=\"chk" + i + "\"/></td>"
-                + "<td> " + (i + 1) + " </td>"
-                + "<td> " + students.get(i).getId() + "</td> "
-                + "<td> " + students.get(i).getFullName() + "</td>"
-                + "<td> " + students.get(i).getClassCode() + "</td>"
-                + "<td> " + students.get(i).getFacultyCode() + "</td>"
-                + "<td> " + students.get(i).getBirthday() + "</td>"
-                + "<td> " + students.get(i).getGender() + "</td>"
-                + "<td> " + students.get(i).getStudyType() + "</td>"
-                + "<td> <a href=\"../../ManageStudentController?function=editstudent&mssv=" + students.get(i).getId() + "\">Sửa</a></td>"
-                + "<td> <a href=\"../../ManageStudentController?function=delete&ajax=true&data=" + students.get(i).getId() + "\"> Xóa</a></td>"
-                + "</tr>";
+                        + "<td><INPUT type=\"checkbox\" name=\"chk" + i + "\"/></td>"
+                        + "<td> " + (i + 1) + " </td>"
+                        + "<td> " + students.get(i).getId() + "</td> "
+                        + "<td> " + students.get(i).getFullName() + "</td>"
+                        + "<td> " + students.get(i).getClassCode() + "</td>"
+                        + "<td> " + students.get(i).getFacultyCode() + "</td>"
+                        + "<td> " + students.get(i).getBirthday() + "</td>"
+                        + "<td> " + students.get(i).getGender() + "</td>"
+                        + "<td> " + students.get(i).getStudyType() + "</td>"
+                        + "<td> <a href=\"../../ManageStudentController?function=editstudent&mssv=" + students.get(i).getId() + "\">Sửa</a></td>"
+                        + "<td> <a href=\"../../ManageStudentController?function=delete&ajax=true&data=" + students.get(i).getId() + "\"> Xóa</a></td>"
+                        + "</tr>";
                 out.println(respStr);
             }
             out.close();
