@@ -5,15 +5,14 @@
 package uit.cnpm02.dkhp.model;
 
 import java.util.Date;
+import uit.cnpm02.dkhp.access.advancedJDBC.AdvancedAbstractJdbcModel;
+import uit.cnpm02.dkhp.access.mapper.MapperConstant;
 
 /**
  *
  * @author LocNguyen
  */
-public class TrainClass {
-    private String classCode;
-    private String year;
-    private int semester;
+public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
     private String subjectCode;
     private String lecturerCode;
     private int numOfStudent;
@@ -21,19 +20,19 @@ public class TrainClass {
     private String studyDate;
     private int shift;
     private String classRoom;
-    private String testDate;
+    private Date testDate;
     private String testHours;
     private String testRoom;
+    private String subjectName;
 
     public TrainClass() {
     }
 
     public TrainClass(String classCode, String year, int semester, String subjectCode, String lecturerCode,
             String classRoom, int numOfStudent, int numOfStudentReg, String studyDate, int shift,
-            String testDate, String testRoom, String testHours) {
-        this.classCode = classCode;
-        this.year = year;
-        this.semester = semester;
+            Date testDate, String testRoom, String testHours) {
+        TrainClassID trainClassID=new TrainClassID(classCode, year, semester);
+        setId(trainClassID);
         this.subjectCode = subjectCode;
         this.lecturerCode = lecturerCode;
         this.classRoom = classRoom;
@@ -44,6 +43,7 @@ public class TrainClass {
         this.testDate=testDate;
         this.testRoom=testRoom;
         this.testHours=testHours;
+        this.subjectName="";
     }
 
     public int getShift() {
@@ -53,15 +53,6 @@ public class TrainClass {
     public void setShift(int shift) {
         this.shift = shift;
     }
-
-    public int getSemester() {
-        return semester;
-    }
-
-    public void setSemester(int semester) {
-        this.semester = semester;
-    }
-
     public String getLecturerCode() {
         return lecturerCode;
     }
@@ -69,15 +60,6 @@ public class TrainClass {
     public void setLecturerCode(String lecturerCode) {
         this.lecturerCode = lecturerCode;
     }
-
-    public String getClassCode() {
-        return classCode;
-    }
-
-    public void setClassCode(String classCode) {
-        this.classCode = classCode;
-    }
-
     public String getSubjectCode() {
         return subjectCode;
     }
@@ -85,15 +67,6 @@ public class TrainClass {
     public void setSubjectCode(String subjectCode) {
         this.subjectCode = subjectCode;
     }
-
-    public String getYear() {
-        return year;
-    }
-
-    public void setYear(String year) {
-        this.year = year;
-    }
-
     public String getStudyDate() {
         return studyDate;
     }
@@ -102,11 +75,11 @@ public class TrainClass {
         this.studyDate = studyDate;
     }
 
-    public String getTestDate() {
+    public Date getTestDate() {
         return testDate;
     }
 
-    public void setTestDate(String testDate) {
+    public void setTestDate(Date testDate) {
         this.testDate = testDate;
     }
 
@@ -136,14 +109,90 @@ public class TrainClass {
     public void setTestHours(String testHours){
         this.testHours=testHours;
     }
-    public String setTestHours(){
+    public String getTestHours(){
      return this.testHours;   
     }
     public void setTestRoom(String testRoom){
         this.testRoom=testRoom;
     }
-    public String setTestRoom(){
+    public String getTestRoom(){
      return this.testRoom;   
     }
-    
+    public void setSubjectName(String _subjectName){
+        this.subjectName=_subjectName;
+    }
+    public String getSubjectName(){
+        return this.subjectName;
+    }
+    @Override
+    public String[] getColumnNames() {
+        return new String[]{
+                    "MaMH",
+                    "MaGV",
+                    "SLSV",
+                    "SLDK",
+                    "NgayHoc",
+                    "CaHoc",
+                    "PhongHoc",
+                    "NgayThi",
+                    "CaThi",
+                    "PhongThi"
+              };
+    }
+
+    @Override
+    public Object[] getColumnValues() {
+         return new Object[]{
+                    subjectCode,
+                    lecturerCode,
+                    numOfStudent,
+                    numOfStudentReg,
+                    studyDate,
+                    shift,
+                    classRoom,
+                    testDate,
+                    testHours,
+                    testRoom
+                };
+    }
+
+    @Override
+    public void setColumnValues(Object[] values) {
+        try {
+                    subjectCode=values[0].toString();
+                    lecturerCode=values[1].toString();
+                    numOfStudent=Integer.parseInt(values[2].toString());
+                    numOfStudentReg=Integer.parseInt(values[3].toString());
+                    studyDate=values[4].toString();
+                    shift=Integer.parseInt(values[5].toString());
+                    classRoom=values[6].toString();
+                    testDate=(Date)values[7];
+                    testHours=values[8].toString();
+                    testRoom =values[9].toString();
+            
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    @Override
+    public String getTableName() {
+        return MapperConstant.DB_NAME
+                + ".lophoc";
+    }
+
+    @Override
+    public String[] getIdColumnName() {
+        return new String[]{
+                    "MaLopHoc",
+                    "HocKy",
+                    "NamHoc"
+                };
+    }
+
+    @Override
+    public Object[] getIdColumnValues() {
+        return getId().getIDValues();
+    }
 }

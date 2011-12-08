@@ -19,9 +19,11 @@ import uit.cnpm02.dkhp.model.StudyResultID;
 import java.util.*;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 import uit.cnpm02.dkhp.DAO.ClassDAO;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.FacultyDAO;
@@ -79,10 +81,21 @@ private void exportStudyResult(HttpServletRequest req, HttpServletResponse resp)
            //create file excel
            HSSFWorkbook hwb = new HSSFWorkbook();
            HSSFSheet sheet = hwb.createSheet("Bang Diem SV " + user);
+           sheet.autoSizeColumn((short)+0);
            HSSFCellStyle style = hwb.createCellStyle();
+           HSSFCellStyle style1 = hwb.createCellStyle();
+           HSSFCellStyle style2 = hwb.createCellStyle();
+           HSSFCellStyle style3 = hwb.createCellStyle();
            
+            HSSFFont font = hwb.createFont();
+            font.setFontName(HSSFFont.FONT_ARIAL);
+            font.setFontHeightInPoints((short) 20);
+            font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+            font.setColor(HSSFColor.RED.index);
+            style2.setFont(font);
+            
            boolean done = false;
-           int nrow = 0, i = 0;
+           int nrow = 1, i = 0;
                       
            String[] infoStudent = {"Họ Và Tên: " + student.getFullName(),
                 "MSSV: " + student.getId(),
@@ -90,18 +103,25 @@ private void exportStudyResult(HttpServletRequest req, HttpServletResponse resp)
                 "Khoa: " +faculty.getFacultyName(),
                 "Số tín chỉ đã tích lũy: " + numTC,
                 "Điểm trung bình: " + averageMark};
-           HSSFRow row1 = null;
+            HSSFRow row1 = null;
             HSSFCell cell1 = null;
-
+            
+            
+            
             row1 = sheet.createRow((short) +(nrow++));
             cell1 = row1.createCell((short) +4);
-            cell1.setCellStyle(style);
+            cell1.setCellStyle(style2);
             cell1.setCellType(HSSFCell.CELL_TYPE_STRING);
             cell1.setCellValue("BẢNG ĐIỂM SINH VIÊN");
 
             row1 = sheet.createRow((short) +(nrow++));
             row1 = sheet.createRow((short) +(nrow++));
-
+            HSSFFont font1 = hwb.createFont();
+            font1.setFontName(HSSFFont.FONT_ARIAL);
+            font1.setFontHeightInPoints((short) 12);
+            font1.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+            font1.setColor(HSSFColor.BLUE.index);
+            style.setFont(font1);
             for (i = 0; i < infoStudent.length; i++) {
                 row1 = sheet.createRow((short) +(nrow++));
                 cell1 = row1.createCell((short) +0);
@@ -116,9 +136,15 @@ private void exportStudyResult(HttpServletRequest req, HttpServletResponse resp)
             
             String[] title = {"Năm học", "Học kỳ", "Mã môn học", "Tên môn học", "Số tín chỉ", "Điểm"};
             row1 = sheet.createRow((short) +(nrow++));
+            HSSFFont font2 = hwb.createFont();
+            font2.setFontName(HSSFFont.FONT_ARIAL);
+            font2.setFontHeightInPoints((short) 12);
+            font2.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+            font2.setColor(HSSFColor.GREEN.index);
+            style1.setFont(font2);
             for (i = 0; i < title.length; i++) {
-                cell1 = row1.createCell((short) +i);
-                cell1.setCellStyle(style);
+                cell1 = row1.createCell((short) +(i+1));
+                cell1.setCellStyle(style1);
                 cell1.setCellType(HSSFCell.CELL_TYPE_STRING);
                 cell1.setCellValue(title[i]);
             }
@@ -141,10 +167,11 @@ private void exportStudyResult(HttpServletRequest req, HttpServletResponse resp)
 
                 HSSFCell cell = null;
                 for (int j = 0; j < info.length; j++) {
-                    cell = row.createCell((short) +j);
-                    cell.setCellStyle(style);
+                    cell = row.createCell((short) +(j+1));
+                    cell.setCellStyle(style3);
                     cell.setCellType(HSSFCell.CELL_TYPE_STRING);
                     cell.setCellValue(info[j]);
+                    sheet.autoSizeColumn(j+1);
                 }
             }
             
