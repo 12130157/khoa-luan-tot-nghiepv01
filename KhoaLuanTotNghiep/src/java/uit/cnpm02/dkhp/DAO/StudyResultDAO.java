@@ -11,11 +11,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import uit.cnpm02.dkhp.access.advancedJDBC.AdvancedAbstractJdbcDAO;
-import uit.cnpm02.dkhp.access.mapper.Queries;
-import uit.cnpm02.dkhp.access.mapper.SQLUtils;
 import uit.cnpm02.dkhp.model.StudyResult;
 import uit.cnpm02.dkhp.model.StudyResultID;
-import uit.cnpm02.dkhp.utilities.LangUtils;
 
 /**
  *

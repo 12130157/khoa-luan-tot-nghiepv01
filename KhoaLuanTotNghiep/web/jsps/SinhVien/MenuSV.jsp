@@ -40,7 +40,7 @@
                  </ul>
              </li>
              <li><a href="../../TrainProgramController?action=view"> Chương trình đào tạo |</a></li>
-             <li><a href="../ServHompage?action=view"> Thời khóa biểu |</a></li>
+             <li><a href="../../ScheduleController?action=view"> Thời khóa biểu |</a></li>
              <li><a href="../ServHompage?action=view"> Danh sách lớp học |</a></li>
              <li><a href=""> Quy định |</a>
                  <ul>

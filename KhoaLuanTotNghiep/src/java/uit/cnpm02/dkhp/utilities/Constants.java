@@ -8,8 +8,8 @@ public class Constants {
     
     /**Account type**/
     public static int ACCOUNT_TYPE_LECTURE = 2;
-    public static int ACCOUNT_TYPE_PDT = 3;
-    public static int ACCOUNT_TYPE_STUDENT = 1;
+    public static int ACCOUNT_TYPE_PDT = 1;
+    public static int ACCOUNT_TYPE_STUDENT = 3;
 
     public static String ACCOUNT_STATUS_NORMAL = "Bình thường";
     public static String ACCOUNT_STATUS_SPECIAL = "Đặc biệt";
@@ -26,6 +26,8 @@ public class Constants {
     //...
     /**Define number row tobe showed on a page**/
     public static int ELEMENT_PER_PAGE_DEFAULT = 10;
+    public static int CURRENT_SEMESTER=2;
+    public static String CURRENT_YEAR= "2011-2012";
     
     /**Some page allowed to show more then default value
      you should define below session**/
