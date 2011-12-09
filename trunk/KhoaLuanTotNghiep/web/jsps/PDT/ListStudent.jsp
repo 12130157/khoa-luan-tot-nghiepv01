@@ -157,6 +157,7 @@
     </body>
 
     <script src="../../javascripts/UtilTable.js"></script>
+    <script src="../../javascripts/AjaxUtil.js"></script>
     <script  type = "text/javascript" >
         var ajax = false;
         var currentpage = 1;
@@ -165,19 +166,6 @@
         var searchValue = 'all';
         var http = createRequestObject();
         
-        function createRequestObject(){
-            var req;
-            if(window.XMLHttpRequest){
-                req = new XMLHttpRequest();
-            } else if(window.ActiveXObject){
-                req = new ActiveXObject("Microsoft.XMLHTTP");
-            } else{
-                alert('Your browser is not IE 5 or higher, or Firefox or Safari or Opera');
-            }
-            
-            return req;
-        }
-
         function firstPage(){
             ajax = true;
             currentpage = 1;

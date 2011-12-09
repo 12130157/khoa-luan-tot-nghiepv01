@@ -137,7 +137,7 @@
                 <p>
                     <INPUT type="button" value="Thêm hàng" onclick="addRow('dataTable')" />
                     <INPUT type="button" value="Xóa mục đã chọn" onclick="deleteRow('dataTable')" />
-                    <INPUT type="submit" value="Hoàn thành" onclick="submit('../../ManageStudentController?function=import', 'dataTable')" />
+                    <INPUT type="submit" value="Hoàn thành" onclick="submitInsertStudentFromTable('../../ManageStudentController?function=import', 'dataTable')" />
                 </p>
                 <hr/><hr/>
                 <div id="sidebar">
@@ -192,6 +192,7 @@
     </body>
 
     <script src="../../javascripts/UtilTable.js"></script>
+    <script src="../../javascripts/AjaxUtil.js"></script>
     <SCRIPT language="javascript">
         var http = createRequestObject();
         var facultiesArray = new Array();
@@ -227,7 +228,7 @@
             createNewInputCell(row, 'txtBirthDay', 4);
             
             //Giới Tính
-            createNewSelectionCell(row, 'selectSex', 5, new Array("Nam", "Nữ"));
+            createNewSelectionCell(row, 'selectSex', 5, new Array("Nam", "N\u1eef"));
             
             //CMND
             createNewInputCell(row, 'txtCMND', 6);
@@ -254,17 +255,17 @@
             createNewSelectionCell(row, 'selectCourse', 13, courseArray);
             
             //Tình Trạng
-            createNewSelectionCell(row, 'selectStatus', 14, new Array('Đang học', 'Đang Bảo Lưu Kq', 'Đã Ra Trường'));
+            createNewSelectionCell(row, 'selectStatus', 14, new Array('\u0110ang học', '\u0110ang Bảo Lưu Kq', '\u0110ã Ra Trường'));
             
             //Bậc học
-            createNewSelectionCell(row, 'selectLevel', 15, new Array('Đại Học', 'Cao Đẳng', 'Trung Cấp'));
+            createNewSelectionCell(row, 'selectLevel', 15, new Array('\u0110ại Học', 'Cao \u0110ẳng', 'Trung C\u1ea5p'));
             
             //Ngày nhập học
             // ==> share be update to calendar input
             createNewInputCell(row, 'txtEnterDay', 16);
             
             //Loại hình học
-            createNewSelectionCell(row, 'selectType', 17, new Array('Tập chung', 'Đào tạo từ xa'));
+            createNewSelectionCell(row, 'selectType', 17, new Array('T\u1eadp chung', '\u0110ào tạo từ xa'));
             
             //Ghi chú
             createNewInputCell(row, 'txtPhone', 18);
@@ -281,22 +282,13 @@
             addRow(tableID);
         }
  
-        //
-        // Function for ajax
-        //
-        function createRequestObject(){
-            var req;
-            if(window.XMLHttpRequest){
-                req = new XMLHttpRequest();
-            } else if(window.ActiveXObject){
-                req = new ActiveXObject("Microsoft.XMLHTTP");
-            } else{
-                alert('Functions does not support you Brower');
-            }
-            return req;
-        }
- 
-        function submit(pagename, tableData){
+        /**
+         * Insert students(s) from table
+         * 
+         * @Param pagename point to controller.
+         * @Param tableData table's id
+         */
+        function submitInsertStudentFromTable(pagename, tableData){
             datas = getListStudentFromTable(tableData);
             
             if (datas == 'fail') {
@@ -312,6 +304,11 @@
             }
         }
         
+        /**
+         * Insert students(s) from file
+         * 
+         * @Param pagename point to controller.
+         */
         function submitInsertFromFile(pagename) {
             if(http){
                 http.open("GET", pagename ,true);
@@ -326,9 +323,12 @@
             }
         }
         
-        //
-        // Util functions for update data
-        //
+        /*
+        * Get data string from table.
+        * 
+        * @Param tableID table's id
+        * @Return string hold data.
+        */
         function getListStudentFromTable(tableID) {
             var datas = '';
             var selectOne = false;
@@ -340,7 +340,7 @@
                     var chkbox = row.cells[0].childNodes[0];
                     if(null != chkbox && true == chkbox.checked) {
                         if (validateInputValue(row) == false) {
-                            alert('Vui lòng nhập đầy thông tin cần thiết cho dòng ' + i);
+                            alert('Vui lòng nh\u1eadp đầy thông tin cần thiết cho dòng ' + i);
                             return 'fail'; //fail
                         }
                         if (selectOne == false)
@@ -388,7 +388,7 @@
                 alert(e);
             }
             if (selectOne == false) {
-                alert('Vui lòng chọn ít nhất một hàng.');
+                alert('Vui lòng ch\u1ecdn ít nhất một hàng.');
                 return 'fail';
             }
             
