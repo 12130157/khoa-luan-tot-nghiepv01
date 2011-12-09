@@ -5,38 +5,35 @@ package uit.cnpm02.dkhp.utilities;
  * @author LocNguyen
  */
 public class Constants {
-    
+
     /**Account type**/
     public static int ACCOUNT_TYPE_LECTURE = 2;
     public static int ACCOUNT_TYPE_PDT = 1;
     public static int ACCOUNT_TYPE_STUDENT = 3;
-
     public static String ACCOUNT_STATUS_NORMAL = "Bình thường";
     public static String ACCOUNT_STATUS_SPECIAL = "Đặc biệt";
-    
-    
     /**News's type**/
     public static int NEWS_TYPE_READ = 0;
     public static int NEWS_TYPE_UNREAD = 1;
-    
     /**Student's type**/
     public static int STUDENT_STATUS_NORMAL = 0;
     public static int STUDENT_STATUS_reservations = 1;
-    
     //...
     /**Define number row tobe showed on a page**/
     public static int ELEMENT_PER_PAGE_DEFAULT = 10;
     public static int CURRENT_SEMESTER = 2;
-    public static String CURRENT_YEAR= "2011-2012";
-    public static int MONDAY= 2;
-    public static int TUESDAY= 3;
-    public static int WEDNESDAY= 4;
-    public static int THURSDAY= 5;
-    public static int FRIDAY= 6;
-    public static int SATURDAY= 7;
-    public static int SUNDAY= 8;
-    
+    public static String CURRENT_YEAR = "2011-2012";
+    public static int MONDAY = 2;
+    public static int TUESDAY = 3;
+    public static int WEDNESDAY = 4;
+    public static int THURSDAY = 5;
+    public static int FRIDAY = 6;
+    public static int SATURDAY = 7;
+    public static int SUNDAY = 8;
     /**Some page allowed to show more then default value
-     you should define below session**/
+    you should define below session**/
     //...
+    public static String LABEL_CLASS = "lbl_clazz";
+    public static String LABEL_COURSE = "lbl_course";
+    public static String LABEL_FACULTY = "lbl_faculty";
 }
