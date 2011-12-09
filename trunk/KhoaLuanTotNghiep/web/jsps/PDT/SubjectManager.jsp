@@ -75,9 +75,15 @@
 
                 <div id = "listsubject">
                     <div style="padding-bottom: 10px;
-                         padding-left: 10px;">
+                         padding-left: 10px;
+                         ">
                         <input type = "text" placeholder = "Nhập thông tin tìm kiếm" />
                         <input type = "button" onclick = "" value = "Tìm">
+                    </div>
+                    <div style="padding-bottom: 5px;
+                         padding-left: 10px;
+                         ">
+                        <input type = "button" onclick = "" value = "Xóa mục đã chọn">
                     </div>
                     <table id = "tablelistsubject" name = "tablelistsubject">
                         <tr>
@@ -119,7 +125,6 @@
                     </div>
                     <br/>
                 </div>
-                <input type="hidden" value="<%= numpage%>">
 
                 <hr/><hr/>
                 <div id="title">
@@ -137,7 +142,7 @@
                                value="Xóa mục đã chọn"
                                />
                         <input type="button" 
-                               onclick="submitAddSubject('tableaddsubject')" 
+                               onclick="addSubjectsFromTable('../../ManageSubjectController?function=insert_sub_from_table', 'tableaddsubject')" 
                                value="Hoàn thành"
                                />
                     </div>
@@ -150,11 +155,15 @@
                             <th> STT </th>
                             <th> Mã MH </th>
                             <th> Tên Môn học </th>
-                            <th> Số TC </th>
                             <th> Số TCLT </th>
                             <th> Số TCTH </th>
+                            <th>  </th>
                             </tr>
                         </table>
+                    </div>
+                    <div id="insert_from_table_error"
+                         style="background-color: #00ff00;
+                         color: #f40f0f;">
                     </div>
 
                 </div>
@@ -174,11 +183,12 @@
     </body>
 
     <script src="../../javascripts/UtilTable.js"></script>
+    <script src="../../javascripts/AjaxUtil.js"></script>
     <script  type = "text/javascript" >
-        var currentpage = 1;
+        //var currentpage = 1;
         var http = createRequestObject();
-        numpage = document.getElementById("numpage").value;
-        function firstPage(){
+        //var numpage = document.getElementById("numpage").value;
+        /*function firstPage(){
             currentpage = 1;
             sendRequest();
         }
@@ -201,8 +211,12 @@
             if(http){
                 ajaxfunction("../../AccountController?action=Filter&curentPage="+currentpage);
             }
-        }
+        }*/
         
+        /**
+         * Add new row to table
+         * @Param tableID table's id
+         **/
         function addRow(tableID) {
             var table = document.getElementById(tableID);
             var rowCount = table.rows.length;
@@ -224,17 +238,115 @@
                 
             //Ten mon hoc
             createNewInputCell(row, 'txtSubName', 3);
-            //So Tin Chi
-            createNewInputCell(row, 'txtNumTC', 4);
             
             //So TCLT
-            createNewInputCell(row, 'txtNumTCLT', 5);
+            createNewInputCell(row, 'txtNumTCLT', 4);
             
             //So TCTT
-            createNewInputCell(row, 'txtNumTCTH', 6);
+            createNewInputCell(row, 'txtNumTCTH', 5);
 
             //createNewSelectionCell(row, 'selectSex', 5, new Array("Nam", "Nữ"));
+            var btn = createNewButton(row, 'btnCheck', 6, 'Ki\u1ec3m tra');
+            btn.onclick = checkAddPrCondition;
+        }
+        
+        function checkAddPrCondition() {
+            alert('checked');
+        }
+        
+        /*
+         * Util functions for get data from a table
+         * 
+         * @Param tableId table's id
+         */
+        function getDataStringFromTable(tableID) {
+            var datas = '';
+            var selectOne = false;
+            try {
+                var table = document.getElementById(tableID);
+                var rowCount = table.rows.length;
+                for(var i = 1; i < rowCount; i++) {
+                    var row = table.rows[i];
+                    var chkbox = row.cells[0].childNodes[0];
+                    if((null != chkbox) && (true == chkbox.checked)) {
+                        if (validateSubjectValue(row) == false) {
+                            alert('Vui lòng nh\u1eadp đầy thông tin cần thiết cho dòng ' + i);
+                            return;
+                        }
+                        if (selectOne == false)
+                            selectOne = true;
+                        var elTableCells = row.getElementsByTagName('td');
+                        var currentData = '';
+                        currentData += elTableCells[2].childNodes[0].value + ','; //Ma Mon Hoc
+                        currentData += elTableCells[3].childNodes[0].value + ','; //Ten Mon Hoc
+                        currentData += elTableCells[4].childNodes[0].value + ','; //So TCLT
+                        currentData += row.cells[5].childNodes[0].value; //So TCTH
+                        
+                        if (i < (rowCount - 1)) {
+                            currentData += ';';
+                        }
+                        
+                        datas += currentData;
+                    }
+                }
+            }catch(e) {
+                alert(e);
+            }
+            if (selectOne == false) {
+                alert('Vui lòng ch\u1ecdn ít nhất một hàng.');
+                return;
+            }
             
+            return datas;
+        }
+        
+        /**
+         * Validate the input data is correct.
+         * 
+         * @Param row row of table.
+         */
+        function validateSubjectValue(row) {
+            var elTableCells = row. getElementsByTagName('td');
+            if ((elTableCells[2].childNodes[0].value == '') ||
+                (elTableCells[3].childNodes[0].value == '') ||
+                (elTableCells[4].childNodes[0].value == '')) {
+                return false;
+            }
+            
+            return true;
+        }
+    
+        /**
+         * Send request to submit insert subject(s)
+         * from a table.
+         * 
+         * @Param pageName point to controller.
+         * @Param tableID table's id.
+         **/
+        function addSubjectsFromTable(pageName, tableID) {
+            var data = getDataStringFromTable(tableID);
+            if ((data == null) || (data.length < 1)) {
+                alert("D\u1eef liệu nhập không đúng.");
+                return;
+            }
+            var controller = pageName + '&data=' + data;
+            alert(http);
+            if(http){
+                http.open("GET", controller ,true);
+                http.onreadystatechange = hdlRespForAddSubFromTable;
+                http.send(null);
+                
+            }
+        }
+        
+        /**
+         * Respone when submit insert subject from a table
+         */
+        function hdlRespForAddSubFromTable(){
+            if(http.readyState == 4 && http.status == 200){
+                var detail=document.getElementById("insert_from_table_error");
+                detail.innerHTML=http.responseText;
+            }
         }
     </script>
 </html>
