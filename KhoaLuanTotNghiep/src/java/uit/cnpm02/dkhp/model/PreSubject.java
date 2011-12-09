@@ -13,6 +13,12 @@ public class PreSubject extends AdvancedAbstractJdbcModel<PreSubID> {
     private String subjectName;
     public PreSubject() {
     }
+    public PreSubject(String _preSubCode, String _subCode) {
+        PreSubID preId=new PreSubID(_subCode, _preSubCode);
+        setId(preId);
+        this.preSubjectName="";
+        this.subjectName="";
+    }
     public String getPreSubjectName(){
         return this.preSubjectName;
     }

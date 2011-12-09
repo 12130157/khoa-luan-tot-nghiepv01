@@ -7,12 +7,15 @@ package uit.cnpm02.dkhp.controllers.SV;
 import com.sun.corba.se.impl.orbutil.closure.Constant;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import uit.cnpm02.dkhp.DAO.TrainClassDAO;
+import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.utilities.Constants;
 
 /**
@@ -21,7 +24,7 @@ import uit.cnpm02.dkhp.utilities.Constants;
  */
 @WebServlet(name = "ScheduleController", urlPatterns = {"/ScheduleController"})
 public class ScheduleController extends HttpServlet {
-
+TrainClassDAO trainClassDao=new TrainClassDAO();
    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -42,6 +45,19 @@ private void getSchedule(HttpServletResponse response, HttpSession session) thro
       try{
             session.setAttribute("year", Constants.CURRENT_YEAR);
             session.setAttribute("semester", Constants.CURRENT_SEMESTER);
+           // List<TrainClass> monday=trainClassDao.findAllByStudyDate(Constants.MONDAY);
+            List<TrainClass> monday=trainClassDao.findAll();
+            //List<TrainClass> tuesday=trainClassDao.findAllByStudyDate(Constants.TUESDAY);
+            //List<TrainClass> wednesday=trainClassDao.findAllByStudyDate(Constants.WEDNESDAY);
+           // List<TrainClass> thursday=trainClassDao.findAllByStudyDate(Constants.THURSDAY);
+           // List<TrainClass> friday=trainClassDao.findAllByStudyDate(Constants.FRIDAY);
+           // List<TrainClass> saturday=trainClassDao.findAllByStudyDate(Constants.SATURDAY);
+            session.setAttribute("monday", monday);
+            //session.setAttribute("tuesday", tuesday);
+            //session.setAttribute("wednesday", wednesday);
+            //session.setAttribute("thursday", thursday);
+            //session.setAttribute("friday", friday);
+            //session.setAttribute("saturday", saturday);
             path= "./jsps/SinhVien/Schedule.jsp";
        }catch(Exception ex){
            path= "./jsps/Message.jsp";

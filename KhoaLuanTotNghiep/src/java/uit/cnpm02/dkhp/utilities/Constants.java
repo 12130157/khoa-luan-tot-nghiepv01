@@ -26,8 +26,15 @@ public class Constants {
     //...
     /**Define number row tobe showed on a page**/
     public static int ELEMENT_PER_PAGE_DEFAULT = 10;
-    public static int CURRENT_SEMESTER=2;
+    public static int CURRENT_SEMESTER = 2;
     public static String CURRENT_YEAR= "2011-2012";
+    public static int MONDAY= 2;
+    public static int TUESDAY= 3;
+    public static int WEDNESDAY= 4;
+    public static int THURSDAY= 5;
+    public static int FRIDAY= 6;
+    public static int SATURDAY= 7;
+    public static int SUNDAY= 8;
     
     /**Some page allowed to show more then default value
      you should define below session**/

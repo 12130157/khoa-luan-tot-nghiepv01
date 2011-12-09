@@ -125,6 +125,19 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
         return this.subjectName;
     }
     @Override
+    public String getTableName() {
+        return MapperConstant.DB_NAME
+                + ".lophoc";
+    }
+     @Override
+    public String[] getIdColumnName() {
+        return new String[]{
+                    "MaLopHoc",
+                    "HocKy",
+                    "NamHoc"
+                };
+    }
+    @Override
     public String[] getColumnNames() {
         return new String[]{
                     "MaMH",
@@ -174,21 +187,6 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
-    }
-
-    @Override
-    public String getTableName() {
-        return MapperConstant.DB_NAME
-                + ".lophoc";
-    }
-
-    @Override
-    public String[] getIdColumnName() {
-        return new String[]{
-                    "MaLopHoc",
-                    "HocKy",
-                    "NamHoc"
-                };
     }
 
     @Override
