@@ -29,7 +29,8 @@ public class SQLUtils {
         {"log.insert", "insert into Log(col1, col2) values (?,?)"},
         {"log.update", "update Log set col1=value1 where id = ?"},
         {"sql.select.rowsCount", "select count(*) from {0}"},
-        {"sql.select.rows", "select * from {0} order by {1} {2} limit {3} offset {4}"}
+        {"sql.select.rows", "select * from {0} order by {1} {2} limit {3} offset {4}"},
+        {"sql.select.rows_where", "select * from {0} where {1} like {2} order by {3} {4} limit {5} offset {6}"}
     };
     private static Map<String, String> sqlQuery = new HashMap<String, String>(10);
     private static boolean queriesLoaded = false;

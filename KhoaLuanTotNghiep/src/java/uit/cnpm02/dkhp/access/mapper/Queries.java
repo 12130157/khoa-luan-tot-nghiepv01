@@ -35,4 +35,6 @@ public interface Queries {
     public String SQL_SELECT_ROWS_COUNT = "sql.select.rowsCount";
     /***/
     public String SQL_SELECT_ROWS = "sql.select.rows";
+    /****/
+    public String SQL_SELECT_ROWS_WHERE = "sql.select.rows_where";
 }
