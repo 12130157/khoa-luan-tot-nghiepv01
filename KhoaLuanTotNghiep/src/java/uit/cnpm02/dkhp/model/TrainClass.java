@@ -24,6 +24,7 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
     private String testHours;
     private String testRoom;
     private String subjectName;
+    private String lecturerName;
 
     public TrainClass() {
     }
@@ -44,6 +45,7 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
         this.testRoom=testRoom;
         this.testHours=testHours;
         this.subjectName="";
+        this.lecturerName="";
     }
 
     public int getShift() {
@@ -124,6 +126,12 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
     public String getSubjectName(){
         return this.subjectName;
     }
+     public void setLectturerName(String _lectturerNam){
+        this.lecturerName=_lectturerNam;
+    }
+    public String getLectturerName(){
+        return this.lecturerName;
+    }
     @Override
     public String getTableName() {
         return MapperConstant.DB_NAME
@@ -179,9 +187,9 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
                     studyDate=values[4].toString();
                     shift=Integer.parseInt(values[5].toString());
                     classRoom=values[6].toString();
-                    testDate=(Date)values[7];
-                    testHours=values[8].toString();
-                    testRoom =values[9].toString();
+                    testDate=(Date) (values[7] == null ? null : values[7]);
+                    testHours=values[8] == null ? "" : values[8].toString();
+                    testRoom =values[9] == null ? "" : values[9].toString();
             
 
         } catch (Exception e) {
