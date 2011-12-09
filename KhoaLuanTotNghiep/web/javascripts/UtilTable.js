@@ -1,3 +1,7 @@
+/**
+ * Select all row of table.
+ * @Param tableId the ID of table.
+ */
 function selectAll(tableId) {
     var table = document.getElementById(tableId);
     var rowCount = table.rows.length;
@@ -9,23 +13,28 @@ function selectAll(tableId) {
             select = true;
         }
     } else {
-        alert('Đã có lỗi xảy ra.');
+        alert('\u0110ã có lỗi xảy ra.');
         return;
     }
     for(var i = 1; i < rowCount; i++) {
-        var row = table.rows[i];
+        row = table.rows[i];
         var chkbox = row.cells[0].childNodes[0];
         chkbox.checked = select;
     }
 }
 
+/**
+ * Delete all selected row of table.
+ * 
+ * @Param tableID the id of table.
+ */
 function deleteRow(tableID) {
     try {
         var table = document.getElementById(tableID);
         var rowCount = table.rows.length;
                 
         if (rowCount < 3) {
-            alert("Không thể xóa tất cả các dòng");
+            alert("Không th\u1ec3 xóa tất cả các dòng");
             return;
         }
 
@@ -44,6 +53,13 @@ function deleteRow(tableID) {
     }
 }
 
+/**
+ * Create a new input element
+ * 
+ * @Param row row's index.
+ * @Param name name of element
+ * @Param index index of element in row.
+ */
 function createNewInputCell(row, name, index) {
     var cell = row.insertCell(index);
     var element = document.createElement("input");
@@ -52,7 +68,15 @@ function createNewInputCell(row, name, index) {
     element.id = name;
     cell.appendChild(element);
 }
-        
+
+/**
+ * Create a new Selection element
+ * 
+ * @Param row row's index.
+ * @Param name name of element
+ * @Param index index of element in row.
+ * @Param values an array hold the values of selections.
+ */
 function createNewSelectionCell(row, name, index, values) {
     var cell = row.insertCell(index);
     var element = document.createElement("select");
@@ -65,4 +89,26 @@ function createNewSelectionCell(row, name, index, values) {
         i ++;
     }
     cell.appendChild(element);
+}
+
+/**
+ * Create a new Button
+ * 
+ * @Param 
+ * @Param 
+ * @Param 
+ * @Param 
+ * @Param 
+ * @Return
+ */
+function createNewButton(row, name, index, value) {
+    var cell = row.insertCell(index);
+    var element = document.createElement("button");
+    element.name = name;
+    element.id = name;
+    element. value = value;
+    
+    cell.appendChild(element);
+    
+    return element;
 }
