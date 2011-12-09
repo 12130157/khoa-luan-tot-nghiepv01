@@ -4,6 +4,8 @@
     Author     : ngloc_it
 --%>
 
+<%@page import="uit.cnpm02.dkhp.model.TrainClass"%>
+<%@page import="java.util.List"%>
 <%@include file="MenuSV.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
@@ -11,6 +13,12 @@
 <%
 String year=(String) session.getAttribute("year");
 Integer semester=(Integer) session.getAttribute("semester");
+ List<TrainClass> monday=(List<TrainClass>)session.getAttribute("monday");
+ List<TrainClass> tuesday=(List<TrainClass>)session.getAttribute("tuesday");
+ List<TrainClass> wednesday=(List<TrainClass>)session.getAttribute("wednesday");
+ List<TrainClass> thursday=(List<TrainClass>)session.getAttribute("thursday");
+ List<TrainClass> friday=(List<TrainClass>)session.getAttribute("friday");
+ List<TrainClass> saturday=(List<TrainClass>)session.getAttribute("saturday");
 %>
 <html>
     <head>
@@ -63,7 +71,7 @@ Integer semester=(Integer) session.getAttribute("semester");
                     <u>Chi tiết</u>
                     <table id="detail" name="detail" border="1" bordercolor="yellow" >
                      <tr>
-                            <th width="100px">Năm học</th><th width="70px">Học kỳ</th><th width="100px">Mã môn</th><th width="300px">Tên môn học</th><th width="70px">Số TC</th><th width="80px">Điểm</th><th width="100px">Nhân hệ số</th>
+                            <th width="100px"><b><u>Thứ 2:</u></b></th>
                      </tr>   
                       
                     </table>
