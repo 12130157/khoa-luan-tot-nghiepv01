@@ -25,6 +25,7 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
     private String testRoom;
     private String subjectName;
     private String lecturerName;
+    int numTC;
 
     public TrainClass() {
     }
@@ -46,6 +47,7 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
         this.testHours=testHours;
         this.subjectName="";
         this.lecturerName="";
+        numTC=0;
     }
 
     public int getShift() {
@@ -131,6 +133,12 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
     }
     public String getLectturerName(){
         return this.lecturerName;
+    }
+    public void setNumTC(int _numTC){
+        this.numTC=_numTC;
+    }
+    public int getNumTC(){
+        return this.numTC;
     }
     @Override
     public String getTableName() {

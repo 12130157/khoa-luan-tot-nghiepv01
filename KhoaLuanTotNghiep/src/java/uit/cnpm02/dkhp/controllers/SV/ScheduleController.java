@@ -4,7 +4,6 @@
  */
 package uit.cnpm02.dkhp.controllers.SV;
 
-import com.sun.corba.se.impl.orbutil.closure.Constant;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -17,7 +16,6 @@ import javax.servlet.http.HttpSession;
 import uit.cnpm02.dkhp.DAO.LecturerDAO;
 import uit.cnpm02.dkhp.DAO.SubjectDAO;
 import uit.cnpm02.dkhp.DAO.TrainClassDAO;
-import uit.cnpm02.dkhp.model.Lecturer;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.utilities.Constants;
 
@@ -49,6 +47,7 @@ private void setSubjectAndLecturer(List<TrainClass> trainClass) throws Exception
     for(int i=0;i<trainClass.size();i++){
         trainClass.get(i).setSubjectName(subjectDao.findById(trainClass.get(i).getSubjectCode()).getSubjectName());
         trainClass.get(i).setLectturerName(lecturerDao.findById(trainClass.get(i).getLecturerCode()).getFullName());
+        trainClass.get(i).setNumTC(subjectDao.findById(trainClass.get(i).getSubjectCode()).getnumTC() );
     }
 }
 private void getSchedule(HttpServletResponse response, HttpSession session) throws IOException{
