@@ -35,7 +35,7 @@
              <li><a href="../../HomepageController?actor=Student"> Trang chủ |</a></li>
              <li><a href=""> Học tập |</a>
                  <ul>
-                      <li><a href="../ServHompage?action=view"> Đăng ký học phần</a></li>
+                      <li><a href="../../RegistryController?action=view"> Đăng ký học phần</a></li>
                       <li><a href="../../StudyResultController?action=view"> Kết quả học tập</a></li>
                  </ul>
              </li>
@@ -55,7 +55,7 @@
                  </ul>
              </li>
              <li><a href="../../Login?function=logout"> Đăng xuất |</a></li>
-             <li><a href="../ServHompage?action=view"> Liên hệ </a></li>
+             <li><a href="../../StudentCommentController?action=send"> Liên hệ </a></li>
         </ul>
     </div>       
 </body>
