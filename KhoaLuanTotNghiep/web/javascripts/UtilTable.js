@@ -2,11 +2,11 @@
  * Select all row of table.
  * @Param tableId the ID of table.
  */
-function selectAll(tableId) {
+function selectAll(tableId, checkboxIndex) {
     var table = document.getElementById(tableId);
     var rowCount = table.rows.length;
     var row = table.rows[0];
-    var chkboxSelect = row.cells[0].childNodes[0];
+    var chkboxSelect = row.cells[checkboxIndex].childNodes[0];
     var select = false;
     if (chkboxSelect != null) {
         if (chkboxSelect.checked) {
@@ -18,13 +18,16 @@ function selectAll(tableId) {
     }
     for(var i = 1; i < rowCount; i++) {
         row = table.rows[i];
-        var chkbox = row.cells[0].childNodes[0];
+        var chkbox = row.cells[checkboxIndex].childNodes[0];
         chkbox.checked = select;
     }
 }
 
 /**
  * Delete all selected row of table.
+ * IN each row of table, there is one
+ * check box, and if this control is 
+ * checked --> will be delete
  * 
  * @Param tableID the id of table.
  */
@@ -48,6 +51,29 @@ function deleteRow(tableID) {
                 i--;
             }
         }
+    }catch(e) {
+        alert(e);
+    }
+}
+
+/**
+ * 
+ * Delete row at special index of table
+ * 
+ * @Param tableID the id of table.
+ * @Param index of deleted row.
+ */
+function deleteRow(tableID, index) {
+    try {
+        var table = document.getElementById(tableID);
+        var rowCount = table.rows.length;
+        
+        if ((index < 0) || (index >= rowCount)) {
+            alert('Not delete any row.');
+            return;
+        }
+
+        table.deleteRow(index);
     }catch(e) {
         alert(e);
     }
@@ -106,7 +132,8 @@ function createNewButton(row, name, index, value) {
     var element = document.createElement("button");
     element.name = name;
     element.id = name;
-    element. value = value;
+    element.value = value;
+    element.innerHTML = value;
     
     cell.appendChild(element);
     
