@@ -14,6 +14,9 @@ public class DAOFactory {
     private static ClassDAO classDao = null;
     private static DiaryDAO diaryDao = null;
     private static SubjectDAO subjectDao = null;
+    private static CommentDao commentDao = null;
+    private static RegistrationDAO registrationDao = null;
+    private static TrainClassDAO trainClassDao=null;
 
     public static SubjectDAO getSubjectDao() {
         if (subjectDao == null) {
@@ -72,5 +75,23 @@ public class DAOFactory {
         }
 
         return newsDao;
+    }
+    public static CommentDao getCommentDao() {
+        if (commentDao == null) {
+            commentDao = new CommentDao();
+        }
+        return commentDao;
+    }
+     public static RegistrationDAO getRegistrationDAO() {
+        if (registrationDao == null) {
+            registrationDao = new RegistrationDAO();
+        }
+        return registrationDao;
+    }
+     public static TrainClassDAO getTrainClassDAO() {
+        if (trainClassDao == null) {
+            trainClassDao = new TrainClassDAO();
+        }
+        return trainClassDao;
     }
 }

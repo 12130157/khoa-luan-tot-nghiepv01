@@ -263,12 +263,8 @@ public class Student extends AbstractJdbcModel<String> {
             studyLevel = values[12].toString();
             dateStart = (Date) values[13];
             studyType = values[14].toString();
-            try{
-            note = values[15].toString();
+            note = values[15] == null ? "" : values[9].toString();
 
-            }catch(Exception ex){
-                note="";
-            }
 
         } catch (Exception e) {
             throw new IllegalArgumentException(e);

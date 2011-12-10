@@ -4,7 +4,6 @@
  */
 package uit.cnpm02.dkhp.controllers;
 
-import com.sun.corba.se.impl.orbutil.closure.Constant;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;

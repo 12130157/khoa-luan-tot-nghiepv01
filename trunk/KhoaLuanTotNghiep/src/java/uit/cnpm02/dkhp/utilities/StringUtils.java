@@ -1,5 +1,7 @@
 package uit.cnpm02.dkhp.utilities;
 
+import java.util.List;
+
 /**
  * Most functions are copied from Apache common lang - StringUtils
  * 
@@ -93,5 +95,13 @@ public class StringUtils {
         } else {
             return "PDT";
         }
+    }
+    public static boolean checkStringExitList(String value, List<String> list){
+        boolean result=false;
+        for(int i=0; i<list.size();i++){
+            if(list.get(i).equalsIgnoreCase(value))
+                result=true;
+        }
+       return result;
     }
 }
