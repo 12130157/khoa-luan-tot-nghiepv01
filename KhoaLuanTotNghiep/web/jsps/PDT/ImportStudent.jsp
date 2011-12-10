@@ -143,7 +143,7 @@
                 <div id="sidebar">
                     <table id="dataTable" width="450px" border="1">
                         <tr id="dataTable-th">
-                            <td><INPUT type="checkbox" name="chkAll" onclick="selectAll('dataTable')" /></td>
+                            <td><INPUT type="checkbox" name="chkAll" onclick="selectAll('dataTable', 0)" /></td>
                             <td align: center> STT </td>
                             <td align="center"> MSSV </td>
                             <td align="center"> Họ Và Tên </td>
