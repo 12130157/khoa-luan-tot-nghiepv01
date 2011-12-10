@@ -108,7 +108,7 @@
                     <input type="button" onclick="deleteStudent('tableliststudent')" value="Xóa mục đã chọn" />
                     <table id="tableliststudent" name="tableliststudent">
                         <tr id="tableliststudent-th">
-                        <td><INPUT type="checkbox" name="chkAll" onclick="selectAll('tableliststudent')" /></td>
+                        <td><INPUT type="checkbox" name="chkAll" onclick="selectAll('tableliststudent', 0)" /></td>
                         <td> STT </td>
                         <td> MSSV </td>
                         <td> Họ Tên </td>

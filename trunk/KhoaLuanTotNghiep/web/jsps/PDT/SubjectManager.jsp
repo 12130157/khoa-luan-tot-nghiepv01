@@ -56,6 +56,9 @@
         } catch (Exception ex) {
             numpage = 1;
         }
+        
+        String error = (String)session.getAttribute("error");
+        session.removeAttribute("error");
 
         List<Subject> subjects = (List<Subject>) session.getAttribute("list_subject");
 
@@ -85,11 +88,27 @@
                          ">
                         <input type = "button" onclick = "" value = "Xóa mục đã chọn">
                     </div>
+                    <form method="post" action="../../ManageSubjectController?function=add_subject">
+                        <div style="padding-bottom: 5px;
+                             float: right; padding-right: 15px;
+                             ">
+                            <input 
+                                style="background-color: #f40f0f;"
+                                type = "submit" value = "Thêm môn học">
+                        </div>
+                    </form>
+                    <div id="error">
+                        <%
+                            if ((error != null) && !error.isEmpty()) { %>
+                                <%= error %>
+                            <%}
+                        %>
+                    </div>
                     <table id = "tablelistsubject" name = "tablelistsubject">
                         <tr>
                         <th><INPUT type = "checkbox" 
                                    name = "chkAll" 
-                                   onclick = "selectAll('tablelistsubject')"/></th>
+                                   onclick = "selectAll('tablelistsubject', 0)"/></th>
                         <th> STT </th>
                         <th> Mã MH </th>
                         <th> Tên Môn học </th>
@@ -110,8 +129,8 @@
                         <td> <%= subjects.get(i).getnumTCLT()%> </td>
                         <td> <%= subjects.get(i).getnumTCLT()%> </td>
                         <td> <%= subjects.get(i).getnumTCTH()%> </td>
-                        <td><a href = "../../ManageSubject?function=edit_subject&subject_code=<%= subjects.get(i).getId()%>">Sửa</a></td>
-                        <td><a href = "../../ManageSubject?function=delete_single_subject&subject_code=<%= subjects.get(i).getId()%>">Xóa</a></td>
+                        <td><a href = "../../ManageSubjectController?function=edit_subject&subject_code=<%= subjects.get(i).getId()%>">Sửa</a></td>
+                        <td><a href = "../../ManageSubjectController?function=delete_single_subject&ajax=false&currentpage=1&subject_code=<%= subjects.get(i).getId()%>">Xóa</a></td>
                         <% }%>
                         </tr>
                         <%}%>
@@ -124,48 +143,6 @@
                         <input type="hidden" value="<%= numpage%>" id = "numpage" />
                     </div>
                     <br/>
-                </div>
-
-                <hr/><hr/>
-                <div id="title">
-                    <u><h3>Thêm môn học</h3></u>
-                </div>
-                <hr/><hr/><br>
-                <div id="addsubject">
-                    <div style="padding-left: 20px; padding-bottom: 10px; padding-top: 15px;">
-                        <input type="button" 
-                               onclick="addRow('tableaddsubject')" 
-                               value="Thêm dòng"
-                               />
-                        <input type="button" 
-                               onclick="deleteRow('tableaddsubject')" 
-                               value="Xóa mục đã chọn"
-                               />
-                        <input type="button" 
-                               onclick="addSubjectsFromTable('../../ManageSubjectController?function=insert_sub_from_table', 'tableaddsubject')" 
-                               value="Hoàn thành"
-                               />
-                    </div>
-                    <div id ="sidebar">
-                        <table id="tableaddsubject" name="tableaddsubject">
-                            <tr>
-                            <th><input type = "checkbox" 
-                                       name = "chkAll" 
-                                       onclick = "selectAll('tableaddsubject')"/></th>
-                            <th> STT </th>
-                            <th> Mã MH </th>
-                            <th> Tên Môn học </th>
-                            <th> Số TCLT </th>
-                            <th> Số TCTH </th>
-                            <th>  </th>
-                            </tr>
-                        </table>
-                    </div>
-                    <div id="insert_from_table_error"
-                         style="background-color: #00ff00;
-                         color: #f40f0f;">
-                    </div>
-
                 </div>
 
                 <div id="editsubject">
@@ -185,16 +162,17 @@
     <script src="../../javascripts/UtilTable.js"></script>
     <script src="../../javascripts/AjaxUtil.js"></script>
     <script  type = "text/javascript" >
-        //var currentpage = 1;
+        var currentpage = 1;
         var http = createRequestObject();
-        //var numpage = document.getElementById("numpage").value;
-        /*function firstPage(){
+        var numpage = document.getElementById("numpage").value;
+        function firstPage(){
             currentpage = 1;
             sendRequest();
         }
         function prePage(){
             currentpage--;
-            if(currentpage < 1) currentpage = 1;
+            if(currentpage < 1)
+                currentpage = 1;
             sendRequest();
         }
         function nextPage(){
@@ -209,49 +187,8 @@
         }
         function sendRequest(){
             if(http){
-                ajaxfunction("../../AccountController?action=Filter&curentPage="+currentpage);
+                submitSearchSubject("../../ManageSubjectController?function=list_subject&ajax=true&currentpage=" + currentpage);
             }
-        }*/
-        
-        /**
-         * Add new row to table
-         * @Param tableID table's id
-         **/
-        function addRow(tableID) {
-            var table = document.getElementById(tableID);
-            var rowCount = table.rows.length;
-            var row = table.insertRow(rowCount);
-            row.backgroundColor = '#AA25FF';
-            row. color = "#FFDD33";
-                
-            var cellChkb = row.insertCell(0);
-            var elementChkb = document.createElement("input");
-            elementChkb.type = "checkbox";
-            cellChkb.appendChild(elementChkb);
- 
-            //STT
-            var cellIndex = row.insertCell(1);
-            cellIndex.innerHTML = rowCount;
-
-            //Ma Mon hoc
-            createNewInputCell(row, 'txtSubId', 2);
-                
-            //Ten mon hoc
-            createNewInputCell(row, 'txtSubName', 3);
-            
-            //So TCLT
-            createNewInputCell(row, 'txtNumTCLT', 4);
-            
-            //So TCTT
-            createNewInputCell(row, 'txtNumTCTH', 5);
-
-            //createNewSelectionCell(row, 'selectSex', 5, new Array("Nam", "Nữ"));
-            var btn = createNewButton(row, 'btnCheck', 6, 'Ki\u1ec3m tra');
-            btn.onclick = checkAddPrCondition;
-        }
-        
-        function checkAddPrCondition() {
-            alert('checked');
         }
         
         /*
@@ -315,36 +252,18 @@
             
             return true;
         }
-    
-        /**
-         * Send request to submit insert subject(s)
-         * from a table.
-         * 
-         * @Param pageName point to controller.
-         * @Param tableID table's id.
-         **/
-        function addSubjectsFromTable(pageName, tableID) {
-            var data = getDataStringFromTable(tableID);
-            if ((data == null) || (data.length < 1)) {
-                alert("D\u1eef liệu nhập không đúng.");
-                return;
-            }
-            var controller = pageName + '&data=' + data;
-            alert(http);
+        
+        function submitSearchSubject(pagename) {
             if(http){
-                http.open("GET", controller ,true);
-                http.onreadystatechange = hdlRespForAddSubFromTable;
+                http.open("GET", pagename ,true);
+                http.onreadystatechange = searchResponeHandler;
                 http.send(null);
-                
             }
         }
         
-        /**
-         * Respone when submit insert subject from a table
-         */
-        function hdlRespForAddSubFromTable(){
+        function searchResponeHandler() {
             if(http.readyState == 4 && http.status == 200){
-                var detail=document.getElementById("insert_from_table_error");
+                var detail=document.getElementById("tablelistsubject");
                 detail.innerHTML=http.responseText;
             }
         }
