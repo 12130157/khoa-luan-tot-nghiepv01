@@ -84,6 +84,7 @@ public interface IAdvancedGenericDAO<T extends IAdvancedModel<ID>, ID extends II
      */
     List<T> findAll() throws Exception;
 
+    List<T> findByColumName(String columnName, Object values) throws Exception;
     /**
      * Update a modified model object.
      * 
