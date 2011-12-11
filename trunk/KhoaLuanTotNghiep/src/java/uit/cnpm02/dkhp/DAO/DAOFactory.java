@@ -17,6 +17,15 @@ public class DAOFactory {
     private static CommentDao commentDao = null;
     private static RegistrationDAO registrationDao = null;
     private static TrainClassDAO trainClassDao=null;
+    
+    private static PreSubjectDAO preSubDao = null;
+
+    public static PreSubjectDAO getPreSubDao() {
+        if (preSubDao == null) {
+            preSubDao = new PreSubjectDAO();
+        }
+        return preSubDao;
+    }
 
     public static SubjectDAO getSubjectDao() {
         if (subjectDao == null) {
