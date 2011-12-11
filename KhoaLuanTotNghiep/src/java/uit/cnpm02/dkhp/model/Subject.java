@@ -99,5 +99,11 @@ public class Subject extends  AbstractJdbcModel<String>{
                     numTCTH,
                 };
     }
+
+    @Override
+    public boolean isIdAutoIncrement() {
+        return false;
+    }
+     
 }
 
