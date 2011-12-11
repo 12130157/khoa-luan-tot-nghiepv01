@@ -685,6 +685,65 @@ public abstract class AdvancedAbstractJdbcDAO<T extends IAdvancedJdbcModel<ID>, 
     public List<T> findByIds(ID[] ids) throws Exception {
         return findByIds(Arrays.asList(ids));
     }
+    
+    @Override
+    public List<T> findByColumName(String columnName, Object values) throws Exception {
+        checkModelWellDefined();
+
+        if ((columnName == null) || (columnName.length() == 0) || (values == null)) {
+            throw new NullPointerException("Column name or values not correct.");
+        }
+
+        ArrayList<T> listResult = new ArrayList<T>();
+
+        T t = createModel();
+        if (t == null) {
+            throw new Exception("Cannot initialize the " + modelClazz.getName()
+                    + " class");
+        }
+        String[] idNames = t.getIdColumnName();
+        Object[] idValues = new Object[idNames.length];
+        
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        try {
+            String strQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_SELECT_BY_COLUMN_ADVANCED),
+                    new String[]{t.getTableName(),
+                        columnName
+                    });
+
+            con = getConnection();
+            statement = con.prepareStatement(strQuery);
+            statement.setObject(1, values);
+
+            rs = statement.executeQuery();
+            while (rs.next()) {
+                Object[] obj = new Object[t.getColumnNames().length];
+                for (int j = 0; j < obj.length; j++) {
+                    obj[j] = rs.getObject(t.getColumnNames()[j]);
+                }
+                T ti = createModel();
+                ID id = createID();
+                for (int k = 0; k < idNames.length; k ++) {
+                    idValues[k] = rs.getObject(idNames[k]);
+                } 
+                id.setIDValues(idValues);
+
+                ti.setId(id);
+                ti.setColumnValues(obj);
+                listResult.add(ti);
+            }
+
+            return listResult;
+
+        } catch (SQLException e) {
+            throw new Exception(e);
+        } finally {
+            close(rs, statement);
+            close(con);
+        }
+    }
 
     @Override
     public T update(T t) throws Exception {
