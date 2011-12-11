@@ -464,6 +464,10 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
                     + " class");
         }
         
+        if (orderBy == null) {
+            orderBy = t.getIdColumnName();
+        }
+        
         if (order == null) {
             order = "ASC";
         }
@@ -522,7 +526,7 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
         }
         
         int offset = (currentPage - 1) * recordPerPage;
-        String selectQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_SELECT_ROWS),
+        String selectQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_SELECT_ROWS_WHERE),
                 new String[] {  t.getTableName(),
                                 //"select * from {0} where {1} like '%{2}%' order by {3} {4} limit {5} offset {6}"
                                 whereStrColumn,
