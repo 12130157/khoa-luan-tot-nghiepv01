@@ -16,6 +16,8 @@ import javax.servlet.http.HttpSession;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.StudentDAO;
 import uit.cnpm02.dkhp.DAO.SubjectDAO;
+import uit.cnpm02.dkhp.model.PreSubID;
+import uit.cnpm02.dkhp.model.PreSubject;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.model.Subject;
 import uit.cnpm02.dkhp.utilities.Constants;
@@ -118,8 +120,8 @@ public class ManageSubjectController extends HttpServlet {
             if (action.equals("list_subject")) {
                 listSubject(request, response);
                 path = "./jsps/PDT/SubjectManager.jsp";
-            } else if (action.equals("insert_sub_from_table")) {
-                insertSubFromTable(request, response);
+            //} else if (action.equals("insert_sub_from_table")) {
+            //    insertSubFromTable(request, response);
                 //return;
             } else if (action.equals("delete_single_subject")) {
                 deleteSingle(request, response);
@@ -144,6 +146,12 @@ public class ManageSubjectController extends HttpServlet {
 
     }
 
+    /**
+     * Get list student, send it to client.
+     * @param req
+     * @param resp
+     * @throws Exception 
+     */
     private void listSubject(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 
         boolean ajaxCalled = false;
@@ -245,6 +253,14 @@ public class ManageSubjectController extends HttpServlet {
 
     }
 
+    /**
+     * Delete single subject.
+     * The infomation is attached in session
+     * by its id.
+     * 
+     * @param request HttpServletRequest object
+     * @param response HttpServletResponse object
+     */
     private void deleteSingle(HttpServletRequest request, HttpServletResponse response) {
         String subId = request.getParameter("subject_code");
         if ((subId == null) || (subId.isEmpty())) {
@@ -274,7 +290,15 @@ public class ManageSubjectController extends HttpServlet {
         }
     }
 
-    private int getNumberPage(int existedRow) throws Exception {
+    /**
+     * Return number page of number subject.
+     * This number maybe change when add or
+     * remove some entity(ies).
+     * 
+     * @param existedRow number entites.
+     * @return number page.
+     */
+    private int getNumberPage(int existedRow) {
         int rowsPerPage = Constants.ELEMENT_PER_PAGE_DEFAULT;
 
         if (existedRow % rowsPerPage == 0) {
@@ -284,9 +308,16 @@ public class ManageSubjectController extends HttpServlet {
         }
     }
 
+    /**
+     * Add subject from subject form.
+     * 
+     * @param request
+     * @param response 
+     */
     private void addSubject(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        String data = (String) session.getAttribute("data");
+        String data = (String) request.getParameter("data");
+
         if (data == null) {
             try {
                 //Just repare data
@@ -294,7 +325,7 @@ public class ManageSubjectController extends HttpServlet {
                 List<Subject> subs = DAOFactory.getSubjectDao().findAll();
                 if ((subs != null) && (!subs.isEmpty())) {
                     List<String> subjectsStr = new ArrayList<String>();
-                    for (int i = 0; i < subs.size(); i ++) {
+                    for (int i = 0; i < subs.size(); i++) {
                         subjectsStr.add(subs.get(i).getId() + "-" + subs.get(i).getSubjectName());
                     }
                     session.setAttribute("subjects", subjectsStr);
@@ -310,7 +341,43 @@ public class ManageSubjectController extends HttpServlet {
             // Data get from AddSubject.jsp form
             // and it's saved in data string.
             // in format: ...
+            PrintWriter out = null;
+            try {
+                out = response.getWriter();
+                
+                String[] infos = data.split("-");
+                if ((infos != null) && (infos.length > 0)) {
+                    int tclt = Integer.parseInt(infos[2]);
+                    int tcth = Integer.parseInt(infos[3]);
+                    Subject sub = new Subject(infos[0], infos[1], tclt + tcth, tcth);
+                    
+                    String id = DAOFactory.getSubjectDao().add(sub);
+                    if ((id != null) && (id.length() > 0)) {
+                        //Add subject successful
+                        //Init Pre subject.
+                        List<PreSubject> preSubjects = new ArrayList<PreSubject>(10);
+                        for (int i = 4; i < infos.length; i++) {
+                            PreSubID preId = new PreSubID(infos[0], infos[i]);
+                            PreSubject ps = new PreSubject();
+                            ps.setId(preId);
+                            preSubjects.add(ps);
+                        }
+                        
+                        if (!preSubjects.isEmpty()) {
+                            DAOFactory.getPreSubDao().addAll(preSubjects);
+                        }
+                    }
+                    
+                    out.println("Thêm môn học thành công.");
+                } else {
+                    out.println("Thêm môn học không thành công.");
+                }
+            } catch (Exception ex) {
+                out.println("Thêm môn học không thành công: " + ex.toString());
+                Logger.getLogger(ManageSubjectController.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                out.close();
+            }
         }
-
     }
 }
