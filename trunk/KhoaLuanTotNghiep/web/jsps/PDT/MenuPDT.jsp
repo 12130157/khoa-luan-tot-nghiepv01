@@ -42,7 +42,7 @@
              <li><a href="../../AccountController?action=manager"> Quản lý tài khoản |</a></li>
              <li><a href="#"> Quản lý học vụ |</a>
                  <ul>
-                     <li><a href="#"> Quản lý môn học</a></li>
+                     <li><a href="../../ManageSubjectController?function=list_subject&ajax=false"> Quản lý môn học</a></li>
                      <li><a href="#"> Quản lý lớp học</a></li>
              
              

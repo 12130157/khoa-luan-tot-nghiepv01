@@ -126,10 +126,10 @@
                         <td> <%= (i + 1)%> </td>
                         <td> <%= subjects.get(i).getId()%> </td> 
                         <td> <%= subjects.get(i).getSubjectName()%> </td>
-                        <td> <%= subjects.get(i).getnumTCLT()%> </td>
+                        <td> <%= subjects.get(i).getnumTC()%> </td>
                         <td> <%= subjects.get(i).getnumTCLT()%> </td>
                         <td> <%= subjects.get(i).getnumTCTH()%> </td>
-                        <td><a href = "../../ManageSubjectController?function=edit_subject&subject_code=<%= subjects.get(i).getId()%>">Sửa</a></td>
+                        <td><a href = "../../ManageSubjectController?function=edit_subject&ajx=false&subject_code=<%= subjects.get(i).getId()%>">Sửa</a></td>
                         <td><a href = "../../ManageSubjectController?function=delete_single_subject&ajax=false&currentpage=1&subject_code=<%= subjects.get(i).getId()%>">Xóa</a></td>
                         <% }%>
                         </tr>
