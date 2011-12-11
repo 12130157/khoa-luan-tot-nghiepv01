@@ -1,6 +1,9 @@
 /**
  * Select all row of table.
  * @Param tableId the ID of table.
+ * @Param checkboxIndex the possition of checkbox
+ *      its nomarly possition at start or end or
+ *      row.
  */
 function selectAll(tableId, checkboxIndex) {
     var table = document.getElementById(tableId);
