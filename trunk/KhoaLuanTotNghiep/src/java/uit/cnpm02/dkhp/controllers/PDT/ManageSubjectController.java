@@ -120,19 +120,23 @@ public class ManageSubjectController extends HttpServlet {
             if (action.equals("list_subject")) {
                 listSubject(request, response);
                 path = "./jsps/PDT/SubjectManager.jsp";
-            //} else if (action.equals("insert_sub_from_table")) {
-            //    insertSubFromTable(request, response);
+                //} else if (action.equals("insert_sub_from_table")) {
+                //    insertSubFromTable(request, response);
                 //return;
             } else if (action.equals("delete_single_subject")) {
                 deleteSingle(request, response);
-                //subject_code
             } else if (action.equals("add_subject")) {
                 addSubject(request, response);
-                //Id not ajax called
                 path = "./jsps/PDT/AddSubject.jsp";
                 response.sendRedirect(path);
                 return;
+            } else if (action.equals("edit_subject")) {
+                editSubject(request, response);
+                path = "./jsps/PDT/EditSubject.jsp";
+                response.sendRedirect(path);
+                return;
             }
+
 
             if (!ajaxCalled) {
                 response.sendRedirect(path);
@@ -190,7 +194,7 @@ public class ManageSubjectController extends HttpServlet {
                             + "<td>" + ((currentPage - 1) * Constants.ELEMENT_PER_PAGE_DEFAULT + i + 1) + "</td>"
                             + "<td>" + subjects.get(i).getId() + "</td> "
                             + "<td>" + subjects.get(i).getSubjectName() + "</td>"
-                            + "<td>" + subjects.get(i).getnumTCLT() + "</td>"
+                            + "<td>" + subjects.get(i).getnumTC() + "</td>"
                             + "<td>" + subjects.get(i).getnumTCLT() + "</td>"
                             + "<td>" + subjects.get(i).getnumTCTH() + "</td>"
                             + "<td><a href = \"../../ManageSubjectController?function=edit_subject&subject_code=" + subjects.get(i).getId() + "\">Sửa</a></td>"
@@ -344,13 +348,13 @@ public class ManageSubjectController extends HttpServlet {
             PrintWriter out = null;
             try {
                 out = response.getWriter();
-                
+
                 String[] infos = data.split("-");
                 if ((infos != null) && (infos.length > 0)) {
                     int tclt = Integer.parseInt(infos[2]);
                     int tcth = Integer.parseInt(infos[3]);
                     Subject sub = new Subject(infos[0], infos[1], tclt + tcth, tcth);
-                    
+
                     String id = DAOFactory.getSubjectDao().add(sub);
                     if ((id != null) && (id.length() > 0)) {
                         //Add subject successful
@@ -362,18 +366,107 @@ public class ManageSubjectController extends HttpServlet {
                             ps.setId(preId);
                             preSubjects.add(ps);
                         }
-                        
+
                         if (!preSubjects.isEmpty()) {
                             DAOFactory.getPreSubDao().addAll(preSubjects);
                         }
                     }
-                    
+
                     out.println("Thêm môn học thành công.");
                 } else {
                     out.println("Thêm môn học không thành công.");
                 }
             } catch (Exception ex) {
                 out.println("Thêm môn học không thành công: " + ex.toString());
+                Logger.getLogger(ManageSubjectController.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                out.close();
+            }
+        }
+    }
+
+    private void editSubject(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession();
+        String data = (String) request.getParameter("data");
+        String subId = (String) request.getParameter("subject_code");
+
+        SubjectDAO subDao = DAOFactory.getSubjectDao();
+        if (data == null) {
+            try {
+                //Just repare data
+                //
+                List<Subject> subs = DAOFactory.getSubjectDao().findAll();
+                if ((subs != null) && (!subs.isEmpty())) {
+                    List<String> subjectsStr = new ArrayList<String>();
+                    for (int i = 0; i < subs.size(); i++) {
+                        subjectsStr.add(subs.get(i).getId() + "-" + subs.get(i).getSubjectName());
+                    }
+                    session.setAttribute("subjects", subjectsStr);
+                }
+
+                Subject sub = subDao.findById(subId);
+
+                if (sub != null) {
+                    session.setAttribute("subject", sub);
+                    List<PreSubject> preSubs = DAOFactory.getPreSubDao().findByColumName("MaMH", subId);
+                    if (!preSubs.isEmpty()) {
+                        List<String> preSubStr = new ArrayList<String>(10);
+                        for (int i = 0; i < preSubs.size(); i++) {
+                            preSubStr.add(preSubs.get(i).getId().getPreSudId());
+                        }
+                        
+                        session.setAttribute("pre_subjects", preSubStr);
+                    }
+                }
+
+                //return;
+            } catch (Exception ex) {
+                Logger.getLogger(ManageSubjectController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        } else {
+            // Process action add subject
+            // Data get from AddSubject.jsp form
+            // and it's saved in data string.
+            // in format: ...
+            PrintWriter out = null;
+            try {
+                out = response.getWriter();
+
+                String[] infos = data.split("-");
+                if ((infos != null) && (infos.length > 0)) {
+                    int tclt = Integer.parseInt(infos[2]);
+                    int tcth = Integer.parseInt(infos[3]);
+                    Subject sub = new Subject(infos[0], infos[1], tclt + tcth, tcth);
+
+                    Subject updatedSub = DAOFactory.getSubjectDao().update(sub);
+                    if (updatedSub != null) {
+                        //Add subject successful
+                        //Init Pre subject.
+                        List<PreSubject> preSubjectsExisted = DAOFactory.getPreSubDao().findByColumName("MaMH", updatedSub.getId());
+                        if ((preSubjectsExisted != null) && (!preSubjectsExisted.isEmpty())) {
+                            DAOFactory.getPreSubDao().delete(preSubjectsExisted);
+                        }
+                        
+                        List<PreSubject> preSubjects = new ArrayList<PreSubject>(10);
+                        for (int i = 4; i < infos.length; i++) {
+                            PreSubID preId = new PreSubID(infos[0], infos[i]);
+                            PreSubject ps = new PreSubject();
+                            ps.setId(preId);
+                            preSubjects.add(ps);
+                        }
+
+                        if (!preSubjects.isEmpty()) {
+                            DAOFactory.getPreSubDao().addAll(preSubjects);
+                        }
+                    }
+
+                    out.println("Cập nhật môn học thành công.");
+                } else {
+                    out.println("Cập nhật môn học không thành công.");
+                }
+            } catch (Exception ex) {
+                out.println("Cập nhật môn học không thành công: " + ex.toString());
                 Logger.getLogger(ManageSubjectController.class.getName()).log(Level.SEVERE, null, ex);
             } finally {
                 out.close();
