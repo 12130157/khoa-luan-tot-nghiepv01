@@ -25,6 +25,7 @@ public class Subject extends  AbstractJdbcModel<String>{
         this.subjectName = subjectName;
         this.numTC = numTC;
         this.numTCLT = numTCLT;
+        this.numTCTH = numTC - numTCLT;
     }
 
     public int getnumTC() {
