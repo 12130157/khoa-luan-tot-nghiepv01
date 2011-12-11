@@ -47,22 +47,27 @@
             a {
                 color: violet;
             }
+
+            #error_code, #error_name, #error_tclt, #error_tcth {
+                font-size: 10px;
+                color: #cc0033;
+            }
         </style>
     </head>
     <%
         String subjectStr = "";
         List<String> subject = (List<String>) session.getAttribute("subjects");
-        
+
         if (subject != null) {
-            for (int i = 0; i < subject.size(); i ++) {
+            for (int i = 0; i < subject.size(); i++) {
                 subjectStr += subject.get(i);
                 if (i < (subject.size() - 1)) {
                     subjectStr += ";";
                 }
             }
         }
-        
-                
+
+
     %>
     <body>
         <!--Div Wrapper-->
@@ -83,8 +88,15 @@
                 <form action="" method="post">
                     <div style="padding-bottom: 20px;
                          margin-left: 40px;">
-                        <input type="button" onclick="submit()" value="Hoàn thành" />
+                        <input type="button"
+                               onclick="submitAddSubject('../../ManageSubjectController?function=add_subject')"
+                               value="Hoàn thành" />
                         <input type="button" onclick="clearData()" value="Xóa" />
+                    </div>
+                    <div id="insert_from_table_error"
+                         style="font-size: 10px;
+                         color: #cc0033;
+                         float: right;">
                     </div>
                     <table id="table_mh">
                         <tr>
@@ -168,18 +180,21 @@
             var name = document.getElementById('txt_name').value;
             var tclt = document.getElementById('txt_tclt').value;
             var tcth = document.getElementById('txt_tcth').value;
-
-            var isValidated = false;
-            if (id.indexOf(' ', 0) >= 0) {
+            var isValidated = true;
+            if ((id == null) || (id == '') 
+                || (id.indexOf(" ", 0)) >= 0
+                || (id.indexOf("-", 0)) >= 0) {
                 document.getElementById('error_code').innerHTML = 'Mã MH không \u0111úng.';
-                isValidated = true;
+                isValidated = false;
             } else {
                 document.getElementById('error_code').innerHTML = '';
             }
     
-            if (name.length <= 0) {
+            if ((name == null)
+                || (name.length <= 0)
+                || (name.indexOf("-", 0) >= 0)) {
                 document.getElementById('error_name').innerHTML = 'Tên môn h\u1ecdc không đúng.';
-                isValidated = true;
+                isValidated = false;
             } else {
                 document.getElementById('error_name').innerHTML = '';
             }
@@ -191,25 +206,25 @@
             return isValidated;
         }
         
-        function submit() {
+        function submitAddSubject(pageName) {
             var validate = checkData();
             if (validate == false) {
                 return;
             }
             
-            //var data = getDataStringFromTable(tableID);
+            var data = getDataStringFromTable();
             //if ((data == null) || (data.length < 1)) {
             //    alert("D\u1eef liệu nhập không đúng.");
             //    return;
             //}
             
-            //var controller = pageName + '&data=' + data;
-            //if(http){
-            //    http.open("GET", controller ,true);
-            //    http.onreadystatechange = hdlRespForAddSubFromTable;
-            //    http.send(null);
+            var controller = pageName + '&data=' + data;
+            if(http){
+                http.open("GET", controller ,true);
+                http.onreadystatechange = hdlRespForAddSubFromTable;
+                http.send(null);
                 
-            //}
+            }
         }
         
         /**
@@ -246,52 +261,36 @@
          * @Param tableId table's id
          */
         function getDataStringFromTable() {
-            document.getElementById('txt_code').value = '';
-                document.getElementById('txt_name').value = '';
-                document.getElementById('txt_tclt').value = '';
-                document.getElementById('txt_tcth').value = '';
+            var id = document.getElementById('txt_code').value;
+            var name = document.getElementById('txt_name').value;
+            var tclt = document.getElementById('txt_tclt').value;
+            var tcth = document.getElementById('txt_tcth').value;
+            var mark = '-';
                 
-                document.getElementById('error_code').innerHTML = '';
-                document.getElementById('error_name').innerHTML = '';
-                document.getElementById('error_tclt').innerHTML = '';
-                document.getElementById('error_tcth').innerHTML = '';
-            var datas = '';
-            var selectOne = false;
+            // Init subject information.
+            var datas = id + mark
+                + name + mark
+                + tclt + mark
+                + tcth;
+
+            // Init PreSubject information
             try {
-                var table = document.getElementById(tableID);
+                var table = document.getElementById('table_mhtq');
                 var rowCount = table.rows.length;
-                for(var i = 1; i < rowCount; i++) {
+                for(var i = 0; i < rowCount; i++) {
                     var row = table.rows[i];
-                    var chkbox = row.cells[0].childNodes[0];
+                    var chkbox = row.cells[1].childNodes[0];
                     if((null != chkbox) && (true == chkbox.checked)) {
-                        if (validateSubjectValue(row) == false) {
-                            alert('Vui lòng nh\u1eadp đầy thông tin cần thiết cho dòng ' + i);
-                            return;
-                        }
-                        if (selectOne == false)
-                            selectOne = true;
+                        datas += mark;
                         var elTableCells = row.getElementsByTagName('td');
-                        var currentData = '';
-                        currentData += elTableCells[2].childNodes[0].value + ','; //Ma Mon Hoc
-                        currentData += elTableCells[3].childNodes[0].value + ','; //Ten Mon Hoc
-                        currentData += elTableCells[4].childNodes[0].value + ','; //So TCLT
-                        currentData += row.cells[5].childNodes[0].value; //So TCTH
-                        
-                        if (i < (rowCount - 1)) {
-                            currentData += ';';
-                        }
-                        
-                        datas += currentData;
+                        var presub = elTableCells[0].childNodes[0].value;
+                        datas += presub.split('-', 1)[0];
                     }
                 }
             }catch(e) {
                 alert(e);
             }
-            if (selectOne == false) {
-                alert('Vui lòng ch\u1ecdn ít nhất một hàng.');
-                return;
-            }
-            
+
             return datas;
         }
         
