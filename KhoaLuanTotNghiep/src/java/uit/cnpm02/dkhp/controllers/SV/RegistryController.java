@@ -51,12 +51,44 @@ public class RegistryController extends HttpServlet {
          String action = request.getParameter("action");
             if(action.equalsIgnoreCase("view"))
                 forward(response, session);
-            if(action.equalsIgnoreCase("reRegistry"))
+            else if(action.equalsIgnoreCase("reRegistry"))
                 reRegistry(response, session);
+            else if(action.equalsIgnoreCase("registry"))
+                preRegistry(response, request, session);
         } finally {            
             out.close();
         }
     }
+ private void preRegistry(HttpServletResponse response, HttpServletRequest request, HttpSession session) throws IOException, Exception{
+     String path="";
+     try{
+         String studentCode=(String)session.getAttribute("username");
+         String[] registry = request.getParameterValues("check");
+         if(registry==null)
+             getAllClass(response, session, studentCode);
+         else{
+             List<TrainClass> registriedClass= new ArrayList<TrainClass>();
+             for(int i=0; i<registry.length; i++){
+                 TrainClassID trainClassId= new TrainClassID(registry[i], Constants.CURRENT_YEAR, Constants.CURRENT_SEMESTER);
+                 registriedClass.add(DAOFactory.getTrainClassDAO().findById(trainClassId));
+             }
+             setSubjectAndLecturer(registriedClass);
+             Student student =DAOFactory.getStudentDao().findById(studentCode);
+             Class classes = DAOFactory.getClassDao().findById(student.getClassCode());
+             Faculty faculty =DAOFactory.getFacultyDao().findById(student.getFacultyCode());
+             session.setAttribute("student", student);
+             session.setAttribute("classes", classes);
+             session.setAttribute("faculty", faculty);
+             session.setAttribute("registriedClass", registriedClass);
+             session.setAttribute("semester", Constants.CURRENT_SEMESTER);
+             session.setAttribute("year", Constants.CURRENT_YEAR);
+             path= "./jsps/SinhVien/PreviewRegistration.jsp";
+         }
+     }catch(Exception ex){
+           path= "./jsps/Message.jsp";
+     }
+      response.sendRedirect(path);
+ }
  private void reRegistry(HttpServletResponse response, HttpSession session) throws Exception{
      String path="";
      try{
