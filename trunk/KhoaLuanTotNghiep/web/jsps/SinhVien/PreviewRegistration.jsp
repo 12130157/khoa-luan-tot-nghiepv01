@@ -4,7 +4,6 @@
     Author     : ngloc_it
 --%>
 
-<%@page import="uit.cnpm02.dkhp.utilities.StringUtils"%>
 <%@page import="uit.cnpm02.dkhp.model.TrainClass"%>
 <%@page import="uit.cnpm02.dkhp.DAO.SubjectDAO"%>
 <%@page import="uit.cnpm02.dkhp.model.StudyResult"%>
@@ -17,13 +16,13 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 <%
-List<TrainClass> trainClass=(List<TrainClass>) session.getAttribute("trainClass");
+List<TrainClass> registried=(List<TrainClass>) session.getAttribute("registriedClass");
 String year=(String) session.getAttribute("year");
 Integer semester=(Integer) session.getAttribute("semester");
 Student student=(Student) session.getAttribute("student");
 Class classes=(Class) session.getAttribute("classes");
 Faculty faculty=(Faculty)session.getAttribute("faculty");
-List<String> registried=(List<String>) session.getAttribute("registried");    
+int numTC=0;    
 %>
 <html>
     <head>
@@ -53,22 +52,24 @@ List<String> registried=(List<String>) session.getAttribute("registried");
                 width: 200px;
                 text-align: left;
             }
-            #formdetail table{
+            #completeRegistry table{
                 width: 100%;
             }
-            #formdetail table th{
+            #completeRegistry table th{
                 background-color:#175F6E;
                 height: 30px;
                 border-color: black;
             }
 
-            #formdetail table td{
+            #completeRegistry table td{
                 text-align: center;
                 background-color: #474C52;
                 border-color: #7D8103;
             }
-
-                
+            a{
+                color: #66ffff;
+            }
+            
             #info{
                 width: 100%;
             }
@@ -79,6 +80,9 @@ List<String> registried=(List<String>) session.getAttribute("registried");
                 width: 99%;
             }
              #detail th{
+               text-align: center;
+            }
+             #detail td{
                text-align: center;
             }
         </style>
@@ -111,45 +115,47 @@ List<String> registried=(List<String>) session.getAttribute("registried");
                 </form>
                 </div>
                <hr/><hr/>
-               <form id="formdetail" name="formdetail" action="../../RegistryController?action=registry" method="post">
+               <form id="completeRegistry" name="completeRegistry" action="../../RegistryController?action=completeRegistry" method="post">
                     <u>Chi tiết</u>
                     <table id="detail" name="detail" border="1" bordercolor="yellow" >
                      <tr>
                          <th width="10px">STT</th><th width="70px">Mã lớp</th><th width="200px">Môn học</th>
-                         <th width="10px">TC</th><th width="200px">Giảng viên</th><th width="10px">Thứ</th>
-                         <th width="50px">Ca</th><th width="50px">Phòng</th><th width="50px">Tối đa</th>
-                         <th width="50px">Đã ĐK</th>
-                         <th width="10px"><INPUT type="checkbox" name="checkAll" onclick="selectAll('detail',10)" /></th>
+                         <th width="200px">Giảng viên</th><th width="10px">Thứ</th>
+                         <th width="50px">Ca</th><th width="50px">Phòng</th>
+                         <th width="10px">TC</th>
                      </tr>   
-                     <%for(int i=0; i<trainClass.size();i++){%>
+                     <%for(int i=0; i<registried.size();i++){
+                         numTC+=registried.get(i).getNumTC();
+                      %>
                      <tr>
                          <td><%=i+1%></td>
-                         <td><a href="../../RegistryController?action=detail&classCode=<%=trainClass.get(i).getId().getClassCode()%>"><%=trainClass.get(i).getId().getClassCode()%></a></td>
-                         <td><%=trainClass.get(i).getSubjectName()%></td>
-                         <td><%=trainClass.get(i).getNumTC()%></td><td><%=trainClass.get(i).getLectturerName()%></td>
-                         <td><%=trainClass.get(i).getStudyDate()%></td>
-                         <%if(trainClass.get(i).getShift()==1){%>
+                         <td><a href="../../RegistryController?action=detail&classCode=<%=registried.get(i).getId().getClassCode()%>"><%=registried.get(i).getId().getClassCode()%></a></td>
+                         <td><%=registried.get(i).getSubjectName()%></td>
+                         <td><%=registried.get(i).getLectturerName()%></td>
+                         <td><%=registried.get(i).getStudyDate()%></td>
+                         <%if(registried.get(i).getShift()==1){%>
                          <td>Sáng</td>
                          <%}else{%>
                          <td>Chiều</td>
                          <%}%>
-                         <td><%=trainClass.get(i).getClassRoom()%></td><td><%=trainClass.get(i).getNumOfStudent()%></td>
-                         <td><%=trainClass.get(i).getNumOfStudentReg()%></td>
-                         <%if(StringUtils.checkStringExitList(trainClass.get(i).getId().getClassCode(), registried)){%>
-                         <td width="10px"><input type="checkbox" name="check" checked="true" value="<%=trainClass.get(i).getId().getClassCode()%>"/></td>
-                         <%}else{
-                             if(trainClass.get(i).getNumOfStudentReg()>=120){%>
-                         <td width="10px"><input type="checkbox" disabled name="check" value="<%=trainClass.get(i).getId().getClassCode()%>"/></td>
-                         <%}else{%>
-                         <td width="10px"><input type="checkbox" name="check" value="<%=trainClass.get(i).getId().getClassCode()%>"/></td>
-                         <%}}%>
-                     </tr>
+                         <td><%=registried.get(i).getClassRoom()%></td>
+                         <td><%=registried.get(i).getNumTC()%></td>
+                      </tr>
                      <%}%>
+                     <tr>
+                         <td></td><td></td><td></td>
+                         <td><u><b>Tổng số tín chỉ:</b></u></td><td></td>
+                         <td></td><td></td>
+                         <th><%=numTC%></th> 
+                     </tr>
                      </table>
-                     <br>
-                   <input type="submit" value="   Đăng ký   ">
                  </form>
-                </div><!--End Contents-->
+                <form action="../../RegistryController?action=reRegistry" method="post" id="reRegistry" name="reRegistry">
+                    <input type="button" value="Đăng ký lại" onclick="reRegistration()"/>
+                    <input type="button" value="Hoàn tất đăng ký" onclick="completeRegistration()"/>
+                    
+                </form>
+            </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
                 <%@include file="../Footer.jsp" %>
@@ -157,8 +163,12 @@ List<String> registried=(List<String>) session.getAttribute("registried");
         </div>
         <!--End Wrapper-->
     </body>
-    <script src="../../javascripts/UtilTable.js"></script>
-    <script>
-        
+    <script  type = "text/javascript" >
+        function reRegistration(){
+              document.forms["reRegistry"].submit();
+        }
+       function completeRegistration(){
+           alert("Ass");
+       }
     </script>
  </html>
