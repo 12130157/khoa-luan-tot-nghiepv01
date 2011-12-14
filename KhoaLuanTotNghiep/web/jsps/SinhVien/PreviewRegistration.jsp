@@ -85,6 +85,12 @@ int numTC=0;
              #detail td{
                text-align: center;
             }
+            #message{
+                text-align: center;
+            }
+            h1{
+                 color: #66ffff;
+            }
         </style>
         </style>
     </head>
@@ -115,6 +121,19 @@ int numTC=0;
                 </form>
                 </div>
                <hr/><hr/>
+                      <%
+                        String error = (String) session.getAttribute("error");
+                            if (error != null) {
+                                session.removeAttribute("error");
+                        %>
+                        <br>
+                        <div id="message">
+                                <h1> <%=error%></h1>
+                        </div>
+                            <br>
+                        <%
+                         }
+                        %>
                <form id="completeRegistry" name="completeRegistry" action="../../RegistryController?action=completeRegistry" method="post">
                     <u>Chi tiết</u>
                     <table id="detail" name="detail" border="1" bordercolor="yellow" >
@@ -153,7 +172,6 @@ int numTC=0;
                 <form action="../../RegistryController?action=reRegistry" method="post" id="reRegistry" name="reRegistry">
                     <input type="button" value="Đăng ký lại" onclick="reRegistration()"/>
                     <input type="button" value="Hoàn tất đăng ký" onclick="completeRegistration()"/>
-                    
                 </form>
             </div><!--End Contents-->
 
@@ -168,7 +186,7 @@ int numTC=0;
               document.forms["reRegistry"].submit();
         }
        function completeRegistration(){
-           alert("Ass");
+           document.forms["completeRegistry"].submit();
        }
     </script>
  </html>

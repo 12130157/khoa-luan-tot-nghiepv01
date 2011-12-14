@@ -30,7 +30,9 @@ public class SQLUtils {
         {"log.update", "update Log set col1=value1 where id = ?"},
         {"sql.select.rowsCount", "select count(*) from {0}"},
         {"sql.select.rows", "select * from {0} order by {1} {2} limit {3} offset {4}"},
-        {"sql.select.rows_where", "select * from {0} where {1} like {2} order by {3} {4} limit {5} offset {6}"}
+        {"sql.select.rows_where", "select * from {0} where {1} like {2} order by {3} {4} limit {5} offset {6}"},
+        {"sql.delete.rows_where","delete from {0} where {1}={2} and {3}={4} and {5}={6}"}
+            
     };
     private static Map<String, String> sqlQuery = new HashMap<String, String>(10);
     private static boolean queriesLoaded = false;

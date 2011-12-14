@@ -25,15 +25,22 @@ public class RegistrationDAO extends AdvancedAbstractJdbcDAO<Registration, Regis
     public RegistrationID createID() {
         return new RegistrationID();
     }
-    public List<Registration> findAllByStudentCode(String studentCode) throws Exception {
-        ArrayList<Registration> results = new ArrayList<Registration>();
-        String selectQuery = "Select * from khoaluantotnghiep.dangkyhocphan where MSSV='"+studentCode+"' and HocKy="+Constants.CURRENT_SEMESTER+" and NamHoc='"+Constants.CURRENT_YEAR+"'";
+  public List<Registration> findAllByStudentCode(String studentCode) throws Exception {
+        checkModelWellDefined();
+        Registration t = new Registration();
+        if (t == null) {
+            throw new Exception("Cannot initialize the " + Registration.class.getName()
+                    + " class");
+        }
+        List<Registration> results = new ArrayList<Registration>();
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
+        String selectQuery = "Select * from "+t.getTableName()+" where MSSV= ? and HocKy="+Constants.CURRENT_SEMESTER+" and NamHoc='"+Constants.CURRENT_YEAR+"'";
         try {
             con = getConnection();
             statement = con.prepareStatement(selectQuery);
+            statement.setObject(1, studentCode);
             rs = statement.executeQuery();
 
             while (rs.next()) {
@@ -50,4 +57,27 @@ public class RegistrationDAO extends AdvancedAbstractJdbcDAO<Registration, Regis
         }
         return results;
     }
+   public void deleteAllByByStudentCode(String studentCode) throws Exception {
+        checkModelWellDefined();
+        Registration t = new Registration();
+        if (t == null) {
+            throw new Exception("Cannot initialize the " + Registration.class.getName()
+                    + " class");
+        }
+        Connection con = null;
+        PreparedStatement statement = null;
+        String selectQuery = "Delete from "+t.getTableName()+" where MSSV= ? and HocKy="+Constants.CURRENT_SEMESTER+" and NamHoc='"+Constants.CURRENT_YEAR+"'";
+        try {
+            con = getConnection();
+            statement = con.prepareStatement(selectQuery);
+            statement.setObject(1, studentCode);
+            statement.execute();
+
+        } catch (SQLException ex) {
+            throw new Exception(ex);
+        } finally {
+           close(con);
+        }
+    }
+ 
 }
