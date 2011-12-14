@@ -13,55 +13,71 @@ import uit.cnpm02.dkhp.model.News;
 public class NewsDAO extends AbstractJdbcDAO<News, Integer> {
     
     public void updateNewsStatus(int id) throws Exception {
-            Connection con = null;
-             PreparedStatement statement = null;
-             ResultSet rs = null;
+        checkModelWellDefined();
+        News t = new News();
+        if (t == null) {
+            throw new Exception("Cannot initialize the " + News.class.getName()
+                    + " class");
+        }
+        Connection con = null;
+        PreparedStatement statement = null;
+        String selectQuery = "Update "+t.getTableName()+" set Loai=(Loai+1)%2 where MaTin= ? ";
         try {
-            StringBuffer sql = new StringBuffer();
-            sql.append("Update khoaluantotnghiep.bantin set Loai=(Loai+1)%2 where MaTin=").append(id).append("");
-            con=getConnection();
-            statement = con.prepareStatement(sql.toString());
+            con = getConnection();
+            statement = con.prepareStatement(selectQuery);
+            statement.setObject(1, id);
             statement.execute();
-        } catch (Exception ex) {
-            throw ex;
-       } finally {
-            close(rs, statement);
-            close(con);
+
+        } catch (SQLException ex) {
+            throw new Exception(ex);
+        } finally {
+           close(con);
         }
     }
     public void deleteNewsByID(int id) throws SQLException, Exception{
-             Connection con = null;
-             PreparedStatement statement = null;
-             ResultSet rs = null;
-             try{
-             StringBuffer sql = new StringBuffer();
-            sql.append("Delete from khoaluantotnghiep.bantin where MaTin=").append(id).append("");
-            con=getConnection();
-            statement = con.prepareStatement(sql.toString());
-            statement.execute();
-            } catch (Exception ex) {
-            throw ex;
-            } finally {
-            close(rs, statement);
-            close(con);
+        checkModelWellDefined();
+        News t = new News();
+        if (t == null) {
+            throw new Exception("Cannot initialize the " + News.class.getName()
+                    + " class");
         }
-            updateNewsId(id);
+        Connection con = null;
+        PreparedStatement statement = null;
+        String selectQuery = "Delete from "+t.getTableName()+" where MaTin= ? ";
+        try {
+            con = getConnection();
+            statement = con.prepareStatement(selectQuery);
+            statement.setObject(1, id);
+            statement.execute();
+
+        } catch (SQLException ex) {
+            throw new Exception(ex);
+        } finally {
+           close(con);
+        }
+            
+        updateNewsId(id);
     }
    public void updateNewsId(int id) throws Exception {
+        checkModelWellDefined();
+        News t = new News();
+        if (t == null) {
+            throw new Exception("Cannot initialize the " + News.class.getName()
+                    + " class");
+        }
         Connection con = null;
-             PreparedStatement statement = null;
-             ResultSet rs = null;
-             try{
-            StringBuffer sql = new StringBuffer();
-            sql.append("Update khoaluantotnghiep.bantin set MaTin=MaTin-1 where MaTin>").append(id).append("");
-            con=getConnection();    
-            statement = con.prepareStatement(sql.toString());
+        PreparedStatement statement = null;
+        String selectQuery = "Update "+t.getTableName()+" set MaTin=MaTin-1 where MaTin> ? ";
+        try {
+            con = getConnection();
+            statement = con.prepareStatement(selectQuery);
+            statement.setObject(1, id);
             statement.execute();
-         } catch (Exception ex) {
-            throw ex;
-         } finally {
-            close(rs, statement);
-            close(con);
+
+        } catch (SQLException ex) {
+            throw new Exception(ex);
+        } finally {
+           close(con);
         }
     }
     

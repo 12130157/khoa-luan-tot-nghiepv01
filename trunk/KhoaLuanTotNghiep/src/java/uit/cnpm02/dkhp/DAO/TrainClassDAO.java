@@ -27,14 +27,21 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         return new TrainClassID();
     }
      public List<TrainClass> findAllByStudyDate(int studyDate) throws Exception {
+        checkModelWellDefined();
+        TrainClass t = new TrainClass();
+        if (t == null) {
+            throw new Exception("Cannot initialize the " + TrainClass.class.getName()
+                    + " class");
+        }
         ArrayList<TrainClass> results = new ArrayList<TrainClass>();
-        String selectQuery = "Select * from KhoaLuanTotNghiep.LopHoc where NgayHoc="+studyDate+" and HocKy="+Constants.CURRENT_SEMESTER+" and NamHoc='"+Constants.CURRENT_YEAR+"'";
-        Connection con = null;
+         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        try {
+        String selectQuery = "Select * from "+t.getTableName()+" where NgayHoc= ? and HocKy="+Constants.CURRENT_SEMESTER+" and NamHoc='"+Constants.CURRENT_YEAR+"'";
+       try {
             con = getConnection();
             statement = con.prepareStatement(selectQuery);
+            statement.setObject(1, studyDate);
             rs = statement.executeQuery();
 
             while (rs.next()) {
@@ -52,8 +59,14 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         return results;
     }
       public List<TrainClass> findAllBySemesterAndYear() throws Exception {
+        checkModelWellDefined();
+        TrainClass t = new TrainClass();
+        if (t == null) {
+            throw new Exception("Cannot initialize the " + TrainClass.class.getName()
+                    + " class");
+        }
         ArrayList<TrainClass> results = new ArrayList<TrainClass>();
-        String selectQuery = "Select * from KhoaLuanTotNghiep.LopHoc where HocKy="+Constants.CURRENT_SEMESTER+" and NamHoc='"+Constants.CURRENT_YEAR+"'";
+        String selectQuery = "Select * from "+t.getTableName()+" where HocKy="+Constants.CURRENT_SEMESTER+" and NamHoc='"+Constants.CURRENT_YEAR+"'";
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;

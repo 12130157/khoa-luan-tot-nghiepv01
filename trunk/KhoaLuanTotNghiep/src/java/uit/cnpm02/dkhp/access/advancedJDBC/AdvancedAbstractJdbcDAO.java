@@ -708,7 +708,7 @@ public abstract class AdvancedAbstractJdbcDAO<T extends IAdvancedJdbcModel<ID>, 
         PreparedStatement statement = null;
         ResultSet rs = null;
         try {
-            String strQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_SELECT_BY_COLUMN_ADVANCED),
+            String strQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_SELECT_ADVANCED),
                     new String[]{t.getTableName(),
                         columnName
                     });

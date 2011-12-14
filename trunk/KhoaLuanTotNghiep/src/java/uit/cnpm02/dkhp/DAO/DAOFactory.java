@@ -17,8 +17,9 @@ public class DAOFactory {
     private static CommentDao commentDao = null;
     private static RegistrationDAO registrationDao = null;
     private static TrainClassDAO trainClassDao=null;
-    
+    private static RuleDAO ruleDao=null;
     private static PreSubjectDAO preSubDao = null;
+    private static StudyResultDAO studyResultDAO=null;
 
     public static PreSubjectDAO getPreSubDao() {
         if (preSubDao == null) {
@@ -102,5 +103,17 @@ public class DAOFactory {
             trainClassDao = new TrainClassDAO();
         }
         return trainClassDao;
+    }
+    public static RuleDAO getRuleDao(){
+        if(ruleDao==null){
+            ruleDao=new RuleDAO();
+        }
+        return ruleDao;
+    }
+    public static StudyResultDAO getStudyResultDAO(){
+        if(studyResultDAO==null){
+            studyResultDAO=new StudyResultDAO();
+        }
+        return studyResultDAO;
     }
 }

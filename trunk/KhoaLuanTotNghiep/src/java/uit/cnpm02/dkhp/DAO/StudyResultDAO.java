@@ -56,4 +56,12 @@ public class StudyResultDAO extends AdvancedAbstractJdbcDAO<StudyResult, StudyRe
         }
         return results;
     }
+    public float getMarkByStudentAndSub(String subCode, String studentCode) throws Exception{
+        float mark=0;
+        StudyResultID studyResultId=new StudyResultID(studentCode, subCode);
+        StudyResult studyResult = findById(studyResultId);
+        if(studyResult!=null)
+        mark=studyResult.getMark();
+        return mark;
+    }
 }

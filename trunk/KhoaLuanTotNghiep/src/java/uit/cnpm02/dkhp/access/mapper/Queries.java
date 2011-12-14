@@ -37,4 +37,5 @@ public interface Queries {
     public String SQL_SELECT_ROWS = "sql.select.rows";
     /****/
     public String SQL_SELECT_ROWS_WHERE = "sql.select.rows_where";
+    public String SQL_DELETE_ROWS_WHERE = "sql.delete.rows_where";
 }
