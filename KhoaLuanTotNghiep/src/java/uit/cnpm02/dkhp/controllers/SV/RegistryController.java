@@ -99,7 +99,7 @@ private boolean isPresubNotComplete(String subjectCode, String studentCode) thro
     List<String> preSub=DAOFactory.getPreSubDao().findAllPreSubBySubCode(subjectCode);
     if(preSub.isEmpty()==false){
         for(int i=0;i<preSub.size();i++){
-            if(DAOFactory.getStudyResultDAO().getMarkByStudentAndSub(preSub.get(i), studentCode)<markPass)
+            if(DAOFactory.getStudyResultDao().getMarkByStudentAndSub(preSub.get(i), studentCode)<markPass)
                 result=true;
         }
     }

@@ -7,6 +7,8 @@ package uit.cnpm02.dkhp.controllers;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -15,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import uit.cnpm02.dkhp.DAO.StudyResultDAO;
 import java.util.*;
+import uit.cnpm02.dkhp.model.Registration;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -31,6 +34,9 @@ import uit.cnpm02.dkhp.model.Faculty;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.model.Class;
 import uit.cnpm02.dkhp.model.StudyResult;
+import uit.cnpm02.dkhp.model.TrainClass;
+import uit.cnpm02.dkhp.model.TrainClassID;
+import uit.cnpm02.dkhp.utilities.Constants;
 
 /**
  *
@@ -47,7 +53,7 @@ public class DownloadController extends HttpServlet {
      * @throws IOException 
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, Exception {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
@@ -55,9 +61,147 @@ public class DownloadController extends HttpServlet {
           String action=request.getParameter("action");
           if(action.equalsIgnoreCase("studentresult"))
               exportStudyResult(request, response);
+          else if(action.equalsIgnoreCase("studentRegistry"))
+              exportRegistration(request, response);
         } finally {            
             
         }
+    }
+    private void setSubjectAndLecturer(List<TrainClass> trainClass) throws Exception{
+    for(int i=0;i<trainClass.size();i++){
+        trainClass.get(i).setSubjectName(DAOFactory.getSubjectDao().findById(trainClass.get(i).getSubjectCode()).getSubjectName());
+        trainClass.get(i).setLectturerName(DAOFactory.getLecturerDao().findById(trainClass.get(i).getLecturerCode()).getFullName());
+        trainClass.get(i).setNumTC(DAOFactory.getSubjectDao().findById(trainClass.get(i).getSubjectCode()).getnumTC() );
+    }
+}
+    private void exportRegistration(HttpServletRequest req, HttpServletResponse resp) throws Exception{
+     try{
+         String user=req.getParameter("mssv");
+         List<Registration> registration=DAOFactory.getRegistrationDAO().findAllByStudentCode(user);
+         ArrayList<TrainClass> registried=new ArrayList<TrainClass>();
+         for(int i=0; i<registration.size();i++){
+          String classCode=registration.get(i).getId().getClassCode();
+          TrainClassID trainClassId=new TrainClassID(classCode, Constants.CURRENT_YEAR, Constants.CURRENT_SEMESTER);
+          TrainClass trainClass=DAOFactory.getTrainClassDAO().findById(trainClassId);
+          registried.add(trainClass);
+       }
+        setSubjectAndLecturer(registried);
+         Student student =DAOFactory.getStudentDao().findById(user);
+         Class classes = DAOFactory.getClassDao().findById(student.getClassCode());
+         Faculty faculty =DAOFactory.getFacultyDao().findById(student.getFacultyCode());
+         
+          HSSFWorkbook hwb = new HSSFWorkbook();
+           HSSFSheet sheet = hwb.createSheet("Dang ky hoc phan " + user);
+           HSSFCellStyle style = hwb.createCellStyle();
+           HSSFCellStyle style1 = hwb.createCellStyle();
+           HSSFCellStyle style2 = hwb.createCellStyle();
+           HSSFCellStyle style3 = hwb.createCellStyle();
+           
+            HSSFFont font = hwb.createFont();
+            font.setFontName(HSSFFont.FONT_ARIAL);
+            font.setFontHeightInPoints((short) 18);
+            font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+            font.setColor(HSSFColor.RED.index);
+            style2.setFont(font);
+            
+           int nrow = 1, i = 0;
+                      
+           String[] infoStudent = {"Họ Và Tên: " + student.getFullName(),
+                "MSSV: " + student.getId(),
+                "Lớp: " +classes.getClassName(),
+                "Khoa: " +faculty.getFacultyName()};
+            HSSFRow row1 = null;
+            HSSFCell cell1 = null;
+            
+            row1 = sheet.createRow((short) +(nrow++));
+            cell1 = row1.createCell((short) +6);
+            cell1.setCellStyle(style2);
+            cell1.setCellType(HSSFCell.CELL_TYPE_STRING);
+            cell1.setCellValue("Bảng đăng ký môn học");
+            row1 = sheet.createRow((short) +(nrow++));
+            cell1 = row1.createCell((short) +6);
+            cell1.setCellStyle(style2);
+            cell1.setCellType(HSSFCell.CELL_TYPE_STRING);
+            cell1.setCellValue("Học kỳ "+Constants.CURRENT_SEMESTER+" năm học "+Constants.CURRENT_YEAR);
+
+            row1 = sheet.createRow((short) +(nrow++));
+            row1 = sheet.createRow((short) +(nrow++));
+            HSSFFont font1 = hwb.createFont();
+            font1.setFontName(HSSFFont.FONT_ARIAL);
+            font1.setFontHeightInPoints((short) 12);
+            font1.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+            font1.setColor(HSSFColor.BLUE.index);
+            style.setFont(font1);
+            for (i = 0; i < infoStudent.length; i++) {
+                row1 = sheet.createRow((short) +(nrow++));
+                cell1 = row1.createCell((short) +0);
+                cell1.setCellStyle(style);
+                cell1.setCellType(HSSFCell.CELL_TYPE_STRING);
+                cell1.setCellValue(infoStudent[i]);
+            }
+
+            row1 = sheet.createRow((short) +(nrow++));
+            row1 = sheet.createRow((short) +(nrow++));
+            row1 = sheet.createRow((short) +(nrow++));
+            
+            String[] title = {"STT", "Mã lớp", "Môn học", "Giảng viên", "Tín chỉ"};
+            row1 = sheet.createRow((short) +(nrow++));
+            HSSFFont font2 = hwb.createFont();
+            font2.setFontName(HSSFFont.FONT_ARIAL);
+            font2.setFontHeightInPoints((short) 12);
+            font2.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+            font2.setColor(HSSFColor.GREEN.index);
+            style1.setFont(font2);
+            for (i = 0; i < title.length; i++) {
+                cell1 = row1.createCell((short) +(i+1));
+                cell1.setCellStyle(style1);
+                cell1.setCellType(HSSFCell.CELL_TYPE_STRING);
+                cell1.setCellValue(title[i]);
+            }
+            String classCode;
+            String subName;
+            String lecturer;
+            int numTC;
+            int sumTC=0;
+            for (i = 0; i < registried.size(); i++) {
+                HSSFRow row = sheet.createRow((short) +(nrow++));
+
+                classCode = registried.get(i).getId().getClassCode();
+                subName = registried.get(i).getSubjectName();
+                lecturer = registried.get(i).getLectturerName();
+                numTC=registried.get(i).getNumTC();
+                sumTC+=numTC;
+                String[] info = {Integer.toString(i), classCode, subName, lecturer, Integer.toString(numTC)};
+
+                HSSFCell cell = null;
+                for (int j = 0; j < info.length; j++) {
+                    cell = row.createCell((short) +(j+1));
+                    cell.setCellStyle(style3);
+                    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+                    cell.setCellValue(info[j]);
+                    sheet.autoSizeColumn(j+1);
+               }
+            }
+            HSSFRow row = sheet.createRow((short) +(nrow++));
+            cell1 = row.createCell((short) +(4));
+            cell1.setCellStyle(style3);
+            cell1.setCellType(HSSFCell.CELL_TYPE_STRING);
+            cell1.setCellValue("Tổng số tín chỉ");
+            cell1 = row.createCell((short) +(5));
+            cell1.setCellStyle(style3);
+            cell1.setCellType(HSSFCell.CELL_TYPE_STRING);
+            cell1.setCellValue(Integer.toString(sumTC));
+            
+            FileOutputStream fileOut = new FileOutputStream("dangkyhocphan" + user + ".xls");
+            hwb.write(fileOut);
+            fileOut.close();
+            downloadFile("dangkyhocphan" + user + ".xls", resp);
+            
+       }catch(Exception ex){
+           String path= "./jsps/Message.jsp";
+           resp.sendRedirect(path);
+       }
+           
     }
 private void exportStudyResult(HttpServletRequest req, HttpServletResponse resp) throws IOException{
    try{
@@ -79,7 +223,6 @@ private void exportStudyResult(HttpServletRequest req, HttpServletResponse resp)
            //create file excel
            HSSFWorkbook hwb = new HSSFWorkbook();
            HSSFSheet sheet = hwb.createSheet("Bang Diem SV " + user);
-           sheet.autoSizeColumn((short)+0);
            HSSFCellStyle style = hwb.createCellStyle();
            HSSFCellStyle style1 = hwb.createCellStyle();
            HSSFCellStyle style2 = hwb.createCellStyle();
@@ -237,7 +380,11 @@ private void setSubjectName(List<StudyResult> studyResult) throws Exception{
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (Exception ex) {
+            Logger.getLogger(DownloadController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /** 
@@ -250,7 +397,11 @@ private void setSubjectName(List<StudyResult> studyResult) throws Exception{
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (Exception ex) {
+            Logger.getLogger(DownloadController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /** 
