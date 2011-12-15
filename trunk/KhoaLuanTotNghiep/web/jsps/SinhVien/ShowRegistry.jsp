@@ -82,6 +82,13 @@ int numTC=0;
              #detail th{
                text-align: center;
             }
+            #left{
+                float: left;
+            }
+            #right{
+                float: right;
+                margin-right: 10px;
+            }
         </style>
         </style>
     </head>
@@ -147,9 +154,14 @@ int numTC=0;
                      </tr>
                      </table>
                  </form>
-                        <form action="" method="post" id="frmexport">
+                <div>
+                    <div id="left">
                     <a href="../../RegistryController?action=reRegistry">Đăng ký lại</a>
-                </form>
+                    </div>
+                    <div id="right">
+                    <a href="../../DownloadController?action=studentRegistry&mssv=<%=student.getId()%>">Tải file</a>
+                    </div>
+                </div>
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->

@@ -20,6 +20,7 @@ public class DAOFactory {
     private static RuleDAO ruleDao=null;
     private static PreSubjectDAO preSubDao = null;
     private static StudyResultDAO studyResultDAO=null;
+    private static LecturerDAO lecturerDao=null;
 
     public static PreSubjectDAO getPreSubDao() {
         if (preSubDao == null) {
@@ -110,10 +111,16 @@ public class DAOFactory {
         }
         return ruleDao;
     }
-    public static StudyResultDAO getStudyResultDAO(){
+    public static StudyResultDAO getStudyResultDao(){
         if(studyResultDAO==null){
             studyResultDAO=new StudyResultDAO();
         }
         return studyResultDAO;
+    }
+    public static LecturerDAO getLecturerDao(){
+        if(lecturerDao==null){
+            lecturerDao=new LecturerDAO();
+        }
+        return lecturerDao;
     }
 }
