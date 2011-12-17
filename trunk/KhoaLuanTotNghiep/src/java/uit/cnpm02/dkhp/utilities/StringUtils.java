@@ -88,7 +88,7 @@ public class StringUtils {
     }
     
     public static String getAccountTypeDescription(int type) {
-        if (type == 1) {
+        if (type == 3) {
             return "Sinh Vien";
         } else if (type == 2) {
             return "Giang vien";

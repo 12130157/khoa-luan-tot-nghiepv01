@@ -106,8 +106,8 @@
                         <td> Tình trạng </td>
                         <td>
                             <select name="selectStatus" id="selectStatus">
-                                <option> Bình thường </option>
-                                <option> Hết hạn </option>
+                                <option value="0"> Bình thường </option>
+                                <option value="1"> Hết hạn </option>
                             </select>
                         </td>
                         </tr>

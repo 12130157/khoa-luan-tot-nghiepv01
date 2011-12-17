@@ -22,7 +22,7 @@
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
                 <br>
-                <p>Thời gian đăng ký học phần cho học kỳ đã hết, <a href="../../HomepageController?action=view&actor=Student">bấm vào đây</a> để quay về trang chủ.</p>
+                <p>Thao tác thành công, <a href="../../HomepageController?action=view&actor=Student">bấm vào đây</a> để quay về trang chủ.</p>
                   
             </div><!--End Contents-->
 

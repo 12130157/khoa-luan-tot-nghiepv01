@@ -167,10 +167,10 @@ public class AccountController extends HttpServlet {
             account.setPassword(newPass);
             accDao.update(account);
             session.setAttribute("password", newPass);
-            session.setAttribute("message", "Đổi mật khẩu thành công");
+            session.setAttribute("messageChanPass", "Đổi mật khẩu thành công");
             response.sendRedirect(path);
         } catch (Exception ex) {
-            session.setAttribute("message", "Đổi mật khẩu thất bại");
+            session.setAttribute("messageChanPass", "Đổi mật khẩu thất bại");
             response.sendRedirect(path);
         }
     }
@@ -246,7 +246,7 @@ public class AccountController extends HttpServlet {
 
 
         try {
-            Account acc = new Account(userName, pwd, fullName, false, "Bình Thường", getType(type));
+            Account acc = new Account(userName, pwd, fullName, false, 0, getType(type));
             accDao.add(acc);
 
             String editor = (String) session.getAttribute("logineduser");
@@ -281,7 +281,7 @@ public class AccountController extends HttpServlet {
             String rePwd = request.getParameter("txtRePassword");
             String fullName = request.getParameter("txtFullName");
             String type = request.getParameter("selectType");
-            String status = request.getParameter("selectStatus");
+            int status =Integer.parseInt(request.getParameter("selectStatus"));
 
             if ((userName == null) || (userName.isEmpty())
                     || (pwd == null)
