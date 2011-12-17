@@ -89,8 +89,8 @@ public class Login extends HttpServlet {
 
                 //Set to logined.
                 Account acc = accDao.findById(user);
-                acc.setIsLogined(true);
-                accDao.update(acc);
+                //acc.setIsLogined(true);
+                //accDao.update(acc);
                 
                 if (acc.getType() == Constants.ACCOUNT_TYPE_PDT) {
                     path = "./jsps/PDT/PDTStart.jsp";
@@ -109,13 +109,13 @@ public class Login extends HttpServlet {
     }
 
     private void LogOut(HttpSession session, HttpServletResponse response) throws IOException, Exception {
-        // String user=(String) session.getAttribute("username");
-        // Account acc = accDao.findById(user);
+         String user=(String) session.getAttribute("username");
+         Account acc = accDao.findById(user);
 
-        //if(acc != null) {
-        //   acc.setIsLogined(false);
-        //   accDao.update(acc);
-        // }
+        if(acc != null) {
+           //acc.setIsLogined(false);
+           //accDao.update(acc);
+         }
 
         session.removeAttribute("username");
         session.removeAttribute("logineduser");

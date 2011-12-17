@@ -36,4 +36,5 @@ public class Constants {
     public static String LABEL_CLASS = "lbl_clazz";
     public static String LABEL_COURSE = "lbl_course";
     public static String LABEL_FACULTY = "lbl_faculty";
+    public static boolean INTIME_REGISTRY = true;
 }

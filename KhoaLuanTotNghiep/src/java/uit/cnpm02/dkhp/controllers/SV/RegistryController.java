@@ -237,19 +237,23 @@ private boolean isPresubNotComplete(String subjectCode, String studentCode) thro
  }
  private void forward(HttpServletResponse response, HttpSession session) throws Exception {
      String path="";  
-       try{
+     try{
           String user=(String)session.getAttribute("username");
         List<Registration> registration=DAOFactory.getRegistrationDAO().findAllByStudentCode(user);
+        if(Constants.INTIME_REGISTRY){
         if (registration.isEmpty()) {
             getAllClass(response, session, user);
         } else {
+            showRegitration(registration, response, session, user);
+        }
+        }else {
             showRegitration(registration, response, session, user);
         }
          }catch(Exception ex){
            path= "./jsps/Message.jsp";
        }
        response.sendRedirect(path);
-    }
+}
  private void getAllClass(HttpServletResponse response, HttpSession session, String studentCode) throws Exception{
       Student student =DAOFactory.getStudentDao().findById(studentCode);
       List<TrainClass> trainClass=DAOFactory.getTrainClassDAO().findAllBySemesterAndYear();
@@ -286,6 +290,7 @@ private boolean isPresubNotComplete(String subjectCode, String studentCode) thro
       session.setAttribute("faculty", faculty);
       session.setAttribute("semester", Constants.CURRENT_SEMESTER);
       session.setAttribute("year", Constants.CURRENT_YEAR);
+      session.setAttribute("inTimeRegistry", Constants.INTIME_REGISTRY);
       ArrayList<TrainClass> registried=new ArrayList<TrainClass>();
       for(int i=0; i<registration.size();i++){
           String classCode=registration.get(i).getId().getClassCode();

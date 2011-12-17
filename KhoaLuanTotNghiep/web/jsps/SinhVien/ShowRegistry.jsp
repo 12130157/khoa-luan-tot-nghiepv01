@@ -16,6 +16,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 <%
+Boolean inTimeRegistry =(Boolean)session.getAttribute("inTimeRegistry");
 List<TrainClass> registried=(List<TrainClass>) session.getAttribute("registried");
 String year=(String) session.getAttribute("year");
 Integer semester=(Integer) session.getAttribute("semester");
@@ -155,9 +156,11 @@ int numTC=0;
                      </table>
                  </form>
                 <div>
+                    <%if(inTimeRegistry){%>
                     <div id="left">
                     <a href="../../RegistryController?action=reRegistry">Đăng ký lại</a>
                     </div>
+                    <%}%>
                     <div id="right">
                     <a href="../../DownloadController?action=studentRegistry&mssv=<%=student.getId()%>">Tải file</a>
                     </div>

@@ -71,7 +71,7 @@ private void sendComment(HttpServletRequest request,HttpServletResponse response
           int id=DAOFactory.getCommentDao().getMaxID()+1;
           Comment coment=new Comment(id, content, author, createDate, 0);
           DAOFactory.getCommentDao().add(coment);
-         path= "./jsps/SinhVien/ResultAction.jsp";
+         path= "./jsps/SinhVien/SuccessResult.jsp";
        }catch(Exception ex){
            path= "./jsps/Message.jsp";
       }

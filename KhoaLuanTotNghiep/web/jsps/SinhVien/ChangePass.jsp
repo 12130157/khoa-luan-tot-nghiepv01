@@ -44,9 +44,9 @@
                 <div>
                     <form id="changepast" name="changepast" action="../../AccountController?action=changePass" method="post">
                      <%
-                        String message = (String) session.getAttribute("message");
+                        String message = (String) session.getAttribute("messageChanPass");
                             if (message != null) {
-                                session.removeAttribute("message");
+                                session.removeAttribute("messageChanPass");
                         %>
                         <p id="message"> <%=message%></p><br>
                         <%

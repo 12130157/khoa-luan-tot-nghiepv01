@@ -34,7 +34,8 @@ public class AccountBO {
         try {
             Account acc = accDao.findById(user);
             if(acc != null) {
-                return acc.getIsLogined();
+                if(acc.getIsLogined())
+                    return true;
             }
         } catch (Exception ex) {
             Logger.getLogger(AccountBO.class.getName()).log(Level.SEVERE, null, ex);
@@ -46,7 +47,8 @@ public class AccountBO {
         try {
             Account acc = accDao.findById(user);
             if(acc != null) {
-                return acc.getIsLogined();
+                if(acc.getStatus()==1)
+                return true;
             }
         } catch (Exception ex) {
             Logger.getLogger(AccountBO.class.getName()).log(Level.SEVERE, null, ex);
