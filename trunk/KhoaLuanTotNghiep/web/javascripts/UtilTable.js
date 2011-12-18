@@ -34,7 +34,7 @@ function selectAll(tableId, checkboxIndex) {
  * 
  * @Param tableID the id of table.
  */
-function deleteRow(tableID) {
+function deleteRowT(tableID) {
     try {
         var table = document.getElementById(tableID);
         var rowCount = table.rows.length;
@@ -67,12 +67,13 @@ function deleteRow(tableID) {
  * @Param index of deleted row.
  */
 function deleteRow(tableID, index) {
+    alert(index);
     try {
         var table = document.getElementById(tableID);
         var rowCount = table.rows.length;
         
         if ((index < 0) || (index >= rowCount)) {
-            alert('Not delete any row.');
+            alert('Chưa xóa dòng nào.');
             return;
         }
 
@@ -115,6 +116,31 @@ function createNewSelectionCell(row, name, index, values) {
     for(e in values) {
         element.options[i] = new Option(values[i], name + values[i]);
         element.options[i].value = values[i];
+        i ++;
+    }
+    cell.appendChild(element);
+}
+
+/**
+ * Create a new Selection element
+ * 
+ * @Param row row's index.
+ * @Param name name of element
+ * @Param index index of element in row.
+ * @Param values an array hold the values of selections.
+ */
+function createNewSelectionCell(row, name, index, values, selectedValue) {
+    var cell = row.insertCell(index);
+    var element = document.createElement("select");
+    element.name = name;
+    element.id = name;
+    var i = 0;
+    for(e in values) {
+        element.options[i] = new Option(values[i], name + values[i]);
+        element.options[i].value = values[i];
+        if ((values[i].split("-")[0]) == selectedValue) {
+            element.selectedIndex = i;
+        }
         i ++;
     }
     cell.appendChild(element);
