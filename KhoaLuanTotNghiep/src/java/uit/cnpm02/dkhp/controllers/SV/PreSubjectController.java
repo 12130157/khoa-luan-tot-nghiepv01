@@ -53,7 +53,7 @@ public class PreSubjectController extends HttpServlet {
             } else if (action.equalsIgnoreCase("add-pre-sub")) {
                 addSub(request, response);
             } else if (action.equalsIgnoreCase("delete")) {
-                String message = deleteSub(request, response);
+                String message = deleteSub(request);
                 if (!message.isEmpty()) {
                     session.setAttribute("error", message);
                 }
@@ -200,7 +200,7 @@ public class PreSubjectController extends HttpServlet {
         }
     }
 
-    private String deleteSub(HttpServletRequest req, HttpServletResponse resp) {
+    private String deleteSub(HttpServletRequest req) {
         String message = "";
         try {
             String subId = req.getParameter("sub-id");
