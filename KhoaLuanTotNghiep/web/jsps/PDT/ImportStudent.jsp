@@ -136,7 +136,7 @@
 
                 <p>
                     <INPUT type="button" value="Thêm hàng" onclick="addRow('dataTable')" />
-                    <INPUT type="button" value="Xóa mục đã chọn" onclick="deleteRow('dataTable')" />
+                    <INPUT type="button" value="Xóa mục đã chọn" onclick="deleteRowT('dataTable')" />
                     <INPUT type="submit" value="Hoàn thành" onclick="submitInsertStudentFromTable('../../ManageStudentController?function=import', 'dataTable')" />
                 </p>
                 <hr/><hr/>
