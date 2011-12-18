@@ -52,6 +52,13 @@ public class PreSubjectController extends HttpServlet {
                 doCheckExisted(request, response);
             } else if (action.equalsIgnoreCase("add-pre-sub")) {
                 addSub(request, response);
+            } else if (action.equalsIgnoreCase("delete")) {
+                String message = deleteSub(request, response);
+                if (!message.isEmpty()) {
+                    session.setAttribute("error", message);
+                }
+                
+                loadDataForManage(request, response);
             }
         } finally {
             out.close();
@@ -170,7 +177,7 @@ public class PreSubjectController extends HttpServlet {
 
             String[] subjectData = subjectNameStr.split("-");
             String[] preSubjectData = preSubjectNameStr.split("-");
-            
+
             String message = "";
             CheckResult checkResult = null;
             if (subjectData.length < 2
@@ -193,7 +200,30 @@ public class PreSubjectController extends HttpServlet {
         }
     }
 
-    private void deleteSub() {
+    private String deleteSub(HttpServletRequest req, HttpServletResponse resp) {
+        String message = "";
+        try {
+            String subId = req.getParameter("sub-id");
+            String preSubId = req.getParameter("pre-sub-id");
+
+            if (subId == null
+                    || preSubId == null
+                    || subId.isEmpty()
+                    || preSubId.isEmpty()) {
+                return "Đã có lỗi xảy ra.";
+            }
+
+            PreSubID id = new PreSubID(subId, preSubId);
+            PreSubject preSub = preDao.findById(id);
+            
+            if (preSub != null) {
+                preDao.delete(preSub);
+            }
+        } catch (Exception ex) {
+            log("Error occur while do checking the pre subject", ex);
+        }
+        
+        return message;
     }
 
     private void addSub(HttpServletRequest req, HttpServletResponse resp) {
@@ -214,7 +244,7 @@ public class PreSubjectController extends HttpServlet {
 
             String[] subjectData = subjectNameStr.split("-");
             String[] preSubjectData = preSubjectNameStr.split("-");
-            
+
             String message = "Thêm thành công";
             if (subjectData.length < 2
                     || preSubjectData.length < 2) {
@@ -222,7 +252,7 @@ public class PreSubjectController extends HttpServlet {
             } else {
                 PreSubID id = new PreSubID(subjectData[1].trim(), preSubjectData[1].trim());
                 CheckResult check = checkPreSubjectExisted(id.getSudId(), id.getPreSudId());
-                
+
                 if (check.isOK) {
                     PreSubject preSub = new PreSubject();
                     preSub.setId(id);
@@ -281,8 +311,9 @@ public class PreSubjectController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-    
+
     private class CheckResult {
+
         private boolean isOK;
         private String message;
 
@@ -309,6 +340,5 @@ public class PreSubjectController extends HttpServlet {
         public void setMessage(String message) {
             this.message = message;
         }
-        
     }
 }
