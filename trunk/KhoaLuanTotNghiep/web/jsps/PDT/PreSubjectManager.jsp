@@ -4,10 +4,11 @@
     Author     : LocNguyen
 --%>
 
+<%@page import="uit.cnpm02.dkhp.model.PreSubID"%>
 <%@page import="uit.cnpm02.dkhp.model.PreSubject"%>
 <%@page import="java.util.List"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@include file="MenuPDT.jsp"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <%
     int numpage;
@@ -30,20 +31,21 @@
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Trang quản lý môn học tiên quyết</title>
+        
         <style media="all" type="text/css">
-            #table{
+            #tableadd, #tablelist{
                 width: 100%;
                 padding-left: 10px;
                 padding-right: 10px;
                 text-align: center;
             }
-            #table th{
+            #tableadd th, #tablelist th{
                 background-color:#00ff00;
                 height: 30px;
                 border-color: black;
             }
 
-            #table td{
+            #tableadd td, #tablelist td{
                 text-align: center;
                 background-color: #5F676D;
             }
@@ -73,12 +75,12 @@
                 <br>
                 <hr/><hr/><br>
 
-                <div id = "add-new">
+                <div id = "add-new" name="add-new">
                     <h3> Thêm môn học tiên quyết: </h3>
-                    <table>
+                    <table id="tableadd" name="tableadd">
                         <tr>
-                            <td> Chọn môn học </td>
-                            <td> Môn học tiên quyết </td>
+                            <th> Chọn môn học </th>
+                            <th> Môn học tiên quyết </th>
                         </tr>
                         <tr>
                         <td>
@@ -113,9 +115,9 @@
                 </div>
 
                 <br /> <hr /> <hr />            
-                <div id = "list-pre-sub">
+                <div id = "list-pre-sub" name="list-pre-sub">
                     <h3> Danh sách môn học tiên quyết: </h3>
-                    <table>
+                    <table id="tablelist" name="tablelist">
                         <tr>
                         <th> STT </th>
                         <th> Tên môn học </th>
@@ -125,25 +127,31 @@
                         <%
                             if ((preSubjects != null) && (!preSubjects.isEmpty())) {
                                 for (int j = 0; j < preSubjects.size(); j++) {
+                                    PreSubID id = preSubjects.get(j).getId();
                         %>
                         <tr>
                         <td> <%= (j + 1)%> </td>
                         <td> <%= preSubjects.get(j).getSubjectName()%> </td>
                         <td> <%= preSubjects.get(j).getPreSubjectName()%> </td>
-                        <td> <input type="button" onclick="" value="Xóa"> </td>
+                        <td> 
+                            <form method="post" action="../../PreSubjectController?action=delete&sub-id=<%= id.getSudId()%>&pre-sub-id=<%= id.getPreSudId()%>">
+                                <input type="submit" value="Xóa">
+                            </form>
+                        </td>
+                        <!--td> <input type="button" onclick="deletePreSubject()" value="Xóa"> </td-->
                         </tr>
                         <%        }
                             }
                         %>
 
                     </table>
-                    <div id="page">
+                    <!--div id="page">
                         <input type="button" value="|<<" onclick="firstPage()"/>- 
                         <input type="button" value="<<" onclick="prePage()"/>-
                         <input type="button" value=">>" onclick="nextPage()"/>-
                         <input type="button" value=">>|" onclick="endPage()"/>
-                        <input type="hidden" value="<%= numpage %>" id="numpage" />
-                    </div>
+                        <input type="hidden" value="<!--%= numpage %>" id="numpage" />
+                    </div-->
                 </div>
             </div><!--End Contents-->
 
