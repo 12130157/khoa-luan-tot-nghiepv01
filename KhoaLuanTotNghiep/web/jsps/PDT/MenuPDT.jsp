@@ -59,7 +59,7 @@
              <li><a href="#"> Điểm cuối kỳ |</a></li>
              <li><a href=""> Quy định |</a>
                  <ul>
-                     <li><a href="#"> Môn học tiên quyết</a></li>
+                     <li><a href="../../PreSubjectController?action=manage"> Môn học tiên quyết</a></li>
                      <li><a href="#"> Quy định</a></li>
                  </ul>
              </li>
