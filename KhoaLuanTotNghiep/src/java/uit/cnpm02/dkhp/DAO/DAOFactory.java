@@ -16,11 +16,11 @@ public class DAOFactory {
     private static SubjectDAO subjectDao = null;
     private static CommentDao commentDao = null;
     private static RegistrationDAO registrationDao = null;
-    private static TrainClassDAO trainClassDao=null;
-    private static RuleDAO ruleDao=null;
+    private static TrainClassDAO trainClassDao = null;
+    private static RuleDAO ruleDao = null;
     private static PreSubjectDAO preSubDao = null;
-    private static StudyResultDAO studyResultDAO=null;
-    private static LecturerDAO lecturerDao=null;
+    private static StudyResultDAO studyResultDAO = null;
+    private static LecturerDAO lecturerDao = null;
 
     public static PreSubjectDAO getPreSubDao() {
         if (preSubDao == null) {
@@ -35,7 +35,7 @@ public class DAOFactory {
         }
         return subjectDao;
     }
-    
+
     public static DiaryDAO getDiaryDao() {
         if (diaryDao == null) {
             diaryDao = new DiaryDAO();
@@ -87,39 +87,45 @@ public class DAOFactory {
 
         return newsDao;
     }
+
     public static CommentDao getCommentDao() {
         if (commentDao == null) {
             commentDao = new CommentDao();
         }
         return commentDao;
     }
-     public static RegistrationDAO getRegistrationDAO() {
+
+    public static RegistrationDAO getRegistrationDAO() {
         if (registrationDao == null) {
             registrationDao = new RegistrationDAO();
         }
         return registrationDao;
     }
-     public static TrainClassDAO getTrainClassDAO() {
+
+    public static TrainClassDAO getTrainClassDAO() {
         if (trainClassDao == null) {
             trainClassDao = new TrainClassDAO();
         }
         return trainClassDao;
     }
-    public static RuleDAO getRuleDao(){
-        if(ruleDao==null){
-            ruleDao=new RuleDAO();
+
+    public static RuleDAO getRuleDao() {
+        if (ruleDao == null) {
+            ruleDao = new RuleDAO();
         }
         return ruleDao;
     }
-    public static StudyResultDAO getStudyResultDao(){
-        if(studyResultDAO==null){
-            studyResultDAO=new StudyResultDAO();
+
+    public static StudyResultDAO getStudyResultDao() {
+        if (studyResultDAO == null) {
+            studyResultDAO = new StudyResultDAO();
         }
         return studyResultDAO;
     }
-    public static LecturerDAO getLecturerDao(){
-        if(lecturerDao==null){
-            lecturerDao=new LecturerDAO();
+
+    public static LecturerDAO getLecturerDao() {
+        if (lecturerDao == null) {
+            lecturerDao = new LecturerDAO();
         }
         return lecturerDao;
     }
