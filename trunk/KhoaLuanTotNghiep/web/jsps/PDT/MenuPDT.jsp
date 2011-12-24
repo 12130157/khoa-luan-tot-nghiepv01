@@ -36,7 +36,7 @@
              <li><a href=""> Quản lý con người |</a>
                  <ul>
                      <li><a href="../../ManageStudentController?function=liststudent"> Quản lý sinh viên</a></li>
-                     <li><a href="#"> Quản lý giảng viên</a></li>
+                     <li><a href="../../ManageLecturerController?function=listlecturer"> Quản lý giảng viên</a></li>
                  </ul>
              </li>
              <li><a href="../../AccountController?action=manager"> Quản lý tài khoản |</a></li>
