@@ -12,124 +12,150 @@ import uit.cnpm02.dkhp.access.JDBC.AbstractJdbcModel;
  *
  * @author thanh
  */
-public class Lecturer extends  AbstractJdbcModel<String>{
-   String lecturerCode;
-   String fullName;
-   String facultyCode;
-   Date birthday;
-   String address;
-   String identityCard;
-   String phone;
-   String email;
-   String gender;
-   String hocHam;
-   String hocVi;
-   String note;
-   public Lecturer(){
-       
-   }
-   public Lecturer(String _lecturerCode, String _fullName, String _facultyCode, Date _birthday, String _address, 
-           String _identityCard, String _phone, String _email, String _gender, String _hocHam, String _hocVi){
-       this.lecturerCode=_lecturerCode;
-       this.fullName=_fullName;
-       this.facultyCode=_facultyCode;
-       this.birthday=_birthday;
-       this.address=_address;
-       this.identityCard=_identityCard;
-       this.phone=_phone;
-       this.email=_email;
-       this.gender=_gender;
-       this.hocHam=_hocHam;
-       this.hocVi=_hocVi;
-       this.note="";
-   }
-   //**********
-   //set parameter
-   //**********
-   public void setLecturerCode(String _lecturerCode){
-       this.lecturerCode=_lecturerCode;
-   }
-   public void setFullName(String _fullName){
-       this.fullName=_fullName;
-   }
-   public void setFacultyCode(String _facultyCode){
-       this.facultyCode=_facultyCode;
-   }
-   public void setBirthday(Date _birthday){
-       this.birthday=_birthday;
-   }
-   public void setAddress(String _address){
-       this.address=_address;
-   }
-   public void setIdentityCard(String _identityCard){
-       this.identityCard=_identityCard;
-   }
-   public void setPhone(String _phone){
-       this.phone=_phone;
-   }
-    public void setEmail(String _email){
-       this.email=_email;
-   }
-   public void setGender(String _gender){
-       this.gender=_gender;
-   }
-   public void setHocHam(String _hocHam){
-       this.hocHam=_hocHam;
-   }
-   public void setHocVi(String _hocVi){
-       this.hocVi=_hocVi;
-   }
-   public void setNote(String _note){
-       this.note=_note;
-   }
-   //*********
-   //get parameter
-   //*********
-   public String getLecturerCode(){
-       return this.lecturerCode;
-   }
-   public String getFullName(){
-       return this.fullName;
-   }
-   public String getFacultyCode(){
-       return this.facultyCode;
-   }
-   public Date getBirthday(){
-       return this.birthday;
-   }
-   public String getAddress(){
-      return  this.address;
-   }
-   public String getIdentityCard(){
-       return this.identityCard;
-   }
-   public String getPhone(){
-       return this.phone;
-   }
-    public String getEmail(){
-      return  this.email;
-   }
-   public String getGender(){
-       return this.gender;
-   }
-   public String getHocHam(){
-       return this.hocHam;
-   }
-   public String getHocVi(){
-       return this.hocVi;
-   }
-   public String getNote(){
-       return this.note;
-   }
-     @Override
+public class Lecturer extends AbstractJdbcModel<String> {
+
+    private String lecturerCode;
+    private String fullName;
+    private String facultyCode;
+    private Date birthday;
+    private String address;
+    private String identityCard;
+    private String phone;
+    private String email;
+    private String gender;
+    private String hocHam;
+    private String hocVi;
+    private String note;
+
+    public Lecturer() {
+    }
+
+    public Lecturer(String lecturerCode, String fullName, String facultyCode,
+            Date birthday, String address, String identityCard, String phone,
+            String email, String gender, String hocHam, String hocVi) {
+        
+        this.lecturerCode = lecturerCode;
+        this.fullName = fullName;
+        this.facultyCode = facultyCode;
+        this.birthday = birthday;
+        this.address = address;
+        this.identityCard = identityCard;
+        this.phone = phone;
+        this.email = email;
+        this.gender = gender;
+        this.hocHam = hocHam;
+        this.hocVi = hocVi;
+        
+        setId(lecturerCode);
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getFacultyCode() {
+        return facultyCode;
+    }
+
+    public void setFacultyCode(String facultyCode) {
+        this.facultyCode = facultyCode;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getHocHam() {
+        return hocHam;
+    }
+
+    public void setHocHam(String hocHam) {
+        this.hocHam = hocHam;
+    }
+
+    public String getHocVi() {
+        return hocVi;
+    }
+
+    public void setHocVi(String hocVi) {
+        this.hocVi = hocVi;
+    }
+
+    public String getIdentityCard() {
+        return identityCard;
+    }
+
+    public void setIdentityCard(String identityCard) {
+        this.identityCard = identityCard;
+    }
+
+    public String getLecturerCode() {
+        return lecturerCode;
+    }
+
+    public void setLecturerCode(String lecturerCode) {
+        this.lecturerCode = lecturerCode;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    
+    @Override
     public String getIdColumnName() {
         return "MaGV";
     }
-     @Override
+
+    @Override
     public String getTableName() {
         return MapperConstant.DB_NAME
                 + ".GiangVien";
     }
+
     @Override
     public String[] getColumnNames() {
         return new String[]{
@@ -144,31 +170,31 @@ public class Lecturer extends  AbstractJdbcModel<String>{
                     "HocHam",
                     "HocVi",
                     "GhiChu"
-                
                 };
-        
+
     }
 
-   @Override
+    @Override
     public void setColumnValues(Object[] values) {
         try {
             fullName = values[0].toString();
             facultyCode = values[1].toString();
-            birthday =(Date)values[2];
+            birthday = (Date) values[2];
             address = values[3].toString();
-            identityCard=values[4].toString();
-            phone=values[5].toString();
-            email=values[6].toString();
-            gender=values[7].toString();
-            hocHam=values[8] == null ? "" : values[9].toString();
-            hocVi=values[9] == null ? "" : values[9].toString();
-            note=values[10] == null ? "" : values[9].toString();
+            identityCard = values[4].toString();
+            phone = values[5].toString();
+            email = values[6].toString();
+            gender = values[7].toString();
+            hocHam = values[8] == null ? "" : values[9].toString();
+            hocVi = values[9] == null ? "" : values[9].toString();
+            note = values[10] == null ? "" : values[9].toString();
 
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
     }
-     @Override
+
+    @Override
     public Object[] getColumnValues() {
         return new Object[]{
                     fullName,
