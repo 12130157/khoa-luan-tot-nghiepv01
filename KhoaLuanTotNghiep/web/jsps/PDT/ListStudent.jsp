@@ -16,9 +16,7 @@
 
 <%
     List<Student> listStudent = (List<Student>) session.getAttribute("liststudent");
-    //List<String> listClass = (ArrayList<String>) session.getAttribute("listClass");
     Integer numpage = (Integer) session.getAttribute("numpage");
-    List<uit.cnpm02.dkhp.model.Class> listClass = DAOFactory.getClassDao().findAll();
 %>
 <html>
     <head>
