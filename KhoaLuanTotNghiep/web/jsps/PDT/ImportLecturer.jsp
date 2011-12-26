@@ -26,6 +26,11 @@
             listFaculties += faculties.get(i).getId();
         }
     }
+    
+    String error = (String) session.getAttribute("error");
+    //if ((error != null) && !error.isEmpty()) {
+    //    session.removeAttribute("error");
+    //}
 %>
 <html>
     <head>
@@ -102,16 +107,13 @@
 
                 <br>
                 <hr/><hr/><br>
-                <p id="error">
+                <div id="error">
                     <%
-                        String error = (String) session.getAttribute("error");
                         if ((error != null) && !error.isEmpty()) {
-                            session.removeAttribute("error");
                     %>
                     <%= error %>
-                    <%  }
-                    %>
-                </p>
+                    <% } %>
+                </div>
 
                 <p>
                     <INPUT type="button" value="Thêm hàng" onclick="addRow('dataTable')" />
@@ -315,20 +317,20 @@
                         currentData += row.cells[5].childNodes[0].value + ','; //NgaySinh
                         //currentData += row.cells[6].childNodes[0].value + ','; //QueQuan
                         if (row.cells[6].childNodes[0].value == '')
-                            currentData += 'x';
+                            currentData += 'x' + ',';
                         else
-                            currentData += row.cells[6].childNodes[0].value ; //Ghi chu
+                            currentData += row.cells[6].childNodes[0].value + ','; //Ghi chu
                         currentData += row.cells[7].childNodes[0].value + ','; //CMND
                         //currentData += row.cells[8].childNodes[0].value + ','; //DienThoai
                         if (row.cells[8].childNodes[0].value == '')
-                            currentData += 'x';
+                            currentData += 'x' + ',';
                         else
-                            currentData += row.cells[8].childNodes[0].value ; //Ghi chu
+                            currentData += row.cells[8].childNodes[0].value + ','; //Ghi chu
                         //currentData += row.cells[9].childNodes[0].value + ','; //Email
                         if (row.cells[9].childNodes[0].value == '')
-                            currentData += 'x';
+                            currentData += 'x' + ',';
                         else
-                            currentData += row.cells[9].childNodes[0].value ; //Ghi chu
+                            currentData += row.cells[9].childNodes[0].value + ','; //Ghi chu
                         currentData += row.cells[10].childNodes[0].value + ','; //GioiTinh
                         currentData += row.cells[11].childNodes[0].value + ','; //HocHam
                         currentData += row.cells[12].childNodes[0].value + ','; //HocVi
@@ -352,7 +354,6 @@
                 alert('Vui lòng ch\u1ecdn ít nhất một hàng.');
                 return 'fail';
             }
-            
             return datas;
         }
         
