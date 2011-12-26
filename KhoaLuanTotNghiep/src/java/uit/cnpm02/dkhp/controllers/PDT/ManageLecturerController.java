@@ -70,8 +70,8 @@ public class ManageLecturerController extends HttpServlet {
             } else if (action.equalsIgnoreCase("import")) {
                 //Data input in format: lecturer1; lecturer2; lecturer 3 ...
                 //lecturer: maGV, hoten, ...
-                String result = importLecturerFromDataString(datas);
-                session.setAttribute("error", result);
+                ExecuteResult result = importLecturerFromDataString(datas);
+                session.setAttribute("error", result.getMessage());
                 String path = "./jsps/PDT/ImportLecturer.jsp";
                 response.sendRedirect(path);
             } else if (action.equalsIgnoreCase("importfromfile")) {
@@ -183,7 +183,7 @@ public class ManageLecturerController extends HttpServlet {
             session = request.getSession();
             session.setAttribute("listlecturer", lectureres);
         } else {
-            
+
             PrintWriter out = response.getWriter();
             String respStr = "<tr id=\"tablelistlecturer-th\">"
                     + "<td><INPUT type=\"checkbox\" name=\"chkAll\" onclick=\"selectAll('tablelistlecturer', 0)\" /></td>"
@@ -230,42 +230,48 @@ public class ManageLecturerController extends HttpServlet {
         session.setAttribute("lecturer", s);
     }
 
-    private String importLecturerFromDataString(String datas) throws Exception {
+    private ExecuteResult importLecturerFromDataString(String datas) {
+        ExecuteResult result = new ExecuteResult(true, datas);
+
         if ((datas == null) || (datas.length() < 1)) {
-            return "Vui lòng kiểm tra lại dữ liệu nhập";
+            return new ExecuteResult(false, "Vui lòng kiểm tra lại dữ liệu nhập");
         }
+        try {
+            List<Lecturer> lecturers = new ArrayList<Lecturer>(10);
+            String[] lecturerStr = datas.split(";");
+            if (lecturerStr != null) {
+                for (int i = 0; i < lecturerStr.length; i++) {
+                    String[] lecturerDetail = lecturerStr[i].split(",");
+                    Lecturer l = new Lecturer();
+                    l.setId(lecturerDetail[0]);                        //MSSV        0
+                    l.setFullName(lecturerDetail[1]);                  //Ho Ten      1
+                    l.setFacultyCode(lecturerDetail[2]);
+                    Date startDate = dateFormat.parse(lecturerDetail[3]);
+                    l.setBirthday(startDate);                         //Ngay Sinh   2 
+                    l.setAddress(lecturerDetail[4]);
+                    l.setIdentityCard(lecturerDetail[5]);
+                    l.setPhone(lecturerDetail[6]);
+                    l.setEmail(lecturerDetail[7]);
+                    l.setGender(lecturerDetail[8]);
+                    l.setHocHam(lecturerDetail[9]);
+                    l.setHocVi(lecturerDetail[10]);
+                    l.setNote(lecturerDetail[11]);
 
-        List<Lecturer> lecturers = new ArrayList<Lecturer>(10);
-        String[] lecturerStr = datas.split(";");
-        if (lecturerStr != null) {
-            for (int i = 0; i < lecturerStr.length; i++) {
-                String[] lecturerDetail = lecturerStr[i].split(",");
-                Lecturer l = new Lecturer();
-                l.setId(lecturerDetail[0]);                        //MSSV        0
-                l.setFullName(lecturerDetail[1]);                  //Ho Ten      1
-                l.setFacultyCode(lecturerDetail[2]);
-                Date startDate = dateFormat.parse(lecturerDetail[3]);
-                l.setBirthday(startDate);                         //Ngay Sinh   2 
-                l.setAddress(lecturerDetail[4]);
-                l.setIdentityCard(lecturerDetail[5]);
-                l.setPhone(lecturerDetail[6]);
-                l.setEmail(lecturerDetail[7]);
-                l.setGender(lecturerDetail[8]);
-                l.setHocHam(lecturerDetail[9]);
-                l.setHocVi(lecturerDetail[10]);
-                l.setNote(lecturerDetail[11]);
-
-                lecturers.add(l);
+                    lecturers.add(l);
+                }
             }
+
+            Collection<String> id_Lecturers = DAOFactory.getLecturerDao().addAll(lecturers);
+            if (id_Lecturers == null) {
+                return new ExecuteResult(false, "Thêm không thành công");
+            }
+
+            result.setMessage("Thêm thành công.");
+        } catch (Exception ex) {
+            return new ExecuteResult(false, "Lỗi: " + ex.toString());
         }
 
-        Collection<String> id_Lecturers = DAOFactory.getLecturerDao().addAll(lecturers);
-
-        if (id_Lecturers == null) {
-            return "Thêm không thành công";
-        }
-
-        return "Thêm thành công.";
+        return result;
     }
 
     private String importLectuererFromFile(HttpServletRequest request, HttpServletResponse response) {
