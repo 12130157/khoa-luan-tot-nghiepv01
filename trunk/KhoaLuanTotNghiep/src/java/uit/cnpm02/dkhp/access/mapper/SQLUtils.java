@@ -12,6 +12,7 @@ import java.util.Map;
  * @author LocNguyen
  */
 public class SQLUtils {
+
     private static String[][] queryName = new String[][]{
         {"sql.delete", "delete from {0} where {1} = {2}"},
         {"sql.delete.advanced", "delete from {0} where {1}"},
@@ -36,24 +37,24 @@ public class SQLUtils {
     };
     private static Map<String, String> sqlQuery = new HashMap<String, String>(10);
     private static boolean queriesLoaded = false;
-        /**
+
+    /**
      * @param queryName query name.
      * @return found query or null if not found.
      */
     public static String getSql(String queryName) {
-        if(!queriesLoaded) {
+        if (!queriesLoaded) {
             loadQuery();
             queriesLoaded = true;
         }
-        
+
         return sqlQuery.get(queryName);
     }
-    
+
     private static void loadQuery() {
         sqlQuery = new HashMap<String, String>();
         for (int i = 0; i < queryName.length; i++) {
             sqlQuery.put(queryName[i][0], queryName[i][1]);
         }
     }
-
 }
