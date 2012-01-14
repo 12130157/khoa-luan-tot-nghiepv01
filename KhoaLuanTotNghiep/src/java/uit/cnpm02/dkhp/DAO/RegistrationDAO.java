@@ -79,5 +79,37 @@ public class RegistrationDAO extends AdvancedAbstractJdbcDAO<Registration, Regis
            close(con);
         }
     }
+   public List<Registration> findAllByClassCode(String classCode) throws Exception {
+        checkModelWellDefined();
+        Registration t = new Registration();
+        if (t == null) {
+            throw new Exception("Cannot initialize the " + Registration.class.getName()
+                    + " class");
+        }
+        List<Registration> results = new ArrayList<Registration>();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        String selectQuery = "Select * from "+t.getTableName()+" where MaLopHoc= ? and HocKy="+Constants.CURRENT_SEMESTER+" and NamHoc='"+Constants.CURRENT_YEAR+"'";
+        try {
+            con = getConnection();
+            statement = con.prepareStatement(selectQuery);
+            statement.setObject(1, classCode);
+            rs = statement.executeQuery();
+
+            while (rs.next()) {
+                String mssv=rs.getString("MSSV");
+                RegistrationID registrationID=new RegistrationID(mssv, classCode, Constants.CURRENT_SEMESTER, Constants.CURRENT_YEAR);
+                Registration registration=findById(registrationID);
+                results.add(registration);
+            }
+        } catch (SQLException ex) {
+            throw new Exception(ex);
+        } finally {
+            close(rs, statement);
+            close(con);
+        }
+        return results;
+    }
  
 }

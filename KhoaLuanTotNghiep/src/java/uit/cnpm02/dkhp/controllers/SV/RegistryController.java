@@ -4,9 +4,9 @@
  */
 package uit.cnpm02.dkhp.controllers.SV;
 
-import com.sun.corba.se.impl.orbutil.closure.Constant;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -58,10 +58,36 @@ public class RegistryController extends HttpServlet {
                 preRegistry(response, request, session);
             else if(action.equalsIgnoreCase("completeRegistry"))
                 completeRegistration(response, request, session);
+            else if(action.equals("detail"))
+                detailTrainClass(response, request, session);
         } finally {           
             out.close();
         }
     }
+ private void detailTrainClass(HttpServletResponse response, HttpServletRequest request, HttpSession session) throws Exception{
+    String path="";
+     try{
+     String classCode= request.getParameter("classCode");
+     List<Registration> registration=DAOFactory.getRegistrationDAO().findAllByClassCode(classCode);
+     List<Student> studentList= new ArrayList<Student>();
+     for(int i=0; i<registration.size(); i++){
+         Student student =DAOFactory.getStudentDao().findById(registration.get(i).getId().getStudentCode());
+         studentList.add(student);
+     }
+     TrainClassID trainClassId=new TrainClassID(classCode, Constants.CURRENT_YEAR, Constants.CURRENT_SEMESTER);
+     TrainClass trainClass=DAOFactory.getTrainClassDAO().findById(trainClassId);
+     trainClass.setLectturerName(DAOFactory.getLecturerDao().findById(trainClass.getLecturerCode()).getFullName());
+     trainClass.setSubjectName(DAOFactory.getSubjectDao().findById(trainClass.getSubjectCode()).getSubjectName());
+     session.setAttribute("studentList", studentList);
+     session.setAttribute("classInfo", trainClass);
+      path= "./jsps/SinhVien/ClassDetail.jsp";
+      response.sendRedirect(path);
+    }catch(Exception e){
+        path= "./jsps/Message.jsp";
+        response.sendRedirect(path);
+    }
+    
+ }
  private int getNumTCRegistry(List<TrainClass> registried){
        int numTC=0;
         if(registried.isEmpty()==false){
