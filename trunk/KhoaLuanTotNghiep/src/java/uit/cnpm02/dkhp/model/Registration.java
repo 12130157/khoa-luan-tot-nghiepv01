@@ -15,6 +15,7 @@ public class Registration extends AdvancedAbstractJdbcModel<RegistrationID>{
     /**No registry**/
     private int noRegisty;
     private float mark;
+    private String studentName;
 
     public Registration() {
     }
@@ -24,6 +25,7 @@ public class Registration extends AdvancedAbstractJdbcModel<RegistrationID>{
         setId(registrationId);
         this.noRegisty = _noRegisty;
         this.mark = _mark;
+        studentName="";
     }
     public float getMark() {
         return mark;
@@ -37,7 +39,12 @@ public class Registration extends AdvancedAbstractJdbcModel<RegistrationID>{
     public void setNoRegisty(int noRegisty) {
         this.noRegisty = noRegisty;
     }
-
+    public void setStudentName(String _studentName){
+        this.studentName=_studentName;
+    }
+    public String getStudentName(){
+        return this.studentName;
+    }
    @Override
     public String[] getColumnNames() {
         return new String[]{
