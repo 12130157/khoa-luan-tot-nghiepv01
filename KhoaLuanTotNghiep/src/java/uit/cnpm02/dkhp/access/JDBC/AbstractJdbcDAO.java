@@ -656,6 +656,59 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
             close(con);
         }
     }
+    
+    @Override
+    public List<T> findByColumName(String columnName, Object values) throws Exception {
+        checkModelWellDefined();
+
+        if ((columnName == null) || (columnName.length() == 0) || (values == null)) {
+            throw new NullPointerException("Column name or values not correct.");
+        }
+
+        ArrayList<T> results = new ArrayList<T>(10);
+
+        T t = createModel();
+        if (t == null) {
+            throw new Exception("Cannot initialize the " + modelClazz.getName()
+                    + " class");
+        }
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        String whereClause = columnName + "like %" + values.toString() + "%";
+        try {
+            String strQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_SELECT_ADVANCED),
+                    new String[]{t.getTableName(),
+                        whereClause
+                    });
+
+            con = getConnection();
+            statement = con.prepareStatement(strQuery);
+            statement.setObject(1, values);
+
+            rs = statement.executeQuery();
+            while (rs.next()) {
+                T ti = createModel();
+                Object[] obj = new Object[t.getColumnNames().length];
+                for (int i = 0; i < obj.length; i++) {
+                    obj[i] = rs.getObject(ti.getColumnNames()[i]);
+                }
+                ID id = (ID) rs.getObject(ti.getIdColumnName());
+
+                ti.setId(id);
+                ti.setColumnValues(obj);
+                results.add(ti);
+            }
+
+            return results;
+
+        } catch (SQLException e) {
+            throw new Exception(e);
+        } finally {
+            close(rs, statement);
+            close(con);
+        }
+    }
 
     @Override
     public List<T> findByIds(Collection<ID> ids, boolean lock)
