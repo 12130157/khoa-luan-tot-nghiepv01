@@ -81,6 +81,15 @@ public interface IGenericDAO<T extends IModel<ID>, ID extends Serializable> {
 	 */
 	List<T> findAll() throws Exception;
 
+        /**
+         * Find list entity by a specify field;
+         * 
+         * @param columnName
+         * @param values
+         * @return
+         * @throws Exception 
+         */
+        public List<T> findByColumName(String columnName, Object values) throws Exception;
 	/**
 	 * Update a modified model object.
 	 * 
