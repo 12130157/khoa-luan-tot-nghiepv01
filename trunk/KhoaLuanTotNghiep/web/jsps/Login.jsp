@@ -35,7 +35,7 @@
             }
            </style>
     </head>
-    <body>
+    <body onload="document.body.focus()" onkeyup="keypressed()">
         <!--Div Wrapper-->
         <div id="wrapper">
             <div id="mainNav"><!--Main Navigation-->
@@ -89,10 +89,17 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    </body>
+      </body>
     
     <script type = "text/javascript">
-        function Login(){
+   function keypressed()
+   { 
+   if(event.keyCode=='13')
+   {
+       Login();
+   } 
+  }
+    function Login(){
             var txtUsername = document.myform.txtUsername.value;
             var txtPassword = document.myform.txtPassword.value;
             if(txtUsername.length==0){
