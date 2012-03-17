@@ -29,11 +29,11 @@ public class Rule extends  AbstractJdbcModel<String>{
 
   
 
-   @Override
+    @Override
     public String getIdColumnName() {
         return "Ma";
     }
-     @Override
+    @Override
     public String getTableName() {
         return MapperConstant.DB_NAME
                 + ".QuyDinh";
