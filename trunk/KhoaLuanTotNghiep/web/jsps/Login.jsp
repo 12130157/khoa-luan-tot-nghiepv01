@@ -35,7 +35,7 @@
             }
            </style>
     </head>
-    <body onload="document.body.focus()" onkeyup="keypressed()">
+    <body>
         <!--Div Wrapper-->
         <div id="wrapper">
             <div id="mainNav"><!--Main Navigation-->
@@ -47,13 +47,13 @@
                         <tr>
                             <td>Tên Đăng Nhập</td>
                             <td>
-                                <input type="text" name="txtUsername" id="txtUsername" />
+                                <input type="text" name="txtUsername" id="txtUsername" onKeyPress="keypressed()"/>
                             </td>
                         </tr>
                         <tr>
                             <td>Mật Khẩu</td>
                             <td>
-                                <input type="password" name="txtPassword" id="txtPassword"/>
+                                <input type="password" name="txtPassword" id="txtPassword" onKeyPress="keypressed()"/>
                             </td>
                         </tr>
                         <tr>
