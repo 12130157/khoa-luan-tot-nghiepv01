@@ -428,11 +428,10 @@ public abstract class AdvancedAbstractJdbcDAO<T extends IAdvancedJdbcModel<ID>, 
         Connection con = null;
         PreparedStatement statement = null;
         try {
-            String updateQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_UPDATE),
+            String updateQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_UPDATE_ADVANCED),
                     new String[]{lEntities.get(0).getTableName(),
                         sbValues.toString(),
-                        sbIdValues.toString(),
-                        "?"});
+                        sbIdValues.toString()});
             con = getConnection();
             con.setAutoCommit(false);
             statement = con.prepareStatement(updateQuery);
@@ -783,8 +782,8 @@ public abstract class AdvancedAbstractJdbcDAO<T extends IAdvancedJdbcModel<ID>, 
         try {
             //String updateQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_UPDATE),
             //        new String[]{t.getTableName(), sb.toString(), t.getIdColumnName(), "?"});
-            String updateQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_UPDATE),
-                    new String[]{t.getTableName(), sbValues.toString(), sbIdValues.toString(), "?"});
+            String updateQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_UPDATE_ADVANCED),
+                    new String[]{t.getTableName(), sbValues.toString(), sbIdValues.toString()});
 
             con = getConnection();
             con.setAutoCommit(false);
