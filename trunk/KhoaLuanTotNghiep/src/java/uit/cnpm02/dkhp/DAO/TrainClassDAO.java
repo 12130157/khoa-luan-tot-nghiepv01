@@ -1,10 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uit.cnpm02.dkhp.DAO;
 
-import com.sun.corba.se.impl.orbutil.closure.Constant;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,13 +15,14 @@ import uit.cnpm02.dkhp.utilities.Constants;
  *
  * @author thanh
  */
-public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClassID>{
+public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClassID> {
 
     @Override
     public TrainClassID createID() {
         return new TrainClassID();
     }
-     public List<TrainClass> findAllByStudyDate(int studyDate) throws Exception {
+
+    public List<TrainClass> findAllByStudyDate(int studyDate) throws Exception {
         checkModelWellDefined();
         TrainClass t = new TrainClass();
         if (t == null) {
@@ -34,20 +30,24 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
                     + " class");
         }
         ArrayList<TrainClass> results = new ArrayList<TrainClass>();
-         Connection con = null;
+        Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        String selectQuery = "Select * from "+t.getTableName()+" where NgayHoc= ? and HocKy="+Constants.CURRENT_SEMESTER+" and NamHoc='"+Constants.CURRENT_YEAR+"'";
-       try {
+        String selectQuery = "Select * from " + t.getTableName() + " where NgayHoc= ? and HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
+        try {
             con = getConnection();
             statement = con.prepareStatement(selectQuery);
             statement.setObject(1, studyDate);
             rs = statement.executeQuery();
 
             while (rs.next()) {
-                String classCode=rs.getString("MaLopHoc");
-                TrainClassID trainclassID=new TrainClassID(classCode, Constants.CURRENT_YEAR, Constants.CURRENT_SEMESTER);
-                TrainClass trainClass=findById(trainclassID);
+                String classCode = rs.getString("MaLopHoc");
+                TrainClassID trainclassID = new TrainClassID(classCode, Constants.CURRENT_YEAR, Constants.CURRENT_SEMESTER);
+                //TODO: Improve (Ham findById se mo mot Connection moi --> Not Good)
+                // Nen tao ham findById moi, truyen Connection vao
+                // Hoac Tao cau query moi + dung Connection vua tao o tren de find
+                TrainClass trainClass = findById(trainclassID);
+                //
                 results.add(trainClass);
             }
         } catch (SQLException ex) {
@@ -58,7 +58,8 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         }
         return results;
     }
-      public List<TrainClass> findAllBySemesterAndYear() throws Exception {
+
+    public List<TrainClass> findAllBySemesterAndYear() throws Exception {
         checkModelWellDefined();
         TrainClass t = new TrainClass();
         if (t == null) {
@@ -66,7 +67,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
                     + " class");
         }
         ArrayList<TrainClass> results = new ArrayList<TrainClass>();
-        String selectQuery = "Select * from "+t.getTableName()+" where HocKy="+Constants.CURRENT_SEMESTER+" and NamHoc='"+Constants.CURRENT_YEAR+"'";
+        String selectQuery = "Select * from " + t.getTableName() + " where HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -76,9 +77,14 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
             rs = statement.executeQuery();
 
             while (rs.next()) {
-                String classCode=rs.getString("MaLopHoc");
-                TrainClassID trainclassID=new TrainClassID(classCode, Constants.CURRENT_YEAR, Constants.CURRENT_SEMESTER);
-                TrainClass trainClass=findById(trainclassID);
+                String classCode = rs.getString("MaLopHoc");
+                TrainClassID trainclassID = new TrainClassID(classCode, Constants.CURRENT_YEAR, Constants.CURRENT_SEMESTER);
+                
+                //TODO: Improve (Ham findById se mo mot Connection moi --> Not Good)
+                // Nen tao ham findById moi, truyen Connection vao
+                // Hoac Tao cau query moi + dung Connection vua tao o tren de find
+                TrainClass trainClass = findById(trainclassID);
+                //
                 results.add(trainClass);
             }
         } catch (SQLException ex) {
@@ -89,4 +95,65 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         }
         return results;
     }
+    
+    /**
+     * Check if a class already existed, A Semeter of an year,
+     * There is only on class opened at A DATE, specified SHIFT, ROOM, and LECTURER
+     * 
+     * @param semeter
+     * @param year
+     * @param lectureId
+     * @param date
+     * @param shift
+     * @param room
+     * @return Class found, Null if class not existed.
+     */
+    public TrainClass findUnique(int semeter, String year, String lectureId, int date, int shift, String room) throws Exception {
+        TrainClass clazz = null;
+        String sqlQuery = "Select * from "
+                + clazz.getTableName()
+                + " where HocKy = ? And"
+                + " NamHoc = ? And"
+                + " MaGV = ? And"
+                + " NgayHoc = ? And"
+                + " CaHoc = ? And"
+                + " PhongHoc= ?";
+        
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        try {
+            con = getConnection();
+            statement = con.prepareStatement(sqlQuery);
+            statement.setInt(1, semeter);
+            statement.setString(2, year);
+            statement.setString(3, lectureId);
+            statement.setInt(4, date);
+            statement.setInt(5, shift);
+            statement.setString(6, room);
+            rs = statement.executeQuery();
+            if (rs.next()) {
+                clazz = new TrainClass();
+                Object[] obj = new Object[clazz.getColumnNames().length];
+                for (int i = 0; i < obj.length; i++) {
+                    obj[i] = rs.getObject(clazz.getColumnNames()[i]);
+                }
+                TrainClassID ID = new TrainClassID();
+                String idNames[] = ID.getIDNames();
+                Object[] idValues = new Object[idNames.length];
+                for (int k = 0; k < idNames.length; k ++) {
+                    idValues[k] = rs.getObject(idNames[k]);
+                }
+                ID.setIDValues(idValues);
+                clazz.setId(ID);
+                clazz.setColumnValues(obj);
+            }
+        } catch (SQLException ex) {
+            throw new Exception(ex);
+        } finally {
+            close(rs, statement);
+            close(con);
+        }
+        return clazz;
+    } 
 }
