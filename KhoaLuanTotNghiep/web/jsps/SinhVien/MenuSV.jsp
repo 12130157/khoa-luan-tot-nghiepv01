@@ -51,7 +51,7 @@
              </li>
              <li><a href="../../Login?function=logout"> Đăng xuất |</a></li>
              <li><a href="../../StudentCommentController?action=send"> Liên hệ </a></li>
-        </ul>
+         </ul>
     </div>       
 </body>
 </html>

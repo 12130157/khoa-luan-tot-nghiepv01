@@ -102,8 +102,7 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
                text-align: center;
             }
         </style>
-        </style>
-    </head>
+     </head>
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
