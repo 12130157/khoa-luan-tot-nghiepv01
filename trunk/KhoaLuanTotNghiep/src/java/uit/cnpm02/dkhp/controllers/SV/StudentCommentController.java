@@ -66,7 +66,7 @@ private void sendComment(HttpServletRequest request,HttpServletResponse response
           Date todayD = new Date(System.currentTimeMillis());
           SimpleDateFormat dayFormat = new SimpleDateFormat("yyyy-MM-dd");
           String createDate = dayFormat.format(todayD.getTime());
-          String content=request.getParameter("txtContent");
+          String content=request.getParameter("content");
           String author=request.getParameter("txtEmail");
           int id=DAOFactory.getCommentDao().getMaxID()+1;
           Comment coment=new Comment(id, content, author, createDate, 0);

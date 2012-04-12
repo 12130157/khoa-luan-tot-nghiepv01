@@ -41,7 +41,7 @@
             <li><a href="SinhVien/SVStart.jsp"> Hệ Thống Thông Tin |</a></li>
             <li><a href="Login.jsp">Đăng nhập |</a></li>
             <li><a href="jspLienHe.jsp">Liên Hệ </a></li>
-        </ul>
+         </ul>
     </div>       
 </body>
 </html>
