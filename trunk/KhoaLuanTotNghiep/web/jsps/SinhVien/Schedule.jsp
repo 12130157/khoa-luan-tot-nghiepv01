@@ -54,6 +54,10 @@ Integer semester=(Integer) session.getAttribute("semester");
              #detail th{
                text-align: center;
             }
+            a.test 
+            {
+                font-weight: bold; 
+            }
         </style>
         </style>
     </head>
@@ -68,7 +72,10 @@ Integer semester=(Integer) session.getAttribute("semester");
                 <h2 align="center"><u>Thời khóa biểu học kỳ <%=semester%> năm học <%=year%> </u></h2>
                 <br><hr/><hr/>
                  <form id="formdetail" name="formdetail">
-                    <u>Chi tiết</u>
+                    <u>
+                        <a id= "a1" href="uit.edu.vn">Xem tất cả:</a>
+                        <a id="a2" href="uit.edu.vn">Xem rút gọn:</a><br>
+                    </u>
                     <table id="detail" name="detail" border="1" bordercolor="yellow" >
                      <tr>
                          <th width="50px"></th><th width="50px">Mã lớp</th><th width="200px">Môn học</th><th width="50px">Phòng</th><th width="50px">Buổi</th><th width="200px">Giảng viên</th>
@@ -203,5 +210,33 @@ Integer semester=(Integer) session.getAttribute("semester");
         </div>
         <!--End Wrapper-->
     </body>
-    
-</html>
+     <script src="../../javascripts/jquery-1.7.1.js"></script>
+     <script src="../../javascripts/Schedule.js"></script>
+     <script type = "text/javascript">
+        var http = createRequestObject();
+        var type="view";
+        $(a1).addClass("test");
+	$(a2).addClass("test");
+	$(a2).hide()
+       $(a1).click(function(event){
+       event.preventDefault();
+       $(a1).hide("slow");
+       $(a2).show("slow");
+        type="Only";
+       SendRequest()
+       });
+    $(a2).click(function(event){
+       event.preventDefault();
+       $(a2).hide("slow");
+       $(a1).show("slow");
+       type="All";
+       SendRequest()
+
+     });
+      function SendRequest(){
+          if(http){
+            ajaxfunction("../../ScheduleController?action=Ajax&type="+type);
+         }
+       }
+     </script>
+   </html>
