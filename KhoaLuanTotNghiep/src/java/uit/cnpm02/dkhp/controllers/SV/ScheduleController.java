@@ -37,10 +37,16 @@ TrainClassDAO trainClassDao=new TrainClassDAO();
             String action=request.getParameter("action");
             if(action.equalsIgnoreCase("view"))
                 getSchedule(response, session);
+            else if(action.equalsIgnoreCase("Ajax"))
+                getScheduleForAjax(request, response);
         } finally {            
             out.close();
         }
     }
+private void getScheduleForAjax(HttpServletRequest request, HttpServletResponse response) throws IOException{
+    String type = request.getParameter("type");
+     
+}
 private void setSubjectAndLecturer(List<TrainClass> trainClass) throws Exception{
     SubjectDAO subjectDao=new SubjectDAO();
     LecturerDAO lecturerDao=new LecturerDAO();
