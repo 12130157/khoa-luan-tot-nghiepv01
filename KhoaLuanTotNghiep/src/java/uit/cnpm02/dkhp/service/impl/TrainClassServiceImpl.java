@@ -23,6 +23,8 @@ public class TrainClassServiceImpl implements ITrainClassService {
     private SubjectDAO subjectDAO = DAOFactory.getSubjectDao();
     private LecturerDAO lectureDAO = DAOFactory.getLecturerDao();
     
+    private static Object mutex = new Object();
+    
     @Override
     public List<TrainClass> getTrainClass(int currentPage) {
         List<TrainClass> trainClazzs = new ArrayList<TrainClass>(10);
@@ -30,10 +32,25 @@ public class TrainClassServiceImpl implements ITrainClassService {
             if (currentPage < 1) {
                 currentPage = 1;
             }
-            
+
             trainClazzs = classDAO.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT,
                     currentPage,
                     null, null);
+                   
+            // Update External Information
+            if ((trainClazzs != null) && !trainClazzs.isEmpty()) {
+                try {
+                    for (TrainClass t : trainClazzs) {
+                        String subName = subjectDAO.findById(t.getSubjectCode()).getSubjectName();
+                        String lecturerName = lectureDAO.findById(t.getLecturerCode()).getFullName();
+
+                        t.setSubjectName(subName);
+                        t.setLectturerName(lecturerName);
+                    }
+                } catch (Exception ex) {
+                    Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         } catch (Exception ex) {
             Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -45,6 +62,20 @@ public class TrainClassServiceImpl implements ITrainClassService {
         List<TrainClass> trainClazzs = new ArrayList<TrainClass>(10);
         try {
             trainClazzs = classDAO.findAll();
+            // Update External Information
+            if ((trainClazzs != null) && !trainClazzs.isEmpty()) {
+                try {
+                    for (TrainClass t : trainClazzs) {
+                        String subName = subjectDAO.findById(t.getSubjectCode()).getSubjectName();
+                        String lecturerName = lectureDAO.findById(t.getLecturerCode()).getFullName();
+
+                        t.setSubjectName(subName);
+                        t.setLectturerName(lecturerName);
+                    }
+                } catch (Exception ex) {
+                    Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         } catch (Exception ex) {
             Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -71,7 +102,16 @@ public class TrainClassServiceImpl implements ITrainClassService {
     
     @Override
     public boolean validate(TrainClass obj) {
-        // TODO: Implement
-        throw new UnsupportedOperationException("Not supported yet.");
+        if ((obj == null) || (obj.getId() == null)) // Not instance
+            return false;
+        try {
+            if (classDAO.findById(obj.getId()) != null) // Class existed
+                return false;
+        } catch (Exception ex) {
+            Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        
+        return true;
     }
 }
