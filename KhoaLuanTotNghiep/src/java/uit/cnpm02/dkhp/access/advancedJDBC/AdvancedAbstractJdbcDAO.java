@@ -464,8 +464,63 @@ public abstract class AdvancedAbstractJdbcDAO<T extends IAdvancedJdbcModel<ID>, 
     public List<T> findAll(int recordPerPage, int currentPage, String orderBy, String order) throws Exception {
         checkModelWellDefined();
 
-        //TODO:
-        return null;
+        ArrayList<T> results = new ArrayList<T>();
+
+        T t = createModel();
+        if (t == null) {
+            throw new Exception("Cannot initialize the " + modelClazz.getName()
+                    + " class");
+        }
+        
+        if (orderBy == null) {
+            orderBy = t.getIdColumnName()[0];
+        }
+        if (order == null) {
+            order = "ASC";
+        }
+        
+        int offset = (currentPage - 1) * recordPerPage;
+        String selectQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_SELECT_ROWS),
+                new String[] {  t.getTableName(), 
+                                orderBy, 
+                                order, 
+                                Integer.toString(recordPerPage), 
+                                Integer.toString(offset)});
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        try {
+            con = getConnection();
+            statement = con.prepareStatement(selectQuery);
+            rs = statement.executeQuery();
+
+            while (rs.next()) {
+                T ti = createModel();
+                // Retriew object's values
+                Object[] obj = new Object[t.getColumnNames().length];
+                for (int i = 0; i < obj.length; i++) {
+                    obj[i] = rs.getObject(ti.getColumnNames()[i]);
+                }
+                
+                // Retrivew id's values
+                Object[] idValues = new Object[t.getIdColumnName().length];
+                for (int i = 0; i < idValues.length; i++) {
+                    idValues[i] = rs.getObject(ti.getIdColumnName()[i]);
+                }
+                
+                ID id = createID();
+                id.setIDValues(idValues);
+                ti.setId(id);
+                ti.setColumnValues(obj);
+                results.add(ti);
+            }
+        } catch (SQLException ex) {
+            throw new Exception(ex);
+        } finally {
+            close(rs, statement);
+            close(con);
+        }
+        return results;
     }
 
     @SuppressWarnings("unchecked")
