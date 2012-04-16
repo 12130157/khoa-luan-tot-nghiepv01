@@ -222,14 +222,14 @@ Integer semester=(Integer) session.getAttribute("semester");
        event.preventDefault();
        $(a1).hide("slow");
        $(a2).show("slow");
-        type="Only";
+        type="All";
        SendRequest()
        });
     $(a2).click(function(event){
        event.preventDefault();
        $(a2).hide("slow");
        $(a1).show("slow");
-       type="All";
+       type="Only";
        SendRequest()
 
      });
