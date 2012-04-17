@@ -146,7 +146,9 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
      * @return Class found, Null if class not existed.
      */
     public TrainClass findUnique(int semeter, String year, String lectureId, int date, int shift, String room) throws Exception {
-        TrainClass clazz = null;
+        checkModelWellDefined();
+        
+        TrainClass clazz = new TrainClass();
         String sqlQuery = "Select * from "
                 + clazz.getTableName()
                 + " where HocKy = ? And"
@@ -192,5 +194,59 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
             close(con);
         }
         return clazz;
-    } 
+    }
+
+    /**
+     * Find TrainClass by status
+     * There are 3 status existed:
+     *  + Open
+     *  + Close
+     *  + Cancel
+     * 
+     * @param status 
+     * @return
+     * @throws Exception 
+     */
+    public List<TrainClass> findByStatus(int status) throws Exception {
+        checkModelWellDefined();
+        
+        List<TrainClass> results = new ArrayList<TrainClass>(10);
+        String sqlQuery = "Select * from "
+                + results.get(0).getTableName()
+                + " where Status = ?";
+        
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        try {
+            con = getConnection();
+            statement = con.prepareStatement(sqlQuery);
+            statement.setInt(1, status);
+            rs = statement.executeQuery();
+            while (rs.next()) {
+                TrainClass clazz = new TrainClass();
+                Object[] obj = new Object[clazz.getColumnNames().length];
+                for (int i = 0; i < obj.length; i++) {
+                    obj[i] = rs.getObject(clazz.getColumnNames()[i]);
+                }
+                TrainClassID ID = new TrainClassID();
+                String idNames[] = ID.getIDNames();
+                Object[] idValues = new Object[idNames.length];
+                for (int k = 0; k < idNames.length; k ++) {
+                    idValues[k] = rs.getObject(idNames[k]);
+                }
+                ID.setIDValues(idValues);
+                clazz.setId(ID);
+                clazz.setColumnValues(obj);
+                
+                results.add(clazz);
+            }
+        } catch (SQLException ex) {
+            throw new Exception(ex);
+        } finally {
+            close(rs, statement);
+            close(con);
+        }
+        return results;
+    }
 }
