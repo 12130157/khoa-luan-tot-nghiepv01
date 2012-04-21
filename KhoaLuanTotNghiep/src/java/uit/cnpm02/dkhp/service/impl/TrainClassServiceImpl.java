@@ -9,7 +9,9 @@ import uit.cnpm02.dkhp.DAO.LecturerDAO;
 import uit.cnpm02.dkhp.DAO.SubjectDAO;
 import uit.cnpm02.dkhp.DAO.TrainClassDAO;
 import uit.cnpm02.dkhp.model.TrainClass;
+import uit.cnpm02.dkhp.model.TrainClassID;
 import uit.cnpm02.dkhp.service.ITrainClassService;
+import uit.cnpm02.dkhp.service.TrainClassStatus;
 import uit.cnpm02.dkhp.utilities.Constants;
 
 /**
@@ -26,17 +28,17 @@ public class TrainClassServiceImpl implements ITrainClassService {
     private static Object mutex = new Object();
     
     @Override
-    public List<TrainClass> getTrainClass(int currentPage) {
+    public List<TrainClass> getTrainClass(int status) {
         List<TrainClass> trainClazzs = new ArrayList<TrainClass>(10);
         try {
-            if (currentPage < 1) {
-                currentPage = 1;
-            }
-
-            trainClazzs = classDAO.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT,
+            //if (currentPage < 1) {
+            //    currentPage = 1;
+            //}
+            /*trainClazzs = classDAO.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT,
                     currentPage,
                     null, null);
-                   
+            */
+            trainClazzs = classDAO.findByStatus(status);
             // Update External Information
             if ((trainClazzs != null) && !trainClazzs.isEmpty()) {
                 try {
@@ -84,8 +86,15 @@ public class TrainClassServiceImpl implements ITrainClassService {
 
     @Override
     public TrainClass addNewTrainClass(TrainClass obj) {
-        // TODO: Implement
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+             TrainClassID id = classDAO.add(obj);
+             obj.setId(id);
+             
+             return obj;
+        } catch (Exception ex) {
+            Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override
