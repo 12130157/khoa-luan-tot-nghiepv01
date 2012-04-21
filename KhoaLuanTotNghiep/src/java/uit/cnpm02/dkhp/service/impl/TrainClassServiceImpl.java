@@ -123,4 +123,18 @@ public class TrainClassServiceImpl implements ITrainClassService {
         
         return true;
     }
+
+    @Override
+    public TrainClass getClassInfomation(TrainClassID obj) {
+        try {
+            TrainClass trainClass = classDAO.findById(obj);
+            trainClass.setLectturerName(lectureDAO.findById(trainClass.getLecturerCode()).getFullName());
+            trainClass.setSubjectName(subjectDAO.findById(trainClass.getSubjectCode()).getSubjectName());
+            return trainClass;
+        } catch (Exception ex) {
+            Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+       
+    }
 }
