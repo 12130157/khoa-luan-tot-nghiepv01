@@ -4,9 +4,14 @@
     Author     : LocNguyen
 --%>
 <%@page import="java.util.List"%>
-<%@page import="uit.cnpm02.dkhp.model.TrainClass"%>
+<%@page import="uit.cnpm02.dkhp.model.web.LecturerWeb"%>
+<%@page import="uit.cnpm02.dkhp.model.web.SubjectWeb"%>
 <%@include file="MenuPDT.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%
+  List<LecturerWeb> Lecture = (List<LecturerWeb>) session.getAttribute("lecturers");
+  List<SubjectWeb> Subject = (List<SubjectWeb>) session.getAttribute("subjects");
+%>
 <html>
     <head>
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
@@ -69,34 +74,40 @@
                 </div>
                 <hr/><hr/><br>
 
-               <form action="" method="post">
+                <form id="addclassform" action="../../ManageClassController?action=create" method="post" >
                    <table id="table_mh">
                         <tr>
-                        <td> Mã lớp </td>
-                        <td> <input type="text" id="txt_code"/> </td>
+                        <td> Mã lớp: </td>
+                        <td> <input type="text" id="classcode" name="classcode"/> </td>
                         </tr>
                         <tr>
-                        <td> Môn học </td>
+                        <td> Môn học: </td>
                         <td> 
-                            <select>
-                                
+                            <select id="subject" name="subject" onchange="ChangeClassCode()">
+                                <%for(int i=0; i<Subject.size();i++){%>
+                                <option value="<%=Subject.get(i).getId()%>"><%=Subject.get(i).getName()%></option>
+                                <%}
+                                %>
                             </select>
                         </td>
                         </tr>
                         <tr>
-                        <td> Giảng viên </td>
+                        <td> Giảng viên: </td>
                         <td> 
-                            <select>
-                                
+                            <select id="lecturer" name="lecturer">
+                                <%for(int i=0; i<Lecture.size();i++){%>
+                                <option value="<%=Lecture.get(i).getId()%>"><%=Lecture.get(i).getName()%></option>
+                                <%}
+                                %>
                             </select>
                         </td>
                        </tr>
                         <tr>
-                        <td> Số sinh viên tối đa </td>
+                        <td> Số sinh viên tối đa: </td>
                         <td> <input type="text" id="txt_tcth"/> </td>
                         </tr>
                          <tr>
-                        <td> Ngày học </td>
+                        <td> Ngày học: </td>
                         <td> 
                            <select id="Date" name="Date">
                                 <option value="2">Thứ 2</option>
@@ -109,7 +120,7 @@
                         </td>
                         </tr>
                         <tr>
-                        <td> Ca học </td>
+                        <td> Ca học: </td>
                         <td> 
                             <select id="Shift" name="Shift">
                                 <option value="1">Sáng</option>
@@ -117,8 +128,15 @@
                             </select>
                         </tr>   
                          <tr>
-                        <td> Phòng học </td>
+                        <td> Phòng học: </td>
                         <td> <input type="text" id="txt_tcth"/> </td>
+                        </tr>
+                         <tr>
+                             <td></td>
+                             <td>
+                                 <input type="button" name="Check" id="Check" value="  Kiểm tra  " onclick="CheckClass()"/>
+                                 <input type="submit" id="Create" name="Create" value="  Tạo lớp học  "/> 
+                             </td>
                         </tr>
                     </table>
 
@@ -131,6 +149,14 @@
         </div>
         <!--End Wrapper-->
     </body>
-
+ <script  type = "text/javascript" >
+  function ChangeClassCode(){
+      var classcode = document.getElementById("subject").value;
+      document.getElementById("classcode").value = classcode;
+  }   
+  function CheckClass(){
+      alert("Function to check class");
+  }
+ </script>
     
 </html>

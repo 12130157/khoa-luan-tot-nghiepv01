@@ -11,7 +11,7 @@
     <head>
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Qu?n l? t᩠kho?n</title>
+        <title>Thêm môn học</title>
         <style media="all" type="text/css">
 
             #table{
@@ -80,7 +80,7 @@
 
                 <hr/><hr/>
                 <div id="title">
-                    <u><h3>Th뭠m��?c</h3></u>
+                    <u><h3>Thêm môn học</h3></u>
                 </div>
                 <hr/><hr/><br>
 
