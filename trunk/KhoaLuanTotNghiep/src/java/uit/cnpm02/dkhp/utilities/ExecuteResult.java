@@ -7,6 +7,8 @@ package uit.cnpm02.dkhp.utilities;
 public class ExecuteResult {
     private boolean isSucces;
     private String message;
+    
+    private Object data;
 
     public ExecuteResult() {
     }
@@ -16,6 +18,14 @@ public class ExecuteResult {
         this.message = message;
     }
 
+    public Object getData() {
+        return data;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
+    }
+    
     public boolean isIsSucces() {
         return isSucces;
     }
