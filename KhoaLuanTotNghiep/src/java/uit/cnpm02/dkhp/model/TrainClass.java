@@ -18,7 +18,7 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
     private String lecturerCode;
     private int numOfStudent;
     private int numOfStudentReg;
-    private String studyDate;
+    private int studyDate;
     private int shift;
     private String classRoom;
     private Date testDate;
@@ -40,7 +40,7 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
     }
 
     public TrainClass(String classCode, String year, int semester, String subjectCode, String lecturerCode,
-            String classRoom, int numOfStudent, int numOfStudentReg, String studyDate, int shift,
+            String classRoom, int numOfStudent, int numOfStudentReg, int studyDate, int shift,
             Date testDate, String testRoom, String testHours) {
         TrainClassID trainClassID=new TrainClassID(classCode, year, semester);
         setId(trainClassID);
@@ -82,11 +82,11 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
     public void setSubjectCode(String subjectCode) {
         this.subjectCode = subjectCode;
     }
-    public String getStudyDate() {
+    public int getStudyDate() {
         return studyDate;
     }
 
-    public void setStudyDate(String studyDate) {
+    public void setStudyDate(int studyDate) {
         this.studyDate = studyDate;
     }
 
@@ -214,7 +214,7 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
             lecturerCode = values[1].toString();
             numOfStudent = Integer.parseInt(values[2].toString());
             numOfStudentReg = Integer.parseInt(values[3].toString());
-            studyDate = values[4].toString();
+            studyDate = Integer.parseInt(values[4].toString());
             shift = Integer.parseInt(values[5].toString());
             classRoom = values[6].toString();
             testDate = (Date) (values[7] == null ? null : values[7]);
