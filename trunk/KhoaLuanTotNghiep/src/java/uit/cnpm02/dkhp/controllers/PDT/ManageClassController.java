@@ -25,6 +25,9 @@ import uit.cnpm02.dkhp.model.web.SubjectWeb;
 import uit.cnpm02.dkhp.service.ITrainClassService;
 import uit.cnpm02.dkhp.service.TrainClassStatus;
 import uit.cnpm02.dkhp.service.impl.TrainClassServiceImpl;
+import uit.cnpm02.dkhp.utilities.Constants;
+import uit.cnpm02.dkhp.utilities.ExecuteResult;
+import uit.cnpm02.dkhp.utilities.Message;
 
 /**
  * Manage Class
@@ -68,23 +71,21 @@ public class ManageClassController extends HttpServlet {
             if (requestAction.equals(ClassFunctionSupported.DEFAULT.getValue())) {
                 // List existed TrainClass, Pagging setup
                 defaultAction(request, response);
-            } else if (requestAction.equals(ClassFunctionSupported.PRECREAT.getValue())) {
+            } else if (requestAction.equals(ClassFunctionSupported.PRECREATE.getValue())) {
                 preCreateNewTrainClass(request);
                 String path = "./jsps/PDT/AddTrainClass.jsp";
                 response.sendRedirect(path);
                 return;
             } else if (requestAction.equals(ClassFunctionSupported.CREATE.getValue())) {
-                createNewTrainClass(request);
-                //(request)
-                // Check : 
-                // Update inserty
-
-                // Create new TrainClass
-                // Setup data, send to create page
+                ExecuteResult result = createNewTrainClass(request);
+                writeRespondErrorMessage(result, out);
+                return;
+                
             } else if (requestAction.equals(ClassFunctionSupported.DELETE.getValue())) {
                 // Delete a TrainClass specified
             } else if (requestAction.equals(ClassFunctionSupported.UPDATE.getValue())) {
                 // Update TrainClass
+                updateTrainClass(request, response);
             }
             
         } finally {
@@ -187,45 +188,32 @@ public class ManageClassController extends HttpServlet {
      * Create new Class
      * Information about new one get from Request object.
      */
-    private TrainClass createNewTrainClass(HttpServletRequest req) {
+    private ExecuteResult createNewTrainClass(HttpServletRequest req) {
         // Information need:
         // MaLopHoc	HocKy	NamHoc	MaMH	MaGV	SLSV	SLDK	NgayHoc	CaHoc	PhongHoc
-        String id = req.getParameter("classID");
-        int semester = Integer.parseInt(req.getParameter("semester"));
-        String year = req.getParameter("year");
-        String subjectName = req.getParameter("subject");
-        String lectureName = req.getParameter("lecturer");
+        String id = req.getParameter("classcode");
+        int semester = Constants.CURRENT_SEMESTER;
+        String year = Constants.CURRENT_YEAR;
+        String subjectCode = req.getParameter("subject");
+        String lectureCode = req.getParameter("lecturer");
         int SLSV = Integer.parseInt(req.getParameter("slsv"));
-        int SLDK = Integer.parseInt(req.getParameter("sldk"));
-        String date = req.getParameter("date");
-        int shift = Integer.parseInt(req.getParameter("shift"));
-        String room = req.getParameter("rool");
-        // [Option] NgayThi	CaThi	PhongThi
+        int SLDK = 0;
+        int date = Integer.parseInt(req.getParameter("Date"));
+        int shift = Integer.parseInt(req.getParameter("Shift"));
+        String room = req.getParameter("room");
 
         TrainClass clazz = null;
         try {
             TrainClassID classID = new TrainClassID(id, year, semester);
-
-            String subjectId = subjectDAO.findByColumName("MaMH", subjectName).get(0).getId();
-            String lectureId = lectureDAO.findByColumName("MaGV", lectureName).get(0).getId();
-
-            // Checking pre-condition
-            // + 
-            
-            if (classDAO.findUnique(semester, year, lectureId, SLDK, shift, room) != null) {
-                return null; 
-                //TODO: Should give a message.
-            }
-            
-            clazz = new TrainClass(id, year, semester, subjectId, lectureId,
+            clazz = new TrainClass(id, year, semester, subjectCode, lectureCode,
                     room, SLSV, SLDK, date, shift, null, "", "");
             clazz.setId(classID);
-
-            classDAO.add(clazz);
+            
+            return trainClassService.addNewTrainClass(clazz);
         } catch (Exception ex) {
             Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return clazz;
+        return null;
     }
     
     private void createNewClassRespond(HttpServletResponse resp, TrainClass clazz) {
@@ -266,13 +254,53 @@ public class ManageClassController extends HttpServlet {
         }
     }
 
+    private void updateTrainClass(HttpServletRequest request, HttpServletResponse response) {
+        //
+        // Retrieve TrainClass's name
+        //
+        
+        //
+        // Query out in database
+        //
+        
+        //
+        // S
+        //
+    }
+
+    private void writeRespondErrorMessage(ExecuteResult result, PrintWriter out) {
+        out.println(result.getMessage());
+        if (result.isIsSucces()) {
+            TrainClass data = (TrainClass) result.getData();
+            out.println("<table id = \"table-list-train-class\" name = \"table-list-train-class\">");
+            
+            out.println("<tr>" +
+                        //"<th> STT </th>" +
+                        "<th> Lớp học </th>" +
+                        "<th> Môn học </th>" +
+                        "<th> Giảng viên </th>" +
+                        "<th> Thứ </th>" +
+                        "<th> Phòng </th>" +
+                        "<th> Số lượng </th>" +
+                        "</tr>");
+            out.println("<td> " + data.getId().getClassCode() + " </td>");
+            out.println("<td> " + data.getSubjectName() + " </td>");
+            out.println("<td> " + data.getLectturerName() + " </td>");
+            out.println("<td> " + data.getStudyDate() + " </td>");
+            out.println("<td> " + data.getClassRoom() + " </td>");
+            out.println("<td> " + data.getNumOfStudent() + " </td>");
+            out.println("</tr>");
+            out.println("</table>");
+        }
+    }
+
     /**
      * An enum define all supported function of serverlet
      * .
      */
     public enum ClassFunctionSupported {
         DEFAULT("default"), // List first page of class opened.
-        PRECREAT("pre_create"),
+        PRECREATE("pre_create"),
         CREATE("create"),   // Create new class form support
         DELETE("delete"),   // Remove class
         UPDATE("update");   // Update
