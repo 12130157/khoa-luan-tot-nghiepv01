@@ -20,6 +20,8 @@ import uit.cnpm02.dkhp.model.Lecturer;
 import uit.cnpm02.dkhp.model.Subject;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.model.TrainClassID;
+import uit.cnpm02.dkhp.model.web.LecturerWeb;
+import uit.cnpm02.dkhp.model.web.SubjectWeb;
 import uit.cnpm02.dkhp.service.ITrainClassService;
 import uit.cnpm02.dkhp.service.TrainClassStatus;
 import uit.cnpm02.dkhp.service.impl.TrainClassServiceImpl;
@@ -242,11 +244,22 @@ public class ManageClassController extends HttpServlet {
             ArrayList<Lecturer> lecturers = (ArrayList<Lecturer>) lectureDAO.findAll();
 
             if ((subjects != null) && (!subjects.isEmpty())) {
-                session.setAttribute("subjects", subjects);
+                ArrayList<SubjectWeb> sws = new ArrayList<SubjectWeb>(10);
+                for (Subject s : subjects) {
+                    SubjectWeb sw = new SubjectWeb(s.getId(), s.getSubjectName());
+                    sws.add(sw);
+                }
+                session.setAttribute("subjects", sws);
             }
 
             if ((lecturers != null) && (!lecturers.isEmpty())) {
-                session.setAttribute("lecturers", lecturers);
+                ArrayList<LecturerWeb> lws = new ArrayList<LecturerWeb>(10);
+                
+                for (Lecturer l : lecturers) {
+                    LecturerWeb lw = new LecturerWeb(l.getId(), l.getFullName());
+                    lws.add(lw);
+                }
+                session.setAttribute("lecturers", lws);
             }
         } catch (Exception ex) {
             Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
