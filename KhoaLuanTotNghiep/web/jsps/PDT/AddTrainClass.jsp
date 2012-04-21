@@ -104,7 +104,7 @@
                        </tr>
                         <tr>
                         <td> Số sinh viên tối đa: </td>
-                        <td> <input type="text" id="txt_tcth"/> </td>
+                        <td> <input type="text" id="slsv"/> </td>
                         </tr>
                          <tr>
                         <td> Ngày học: </td>
@@ -129,7 +129,7 @@
                         </tr>   
                          <tr>
                         <td> Phòng học: </td>
-                        <td> <input type="text" id="txt_tcth"/> </td>
+                        <td> <input type="text" id="room"/> </td>
                         </tr>
                          <tr>
                              <td></td>
