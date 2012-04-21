@@ -43,7 +43,7 @@
              <li><a href="#"> Quản lý học vụ |</a>
                  <ul>
                      <li><a href="../../ManageSubjectController?function=list_subject&ajax=false"> Quản lý môn học</a></li>
-                     <li><a href="#"> Quản lý lớp học</a></li>
+                     <li><a href="../../ManageClassController?action=default"> Quản lý lớp học</a></li>
              
              
                  </ul>
