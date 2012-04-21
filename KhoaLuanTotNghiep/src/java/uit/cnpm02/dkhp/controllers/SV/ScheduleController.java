@@ -78,7 +78,7 @@ private void getScheduleForAll(HttpServletRequest request, HttpServletResponse r
             setSubjectAndLecturer(saturday);
            out.println("<tr><th width='50px'></th><th width='50px'>Mã lớp</th><th width='200px'>Môn học</th><th width='50px'>Phòng</th><th width='50px'>Buổi</th><th width='200px'>Giảng viên</th></tr>"); 
            out.println("<tr><th><b><u>Thứ 2:</u></b></th><th></th><th></th><th></th><th></th><th></th></tr> ");
-           for(int i=1; i<monday.size();i++){
+           for(int i=0; i<monday.size();i++){
                StringBuffer output= new StringBuffer();
                output.append("<tr><td></td><td>");
                output.append(monday.get(i).getId().getClassCode());
@@ -95,7 +95,7 @@ private void getScheduleForAll(HttpServletRequest request, HttpServletResponse r
                out.println(output.toString());
            }
            out.println("<tr><th><b><u>Thứ 3:</u></b></th><th></th><th></th><th></th><th></th><th></th></tr> ");
-           for(int i=1; i<tuesday.size();i++){
+           for(int i=0; i<tuesday.size();i++){
                StringBuffer output= new StringBuffer();
                output.append("<tr><td></td><td>");
                output.append(tuesday.get(i).getId().getClassCode());
@@ -103,7 +103,7 @@ private void getScheduleForAll(HttpServletRequest request, HttpServletResponse r
                output.append(tuesday.get(i).getSubjectName());
                output.append("</td><td>");
                output.append(tuesday.get(i).getClassRoom());
-               if(monday.get(i).getShift()==1)
+               if(tuesday.get(i).getShift()==1)
                     output.append("</td><td>Sáng</td><td>");
                else 
                     output.append("</td><td>Chiều</td><td>");
@@ -112,7 +112,7 @@ private void getScheduleForAll(HttpServletRequest request, HttpServletResponse r
                out.println(output.toString());
            }
            out.println("<tr><th><b><u>Thứ 4:</u></b></th><th></th><th></th><th></th><th></th><th></th></tr> ");
-           for(int i=1; i<wednesday.size();i++){
+           for(int i=0; i<wednesday.size();i++){
                StringBuffer output= new StringBuffer();
                output.append("<tr><td></td><td>");
                output.append(wednesday.get(i).getId().getClassCode());
@@ -120,7 +120,7 @@ private void getScheduleForAll(HttpServletRequest request, HttpServletResponse r
                output.append(wednesday.get(i).getSubjectName());
                output.append("</td><td>");
                output.append(wednesday.get(i).getClassRoom());
-               if(monday.get(i).getShift()==1)
+               if(wednesday.get(i).getShift()==1)
                     output.append("</td><td>Sáng</td><td>");
                else 
                     output.append("</td><td>Chiều</td><td>");
@@ -129,7 +129,7 @@ private void getScheduleForAll(HttpServletRequest request, HttpServletResponse r
                out.println(output.toString());
            }
             out.println("<tr><th><b><u>Thứ 5:</u></b></th><th></th><th></th><th></th><th></th><th></th></tr> ");
-           for(int i=1; i<thursday.size();i++){
+           for(int i=0; i<thursday.size();i++){
                StringBuffer output= new StringBuffer();
                output.append("<tr><td></td><td>");
                output.append(thursday.get(i).getId().getClassCode());
@@ -137,7 +137,7 @@ private void getScheduleForAll(HttpServletRequest request, HttpServletResponse r
                output.append(thursday.get(i).getSubjectName());
                output.append("</td><td>");
                output.append(thursday.get(i).getClassRoom());
-               if(monday.get(i).getShift()==1)
+               if(thursday.get(i).getShift()==1)
                     output.append("</td><td>Sáng</td><td>");
                else 
                     output.append("</td><td>Chiều</td><td>");
@@ -146,7 +146,7 @@ private void getScheduleForAll(HttpServletRequest request, HttpServletResponse r
                out.println(output.toString());
            }
            out.println("<tr><th><b><u>Thứ 6:</u></b></th><th></th><th></th><th></th><th></th><th></th></tr> ");
-           for(int i=1; i<friday.size();i++){
+           for(int i=0; i<friday.size();i++){
                StringBuffer output= new StringBuffer();
                output.append("<tr><td></td><td>");
                output.append(friday.get(i).getId().getClassCode());
@@ -154,7 +154,7 @@ private void getScheduleForAll(HttpServletRequest request, HttpServletResponse r
                output.append(friday.get(i).getSubjectName());
                output.append("</td><td>");
                output.append(friday.get(i).getClassRoom());
-               if(monday.get(i).getShift()==1)
+               if(friday.get(i).getShift()==1)
                     output.append("</td><td>Sáng</td><td>");
                else 
                     output.append("</td><td>Chiều</td><td>");
@@ -163,7 +163,7 @@ private void getScheduleForAll(HttpServletRequest request, HttpServletResponse r
                out.println(output.toString());
            }
            out.println("<tr><th><b><u>Thứ 7:</u></b></th><th></th><th></th><th></th><th></th><th></th></tr> ");
-           for(int i=1; i<saturday.size();i++){
+           for(int i=0; i<saturday.size();i++){
                StringBuffer output= new StringBuffer();
                output.append("<tr><td></td><td>");
                output.append(saturday.get(i).getId().getClassCode());
@@ -171,7 +171,7 @@ private void getScheduleForAll(HttpServletRequest request, HttpServletResponse r
                output.append(saturday.get(i).getSubjectName());
                output.append("</td><td>");
                output.append(saturday.get(i).getClassRoom());
-               if(monday.get(i).getShift()==1)
+               if(saturday.get(i).getShift()==1)
                     output.append("</td><td>Sáng</td><td>");
                else 
                     output.append("</td><td>Chiều</td><td>");
@@ -198,7 +198,7 @@ private void getScheduleForOnly(HttpServletRequest request, HttpServletResponse 
             setSubjectAndLecturer(saturday);
             out.println("<tr><th width='50px'></th><th width='50px'>Mã lớp</th><th width='200px'>Môn học</th><th width='50px'>Phòng</th><th width='50px'>Buổi</th><th width='200px'>Giảng viên</th></tr>"); 
             out.println("<tr><th><b><u>Thứ 2:</u></b></th><th></th><th></th><th></th><th></th><th></th></tr> ");
-            for(int i=1; i<monday.size();i++){
+            for(int i=0; i<monday.size();i++){
                StringBuffer output= new StringBuffer();
                output.append("<tr><td></td><td>");
                output.append(monday.get(i).getId().getClassCode());
@@ -214,8 +214,8 @@ private void getScheduleForOnly(HttpServletRequest request, HttpServletResponse 
                output.append("</td></tr>");
                out.println(output.toString());
            }
-          /*  out.println("<tr><th><b><u>Thứ 3:</u></b></th><th></th><th></th><th></th><th></th><th></th></tr> ");
-           for(int i=1; i<tuesday.size();i++){
+           out.println("<tr><th><b><u>Thứ 3:</u></b></th><th></th><th></th><th></th><th></th><th></th></tr> ");
+           for(int i=0; i<tuesday.size();i++){
                StringBuffer output= new StringBuffer();
                output.append("<tr><td></td><td>");
                output.append(tuesday.get(i).getId().getClassCode());
@@ -223,7 +223,7 @@ private void getScheduleForOnly(HttpServletRequest request, HttpServletResponse 
                output.append(tuesday.get(i).getSubjectName());
                output.append("</td><td>");
                output.append(tuesday.get(i).getClassRoom());
-               if(monday.get(i).getShift()==1)
+               if(tuesday.get(i).getShift()==1)
                     output.append("</td><td>Sáng</td><td>");
                else 
                     output.append("</td><td>Chiều</td><td>");
@@ -231,8 +231,8 @@ private void getScheduleForOnly(HttpServletRequest request, HttpServletResponse 
                output.append("</td></tr>");
                out.println(output.toString());
            }
-          out.println("<tr><th><b><u>Thứ 4:</u></b></th><th></th><th></th><th></th><th></th><th></th></tr> ");
-           for(int i=1; i<wednesday.size();i++){
+         out.println("<tr><th><b><u>Thứ 4:</u></b></th><th></th><th></th><th></th><th></th><th></th></tr> ");
+           for(int i=0; i<wednesday.size();i++){
                StringBuffer output= new StringBuffer();
                output.append("<tr><td></td><td>");
                output.append(wednesday.get(i).getId().getClassCode());
@@ -240,7 +240,7 @@ private void getScheduleForOnly(HttpServletRequest request, HttpServletResponse 
                output.append(wednesday.get(i).getSubjectName());
                output.append("</td><td>");
                output.append(wednesday.get(i).getClassRoom());
-               if(monday.get(i).getShift()==1)
+               if(wednesday.get(i).getShift()==1)
                     output.append("</td><td>Sáng</td><td>");
                else 
                     output.append("</td><td>Chiều</td><td>");
@@ -249,7 +249,7 @@ private void getScheduleForOnly(HttpServletRequest request, HttpServletResponse 
                out.println(output.toString());
            }
             out.println("<tr><th><b><u>Thứ 5:</u></b></th><th></th><th></th><th></th><th></th><th></th></tr> ");
-           for(int i=1; i<thursday.size();i++){
+           for(int i=0; i<thursday.size();i++){
                StringBuffer output= new StringBuffer();
                output.append("<tr><td></td><td>");
                output.append(thursday.get(i).getId().getClassCode());
@@ -257,7 +257,7 @@ private void getScheduleForOnly(HttpServletRequest request, HttpServletResponse 
                output.append(thursday.get(i).getSubjectName());
                output.append("</td><td>");
                output.append(thursday.get(i).getClassRoom());
-               if(monday.get(i).getShift()==1)
+               if(thursday.get(i).getShift()==1)
                     output.append("</td><td>Sáng</td><td>");
                else 
                     output.append("</td><td>Chiều</td><td>");
@@ -266,7 +266,7 @@ private void getScheduleForOnly(HttpServletRequest request, HttpServletResponse 
                out.println(output.toString());
            }
            out.println("<tr><th><b><u>Thứ 6:</u></b></th><th></th><th></th><th></th><th></th><th></th></tr> ");
-           for(int i=1; i<friday.size();i++){
+           for(int i=0; i<friday.size();i++){
                StringBuffer output= new StringBuffer();
                output.append("<tr><td></td><td>");
                output.append(friday.get(i).getId().getClassCode());
@@ -274,7 +274,7 @@ private void getScheduleForOnly(HttpServletRequest request, HttpServletResponse 
                output.append(friday.get(i).getSubjectName());
                output.append("</td><td>");
                output.append(friday.get(i).getClassRoom());
-               if(monday.get(i).getShift()==1)
+               if(friday.get(i).getShift()==1)
                     output.append("</td><td>Sáng</td><td>");
                else 
                     output.append("</td><td>Chiều</td><td>");
@@ -283,7 +283,7 @@ private void getScheduleForOnly(HttpServletRequest request, HttpServletResponse 
                out.println(output.toString());
            }
            out.println("<tr><th><b><u>Thứ 7:</u></b></th><th></th><th></th><th></th><th></th><th></th></tr> ");
-           for(int i=1; i<saturday.size();i++){
+           for(int i=0; i<saturday.size();i++){
                StringBuffer output= new StringBuffer();
                output.append("<tr><td></td><td>");
                output.append(saturday.get(i).getId().getClassCode());
@@ -291,14 +291,14 @@ private void getScheduleForOnly(HttpServletRequest request, HttpServletResponse 
                output.append(saturday.get(i).getSubjectName());
                output.append("</td><td>");
                output.append(saturday.get(i).getClassRoom());
-               if(monday.get(i).getShift()==1)
+               if(saturday.get(i).getShift()==1)
                     output.append("</td><td>Sáng</td><td>");
                else 
                     output.append("</td><td>Chiều</td><td>");
                output.append(saturday.get(i).getLectturerName());
                output.append("</td></tr>");
                out.println(output.toString());
-           }*/
+           }
 }
 private void setSubjectAndLecturer(List<TrainClass> trainClass) throws Exception{
     SubjectDAO subjectDao=new SubjectDAO();

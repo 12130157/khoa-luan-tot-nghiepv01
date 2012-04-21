@@ -69,7 +69,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        String selectQuery = "Select * from KhoaLuanTotNghiep.MonHoc, " + t.getTableName() + " where KhoaLuanTotNghiep.MonHoc.MaMH=KhoaLuanTotNghiep.LopHoc.MaMH and NgayHoc= ? and MaKhoa = ? and HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
+        String selectQuery = "Select * from KhoaLuanTotNghiep.MonHoc, " + t.getTableName() + " where KhoaLuanTotNghiep.MonHoc.MaMH=KhoaLuanTotNghiep.LopHoc.MaMH and NgayHoc= ? and MaKhoa in ( ?,'ENG','MAT','XH') and HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
         try {
             con = getConnection();
             statement = con.prepareStatement(selectQuery);
