@@ -2,6 +2,7 @@ package uit.cnpm02.dkhp.controllers.PDT;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,6 +16,8 @@ import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.LecturerDAO;
 import uit.cnpm02.dkhp.DAO.SubjectDAO;
 import uit.cnpm02.dkhp.DAO.TrainClassDAO;
+import uit.cnpm02.dkhp.model.Lecturer;
+import uit.cnpm02.dkhp.model.Subject;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.model.TrainClassID;
 import uit.cnpm02.dkhp.service.ITrainClassService;
@@ -63,7 +66,17 @@ public class ManageClassController extends HttpServlet {
             if (requestAction.equals(ClassFunctionSupported.DEFAULT.getValue())) {
                 // List existed TrainClass, Pagging setup
                 defaultAction(request, response);
+            } else if (requestAction.equals(ClassFunctionSupported.PRECREAT.getValue())) {
+                preCreateNewTrainClass(request);
+                String path = "./jsps/PDT/AddTrainClass.jsp";
+                response.sendRedirect(path);
+                return;
             } else if (requestAction.equals(ClassFunctionSupported.CREATE.getValue())) {
+                createNewTrainClass(request);
+                //(request)
+                // Check : 
+                // Update inserty
+
                 // Create new TrainClass
                 // Setup data, send to create page
             } else if (requestAction.equals(ClassFunctionSupported.DELETE.getValue())) {
@@ -172,7 +185,7 @@ public class ManageClassController extends HttpServlet {
      * Create new Class
      * Information about new one get from Request object.
      */
-    private TrainClass createNewClass(HttpServletRequest req) {
+    private TrainClass createNewTrainClass(HttpServletRequest req) {
         // Information need:
         // MaLopHoc	HocKy	NamHoc	MaMH	MaGV	SLSV	SLDK	NgayHoc	CaHoc	PhongHoc
         String id = req.getParameter("classID");
@@ -217,13 +230,36 @@ public class ManageClassController extends HttpServlet {
         // Just write the result
         // If clzz is NUll, just notify an error message.
     }
-    
+
+    private void preCreateNewTrainClass(HttpServletRequest req) {
+        HttpSession session = req.getSession();
+        if (session == null) {
+            //
+        }
+        
+        try {
+            ArrayList<Subject> subjects = (ArrayList<Subject>) subjectDAO.findAll();
+            ArrayList<Lecturer> lecturers = (ArrayList<Lecturer>) lectureDAO.findAll();
+
+            if ((subjects != null) && (!subjects.isEmpty())) {
+                session.setAttribute("subjects", subjects);
+            }
+
+            if ((lecturers != null) && (!lecturers.isEmpty())) {
+                session.setAttribute("lecturers", lecturers);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     /**
      * An enum define all supported function of serverlet
      * .
      */
     public enum ClassFunctionSupported {
         DEFAULT("default"), // List first page of class opened.
+        PRECREAT("pre_create"),
         CREATE("create"),   // Create new class form support
         DELETE("delete"),   // Remove class
         UPDATE("update");   // Update
