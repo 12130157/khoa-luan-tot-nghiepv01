@@ -97,7 +97,7 @@
                             <%}
                         %>
                     </div>
-                    <p id="createLabel" align="right"><b><a href="../../ManageSubjectController?action=pre_create">Mở lớp học mới</a></b></p>
+                    <p id="createLabel" align="right"><b><a href="../../ManageClassController?action=pre_create">Mở lớp học mới</a></b></p>
                     <table id = "table-list-train-class" name = "table-list-train-class">
                         <tr>
                         <th> STT </th>
