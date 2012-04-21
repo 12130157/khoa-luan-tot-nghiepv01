@@ -2,6 +2,7 @@ package uit.cnpm02.dkhp.controllers.PDT;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -9,12 +10,16 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.LecturerDAO;
 import uit.cnpm02.dkhp.DAO.SubjectDAO;
 import uit.cnpm02.dkhp.DAO.TrainClassDAO;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.model.TrainClassID;
+import uit.cnpm02.dkhp.service.ITrainClassService;
+import uit.cnpm02.dkhp.service.TrainClassStatus;
+import uit.cnpm02.dkhp.service.impl.TrainClassServiceImpl;
 
 /**
  * Manage Class
@@ -27,9 +32,12 @@ import uit.cnpm02.dkhp.model.TrainClassID;
 @WebServlet(name = "ManageClassController", urlPatterns = {"/ManageClassController"})
 public class ManageClassController extends HttpServlet {
     
+    // DAO definition ///
     private TrainClassDAO classDAO = DAOFactory.getTrainClassDAO();
     private SubjectDAO subjectDAO = DAOFactory.getSubjectDao();
     private LecturerDAO lectureDAO = DAOFactory.getLecturerDao();
+    
+    private ITrainClassService trainClassService = new TrainClassServiceImpl();
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -41,22 +49,89 @@ public class ManageClassController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
+        
+        String requestAction;
         try {
-            //TODO:
-            // + Default
-            // + Default
-            // + Default
-            // + Default
-            // + Default
-            // + Default
+            requestAction = (String) request.getParameter("action");
+        } catch (Exception ex) {
+             requestAction = ClassFunctionSupported.DEFAULT.getValue();
+        }
+        
+        try {
+            if (requestAction.equals(ClassFunctionSupported.DEFAULT.getValue())) {
+                // List existed TrainClass, Pagging setup
+                defaultAction(request, response);
+            } else if (requestAction.equals(ClassFunctionSupported.CREATE.getValue())) {
+                // Create new TrainClass
+                // Setup data, send to create page
+            } else if (requestAction.equals(ClassFunctionSupported.DELETE.getValue())) {
+                // Delete a TrainClass specified
+            } else if (requestAction.equals(ClassFunctionSupported.UPDATE.getValue())) {
+                // Update TrainClass
+            }
             
-            
-        } finally {            
+        } finally {
             out.close();
         }
     }
+    
+    /**
+     * Default action
+     * This just list trainclass with pagging
+     * and send it back to callback function.
+     * 
+     * @param request request object
+     * @param response respone object
+     */
+    private void defaultAction(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        /*int currentPage = 1;
+        try {
+            currentPage = Integer.parseInt((String)request.getAttribute("current-page"));
+        } catch (Exception ex) {
+            currentPage = 1;
+        }*/
+        
+        List<TrainClass> trainClazzs = trainClassService.getTrainClass(TrainClassStatus.OPEN.getValue());
+        //
+        // TODO: Should accept only TrainClass of current semeter.
+        //
+        if ((trainClazzs != null) && (!trainClazzs.isEmpty())) {
+            HttpSession session = request.getSession();
+            session.setAttribute("train-clazzs", trainClazzs);
+        }
+        
+        String path = "./jsps/PDT/TrainClassManager.jsp";
+        response.sendRedirect(path);
+        
+        return;
+    }
 
+    private void retrieveTrainClassForAjaxQuery(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        
+        /*int currentPage = 1;
+        try {
+            currentPage = Integer.parseInt((String)request.getAttribute("current-page"));
+        } catch (Exception ex) {
+            currentPage = 1;
+        }*/
+        
+        List<TrainClass> trainClazzs = trainClassService.getTrainClass(TrainClassStatus.OPEN.getValue());
+        //
+        // TODO: Should accept only TrainClass of current semeter.
+        //
+        if ((trainClazzs != null) && (!trainClazzs.isEmpty())) {
+            HttpSession session = request.getSession();
+            session.setAttribute("train-clazzs", trainClazzs);
+        }
+        
+        String path = "./jsps/PDT/TrainClassManager.jsp";
+        response.sendRedirect(path);
+        
+        return;
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
      * Handles the HTTP <code>GET</code> method.
@@ -151,7 +226,7 @@ public class ManageClassController extends HttpServlet {
         DEFAULT("default"), // List first page of class opened.
         CREATE("create"),   // Create new class form support
         DELETE("delete"),   // Remove class
-        UPDATE("update");
+        UPDATE("update");   // Update
         
         private String description;
         ClassFunctionSupported(String description) {
