@@ -214,7 +214,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         TrainClass t = new TrainClass();
         String sqlQuery = "Select * from "
                 + t.getTableName()
-                + " where Status = ?";
+                + " where TrangThai = ?";
         
         Connection con = null;
         PreparedStatement statement = null;
