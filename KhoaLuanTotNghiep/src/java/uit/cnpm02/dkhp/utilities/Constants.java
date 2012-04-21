@@ -23,6 +23,13 @@ public class Constants {
     public static int ELEMENT_PER_PAGE_DEFAULT = 10;
     public static int CURRENT_SEMESTER = 2;
     public static String CURRENT_YEAR = "2011-2012";
+    static {
+        CURRENT_SEMESTER = BOUtils.getCurrentSemeter(2);
+        //Should get current year...
+        //
+        CURRENT_YEAR = BOUtils.getCurrentYear("2011-2012");
+    }
+    
     public static int MONDAY = 2;
     public static int TUESDAY = 3;
     public static int WEDNESDAY = 4;
