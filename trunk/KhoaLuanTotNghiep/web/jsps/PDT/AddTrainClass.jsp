@@ -4,14 +4,14 @@
     Author     : LocNguyen
 --%>
 <%@page import="java.util.List"%>
-<%@page import="uit.cnpm02.dkhp.model.Subject"%>
+<%@page import="uit.cnpm02.dkhp.model.TrainClass"%>
 <%@include file="MenuPDT.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <html>
     <head>
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Thêm môn học</title>
+        <title>Mở lớp học</title>
         <style media="all" type="text/css">
 
             #table{
@@ -54,21 +54,6 @@
             }
         </style>
     </head>
-    <%
-        String subjectStr = "";
-        List<String> subject = (List<String>) session.getAttribute("subjects");
-
-        if (subject != null) {
-            for (int i = 0; i < subject.size(); i++) {
-                subjectStr += subject.get(i);
-                if (i < (subject.size() - 1)) {
-                    subjectStr += ";";
-                }
-            }
-        }
-
-
-    %>
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
@@ -80,56 +65,60 @@
 
                 <hr/><hr/>
                 <div id="title">
-                    <u><h3>Thêm môn học</h3></u>
+                    <u><h3>Mở lớp học mới</h3></u>
                 </div>
                 <hr/><hr/><br>
 
-                <input type="hidden" id="subs" value="<%= subjectStr%>">
-                <form action="" method="post">
-                    <div style="padding-bottom: 20px;
-                         margin-left: 40px;">
-                        <input type="button"
-                               onclick="submitAddSubject('../../ManageSubjectController?function=add_subject')"
-                               value="Hoàn thành" />
-                        <input type="button" onclick="clearData()" value="Xóa" />
-                    </div>
-                    <div id="insert_from_table_error"
-                         style="font-size: 10px;
-                         color: #cc0033;
-                         float: right;">
-                    </div>
-                    <table id="table_mh">
+               <form action="" method="post">
+                   <table id="table_mh">
                         <tr>
-                        <td> Mã MH </td>
+                        <td> Mã lớp </td>
                         <td> <input type="text" id="txt_code"/> </td>
-                        <td id ="error_code"> </td>
                         </tr>
                         <tr>
-                        <td> Tên MH </td>
-                        <td> <input type="text" id="txt_name"/> </td>
-                        <td id ="error_name"> </td>
-                        </tr>
-                        <tr>
-                        <td> Số TCLT </td>
-                        <td> <input type="text" id="txt_tclt"/> </td>
-                        <td id ="error_tclt"> </td>
-                        </tr>
-
-                        <tr>
-                        <td> Số TCTH </td>
-                        <td> <input type="text" id="txt_tcth"/> </td>
-                        <td id ="error_tcth"> </td>
-                        </tr>
-
-                        <tr>
-                        <td> Môn học tiên quyết </td>
-                        <td>
-                            <table id="table_mhtq" name="table_mhtq">
-                            </table>
-                            <input 
-                                type="button" onclick="addRow('table_mhtq')" value="+" 
-                                />
+                        <td> Môn học </td>
+                        <td> 
+                            <select>
+                                
+                            </select>
                         </td>
+                        </tr>
+                        <tr>
+                        <td> Giảng viên </td>
+                        <td> 
+                            <select>
+                                
+                            </select>
+                        </td>
+                       </tr>
+                        <tr>
+                        <td> Số sinh viên tối đa </td>
+                        <td> <input type="text" id="txt_tcth"/> </td>
+                        </tr>
+                         <tr>
+                        <td> Ngày học </td>
+                        <td> 
+                           <select id="Date" name="Date">
+                                <option value="2">Thứ 2</option>
+                                <option value="3">Thứ 3</option>
+                                <option value="4">Thứ 4</option>
+                                <option value="5">Thứ 5</option>
+                                <option value="6">Thứ 6</option>
+                                <option value="7">Thứ 7</option>
+                            </select>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td> Ca học </td>
+                        <td> 
+                            <select id="Shift" name="Shift">
+                                <option value="1">Sáng</option>
+                                <option value="1">Chiều</option>
+                            </select>
+                        </tr>   
+                         <tr>
+                        <td> Phòng học </td>
+                        <td> <input type="text" id="txt_tcth"/> </td>
                         </tr>
                     </table>
 
@@ -143,213 +132,5 @@
         <!--End Wrapper-->
     </body>
 
-    <script src="../../javascripts/UtilTable.js"></script>
-    <script src="../../javascripts/AjaxUtil.js"></script>
-    <script  type = "text/javascript" >
-        var http = createRequestObject();
-        
-        /**
-         *
-         * Clear entered information
-         * 
-         **/
-        function clearData() {
-            try {
-                document.getElementById('txt_code').value = '';
-                document.getElementById('txt_name').value = '';
-                document.getElementById('txt_tclt').value = '';
-                document.getElementById('txt_tcth').value = '';
-                
-                document.getElementById('error_code').innerHTML = '';
-                document.getElementById('error_name').innerHTML = '';
-                document.getElementById('error_tclt').innerHTML = '';
-                document.getElementById('error_tcth').innerHTML = '';
-                
-                var table_mhtq = document.getElementById('table_mhtq');
-                var rowCount_mhtq = table_mhtq.rows.length;
-                for(var j = rowCount_mhtq - 1; j >= 0; j--) {
-                    table_mhtq.deleteRow(j);
-                }
-            }catch(e) {
-                alert(e);
-            }
-        }
-        
-        function checkData() {
-            var id = document.getElementById('txt_code').value;
-            var name = document.getElementById('txt_name').value;
-            var tclt = document.getElementById('txt_tclt').value;
-            var tcth = document.getElementById('txt_tcth').value;
-            var isValidated = true;
-            if ((id == null) || (id == '') 
-                || (id.indexOf(" ", 0)) >= 0
-                || (id.indexOf("-", 0)) >= 0) {
-                document.getElementById('error_code').innerHTML = 'Mã MH không \u0111úng.';
-                isValidated = false;
-            } else {
-                document.getElementById('error_code').innerHTML = '';
-            }
     
-            if ((name == null)
-                || (name.length <= 0)
-                || (name.indexOf("-", 0) >= 0)) {
-                document.getElementById('error_name').innerHTML = 'Tên môn h\u1ecdc không đúng.';
-                isValidated = false;
-            } else {
-                document.getElementById('error_name').innerHTML = '';
-            }
-    
-            //Check tclt & tcth is number
-            //
-            // ...
-            //
-            return isValidated;
-        }
-        
-        function submitAddSubject(pageName) {
-            var validate = checkData();
-            if (validate == false) {
-                return;
-            }
-            
-            var data = getDataStringFromTable();
-            //if ((data == null) || (data.length < 1)) {
-            //    alert("D\u1eef liệu nhập không đúng.");
-            //    return;
-            //}
-            
-            var controller = pageName + '&data=' + data;
-            if(http){
-                http.open("GET", controller ,true);
-                http.onreadystatechange = hdlRespForAddSubFromTable;
-                http.send(null);
-                
-            }
-        }
-        
-        /**
-         * Add new row to table
-         * @Param tableID table's id
-         * @Param valuesStr list of subject
-         *          for selection creation
-         **/
-        function addRow(tableID) {
-            var valuesStr = document.getElementById('subs').value;
-            var table = document.getElementById(tableID);
-            var rowCount = table.rows.length;
-            var row = table.insertRow(rowCount);
-            row.backgroundColor = '#AA25FF';
-            row. color = "#FFDD33";
-                
-            //Selection
-            //createNewInputCell(row, 'txtSubId', 1);
-            //var values = new Array('Mon hoc 1', 'Mon Hoc 2', 'Mon Hoc 3');
-            var values = valuesStr.split(";");
-            createNewSelectionCell(row, 'selectSubject' + rowCount, 0, values);
-        
-            var cellChkb = row.insertCell(1);
-            var elementChkb = document.createElement("input");
-            elementChkb.type = "checkbox";
-            elementChkb.checked = true;
-            cellChkb.appendChild(elementChkb);
-            //createNewButton(row, 'btn_disselect_' + rowCount, 1, 'Bỏ');
-        }
-        
-        /*
-         * Util functions for get data from a table
-         * 
-         * @Param tableId table's id
-         */
-        function getDataStringFromTable() {
-            var id = document.getElementById('txt_code').value;
-            var name = document.getElementById('txt_name').value;
-            var tclt = document.getElementById('txt_tclt').value;
-            var tcth = document.getElementById('txt_tcth').value;
-            var mark = '-';
-                
-            // Init subject information.
-            var datas = id + mark
-                + name + mark
-                + tclt + mark
-                + tcth;
-
-            // Init PreSubject information
-            try {
-                var table = document.getElementById('table_mhtq');
-                var rowCount = table.rows.length;
-                for(var i = 0; i < rowCount; i++) {
-                    var row = table.rows[i];
-                    var chkbox = row.cells[1].childNodes[0];
-                    if((null != chkbox) && (true == chkbox.checked)) {
-                        datas += mark;
-                        var elTableCells = row.getElementsByTagName('td');
-                        var presub = elTableCells[0].childNodes[0].value;
-                        datas += presub.split('-', 1)[0];
-                    }
-                }
-            }catch(e) {
-                alert(e);
-            }
-
-            return datas;
-        }
-        
-        /**
-         * Validate the input data is correct.
-         * 
-         * @Param row row of table.
-         */
-        function validateSubjectValue(row) {
-            var elTableCells = row. getElementsByTagName('td');
-            if ((elTableCells[2].childNodes[0].value == '') ||
-                (elTableCells[3].childNodes[0].value == '') ||
-                (elTableCells[4].childNodes[0].value == '')) {
-                return false;
-            }
-            
-            return true;
-        }
-    
-        /**
-         * Respone when submit insert subject from a table
-         */
-        function responeHandler(){
-            if(http.readyState == 4 && http.status == 200){
-                //var detail=document.getElementById("insert_from_table_error");
-                //detail.innerHTML=http.responseText;
-            }
-        }
-        /**
-         * Send request to submit insert subject(s)
-         * from a table.
-         * 
-         * @Param pageName point to controller.
-         * @Param tableID table's id.
-         **/
-        function addSubjectsFromTable(pageName, tableID) {
-            var data = getDataStringFromTable(tableID);
-            if ((data == null) || (data.length < 1)) {
-                alert("D\u1eef liệu nhập không đúng.");
-                return;
-            }
-            var controller = pageName + '&data=' + data;
-            alert(http);
-            if(http){
-                http.open("GET", controller ,true);
-                http.onreadystatechange = hdlRespForAddSubFromTable;
-                http.send(null);
-                
-            }
-        }
-        
-        /**
-         * Respone when submit insert subject from a table
-         */
-        function hdlRespForAddSubFromTable(){
-            if(http.readyState == 4 && http.status == 200){
-                var detail=document.getElementById("insert_from_table_error");
-                detail.innerHTML=http.responseText;
-            }
-        }
-    </script>
 </html>
