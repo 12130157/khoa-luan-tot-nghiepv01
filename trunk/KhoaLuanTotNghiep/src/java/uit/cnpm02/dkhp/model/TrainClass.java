@@ -7,6 +7,7 @@ package uit.cnpm02.dkhp.model;
 import java.util.Date;
 import uit.cnpm02.dkhp.access.advancedJDBC.AdvancedAbstractJdbcModel;
 import uit.cnpm02.dkhp.access.mapper.MapperConstant;
+import uit.cnpm02.dkhp.service.TrainClassStatus;
 
 /**
  *
@@ -25,7 +26,15 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
     private String testRoom;
     private String subjectName;
     private String lecturerName;
-    int numTC;
+    /**
+     * Give current status of train class
+     * There are 3 status for each TrainClass
+     *  + Opened (1)
+     *  + Canceled (2)
+     *  + Closed (2)
+     **/
+    private TrainClassStatus status;
+    private int numTC;
 
     public TrainClass() {
     }
@@ -41,13 +50,15 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
         this.numOfStudent = numOfStudent;
         this.numOfStudentReg = numOfStudentReg;
         this.studyDate = studyDate;
-        this.shift=shift;
-        this.testDate=testDate;
-        this.testRoom=testRoom;
-        this.testHours=testHours;
-        this.subjectName="";
-        this.lecturerName="";
-        numTC=0;
+        this.shift = shift;
+        this.testDate = testDate;
+        this.testRoom = testRoom;
+        this.testHours = testHours;
+        this.subjectName = "";
+        this.lecturerName = "";
+        this.numTC = 0;
+        
+        this.status = TrainClassStatus.OPEN;
     }
 
     public int getShift() {
@@ -111,35 +122,44 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
         this.numOfStudentReg = numOfStudentReg;
     }
     public void setTestHours(String testHours){
-        this.testHours=testHours;
+        this.testHours = testHours;
     }
     public String getTestHours(){
      return this.testHours;   
     }
     public void setTestRoom(String testRoom){
-        this.testRoom=testRoom;
+        this.testRoom = testRoom;
     }
     public String getTestRoom(){
      return this.testRoom;   
     }
-    public void setSubjectName(String _subjectName){
-        this.subjectName=_subjectName;
+    public void setSubjectName(String subjectName){
+        this.subjectName = subjectName;
     }
     public String getSubjectName(){
         return this.subjectName;
     }
-     public void setLectturerName(String _lectturerNam){
-        this.lecturerName=_lectturerNam;
+     public void setLectturerName(String lectturerNam){
+         this.lecturerName = lectturerNam;
     }
     public String getLectturerName(){
         return this.lecturerName;
     }
-    public void setNumTC(int _numTC){
-        this.numTC=_numTC;
+    public void setNumTC(int numTC){
+        this.numTC = numTC;
     }
     public int getNumTC(){
         return this.numTC;
     }
+    
+    public void setStatus(TrainClassStatus status) {
+        this.status = status;
+    }
+    
+    public TrainClassStatus getStatus() {
+        return status;
+    }
+    
     @Override
     public String getTableName() {
         return MapperConstant.DB_NAME
@@ -165,13 +185,14 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
                     "PhongHoc",
                     "NgayThi",
                     "CaThi",
-                    "PhongThi"
+                    "PhongThi",
+                    "TrangThai"
               };
     }
 
     @Override
     public Object[] getColumnValues() {
-         return new Object[]{
+        return new Object[]{
                     subjectCode,
                     lecturerCode,
                     numOfStudent,
@@ -181,24 +202,33 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
                     classRoom,
                     testDate,
                     testHours,
-                    testRoom
+                    testRoom,
+                    (status == null ? null : status.getValue())
                 };
     }
 
     @Override
     public void setColumnValues(Object[] values) {
         try {
-                    subjectCode=values[0].toString();
-                    lecturerCode=values[1].toString();
-                    numOfStudent=Integer.parseInt(values[2].toString());
-                    numOfStudentReg=Integer.parseInt(values[3].toString());
-                    studyDate=values[4].toString();
-                    shift=Integer.parseInt(values[5].toString());
-                    classRoom=values[6].toString();
-                    testDate=(Date) (values[7] == null ? null : values[7]);
-                    testHours=values[8] == null ? "" : values[8].toString();
-                    testRoom =values[9] == null ? "" : values[9].toString();
-            
+            subjectCode = values[0].toString();
+            lecturerCode = values[1].toString();
+            numOfStudent = Integer.parseInt(values[2].toString());
+            numOfStudentReg = Integer.parseInt(values[3].toString());
+            studyDate = values[4].toString();
+            shift = Integer.parseInt(values[5].toString());
+            classRoom = values[6].toString();
+            testDate = (Date) (values[7] == null ? null : values[7]);
+            testHours = values[8] == null ? "" : values[8].toString();
+            testRoom = values[9] == null ? "" : values[9].toString();
+
+            int statusValue = Integer.parseInt(values[10].toString());
+            if (statusValue == TrainClassStatus.CANCEL.getValue()) {
+                this.status = TrainClassStatus.CANCEL;
+            } else if (statusValue == TrainClassStatus.CLOSE.getValue()) {
+                this.status = TrainClassStatus.CLOSE;
+            } else if (statusValue == TrainClassStatus.OPEN.getValue()) {
+                this.status = TrainClassStatus.OPEN;
+            }
 
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
