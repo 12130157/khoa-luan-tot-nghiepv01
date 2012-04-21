@@ -15,20 +15,20 @@
         <title>Quản lý tài khoản</title>
         <style media="all" type="text/css">
 
-            #tablelistsubject, #tableaddsubject{
+            #table-list-train-class{
                 width: 100%;
                 padding-left: 10px;
                 padding-right: 10px;
                 text-align: center;
 
             }
-            #tablelistsubject th, #tableaddsubject th{
+            #table-list-train-class th{
                 background-color:#00ff00;
                 height: 30px;
                 border-color: black;
             }
 
-            #tablelistsubject td, #tableaddsubject td{
+            #table-list-train-class td{
                 text-align: center;
                 background-color: #5F676D;
             }
@@ -47,6 +47,9 @@
             }
             a {
                 color: violet;
+            }
+            #createLabel{
+                padding-right: 15px;
             }
         </style>
     </head>
@@ -78,13 +81,7 @@
                 <hr/><hr/><br>
 
                 <%--Form add new Train subject--%>
-                <div id="">
-                    <input type="button" value="Add" onclick="showAddTrainClassForm('id_add_train_class_form')"
-                    <div id="id_add_train_class_form">
-                          
-                    </div>
-                </div>
-                
+                           
                 <div id = "list-train-class">
                     <div style="padding-bottom: 10px;
                          padding-left: 10px;
@@ -92,12 +89,7 @@
                         <input type = "text" placeholder = "Nhập thông tin tìm kiếm" />
                         <input type = "button" onclick = "" value = "Tìm">
                     </div>
-                    <div style="padding-bottom: 5px;
-                         padding-left: 10px;
-                         ">
-                        <input type = "button" onclick = "" value = "Xóa mục đã chọn">
-                    </div>
-                    
+                                      
                     <div id="error">
                         <%
                             if ((error != null) && !error.isEmpty()) { %>
@@ -105,41 +97,28 @@
                             <%}
                         %>
                     </div>
-                    
+                    <p id="createLabel" align="right"><b><a href="../../ManageSubjectController?action=pre_create">Mở lớp học mới</a></b></p>
                     <table id = "table-list-train-class" name = "table-list-train-class">
                         <tr>
-                        <th><INPUT type = "checkbox" 
-                                   name = "chkAll" 
-                                   onclick = "selectAll('tablelistsubject', 0)"/></th>
                         <th> STT </th>
-                        <th> Môn Học </th> <!-- Tên môn học-->
+                        <th> Lớp học </th>
+                        <th> Môn học </th>
                         <th> Giảng viên </th>
-                        <th> Số lượng SV </th>
-                        <th> Đã ĐK </th>
-                        <th> Ngày học </th>
-                        <th> Ca học </th>
-                        <th> Phòng học </th>
-                        <th> Ngày thi </th>
-                        <th> Sửa </th>
-                        <th> Xóa </th>
+                        <th> Thứ </th>
+                        <th> Phòng </th>
+                        <th> Đăng ký </th>
                         <%--Should be sorted when click on table's header--%>
                         </tr>
                         <%if ((openedClazzs != null) && (!openedClazzs.isEmpty())) {%>
                         <% for (int i = 0; i < openedClazzs.size(); i++) {%>
                         <tr>
-                        <td><INPUT type="checkbox" name="chk<%= i%>"/></td>
                         <td> <%= (i + 1)%> </td>
+                        <td> <%= openedClazzs.get(i).getId().getClassCode() %> </td>
                         <td> <%= openedClazzs.get(i).getSubjectName()%> </td>
                         <td> <%= openedClazzs.get(i).getLectturerName()%> </td>
-                        <td> <%= openedClazzs.get(i).getNumOfStudent()%> </td>
-                        <td> <%= openedClazzs.get(i).getNumOfStudentReg() %> </td>
-                        <td> <%= openedClazzs.get(i).getStudyDate() %> </td>
-                        <td> <%= openedClazzs.get(i).getShift() %> </td>
-                        <td> <%= openedClazzs.get(i).getTestRoom() %> </td>
-                        <td> <%= openedClazzs.get(i).getTestDate() %> </td>
-
-                        <td><a href = "../../ManageSubjectController?function=edit_subject&ajx=false&subject_code=?">Sửa</a></td>
-                        <td><a href = "../../ManageSubjectController?function=delete_single_subject&ajax=false&currentpage=1&subject_code=?">Xóa</a></td>
+                        <td> <%= openedClazzs.get(i).getStudyDate()%> </td>
+                        <td> <%= openedClazzs.get(i).getClassRoom() %> </td>
+                        <td> <%= openedClazzs.get(i).getNumOfStudentReg()+"/"+openedClazzs.get(i).getNumOfStudent()%> </td>
                         <% }%>
                         </tr>
                         <%}%>
@@ -153,12 +132,6 @@
                     </div>
                     <br/>
                 </div>
-
-                <div id="editsubject">
-                    <table id="tableeditsubject">
-                    </table>
-                </div>
-
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
