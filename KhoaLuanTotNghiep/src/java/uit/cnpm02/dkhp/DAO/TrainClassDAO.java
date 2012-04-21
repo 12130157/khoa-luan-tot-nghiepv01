@@ -211,8 +211,9 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         checkModelWellDefined();
         
         List<TrainClass> results = new ArrayList<TrainClass>(10);
+        TrainClass t = new TrainClass();
         String sqlQuery = "Select * from "
-                + results.get(0).getTableName()
+                + t.getTableName()
                 + " where Status = ?";
         
         Connection con = null;
