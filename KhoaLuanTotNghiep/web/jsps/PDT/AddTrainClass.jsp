@@ -74,7 +74,7 @@
                 </div>
                 <hr/><hr/><br>
 
-                <form id="addclassform" action="../../ManageClassController?action=create" method="post" >
+                <form id="addclassform" method="post" >
                    <table id="table_mh">
                         <tr>
                         <td> Mã lớp: </td>
@@ -135,10 +135,15 @@
                              <td></td>
                              <td>
                                  <input type="button" name="Check" id="Check" value="  Kiểm tra  " onclick="CheckClass()"/>
-                                 <input type="submit" id="Create" name="Create" value="  Tạo lớp học  "/> 
+                                 <input type="button" id="Create" onclick="SendRequestCreateNewTrainClass()" name="Create" value="  Tạo lớp học  "/> 
                              </td>
                         </tr>
                     </table>
+                    <div id="error">
+                        <p>
+                            AAAAAA
+                        </p>
+                    </div>
 
                 </form>
             </div><!--End Contents-->
@@ -149,14 +154,54 @@
         </div>
         <!--End Wrapper-->
     </body>
- <script  type = "text/javascript" >
-  function ChangeClassCode(){
-      var classcode = document.getElementById("subject").value;
-      document.getElementById("classcode").value = classcode;
-  }   
-  function CheckClass(){
-      alert("Function to check class");
-  }
- </script>
+    <script src="../../javascripts/AjaxUtil.js"></script>
+    <script  type = "text/javascript" >
+
+        var http = createRequestObject();
+        //numpage = document.getElementById("numpage").value;
+        function SendRequestCreateNewTrainClass(){
+            var classCode = document.getElementById("classcode").value;
+            var lecturer = document.getElementById("lecturer").value;
+            var subject = document.getElementById("subject").value;
+            var slsv = document.getElementById("slsv").value;
+            var date = document.getElementById("Date").value;
+            var shift = document.getElementById("Shift").value;
+            var room = document.getElementById("room").value;
+            
+             if (http) {
+                http.open("GET", "../../ManageClassController?action=create" +
+                "&classcode=" + classCode +
+                "&subject=" + subject +
+                "&lecturer="+ lecturer +
+                "&slsv=" + slsv +
+                "&date=" + date +
+                "&Shift=" + shift +
+                "&room=" + room ,true);
+                //http.open("GET", "../../ManageClassController?action=create", true);
+                http.onreadystatechange = handleResponse;
+                http.send(null);
+              }
+        
+/*                submit("../../ManageClassController?action=create&classcode=" + classCode +
+                    "&subject=" + subject +
+                    "&lecturer="+ lecturer +
+                    "&slsv=" + slsv +
+                    "&date=" + date +
+                    "Shift=" + shift +
+                    "&room=" + room, handleResponse);*/
+            }
+        
+         function handleResponse() {
+             if(http.readyState == 4 && http.status == 200){
+                 var detail=document.getElementById("error");
+                 detail.innerHTML=http.responseText;
+             }
+         }
+
+         function ChangeClassCode(){
+                  var classcode = document.getElementById("subject").value;
+                  document.getElementById("classcode").value = classcode;
+         }
+    </script>
     
 </html>
