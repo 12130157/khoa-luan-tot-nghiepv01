@@ -56,7 +56,7 @@
                      <li><a href="#"> Quản lý lớp</a></li>
                  </ul>
              </li>
-             <li><a href="#"> Điểm cuối kỳ |</a></li>
+             <li><a href="../../ManageScoreController?function=manage"> Điểm cuối kỳ |</a></li>
              <li><a href=""> Quy định |</a>
                  <ul>
                      <li><a href="../../PreSubjectController?action=manage"> Môn học tiên quyết</a></li>
