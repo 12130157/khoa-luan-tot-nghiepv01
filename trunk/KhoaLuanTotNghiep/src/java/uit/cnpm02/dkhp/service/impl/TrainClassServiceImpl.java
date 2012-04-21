@@ -12,7 +12,8 @@ import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.model.TrainClassID;
 import uit.cnpm02.dkhp.service.ITrainClassService;
 import uit.cnpm02.dkhp.service.TrainClassStatus;
-import uit.cnpm02.dkhp.utilities.Constants;
+import uit.cnpm02.dkhp.utilities.ExecuteResult;
+import uit.cnpm02.dkhp.utilities.Message;
 
 /**
  * This utility class support functions for TrainClass
@@ -85,22 +86,82 @@ public class TrainClassServiceImpl implements ITrainClassService {
     }
 
     @Override
-    public TrainClass addNewTrainClass(TrainClass obj) {
+    public ExecuteResult addNewTrainClass(TrainClass obj) {
+        ExecuteResult result = new ExecuteResult(true, Message.ADD_TRAINCLASS_SUCCSESS);
         try {
-             TrainClassID id = classDAO.add(obj);
-             obj.setId(id);
-             
-             return obj;
+            //////
+            // TrainClass hasn't existed yet.
+            //
+            boolean checkPass = true;
+            TrainClass classExisted;
+
+            classExisted = classDAO.findById(obj.getId());
+            if (classExisted != null) {
+                result.setMessage(Message.ADD_TRAINCLASS_ERROR_CLASS_EXISTED);
+                checkPass = false;
+            }
+            //////
+            // Room - In a time --> 1 train class
+            //
+            List<TrainClass> existedClasses = classDAO.findByClassRoomAndTime(
+                    obj.getClassRoom(), obj.getStudyDate(),
+                    obj.getShift(), TrainClassStatus.OPEN.getValue());
+            if ((existedClasses != null) && (!existedClasses.isEmpty())) {
+                result.setMessage(Message.ADD_TRAINCLASS_ERROR_ROOM_DUPLECATE);
+                checkPass = false;
+            }
+            //////
+            // Lecturer - In a time --> 1 train class
+            //
+            existedClasses = classDAO.findByLecturerAndTime(obj.getClassRoom(),
+                    obj.getStudyDate(), obj.getShift(),
+                    TrainClassStatus.OPEN.getValue());
+            if ((existedClasses != null) && (!existedClasses.isEmpty())) {
+                result.setMessage(Message.ADD_TRAINCLASS_ERROR_LECTURER_DUPLECATE);
+                checkPass = false;
+            }
+
+            if (!checkPass) {
+                result.setIsSucces(false);
+                return result;
+            }
+
+            classDAO.add(obj);
+            result.setData(obj);
         } catch (Exception ex) {
             Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            result.setIsSucces(false);
+            result.setMessage(Message.ADD_TRAINCLASS_ERROR);
         }
-        return null;
+        
+        return result;
     }
 
     @Override
-    public boolean updateTrainClass(TrainClass obj) {
-        // TODO: Implement
-        throw new UnsupportedOperationException("Not supported yet.");
+    public ExecuteResult updateTrainClass(TrainClass obj) {
+        //TODO: implementation.
+        ExecuteResult result = new ExecuteResult();
+        try {
+            //
+            // Query out real object from database
+            //
+            TrainClass trainClass = classDAO.findById(obj.getId());
+
+            
+            //
+            // Check if object changed or not
+            //
+            
+            //
+            // Update to database
+            //
+            
+            
+        } catch (Exception ex) {
+            Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            
+        return result;
     }
 
     @Override
