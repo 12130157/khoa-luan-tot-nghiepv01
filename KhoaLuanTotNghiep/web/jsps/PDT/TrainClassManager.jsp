@@ -113,7 +113,7 @@
                         <% for (int i = 0; i < openedClazzs.size(); i++) {%>
                         <tr>
                         <td> <%= (i + 1)%> </td>
-                        <td> <%= openedClazzs.get(i).getId().getClassCode() %> </td>
+                        <td> <a href="../../ManageClassController?action=detail&classID=<%= openedClazzs.get(i).getId().getClassCode()%>"><%= openedClazzs.get(i).getId().getClassCode() %> </a></td>
                         <td> <%= openedClazzs.get(i).getSubjectName()%> </td>
                         <td> <%= openedClazzs.get(i).getLectturerName()%> </td>
                         <td> <%= openedClazzs.get(i).getStudyDate()%> </td>
