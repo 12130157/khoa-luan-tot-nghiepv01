@@ -1,5 +1,9 @@
 package uit.cnpm02.dkhp.utilities;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  *
  * @author LocNguyen
@@ -23,11 +27,13 @@ public class Constants {
     public static int ELEMENT_PER_PAGE_DEFAULT = 10;
     public static int CURRENT_SEMESTER = 2;
     public static String CURRENT_YEAR = "2011-2012";
+    public static List<String> ROOM_LISS = Arrays.asList(new String[]{"101","102","103"});
     static {
         CURRENT_SEMESTER = BOUtils.getCurrentSemeter(2);
         //Should get current year...
         //
         CURRENT_YEAR = BOUtils.getCurrentYear("2011-2012");
+        ROOM_LISS = BOUtils.getListRoom(Arrays.asList(new String[]{"101","102","103"}));
     }
     
     public static int MONDAY = 2;
