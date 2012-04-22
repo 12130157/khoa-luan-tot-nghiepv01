@@ -26,7 +26,7 @@ public class BOUtils {
 
     private static List<String> roomList = new ArrayList(10);
     private static int currentSemeter = -1;
-    private static String currentYear;
+    private static String currentYear = "";
 
     
     
@@ -34,34 +34,38 @@ public class BOUtils {
     }
     
     public static List<String> getListRool() {
-        if (!doLoadConfig) {
-            loadConfig();
-            doLoadConfig = true;
-        }
+        loadConfig();
         return roomList;
     }
     
     private static void loadConfig() {
-        Properties config = new Properties();
-        try {
-            config.load(new FileInputStream("system.properties"));
-            String listClass = config.get(ROOM_LIST).toString();
-            
-            roomList = Arrays.asList(listClass.split(","));
-            
-            currentSemeter = Integer.parseInt(config.get(CURRENT_SEMETER).toString());
-            currentYear = config.get(CURRENT_YEAR).toString();
-        } catch (IOException ex) {
-            Logger.getLogger(BOUtils.class.getName()).log(Level.SEVERE, null, ex);
+        if (!doLoadConfig) {
+            Properties config = new Properties();
+            try {
+                config.load(new FileInputStream("system.properties"));
+                String listClass = config.get(ROOM_LIST).toString();
+
+                roomList = Arrays.asList(listClass.split(","));
+
+                currentSemeter = Integer.parseInt(config.get(CURRENT_SEMETER).toString());
+                currentYear = config.get(CURRENT_YEAR).toString();
+            } catch (IOException ex) {
+                Logger.getLogger(BOUtils.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            doLoadConfig = true;
         }
+        
     }
     
-    static int getCurrentSemeter(int defaultValue) {
+    public static int getCurrentSemeter(int defaultValue) {
+        loadConfig();
         return currentSemeter < 0 ? defaultValue : currentSemeter;
     }
     
-    static String getCurrentYear(String defaultValues) {
-        return currentYear;
+    public static String getCurrentYear(String defaultValues) {
+        loadConfig();
+        return currentYear.isEmpty() ? defaultValues : currentYear;
     }
     
 }

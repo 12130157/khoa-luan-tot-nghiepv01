@@ -25,9 +25,8 @@ import uit.cnpm02.dkhp.model.web.SubjectWeb;
 import uit.cnpm02.dkhp.service.ITrainClassService;
 import uit.cnpm02.dkhp.service.TrainClassStatus;
 import uit.cnpm02.dkhp.service.impl.TrainClassServiceImpl;
-import uit.cnpm02.dkhp.utilities.Constants;
+import uit.cnpm02.dkhp.utilities.BOUtils;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
-import uit.cnpm02.dkhp.utilities.Message;
 
 /**
  * Manage Class
@@ -192,8 +191,10 @@ public class ManageClassController extends HttpServlet {
         // Information need:
         // MaLopHoc	HocKy	NamHoc	MaMH	MaGV	SLSV	SLDK	NgayHoc	CaHoc	PhongHoc
         String id = req.getParameter("classcode");
-        int semester = Constants.CURRENT_SEMESTER;
-        String year = Constants.CURRENT_YEAR;
+        //int semester = Constants.CURRENT_SEMESTER;
+        int semester = BOUtils.getCurrentSemeter(1);
+        //String year = Constants.CURRENT_YEAR;
+        String year = BOUtils.getCurrentYear("2011-2012");
         String subjectCode = req.getParameter("subject");
         String lectureCode = req.getParameter("lecturer");
         int SLSV = Integer.parseInt(req.getParameter("slsv"));
