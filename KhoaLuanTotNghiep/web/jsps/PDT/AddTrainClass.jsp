@@ -124,7 +124,7 @@
                         <td> 
                             <select id="Shift" name="Shift">
                                 <option value="1">Sáng</option>
-                                <option value="1">Chiều</option>
+                                <option value="2">Chiều</option>
                             </select>
                         </tr>   
                          <tr>
@@ -140,9 +140,7 @@
                         </tr>
                     </table>
                     <div id="error">
-                        <p>
-                            AAAAAA
-                        </p>
+                        
                     </div>
 
                 </form>
@@ -167,14 +165,13 @@
             var date = document.getElementById("Date").value;
             var shift = document.getElementById("Shift").value;
             var room = document.getElementById("room").value;
-            
              if (http) {
                 http.open("GET", "../../ManageClassController?action=create" +
                 "&classcode=" + classCode +
                 "&subject=" + subject +
                 "&lecturer="+ lecturer +
                 "&slsv=" + slsv +
-                "&date=" + date +
+                "&Date=" + date +
                 "&Shift=" + shift +
                 "&room=" + room ,true);
                 //http.open("GET", "../../ManageClassController?action=create", true);

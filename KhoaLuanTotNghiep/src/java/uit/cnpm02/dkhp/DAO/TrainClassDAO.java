@@ -240,7 +240,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
                 + " where PhongHoc = ? And"
                 + " CaHoc = ? And"
                 + " NgayHoc = ? And"
-                + " And TrangThai = ?";
+                + " TrangThai = ?";
         
         Connection con = null;
         PreparedStatement statement = null;
@@ -271,7 +271,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
                 + " where MaGV = ? And"
                 + " CaHoc = ? And"
                 + " NgayHoc = ? And"
-                + " And TrangThai = ?";
+                + " TrangThai = ?";
         
         Connection con = null;
         PreparedStatement statement = null;
