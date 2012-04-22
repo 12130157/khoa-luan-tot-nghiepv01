@@ -174,7 +174,6 @@
                 "&Date=" + date +
                 "&Shift=" + shift +
                 "&room=" + room ,true);
-                //http.open("GET", "../../ManageClassController?action=create", true);
                 http.onreadystatechange = handleResponse;
                 http.send(null);
               }
