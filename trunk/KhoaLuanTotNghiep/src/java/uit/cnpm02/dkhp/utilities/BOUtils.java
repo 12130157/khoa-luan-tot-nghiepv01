@@ -57,7 +57,10 @@ public class BOUtils {
         }
         
     }
-    
+    public static List<String> getListRoom(List<String> defaultValue) {
+        loadConfig();
+        return roomList == null ? defaultValue : roomList;
+    }
     public static int getCurrentSemeter(int defaultValue) {
         loadConfig();
         return currentSemeter < 0 ? defaultValue : currentSemeter;
