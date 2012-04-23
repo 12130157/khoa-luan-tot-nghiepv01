@@ -6,11 +6,13 @@
 <%@page import="java.util.List"%>
 <%@page import="uit.cnpm02.dkhp.model.web.LecturerWeb"%>
 <%@page import="uit.cnpm02.dkhp.model.web.SubjectWeb"%>
+<%@page import="uit.cnpm02.dkhp.utilities.Constants"%>
 <%@include file="MenuPDT.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
   List<LecturerWeb> Lecture = (List<LecturerWeb>) session.getAttribute("lecturers");
   List<SubjectWeb> Subject = (List<SubjectWeb>) session.getAttribute("subjects");
+  List<String> roomList = Constants.ROOM_LISS;
 %>
 <html>
     <head>
@@ -129,7 +131,14 @@
                         </tr>   
                          <tr>
                         <td> Phòng học: </td>
-                        <td> <input type="text" id="room"/> </td>
+                        <td> 
+                            <select id="room" name="room">
+                              <%for(int i=0; i<roomList.size();i++){%>
+                                <option value="<%=roomList.get(i)%>"><%=roomList.get(i)%></option>
+                                <%}
+                                %>  
+                            </select>
+                        </td>
                         </tr>
                          <tr>
                              <td></td>
@@ -165,7 +174,13 @@
             var date = document.getElementById("Date").value;
             var shift = document.getElementById("Shift").value;
             var room = document.getElementById("room").value;
+            if(classCode.length == 0){
+                alert("Hãy nhập mã lớp học");
+            }else if(slsv.length ==0 ){
+                alert("Hãy nhập số sinh viên tối đa cho lớp");
+            }else{
              if (http) {
+                 alert("123232");
                 http.open("GET", "../../ManageClassController?action=create" +
                 "&classcode=" + classCode +
                 "&subject=" + subject +
@@ -186,7 +201,7 @@
                     "Shift=" + shift +
                     "&room=" + room, handleResponse);*/
             }
-        
+        }
          function handleResponse() {
              if(http.readyState == 4 && http.status == 200){
                  var detail=document.getElementById("error");
