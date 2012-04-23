@@ -247,7 +247,7 @@ public class AccountController extends HttpServlet {
 
         try {
             Account acc = new Account(userName, pwd, fullName, false, 0, getType(type));
-            accDao.add(acc);
+             accDao.add(acc);
 
             String editor = (String) session.getAttribute("logineduser");
 
