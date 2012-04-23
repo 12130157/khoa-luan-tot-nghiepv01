@@ -59,7 +59,7 @@ public class BOUtils {
     }
     public static List<String> getListRoom(List<String> defaultValue) {
         loadConfig();
-        return roomList == null ? defaultValue : roomList;
+        return roomList.isEmpty() ? defaultValue : roomList;
     }
     public static int getCurrentSemeter(int defaultValue) {
         loadConfig();

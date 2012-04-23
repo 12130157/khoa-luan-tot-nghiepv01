@@ -18,7 +18,7 @@ public interface ITrainClassService {
     ExecuteResult addNewTrainClass(TrainClass obj);
     
     TrainClass getClassInfomation(TrainClassID obj);
-    
+        
     ExecuteResult updateTrainClass(TrainClass obj);
     
     boolean isExisted(TrainClass obj);
