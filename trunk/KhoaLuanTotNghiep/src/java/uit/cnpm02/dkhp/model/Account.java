@@ -12,13 +12,13 @@ public class Account extends AbstractJdbcModel<String> {
     private String password;
     private String fullName;
     private boolean   isLogined;//1 dang dang nhap, 0 chua dang nhap
-    private String status;//1 dang khoa, 0 binh thuong
+    private int status;//1 dang khoa, 0 binh thuong
     private int type;
 
     public Account() {
     }
 
-    public Account(String userName, String password, String fullName, boolean  isLogined, String status, int type) {
+    public Account(String userName, String password, String fullName, boolean  isLogined, int status, int type) {
         this.userName = userName;
         this.password = password;
         this.fullName = fullName;
@@ -52,11 +52,11 @@ public class Account extends AbstractJdbcModel<String> {
         this.password = password;
     }
 
-    public String getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 
@@ -121,7 +121,7 @@ public class Account extends AbstractJdbcModel<String> {
             fullName = values[1].toString();
             isLogined =Boolean.parseBoolean(values[2].toString());
             //status =Integer.parseInt(values[3].toString());
-            status = values[3].toString();
+            status = Integer.parseInt(values[3].toString());
             type = Integer.parseInt(values[4].toString());
             
             userName = getId();
