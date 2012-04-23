@@ -25,8 +25,9 @@ import uit.cnpm02.dkhp.model.web.SubjectWeb;
 import uit.cnpm02.dkhp.service.ITrainClassService;
 import uit.cnpm02.dkhp.service.TrainClassStatus;
 import uit.cnpm02.dkhp.service.impl.TrainClassServiceImpl;
-import uit.cnpm02.dkhp.utilities.BOUtils;
+import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
+import uit.cnpm02.dkhp.utilities.Message;
 
 /**
  * Manage Class
@@ -82,16 +83,52 @@ public class ManageClassController extends HttpServlet {
                 
             } else if (requestAction.equals(ClassFunctionSupported.DELETE.getValue())) {
                 // Delete a TrainClass specified
-            } else if (requestAction.equals(ClassFunctionSupported.UPDATE.getValue())) {
+            } else if (requestAction.equals(ClassFunctionSupported.PREUPDATE.getValue())) {
+                // Prepare to update TrainClass
+                preUpdateTrainClass(request, response);
+            }else if (requestAction.equals(ClassFunctionSupported.UPDATE.getValue())) {
                 // Update TrainClass
-                updateTrainClass(request, response);
+                 updateTrainClass(request, response);
+            }else if (requestAction.equals(ClassFunctionSupported.DETAIL.getValue())) {
+                // view detail train class
+                viewDetailClass(request, response);
+               
             }
             
         } finally {
             out.close();
         }
     }
-    
+    private void preUpdateTrainClass(HttpServletRequest request, HttpServletResponse response){
+        
+    }
+    /**
+     * this function to update train class
+     * @param request
+     * @param response 
+     */
+    private void updateTrainClass(HttpServletRequest request, HttpServletResponse response){
+        
+    }
+    /**
+     * This function use to get class to use view detail
+     * @param request
+     * @param response 
+     */
+    private void viewDetailClass(HttpServletRequest request, HttpServletResponse response) throws IOException{
+      String path="";
+        try{
+        String ClassCode = (String)request.getParameter("classID"); 
+        TrainClassID classID = new TrainClassID(ClassCode, Constants.CURRENT_YEAR, Constants.CURRENT_SEMESTER);
+        TrainClass trainClass = trainClassService.getClassInfomation(classID);
+        HttpSession session = request.getSession();
+        session.setAttribute("trainclass", trainClass);
+        path = "./jsps/PDT/TrainClassDetail.jsp";
+        }catch(Exception ex){
+           path= "./jsps/Message.jsp";
+       }
+         response.sendRedirect(path);
+   }
     /**
      * Default action
      * This just list trainclass with pagging
@@ -191,10 +228,8 @@ public class ManageClassController extends HttpServlet {
         // Information need:
         // MaLopHoc	HocKy	NamHoc	MaMH	MaGV	SLSV	SLDK	NgayHoc	CaHoc	PhongHoc
         String id = req.getParameter("classcode");
-        //int semester = Constants.CURRENT_SEMESTER;
-        int semester = BOUtils.getCurrentSemeter(1);
-        //String year = Constants.CURRENT_YEAR;
-        String year = BOUtils.getCurrentYear("2011-2012");
+        int semester = Constants.CURRENT_SEMESTER;
+        String year = Constants.CURRENT_YEAR;
         String subjectCode = req.getParameter("subject");
         String lectureCode = req.getParameter("lecturer");
         int SLSV = Integer.parseInt(req.getParameter("slsv"));
@@ -255,21 +290,7 @@ public class ManageClassController extends HttpServlet {
         }
     }
 
-    private void updateTrainClass(HttpServletRequest request, HttpServletResponse response) {
-        //
-        // Retrieve TrainClass's name
-        //
-        
-        //
-        // Query out in database
-        //
-        
-        //
-        // S
-        //
-    }
-
-    private void writeRespondErrorMessage(ExecuteResult result, PrintWriter out) {
+   private void writeRespondErrorMessage(ExecuteResult result, PrintWriter out) {
         out.println(result.getMessage());
         if (result.isIsSucces()) {
             TrainClass data = (TrainClass) result.getData();
@@ -304,6 +325,8 @@ public class ManageClassController extends HttpServlet {
         PRECREATE("pre_create"),
         CREATE("create"),   // Create new class form support
         DELETE("delete"),   // Remove class
+        DETAIL("detail"),   // view detail class
+        PREUPDATE("pre_update"), // prepare update class
         UPDATE("update");   // Update
         
         private String description;
