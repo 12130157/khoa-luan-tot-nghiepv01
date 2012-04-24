@@ -15,4 +15,6 @@ public class Message {
     public static String ADD_TRAINCLASS_ERROR_ROOM_DUPLECATE = "Phong hoc khong co san.";
     public static String ADD_TRAINCLASS_ERROR = "Da co loi xay ra trong qua trinh mo lop";
     
+    public static String STUDENT_SEARCH_NOTFOUND = "Khong tim thay sinh vien nao";
+    
 }
