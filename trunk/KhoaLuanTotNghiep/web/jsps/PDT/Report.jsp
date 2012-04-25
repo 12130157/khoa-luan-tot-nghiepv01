@@ -84,6 +84,16 @@
                         </tr>
                     </table>
                 </div>
+                <hr/><hr/>
+                <div id="student-detail">
+                    <table>
+                        <tr>
+                            <td>
+                                
+                            </td>
+                        </tr>
+                    </table>
+                </div>
                 <hr/><hr/><br>
 
                 <%--Form add new Train subject--%>
@@ -166,7 +176,6 @@
         //numpage = document.getElementById("numpage").value;
         function SendRequestCreateNewTrainClass(){
             var search = document.getElementById("search-student").value;
-            alert(search);
              if (http) {
                 http.open("GET", "../../ReportController?action=search_student&value="
                     + search, true);
@@ -178,6 +187,26 @@
          function handleResponseFindStudent() {
              if(http.readyState == 4 && http.status == 200){
                  var detail=document.getElementById("list-student");
+                 detail.innerHTML=http.responseText;
+             }
+         }
+         
+         //
+         //
+         //
+         function getDetailStudentReport(mssv) {
+            //var search = document.getElementById("search-student").value;
+             if (http) {
+                http.open("GET", "../../ReportController?action=student-report&value="
+                    + mssv, true);
+                http.onreadystatechange = handleResponseStudentReport;
+                http.send(null);
+              }
+         }
+         
+         function handleResponseStudentReport() {
+             if(http.readyState == 4 && http.status == 200){
+                 var detail=document.getElementById("student-detail");
                  detail.innerHTML=http.responseText;
              }
          }
