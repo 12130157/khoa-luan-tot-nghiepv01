@@ -70,13 +70,12 @@
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
 
-                <hr/><hr/>
-                <div id="title">
+               <div id="title">
                     <u><h3>Mở lớp học mới</h3></u>
                 </div>
                 <hr/><hr/><br>
 
-                <form id="addclassform" method="post" >
+                <form id="addclassform" method="post">
                    <table id="table_mh">
                         <tr>
                         <td> Mã lớp: </td>
@@ -106,7 +105,7 @@
                        </tr>
                         <tr>
                         <td> Số sinh viên tối đa: </td>
-                        <td> <input type="text" id="slsv"/> </td>
+                        <td> <input type="text" id="slsv" onkeypress="return checknumber(event)"/> </td>
                         </tr>
                          <tr>
                         <td> Ngày học: </td>
@@ -178,6 +177,8 @@
                 alert("Hãy nhập mã lớp học");
             }else if(slsv.length ==0 ){
                 alert("Hãy nhập số sinh viên tối đa cho lớp");
+            }else if(slsv>120 || slsv <30){
+                alert("Số sinh viên cho một lớp tối thiểu là 10 tối đa là 120");
             }else{
              if (http) {
                  alert("123232");
@@ -213,6 +214,15 @@
                   var classcode = document.getElementById("subject").value;
                   document.getElementById("classcode").value = classcode;
          }
+         function checknumber(evt){
+           var e = event || evt; // for trans-browser compatibility
+	var charCode = e.which || e.keyCode;
+
+	if (charCode > 31 && (charCode < 48 || charCode > 57))
+		return false;
+
+	return true;
+        }
     </script>
     
 </html>
