@@ -99,8 +99,19 @@ public class ManageClassController extends HttpServlet {
             out.close();
         }
     }
-    private void preUpdateTrainClass(HttpServletRequest request, HttpServletResponse response){
-        
+    private void preUpdateTrainClass(HttpServletRequest request, HttpServletResponse response) throws IOException{
+       String path="";
+        try{
+        String ClassCode = (String)request.getParameter("classId"); 
+        TrainClassID classID = new TrainClassID(ClassCode, Constants.CURRENT_YEAR, Constants.CURRENT_SEMESTER);
+        TrainClass trainClass = trainClassService.getClassInfomation(classID);
+        HttpSession session = request.getSession();
+        session.setAttribute("trainclass", trainClass);
+        path = "./jsps/PDT/UpdateTrainClass.jsp";
+        }catch(Exception ex){
+           path= "./jsps/Message.jsp";
+       }
+         response.sendRedirect(path);
     }
     /**
      * this function to update train class
