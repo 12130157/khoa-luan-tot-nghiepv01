@@ -71,7 +71,7 @@
                 </div>
                 <hr/><hr/><br>
 
-                <form id="classDetail" action="../../ManageClassController?action=update&id=<%=trainClass.getId().getClassCode()%>" method="post" >
+                <form id="classDetail" action="../../ManageClassController?action=pre_update&classId=<%=trainClass.getId().getClassCode()%>" method="post" >
                    <table id="table_mh">
                         <tr>
                             <td width="100px"> Mã lớp: </td>
@@ -132,7 +132,7 @@
                         <tr>
                              <td></td>
                              <td>
-                              <input type="submit" id="Create" name="Create" value="  Cập nhật  "/> 
+                              <input type="submit" id="update" name="update" value="  Cập nhật  "/> 
                              </td>
                         </tr>
                     </table>
