@@ -23,7 +23,7 @@ public interface IReporter {
     // Student report
     //
     List<Student> searchStudent(String key);
-    List<TrainClass> getTrainClassRegistered(String mssv);
+    List<TrainClass> getTrainClassRegistered(String mssv, boolean fullInfor);
     List<TrainClass> getTrainClassRegistered(String mssv, String year, int semeter);
     
 }

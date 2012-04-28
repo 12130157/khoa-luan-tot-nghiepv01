@@ -17,6 +17,7 @@ public class Message {
     
     public static String STUDENT_SEARCH_NOTFOUND = "Khong tim thay sinh vien nao";
     public static String STUDENT_REPORT_NO_REPORT = "Chua co thong tin";
+    public static String CLASS_REPORT_NO_REPORT = "Chua co thong tin";
     
     public static String REPORT_TRAINCLASS_TOTAL = "Tong so lop da mo";
     public static String REPORT_TRAINCLASS_CLOSED = "So lop da hoan thanh";
