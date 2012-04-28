@@ -8,8 +8,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -46,7 +44,8 @@ public class ManageStudentController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+    protected void processRequest(HttpServletRequest request,
+                                            HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
@@ -95,13 +94,15 @@ public class ManageStudentController extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest request,
+                                    HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request,
+                                    HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
@@ -124,7 +125,8 @@ public class ManageStudentController extends HttpServlet {
      * @param students
      * @throws Exception 
      */
-    private String deleteStudent(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    private String deleteStudent(HttpServletRequest req,
+                        HttpServletResponse resp) throws Exception {
         String result = "";
         String data = (String) req.getParameter("data");
 
@@ -146,6 +148,12 @@ public class ManageStudentController extends HttpServlet {
         return result;
     }
 
+    /**
+     * Import data form a String
+     * @param datas data
+     * @return
+     * @throws Exception 
+     */
     private String importStudentFromDataString(String datas) throws Exception {
         if ((datas == null) || (datas.length() < 1)) {
             return "Vui lòng kiểm tra lại dữ liệu nhập";
@@ -190,7 +198,16 @@ public class ManageStudentController extends HttpServlet {
         return "Thêm thành công.";
     }
 
-    private String importStudentFromFile(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    /**
+     * Import data from file
+     * Data format must follow a specified rule.
+     * @param request request object
+     * @param response respone object
+     * @return string
+     * @throws Exception 
+     */
+    private String importStudentFromFile(HttpServletRequest request,
+                            HttpServletResponse response) throws Exception {
         List<Student> students = new ArrayList<Student>();
         try {
             HSSFWorkbook wb = FileUtils.getWorkbook(request, response);
@@ -221,7 +238,8 @@ public class ManageStudentController extends HttpServlet {
                 }
             }
 
-            Collection<String> id_Students = DAOFactory.getStudentDao().addAll(students);
+            Collection<String> id_Students = DAOFactory.getStudentDao()
+                                                        .addAll(students);
             if (id_Students == null) {
                 return "Thêm không thành công";
             }
@@ -320,7 +338,8 @@ public class ManageStudentController extends HttpServlet {
      * This function will be called at the first time go
      * to manager student page.
      */
-    private void listStudent(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    private void listStudent(HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         List<Student> students;
         String searchType = (String) request.getParameter("searchtype");
         String searchValue = (String) request.getParameter("searchvalue");
@@ -350,7 +369,8 @@ public class ManageStudentController extends HttpServlet {
             } else if (searchType.equals("course")) {
                 searchTypeStr = "MaKhoa";
             }
-            students = studentDao.findAll(rowPerPage, currentPage, searchTypeStr, "'%" + searchValue + "%'", "HoTen", null);
+            students = studentDao.findAll(rowPerPage, currentPage,
+                    searchTypeStr, "'%" + searchValue + "%'", "HoTen", null);
         }
         if ((ajaxRespone == null)
                 || ajaxRespone.isEmpty()
@@ -360,7 +380,8 @@ public class ManageStudentController extends HttpServlet {
         } else {
             PrintWriter out = response.getWriter();
             String respStr = "<tr id=\"tableliststudent-th\">"
-                    + "<td><INPUT type=\"checkbox\" name=\"chkAll\" onclick=\"selectAll('tableliststudent')\" /></td>"
+                    + "<td><INPUT type=\"checkbox\" name=\"chkAll\""
+                    + " onclick=\"selectAll('tableliststudent')\" /></td>"
                     + "<td> STT </td>"
                     + "<td> MSSV </td>"
                     + "<td> Họ Tên </td>"
@@ -384,8 +405,12 @@ public class ManageStudentController extends HttpServlet {
                         + "<td> " + students.get(i).getBirthday() + "</td>"
                         + "<td> " + students.get(i).getGender() + "</td>"
                         + "<td> " + students.get(i).getStudyType() + "</td>"
-                        + "<td> <a href=\"../../ManageStudentController?function=editstudent&mssv=" + students.get(i).getId() + "\">Sửa</a></td>"
-                        + "<td> <a href=\"../../ManageStudentController?function=delete&ajax=true&data=" + students.get(i).getId() + "\"> Xóa</a></td>"
+                        + "<td> <a href=\"../../ManageStudentController?function=editstudent&mssv=" 
+                                                            + students.get(i).getId() 
+                                                            + "\">Sửa</a></td>"
+                        + "<td> <a href=\"../../ManageStudentController?function=delete&ajax=true&data="
+                                                            + students.get(i).getId()
+                                                            + "\"> Xóa</a></td>"
                         + "</tr>";
                 out.println(respStr);
             }
@@ -393,7 +418,8 @@ public class ManageStudentController extends HttpServlet {
         }
     }
 
-    private void editStudent(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    private void editStudent(HttpServletRequest request,
+                        HttpServletResponse response) throws Exception {
         String mssv = request.getParameter("mssv");
         Student s = studentDao.findById(mssv);
         HttpSession session = request.getSession();
