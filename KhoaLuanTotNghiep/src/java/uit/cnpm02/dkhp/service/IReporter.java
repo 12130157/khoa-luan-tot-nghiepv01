@@ -16,6 +16,8 @@ public interface IReporter {
     List<TrainClass> getTrainClass(TrainClassStatus status);
     List<TrainClass> getOpened(String year);
     List<TrainClass> getOpened(String year, int semeter);
+    List<TrainClass> getTrainClass(String year, int semeter,
+            TrainClassStatus status);
     
     //
     // Student report

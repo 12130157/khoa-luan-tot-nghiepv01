@@ -2,7 +2,9 @@ package uit.cnpm02.dkhp.controllers.PDT;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -13,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.service.IReporter;
+import uit.cnpm02.dkhp.service.TrainClassStatus;
 import uit.cnpm02.dkhp.service.impl.ReporterImpl;
 import uit.cnpm02.dkhp.utilities.Message;
 
@@ -70,10 +73,26 @@ public class ReportController extends HttpServlet {
                 String mssv = request.getParameter("value");
                 List<TrainClass> trainClassReg = getStudentReport(mssv);
                 if ((trainClassReg != null) && !trainClassReg.isEmpty()) {
-                    writeStudentReportDetail(trainClassReg, out);
+                    writeStudentReportDetail(mssv, trainClassReg, out);
                 } else {
                     out.println(Message.STUDENT_REPORT_NO_REPORT);
                 }
+            } else if (requestAction.equals(ReportFunctionSupported.
+                                                CLASS_REPORT.getValue())) {
+                String year = request.getParameter("year");
+                int semeter = Integer.parseInt(request.getParameter("semeter"));
+                List<TrainClass> trainClassReg = getTrainClassByYearAndSemeter(
+                                                    year, semeter);
+                
+                if ((trainClassReg == null) || trainClassReg.isEmpty()) {
+                    out.println(Message.STUDENT_REPORT_NO_REPORT);
+                } else {
+                    writeTrainClassReport(trainClassReg, out);
+                }
+                
+                
+                
+                return;
             }
         } catch(Exception ex) {
             Logger.getLogger(ReportController.class.getName()).
@@ -134,14 +153,17 @@ public class ReportController extends HttpServlet {
 
         out.println("<tr>"
                 + "<th> STT </th>"
+                + "<th> MSSV </th>"
                 + "<th> Họ và tên </th>"
                 + "</tr>");
         for (int i = 0; i < datas.size(); i++) {
             out.println("<tr>");
             out.println("<td> " + (i + 1) + " </td>");
-            out.println("<td> <a href=\"#\" onclick=getDetailStudentReport("
-                    + datas.get(i).getId()
-                    + ")>" + datas.get(i).getFullName()
+            out.println("<td> " + datas.get(i).getId() + " </td>");
+            String method = String.format(" onclick=getDetailStudentReport('%s')>",
+                                                        datas.get(i).getId());
+            out.println("<td> <a href=\'#\'" + method
+                    + datas.get(i).getFullName()
                     + "</a> </td>");
             out.println("</tr>");// <a hreft > abc </a>
         }
@@ -152,8 +174,9 @@ public class ReportController extends HttpServlet {
         return reportService.getTrainClassRegistered(mssv);
     }
     
-    private void writeStudentReportDetail(List<TrainClass> datas,
+    private void writeStudentReportDetail(String student, List<TrainClass> datas,
                                                         PrintWriter out) {
+        out.println("Danh sach cac mon hoc " + student + " da dang ky:");
         out.println("<table id = \"student-report\" name = \"student-report\">");
 
         out.println("<tr>"
@@ -173,6 +196,56 @@ public class ReportController extends HttpServlet {
             out.println("</tr>");// <a hreft > abc </a>
         }
         out.println("</table>");
+        out.println("... Thong tin khac </br>");
+        
+        out.println("<a href='#'>Tai file excel</a>");
+    }
+
+    private List<TrainClass> getTrainClassByYearAndSemeter(
+            String year, int semeter) {
+        return reportService.getTrainClass(year, semeter, TrainClassStatus.ALL);
+    }
+
+    private void writeTrainClassReport(List<TrainClass> trainClassReg, PrintWriter out) {
+        
+        out.println("<table id = \"trainclass-report\" name = \"trainclass-report\">");
+
+        /**
+            Tổng số lớp đã tạo: 	120
+            Tổng số lớp hủy do không đủ điều kiện: 	100
+            Tổng số lớp chưa kết thúc: 	20
+         */
+        int total = trainClassReg.size();
+        int classClosed = 0;
+        int classCanceled = 0;
+        int classInProcess = 0;
+        for (TrainClass t : trainClassReg) {
+            
+            if (t.getStatus() == TrainClassStatus.OPEN) {
+                classInProcess ++;
+            } else if (t.getStatus() == TrainClassStatus.CLOSE) {
+                classClosed ++;
+            } else if (t.getStatus() == TrainClassStatus.CANCEL) {
+                classCanceled ++;
+            }
+        }
+        
+        String[][] map = new String[][] {
+            {Message.REPORT_TRAINCLASS_TOTAL, Integer.toString(total)},
+            {Message.REPORT_TRAINCLASS_CLOSED, Integer.toString(classClosed)},
+            {Message.REPORT_TRAINCLASS_CANCELED, Integer.toString(classCanceled)},
+            {Message.REPORT_TRAINCLASS_IN_PROGRESS, Integer.toString(classInProcess)},
+        };     
+        
+        for (int i = 0; i < map.length; i++) {
+            out.println("<tr>");
+            out.println("<td> " + map[i][0] + " </td>");
+            out.println("<td> " + map[i][1] + " </td>");
+            out.println("</tr>");
+        }
+        
+        out.println("</table>");
+        out.println("<a href='#'>Tai file excel</a>");
     }
 
      /**
@@ -182,10 +255,8 @@ public class ReportController extends HttpServlet {
     public enum ReportFunctionSupported {
         DEFAULT("default"), // List first page of class opened.
         SEARCH_STUDENT("search_student"),
-        STUDENT_REPORT("getDetailStudentReport");
-        //CREATE("create"),   // Create new class form support
-        //DELETE("delete"),   // Remove class
-        //UPDATE("update");   // Update
+        STUDENT_REPORT("student-report"),
+        CLASS_REPORT("class-report");
         
         private String description;
         ReportFunctionSupported(String description) {

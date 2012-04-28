@@ -5,6 +5,7 @@ package uit.cnpm02.dkhp.service;
  * @author LocNguyen
  */
 public enum TrainClassStatus {
+    ALL(0, "All"),
     OPEN(1, "Opened"), //
     CANCEL(2, "Canceled"),
     CLOSE(3, "Closed");

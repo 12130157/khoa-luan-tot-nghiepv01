@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.LecturerDAO;
+import uit.cnpm02.dkhp.DAO.RuleDAO;
 import uit.cnpm02.dkhp.DAO.SubjectDAO;
 import uit.cnpm02.dkhp.DAO.TrainClassDAO;
 import uit.cnpm02.dkhp.model.TrainClass;
@@ -25,6 +26,7 @@ public class TrainClassServiceImpl implements ITrainClassService {
     private TrainClassDAO classDAO = DAOFactory.getTrainClassDAO();
     private SubjectDAO subjectDAO = DAOFactory.getSubjectDao();
     private LecturerDAO lectureDAO = DAOFactory.getLecturerDao();
+    private RuleDAO ruleDao = DAOFactory.getRuleDao();
     
     private static Object mutex = new Object();
     
@@ -100,6 +102,12 @@ public class TrainClassServiceImpl implements ITrainClassService {
                 result.setMessage(Message.ADD_TRAINCLASS_ERROR_CLASS_EXISTED);
                 checkPass = false;
             }
+            
+            //
+            // Check max and min number of student for open class
+            //
+            
+            
             //////
             // Room - In a time --> 1 train class
             //
