@@ -2,9 +2,7 @@ package uit.cnpm02.dkhp.controllers.PDT;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -77,21 +75,26 @@ public class ReportController extends HttpServlet {
                 } else {
                     out.println(Message.STUDENT_REPORT_NO_REPORT);
                 }
+                return;
             } else if (requestAction.equals(ReportFunctionSupported.
                                                 CLASS_REPORT.getValue())) {
                 String year = request.getParameter("year");
-                int semeter = Integer.parseInt(request.getParameter("semeter"));
+                String s = request.getParameter("semeter");
+                int semeter = -1;
+                if ((s != null) || !s.isEmpty()) {
+                    if (s.equals("1"))
+                        semeter = 1;
+                    else if (s.equals("2"))
+                        semeter = 2;
+                }
                 List<TrainClass> trainClassReg = getTrainClassByYearAndSemeter(
                                                     year, semeter);
                 
                 if ((trainClassReg == null) || trainClassReg.isEmpty()) {
-                    out.println(Message.STUDENT_REPORT_NO_REPORT);
+                    out.println(Message.CLASS_REPORT_NO_REPORT);
                 } else {
                     writeTrainClassReport(trainClassReg, out);
                 }
-                
-                
-                
                 return;
             }
         } catch(Exception ex) {
@@ -150,16 +153,13 @@ public class ReportController extends HttpServlet {
      */
     private void writeRespond(List<Student> datas, PrintWriter out) {
         out.println("<table id = \"list-student\" name = \"list-student\">");
-
         out.println("<tr>"
                 + "<th> STT </th>"
-                + "<th> MSSV </th>"
                 + "<th> Họ và tên </th>"
                 + "</tr>");
         for (int i = 0; i < datas.size(); i++) {
             out.println("<tr>");
             out.println("<td> " + (i + 1) + " </td>");
-            out.println("<td> " + datas.get(i).getId() + " </td>");
             String method = String.format(" onclick=getDetailStudentReport('%s')>",
                                                         datas.get(i).getId());
             out.println("<td> <a href=\'#\'" + method
@@ -171,7 +171,7 @@ public class ReportController extends HttpServlet {
     }
 
     private List<TrainClass> getStudentReport(String mssv) {
-        return reportService.getTrainClassRegistered(mssv);
+        return reportService.getTrainClassRegistered(mssv, true);
     }
     
     private void writeStudentReportDetail(String student, List<TrainClass> datas,
