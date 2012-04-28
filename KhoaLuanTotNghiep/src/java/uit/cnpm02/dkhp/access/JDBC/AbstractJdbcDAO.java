@@ -675,8 +675,8 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        String whereClause = columnName + "like %" + values.toString() + "%";
-        try {
+        String whereClause = " " + columnName + " like '%" + values.toString() + "%'";
+        try { 
             String strQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_SELECT_ADVANCED),
                     new String[]{t.getTableName(),
                         whereClause
@@ -684,7 +684,8 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
 
             con = getConnection();
             statement = con.prepareStatement(strQuery);
-            statement.setObject(1, values);
+            //statement.setString(1, columnName);
+            //statement.setString(2, values.toString());
 
             rs = statement.executeQuery();
             while (rs.next()) {
