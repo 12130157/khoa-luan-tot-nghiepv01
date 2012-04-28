@@ -52,6 +52,7 @@ public class ReporterImpl implements IReporter {
         List<Student> students = new ArrayList<Student>(10);
         try {
             students = studentDao.findByColumName("HoTen", key);
+                    
             List<Student> student_1 = studentDao.findByColumName("MSSV", key);
             
             if ((student_1 != null) && !student_1.isEmpty()) {
@@ -62,7 +63,8 @@ public class ReporterImpl implements IReporter {
                 }
             }
         } catch (Exception ex) {
-            Logger.getLogger(ReporterImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(
+                    ReporterImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         return students;
@@ -101,6 +103,12 @@ public class ReporterImpl implements IReporter {
                                             int semeter) {
         // TODO: implementation
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<TrainClass> getTrainClass(String year, int semeter,
+                                                TrainClassStatus status) {
+        return null;
     }
     
 }

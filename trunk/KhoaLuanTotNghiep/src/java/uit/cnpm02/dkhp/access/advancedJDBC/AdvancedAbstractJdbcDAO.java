@@ -757,6 +757,7 @@ public abstract class AdvancedAbstractJdbcDAO<T extends IAdvancedJdbcModel<ID>, 
         }
         String[] idNames = t.getIdColumnName();
         Object[] idValues = new Object[idNames.length];
+        String whereStatement = columnName + " = ?";
         
         Connection con = null;
         PreparedStatement statement = null;
@@ -764,7 +765,7 @@ public abstract class AdvancedAbstractJdbcDAO<T extends IAdvancedJdbcModel<ID>, 
         try {
             String strQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_SELECT_ADVANCED),
                     new String[]{t.getTableName(),
-                        columnName
+                        whereStatement
                     });
 
             con = getConnection();
