@@ -86,10 +86,8 @@ public class ReporterImpl implements IReporter {
 
             // Retrivev correcspond trainclass
             for (Registration r : regs) {
-                List<TrainClass> clazzTemp = classDao.findByColumNames(
-                        new String[] {"MaLopHoc", "MSSV"},
-                        new Object[] {r.getId().getClassCode(),
-                                        r.getId().getStudentCode()});
+                List<TrainClass> clazzTemp = classDao.findByColumName(
+                        "MaLopHoc",r.getId().getClassCode());
                 //
                 // Note: In this case, the clazzTemp will be unique or empty.
                 //
@@ -126,35 +124,40 @@ public class ReporterImpl implements IReporter {
     @Override
     public List<TrainClass> getTrainClass(String year, int semeter,
                                                 TrainClassStatus status) {
+        List<TrainClass> results = new ArrayList<TrainClass>(10);
         try {
-            String[] columnName = new String[3];
-            Object[] values = new Object[3];
+            List<String> columnName = new ArrayList<String>(10);
+            List<Object> values = new ArrayList<Object>(10);
             
-            int count = 0;
             if ((year != null)
                     && !year.isEmpty()
                     && !year.equalsIgnoreCase("all")) {
-                columnName[count] = "NamHoc";
-                values[count] = year;
-                count ++;
+                columnName.add("NamHoc");
+                values.add(year);
             }
             if (semeter > 0) {
-                columnName[count] = "HocKy";
-                values[count] = semeter;
-                count ++;
+                columnName.add("HocKy");
+                values.add(semeter);
             }
-            
             if (status != TrainClassStatus.ALL) {
-                columnName[count] = "TrangThai";
-                values[count] = status.getValue();
+                columnName.add("TrangThai");
+                values.add(status.getValue());
             }
+
+            String[] strColumnNames = (String[])columnName.toArray(
+                                                new String[columnName.size()]);
             
-            return classDao.findByColumNames(columnName, values);
+            if ((strColumnNames == null) || (strColumnNames.length <= 0)) {
+                results = classDao.findAll();
+            } else {
+                results = classDao.findByColumNames(
+                                        strColumnNames, values.toArray());
+            }
         } catch (Exception ex) {
             Logger.getLogger(
                     ReporterImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+        return results;
     }
     
 }
