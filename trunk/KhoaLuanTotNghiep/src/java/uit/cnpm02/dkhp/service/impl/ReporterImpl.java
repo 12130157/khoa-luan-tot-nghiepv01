@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.RegistrationDAO;
 import uit.cnpm02.dkhp.DAO.StudentDAO;
+import uit.cnpm02.dkhp.DAO.SubjectDAO;
 import uit.cnpm02.dkhp.DAO.TrainClassDAO;
 import uit.cnpm02.dkhp.model.Registration;
 import uit.cnpm02.dkhp.model.Student;
@@ -22,6 +23,7 @@ public class ReporterImpl implements IReporter {
     private StudentDAO studentDao = DAOFactory.getStudentDao();
     private RegistrationDAO regDao = DAOFactory.getRegistrationDAO();
     private TrainClassDAO classDao = DAOFactory.getTrainClassDAO();
+    private SubjectDAO subjectDao = DAOFactory.getSubjectDao();
     
     private static Object mutex = new Object();
     
@@ -71,19 +73,35 @@ public class ReporterImpl implements IReporter {
     }
 
     @Override
-    public List<TrainClass> getTrainClassRegistered(String mssv) {
+    public List<TrainClass> getTrainClassRegistered(String mssv,
+                                                    boolean fullInfor) {
         List<TrainClass> results = new ArrayList<TrainClass>(10);
 
         try {
+            // Retrieve student's registration
             List<Registration> regs = regDao.findByColumName("MSSV", mssv);
             if ((regs == null) || regs.isEmpty()) {
                 return null;
             }
 
+            // Retrivev correcspond trainclass
             for (Registration r : regs) {
-                List<TrainClass> clazzTemp = classDao.findByColumName(
-                                        "MaLopHoc", r.getId().getClassCode());
+                List<TrainClass> clazzTemp = classDao.findByColumNames(
+                        new String[] {"MaLopHoc", "MSSV"},
+                        new Object[] {r.getId().getClassCode(),
+                                        r.getId().getStudentCode()});
+                //
+                // Note: In this case, the clazzTemp will be unique or empty.
+                //
                 if ((clazzTemp != null) && !clazzTemp.isEmpty()) {
+                    // Update full information
+                    if (fullInfor) {
+                        for (TrainClass t : clazzTemp) {
+                            String subjectName = subjectDao.findById(
+                                        t.getSubjectCode()).getSubjectName();
+                            t.setSubjectName(subjectName);
+                        }
+                    }
                     results.addAll(clazzTemp);
                 }
             }
@@ -108,6 +126,34 @@ public class ReporterImpl implements IReporter {
     @Override
     public List<TrainClass> getTrainClass(String year, int semeter,
                                                 TrainClassStatus status) {
+        try {
+            String[] columnName = new String[3];
+            Object[] values = new Object[3];
+            
+            int count = 0;
+            if ((year != null)
+                    && !year.isEmpty()
+                    && !year.equalsIgnoreCase("all")) {
+                columnName[count] = "NamHoc";
+                values[count] = year;
+                count ++;
+            }
+            if (semeter > 0) {
+                columnName[count] = "HocKy";
+                values[count] = semeter;
+                count ++;
+            }
+            
+            if (status != TrainClassStatus.ALL) {
+                columnName[count] = "TrangThai";
+                values[count] = status.getValue();
+            }
+            
+            return classDao.findByColumNames(columnName, values);
+        } catch (Exception ex) {
+            Logger.getLogger(
+                    ReporterImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return null;
     }
     
