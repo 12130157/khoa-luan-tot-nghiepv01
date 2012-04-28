@@ -110,6 +110,7 @@
                             <td>
                                 <b>Năm học: </b>
                                 <select id="year" name="year" onchange="">
+                                <option value="*"> All </option>
                                 <%
                                 int currentYear = Calendar.getInstance().get(Calendar.YEAR);
                                 if (currentYear <= 2007)
@@ -127,17 +128,18 @@
                             <td>
                                 <b>Học Kỳ: </b>
                                 <select id="semeter" name="semeter" onchange="">
+                                    <option value="*"> All </option>
                                     <option value="1"> 1 </option>
                                     <option value="2"> 2 </option>
                                 </select>
                             </td>
                             <td>
-                                <input type="button" value="Tìm" onclick="" />
+                                <input type="button" value="Tìm" onclick="getTrainClassReport()" />
                             </td>
                         </tr>
                     </table>
                     
-                    <div id="result">
+                    <div id="trainclass-report">
                         <table>
                             <tr>
                                 <th></th>
@@ -157,6 +159,9 @@
                             </tr>
                         </table>
                     </div>
+                    <div id="">
+                        <a href="">Download file Excel</a>
+                    </div>
                     
                         
                 </div>
@@ -173,7 +178,9 @@
     <script  type = "text/javascript" >
 
         var http = createRequestObject();
-        //numpage = document.getElementById("numpage").value;
+        //
+        // Search Student
+        //
         function SendRequestCreateNewTrainClass(){
             var search = document.getElementById("search-student").value;
              if (http) {
@@ -192,7 +199,7 @@
          }
          
          //
-         //
+         // Get student Report
          //
          function getDetailStudentReport(mssv) {
             //var search = document.getElementById("search-student").value;
@@ -207,6 +214,28 @@
          function handleResponseStudentReport() {
              if(http.readyState == 4 && http.status == 200){
                  var detail=document.getElementById("student-detail");
+                 detail.innerHTML=http.responseText;
+             }
+         }
+         
+         //
+         // Get TrainClass report
+         //
+         function getTrainClassReport() {
+            var year = document.getElementById("year").value;
+            var semeter = document.getElementById("semeter").value;
+            if (http) {
+                http.open("GET", "../../ReportController?action=class-report"
+                    + "&year=" + year
+                    + "&semeter=" + semeter, true);
+                http.onreadystatechange = handleResponseTrainClassReport;
+                http.send(null);
+              }
+         }
+         
+         function handleResponseTrainClassReport() {
+             if(http.readyState == 4 && http.status == 200){
+                 var detail=document.getElementById("trainclass-report");
                  detail.innerHTML=http.responseText;
              }
          }
