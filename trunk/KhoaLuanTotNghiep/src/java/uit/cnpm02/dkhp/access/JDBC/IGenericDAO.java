@@ -90,6 +90,20 @@ public interface IGenericDAO<T extends IModel<ID>, ID extends Serializable> {
          * @throws Exception 
          */
         public List<T> findByColumName(String columnName, Object values) throws Exception;
+        
+        /**
+         * Find list entities by a specify fields
+         * The set of columnName and set of values must be
+         * had the same of size.
+         * 
+         * @param columnName set of column name
+         * @param values set of values correcspond with column name
+         * @return List of models matched.
+         * @throws Exception An exception should be thrown if query
+         * process get error.
+         */
+        public List<T> findByColumNames(String[] columnName, Object[] values) throws Exception;
+        
 	/**
 	 * Update a modified model object.
 	 * 

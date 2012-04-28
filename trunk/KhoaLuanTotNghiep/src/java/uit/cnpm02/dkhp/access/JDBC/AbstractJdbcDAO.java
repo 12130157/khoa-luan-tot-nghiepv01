@@ -710,6 +710,69 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
             close(con);
         }
     }
+    
+    @Override
+    public List<T> findByColumNames(String[] columnName, Object[] values)
+                                                            throws Exception {
+        checkModelWellDefined();
+        if ((columnName == null) || (columnName.length <= 0)
+                || (values == null) || (values.length <= 0)
+                || columnName.length != values.length) {
+            throw new NullPointerException(
+                    "ColumnNames and values don't matched to gether");
+        }
+
+        ArrayList<T> results = new ArrayList<T>(10);
+
+        T t = createModel();
+        if (t == null) {
+            throw new Exception("Cannot initialize the " + modelClazz.getName()
+                    + " class");
+        }
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        StringBuffer whereClause = new StringBuffer();
+        //String whereClause = " ";// + columnName + " like '%" + values.toString() + "%'";
+        whereClause.append(" " + columnName[0] + " = ?");
+        for (int i = 1; i < columnName.length; i++) {
+            whereClause.append(" And " + columnName[i] + " = ?");
+        }
+        try { 
+            String strQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_SELECT_ADVANCED),
+                    new String[]{t.getTableName(),
+                        whereClause.toString()
+                    });
+
+            con = getConnection();
+            statement = con.prepareStatement(strQuery);
+            for (int i = 0; i < values.length; i++) {
+                statement.setObject(i + 1, values[i]);
+            }
+
+            rs = statement.executeQuery();
+            while (rs.next()) {
+                T ti = createModel();
+                Object[] obj = new Object[t.getColumnNames().length];
+                for (int i = 0; i < obj.length; i++) {
+                    obj[i] = rs.getObject(ti.getColumnNames()[i]);
+                }
+                ID id = (ID) rs.getObject(ti.getIdColumnName());
+
+                ti.setId(id);
+                ti.setColumnValues(obj);
+                results.add(ti);
+            }
+
+            return results;
+
+        } catch (SQLException e) {
+            throw new Exception(e);
+        } finally {
+            close(rs, statement);
+            close(con);
+        }
+    }
 
     @Override
     public List<T> findByIds(Collection<ID> ids, boolean lock)

@@ -799,6 +799,76 @@ public abstract class AdvancedAbstractJdbcDAO<T extends IAdvancedJdbcModel<ID>, 
             close(con);
         }
     }
+    
+    @Override
+    public List<T> findByColumNames(String[] columnName, Object[] values)
+                                                        throws Exception {
+        checkModelWellDefined();
+        if ((columnName == null) || (columnName.length <= 0)
+                || (values == null) || (values.length <= 0)
+                || columnName.length != values.length) {
+            throw new NullPointerException(
+                    "ColumnNames and values don't matched to gether");
+        }
+
+        ArrayList<T> results = new ArrayList<T>(10);
+
+        T t = createModel();
+        if (t == null) {
+            throw new Exception("Cannot initialize the " + modelClazz.getName()
+                    + " class");
+        }
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        String[] idNames = t.getIdColumnName();
+        Object[] idValues = new Object[idNames.length];
+        
+        StringBuffer whereClause = new StringBuffer();
+        whereClause.append(" " + columnName[0] + " = ?");
+        for (int i = 1; i < columnName.length; i++) {
+            whereClause.append(" And " + columnName[i] + " = ?");
+        }
+        try { 
+            String strQuery = LangUtils.bind(SQLUtils.getSql(
+                                        Queries.SQL_SELECT_ADVANCED),
+                                        new String[]{t.getTableName(),
+                                        whereClause.toString()
+                    });
+
+            con = getConnection();
+            statement = con.prepareStatement(strQuery);
+            for (int i = 0; i < values.length; i++) {
+                statement.setObject(i + 1, values[i]);
+            }
+
+            rs = statement.executeQuery();
+            while (rs.next()) {
+                Object[] obj = new Object[t.getColumnNames().length];
+                for (int j = 0; j < obj.length; j++) {
+                    obj[j] = rs.getObject(t.getColumnNames()[j]);
+                }
+                T ti = createModel();
+                ID id = createID();
+                for (int k = 0; k < idNames.length; k ++) {
+                    idValues[k] = rs.getObject(idNames[k]);
+                } 
+                id.setIDValues(idValues);
+
+                ti.setId(id);
+                ti.setColumnValues(obj);
+                results.add(ti);
+            }
+
+            return results;
+
+        } catch (SQLException e) {
+            throw new Exception(e);
+        } finally {
+            close(rs, statement);
+            close(con);
+        }
+    }
 
     @Override
     public T update(T t) throws Exception {

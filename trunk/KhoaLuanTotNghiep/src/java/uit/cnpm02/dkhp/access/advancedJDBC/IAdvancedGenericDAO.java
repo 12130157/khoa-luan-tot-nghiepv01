@@ -85,6 +85,20 @@ public interface IAdvancedGenericDAO<T extends IAdvancedModel<ID>, ID extends II
     List<T> findAll() throws Exception;
 
     List<T> findByColumName(String columnName, Object values) throws Exception;
+    
+    /**
+         * Find list entities by a specify fields
+         * The set of columnName and set of values must be
+         * had the same of size.
+         * 
+         * @param columnName set of column name
+         * @param values set of values correcspond with column name
+         * @return List of models matched.
+         * @throws Exception An exception should be thrown if query
+         * process get error.
+         */
+        public List<T> findByColumNames(String[] columnName, Object[] values)
+                                                            throws Exception;
     /**
      * Update a modified model object.
      * 
