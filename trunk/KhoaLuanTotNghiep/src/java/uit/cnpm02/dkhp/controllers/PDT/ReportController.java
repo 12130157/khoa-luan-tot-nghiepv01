@@ -87,6 +87,14 @@ public class ReportController extends HttpServlet {
                     else if (s.equals("2"))
                         semeter = 2;
                 }
+                if ((year == null)
+                        || year.isEmpty()
+                        || year.equalsIgnoreCase("All")
+                        || year.equals("*")) {
+                    
+                    year = "";
+                }
+                
                 List<TrainClass> trainClassReg = getTrainClassByYearAndSemeter(
                                                     year, semeter);
                 
