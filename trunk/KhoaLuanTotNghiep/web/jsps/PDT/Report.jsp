@@ -15,8 +15,27 @@
         <title>Report</title>
         <style media="all" type="text/css">
 
+            table {
+                /*width: 100%;*/
+                padding-left: 10px;
+                padding-right: 10px;
+                text-align: center;
+
+            }
+            table th {
+                background-color:#00ff00;
+                height: 30px;
+                border-color: black;
+            }
+
+            table td {
+                text-align: center;
+                background-color: #5F676D;
+            }
+            
             #report-range {
-                width: 100%;
+                /*width: 100%;*/
+                float: left;
                 padding-left: 10px;
                 padding-right: 10px;
                 padding-bottom: 25px;
@@ -24,6 +43,18 @@
 
             }
             
+            #list-student {
+                float: left;
+                
+                height:250px;
+                overflow:auto;
+            }
+            #student-detail {
+                float: none;
+                padding-left: 12px;
+                border-width: 1px;
+                border-color: #00ff00;
+            }
             #report-range td {
                 text-align: left;
             }
@@ -59,7 +90,7 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <div id="report-range">
+                <div id="title">
                     THONG KE THEO SINH VIEN
                 </div>
                 <div id="search">
@@ -75,24 +106,25 @@
                         </tr>
                     </table>
                 </div>
-                <div id="list-student">
-                    <table>
-                        <tr>
-                            <td>
-                                
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <hr/><hr/>
-                <div id="student-detail">
-                    <table>
-                        <tr>
-                            <td>
-                                
-                            </td>
-                        </tr>
-                    </table>
+                <div>
+                    <div id="list-student">
+                        <table>
+                            <tr>
+                                <td>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="student-detail">
+                        <table>
+                            <tr>
+                                <td>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
                 <hr/><hr/><br>
 
@@ -101,11 +133,6 @@
                 <div id = "report-range">
                     THONG KE THEO LOP HOC
                     <table>
-                        <tr>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                        </tr>
                         <tr>
                             <td>
                                 <b>Năm học: </b>
@@ -141,10 +168,6 @@
                     
                     <div id="trainclass-report">
                         <table>
-                            <tr>
-                                <th></th>
-                                <th></th>
-                            </tr>
                             <tr>
                                 <td>Tổng số lớp đã tạo: </td>
                                 <td>120</td>
@@ -211,6 +234,16 @@
               }
          }
          
+         function sortTrainClass(by, type) {
+             if (http) {
+                http.open("GET", "../../ReportController?action=sort-student-report"
+                    + "&by=" + by
+                    + "&type=" + type, true);
+                http.onreadystatechange = handleResponseStudentReport;
+                http.send(null);
+              }
+         }
+         
          function handleResponseStudentReport() {
              if(http.readyState == 4 && http.status == 200){
                  var detail=document.getElementById("student-detail");
@@ -239,5 +272,7 @@
                  detail.innerHTML=http.responseText;
              }
          }
+         
+         
     </script>
 </html>
