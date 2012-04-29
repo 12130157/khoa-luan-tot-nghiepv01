@@ -134,7 +134,7 @@
                     THONG KE THEO LOP HOC
                     <table>
                         <tr>
-                            <td>
+                            <th>
                                 <b>Năm học: </b>
                                 <select id="year" name="year" onchange="">
                                 <option value="*"> All </option>
@@ -151,18 +151,18 @@
                                 <%}
                                 %>
                                 </select>
-                            </td>
-                            <td>
+                            </th>
+                            <th>
                                 <b>Học Kỳ: </b>
                                 <select id="semeter" name="semeter" onchange="">
                                     <option value="*"> All </option>
                                     <option value="1"> 1 </option>
                                     <option value="2"> 2 </option>
                                 </select>
-                            </td>
-                            <td>
+                            </th>
+                            <th>
                                 <input type="button" value="Tìm" onclick="getTrainClassReport()" />
-                            </td>
+                            </th>
                         </tr>
                     </table>
                     
