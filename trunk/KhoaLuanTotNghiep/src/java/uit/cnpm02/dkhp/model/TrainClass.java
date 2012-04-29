@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uit.cnpm02.dkhp.model;
 
 import java.util.Date;
@@ -158,6 +154,30 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
     
     public TrainClassStatus getStatus() {
         return status;
+    }
+    
+    public int compare(TrainClass obj, String by) {
+        /**
+         * MaLopHoc
+         * MonHoc
+         * NamHoc
+         * HocKy
+         */
+        int result = 0;
+        if (by.equalsIgnoreCase("MaLopHoc")) {
+            result = this.getId().getClassCode()
+                    .compareTo(obj.getId().getClassCode());
+        } else if (by.equalsIgnoreCase("MonHoc")) {
+            result = this.getSubjectName()
+                    .compareTo(obj.getSubjectName());
+        } else if (by.equalsIgnoreCase("NamHoc")) {
+            result = this.getId().getYear()
+                    .compareTo(obj.getId().getYear());
+        } else if (by.equalsIgnoreCase("HocKy")) {
+            result = this.getId().getSemester() - obj.getId().getSemester();
+        }
+        
+        return result;
     }
     
     @Override
