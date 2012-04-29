@@ -13,8 +13,10 @@ import javax.servlet.http.HttpServletResponse;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.service.IReporter;
+import uit.cnpm02.dkhp.service.IStudentService;
 import uit.cnpm02.dkhp.service.TrainClassStatus;
 import uit.cnpm02.dkhp.service.impl.ReporterImpl;
+import uit.cnpm02.dkhp.service.impl.StudentServiceImpl;
 import uit.cnpm02.dkhp.utilities.Message;
 
 /**
@@ -25,6 +27,11 @@ import uit.cnpm02.dkhp.utilities.Message;
 public class ReportController extends HttpServlet {
     
     private IReporter reportService = new ReporterImpl();
+    private IStudentService studentService = new StudentServiceImpl();
+    
+    private String sortType = "ASC";
+    /**Store curren process student**/
+    private String mssv = "";
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and
@@ -54,6 +61,7 @@ public class ReportController extends HttpServlet {
             } else if (requestAction.equals(ReportFunctionSupported.
                                                 SEARCH_STUDENT.getValue())) {
                 // List existed TrainClass, Pagging setup
+                /**The key should be student's name or student's id**/
                 String key = request.getParameter("value");
                 if (key != null) {
                     List<Student> students = searchStudent(key);
@@ -67,8 +75,35 @@ public class ReportController extends HttpServlet {
                 }
                 return;
             } else if (requestAction.equals(ReportFunctionSupported.
+                                                STUDENT_REPORT_SORT.getValue())) {
+                // List existed TrainClass, Pagging setup
+                String by = request.getParameter("by");
+                String type = request.getParameter("type");
+                if (type != null) {
+                    if (!type.equalsIgnoreCase("ASC")
+                            && !type.equalsIgnoreCase("DES")) {
+                        type = "ASC";
+                    }
+                    List<TrainClass> trainClassReg = reportService.sort(by, type);
+                    if ((trainClassReg != null) && !trainClassReg.isEmpty()) {
+                        writeStudentReportDetail(mssv, trainClassReg, out);
+                    } else {
+                        out.println(Message.STUDENT_REPORT_NO_REPORT);
+                    }
+                    
+                    if (sortType.equalsIgnoreCase("ASC"))
+                        sortType = "DES";
+                    else
+                        sortType = "ASC";
+                    //103/33 duong dien cao the
+                    return;
+                } else {
+                    out.println(Message.STUDENT_SEARCH_NOTFOUND);
+                }
+                return;
+            } else if (requestAction.equals(ReportFunctionSupported.
                                                 STUDENT_REPORT.getValue())) {
-                String mssv = request.getParameter("value");
+                mssv = request.getParameter("value");
                 List<TrainClass> trainClassReg = getStudentReport(mssv);
                 if ((trainClassReg != null) && !trainClassReg.isEmpty()) {
                     writeStudentReportDetail(mssv, trainClassReg, out);
@@ -182,17 +217,27 @@ public class ReportController extends HttpServlet {
         return reportService.getTrainClassRegistered(mssv, true);
     }
     
-    private void writeStudentReportDetail(String student, List<TrainClass> datas,
+    private void writeStudentReportDetail(String mssv, List<TrainClass> datas,
                                                         PrintWriter out) {
-        out.println("Danh sach cac mon hoc " + student + " da dang ky:");
+        String studentName = studentService.getStudent(mssv).getFullName();
+        
+        out.println("Danh sach cac mon hoc <b>" + studentName + "</b> da dang ky:");
         out.println("<table id = \"student-report\" name = \"student-report\">");
 
         out.println("<tr>"
                 + "<th> STT </th>"
-                + "<th> Ma lop </th>"
-                + "<th> Mon hoc </th>"
-                + "<th> Nam hoc </th>"
-                + "<th> Hoc ky </th>"
+                + "<th> <a href='#'"
+                    + " onclick=\"sortTrainClass('MaLopHoc', '" + sortType + "')\">"
+                    + " Ma lop </a></th>"
+                + "<th> <a href='#'"
+                    + " onclick=\"sortTrainClass('MonHoc', '" + sortType + "')\">"
+                    + " Mon hoc </a></th>"
+                + "<th> <a href='#'"
+                    + " onclick=\"sortTrainClass('NamHoc', '" + sortType + "')\">"
+                    + " Nam hoc </a></th>"
+                + "<th> <a href = '#'"
+                    + " onclick=\"sortTrainClass('HocKy', '" + sortType + "')\">"
+                    + "Hoc ky </a></th>"
                 + "</tr>");
         for (int i = 0; i < datas.size(); i++) {
             out.println("<tr>");
@@ -214,9 +259,10 @@ public class ReportController extends HttpServlet {
         return reportService.getTrainClass(year, semeter, TrainClassStatus.ALL);
     }
 
-    private void writeTrainClassReport(List<TrainClass> trainClassReg, PrintWriter out) {
+    private void writeTrainClassReport(List<TrainClass> trainClassReg,
+                                                        PrintWriter out) {
         
-        out.println("<table id = \"trainclass-report\" name = \"trainclass-report\">");
+        out.println("<table>");
 
         /**
             Tổng số lớp đã tạo: 	120
@@ -264,6 +310,7 @@ public class ReportController extends HttpServlet {
         DEFAULT("default"), // List first page of class opened.
         SEARCH_STUDENT("search_student"),
         STUDENT_REPORT("student-report"),
+        STUDENT_REPORT_SORT("sort-student-report"),
         CLASS_REPORT("class-report");
         
         private String description;

@@ -18,6 +18,13 @@ public interface IReporter {
     List<TrainClass> getOpened(String year, int semeter);
     List<TrainClass> getTrainClass(String year, int semeter,
             TrainClassStatus status);
+    /**
+     * 
+     * @param ti
+     * @param type default ASC
+     * @return 
+     */
+    List<TrainClass> sort(String by, String type);
     
     //
     // Student report

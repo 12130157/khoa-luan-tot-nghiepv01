@@ -1,6 +1,9 @@
 package uit.cnpm02.dkhp.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,15 +23,25 @@ import uit.cnpm02.dkhp.service.TrainClassStatus;
  * @author LocNguyen
  */
 public class ReporterImpl implements IReporter {
-    private StudentDAO studentDao = DAOFactory.getStudentDao();
-    private RegistrationDAO regDao = DAOFactory.getRegistrationDAO();
-    private TrainClassDAO classDao = DAOFactory.getTrainClassDAO();
-    private SubjectDAO subjectDao = DAOFactory.getSubjectDao();
+    private StudentDAO studentDao;
+    private RegistrationDAO regDao;
+    private TrainClassDAO classDao;
+    private SubjectDAO subjectDao;
+    
+    /**
+     * Keep back data for search purpose
+     */
+    private List<TrainClass> trainClasses = new ArrayList<TrainClass>(10);
     
     private static Object mutex = new Object();
     
     public ReporterImpl() {
         super();
+
+        studentDao = DAOFactory.getStudentDao();
+        regDao = DAOFactory.getRegistrationDAO();
+        classDao = DAOFactory.getTrainClassDAO();
+        subjectDao = DAOFactory.getSubjectDao();
     }
 
     @Override
@@ -108,6 +121,7 @@ public class ReporterImpl implements IReporter {
             Logger.getLogger(ReporterImpl.class.getName())
                     .log(Level.SEVERE, null, ex);
         }
+        trainClasses = results;
         return results;
         //TODO: tobe tested.
     }
@@ -159,5 +173,25 @@ public class ReporterImpl implements IReporter {
         }
         return results;
     }
-    
+
+    @Override
+    public List<TrainClass> sort(final String by, final String type) {
+        if ((trainClasses == null) || trainClasses.isEmpty()) {
+            return trainClasses;
+        }
+        
+        Collections.sort(trainClasses, new Comparator<TrainClass>() {
+
+            @Override
+            public int compare(TrainClass o1, TrainClass o2) {
+                if (type.equals("ASC"))
+                    return o1.compare(o2, by);
+                else
+                    return o2.compare(o1, by);
+            }
+
+        });
+        
+        return trainClasses;
+    }
 }
