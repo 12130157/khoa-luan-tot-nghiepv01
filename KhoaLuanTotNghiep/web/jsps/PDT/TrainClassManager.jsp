@@ -65,6 +65,7 @@
         session.removeAttribute("error");
         
         List<TrainClass> openedClazzs = (List<TrainClass>) session.getAttribute("train-clazzs");
+       List<String> yearList=(List<String>) session.getAttribute("yearList");
                 
     %>
     <body>
@@ -76,7 +77,7 @@
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
                 <div id="title">
-                    <u><h3>Danh sách lớp học đã có</h3></u>
+                    <u><h3>Danh sách lớp học</h3></u>
                 </div>
                 <hr/><hr/><br>
 
@@ -86,8 +87,8 @@
                     <div style="padding-bottom: 10px;
                          padding-left: 10px;
                          ">
-                        <input type = "text" placeholder = "Nhập thông tin tìm kiếm" />
-                        <input type = "button" onclick = "" value = "Tìm">
+                        <input type = "text" id="searchValue" placeholder = "Nhập thông tin tìm kiếm" />
+                        <input type = "button" onclick = "search()" value = "Tìm">
                     </div>
                                       
                     <div id="error">
@@ -96,7 +97,21 @@
                                 <%= error %>
                             <%}
                         %>
-                    </div>
+                    </div><br>
+                    <form id="trainclaslist">
+                    <p id="filtername" align="left">
+                        Năm học: <select style="width:90px" name="year" id="year" onchange="reloadResult()">
+                                    <option value="all">Tất cả</option>
+                                    <% for (int i = 0; i < yearList.size(); i++) {%>
+                                    <option value="<%=yearList.get(i)%>"><%=yearList.get(i)%></option>
+                                    <%}%>
+                                </select>
+                                Học kỳ: <select style="width:70px" name="semester" id="semester" onchange="reloadResult()">
+                                    <option value="0">Tất cả</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                </select>
+                    </p>
                     <p id="createLabel" align="right"><b><a href="../../ManageClassController?action=pre_create">Mở lớp học mới</a></b></p>
                     <table id = "table-list-train-class" name = "table-list-train-class">
                         <tr>
@@ -108,13 +123,14 @@
                         <th> Phòng </th>
                         <th> Đăng ký </th>
                         <th>Ngày thi</th>
-                        <%--Should be sorted when click on table's header--%>
+                        <th>Hủy</th>
+                        <th>Đóng</th>
                         </tr>
                         <%if ((openedClazzs != null) && (!openedClazzs.isEmpty())) {%>
                         <% for (int i = 0; i < openedClazzs.size(); i++) {%>
                         <tr>
                         <td> <%= (i + 1)%> </td>
-                        <td> <a href="../../ManageClassController?action=detail&classID=<%= openedClazzs.get(i).getId().getClassCode()%>"><%= openedClazzs.get(i).getId().getClassCode() %> </a></td>
+                        <td> <a href="../../ManageClassController?action=detail&classID=<%= openedClazzs.get(i).getId().getClassCode()%>&year=<%= openedClazzs.get(i).getId().getYear()%>&semester=<%= openedClazzs.get(i).getId().getSemester()%>"><%= openedClazzs.get(i).getId().getClassCode() %> </a></td>
                         <td> <%= openedClazzs.get(i).getSubjectName()%> </td>
                         <td> <%= openedClazzs.get(i).getLectturerName()%> </td>
                         <td> <%= openedClazzs.get(i).getStudyDate()%> </td>
@@ -125,6 +141,8 @@
                             <%}else {%>
                             <td><%=openedClazzs.get(i).getTestDate()%></td>
                             <%}%>
+                            <td><a href="../../ManageClassController?action=cancel&classID=<%= openedClazzs.get(i).getId().getClassCode()%>">Hủy</a></td>
+                            <td><a href="../../ManageClassController?action=close&classID=<%= openedClazzs.get(i).getId().getClassCode()%>">Đóng</a></td>
                         <% }%>
                         </tr>
                         <%}%>
@@ -136,6 +154,7 @@
                         <input type="button" value=">>|" onclick="endPage()"/>
                         <input type="hidden" value="<%= numpage %>" id = "numpage" />
                     </div>
+                    </form>
                     <br/>
                 </div>
             </div><!--End Contents-->
@@ -147,10 +166,10 @@
         <!--End Wrapper-->
     </body>
 
-    <script src="../../javascripts/UtilTable.js"></script>
     <script src="../../javascripts/AjaxUtil.js"></script>
     <script  type = "text/javascript" >
-        var currentpage = 1;
+        var http = createRequestObject();
+        /*var currentpage = 1;
         var http = createRequestObject();
         var numpage = document.getElementById("numpage").value;
         function firstPage(){
@@ -178,82 +197,39 @@
                 submitSearchSubject("../../ManageSubjectController?function=list_subject&ajax=true&currentpage=" + currentpage);
             }
         }
-        
-        /*
-         * Util functions for get data from a table
-         * 
-         * @Param tableId table's id
-         */
-        function getDataStringFromTable(tableID) {
-            var datas = '';
-            var selectOne = false;
-            try {
-                var table = document.getElementById(tableID);
-                var rowCount = table.rows.length;
-                for(var i = 1; i < rowCount; i++) {
-                    var row = table.rows[i];
-                    var chkbox = row.cells[0].childNodes[0];
-                    if((null != chkbox) && (true == chkbox.checked)) {
-                        if (validateSubjectValue(row) == false) {
-                            alert('Vui lòng nh\u1eadp đầy thông tin cần thiết cho dòng ' + i);
-                            return;
-                        }
-                        if (selectOne == false)
-                            selectOne = true;
-                        var elTableCells = row.getElementsByTagName('td');
-                        var currentData = '';
-                        currentData += elTableCells[2].childNodes[0].value + ','; //Ma Mon Hoc
-                        currentData += elTableCells[3].childNodes[0].value + ','; //Ten Mon Hoc
-                        currentData += elTableCells[4].childNodes[0].value + ','; //So TCLT
-                        currentData += row.cells[5].childNodes[0].value; //So TCTH
-                        
-                        if (i < (rowCount - 1)) {
-                            currentData += ';';
-                        }
-                        
-                        datas += currentData;
-                    }
-                }
-            }catch(e) {
-                alert(e);
-            }
-            if (selectOne == false) {
-                alert('Vui lòng ch\u1ecdn ít nhất một hàng.');
-                return;
-            }
-            
-            return datas;
+        */
+       function reloadResult(){
+           
+             year=document.getElementById("year").value;
+             semester=document.getElementById("semester").value;
+            SendRequest();
         }
-        
-        /**
-         * Validate the input data is correct.
-         * 
-         * @Param row row of table.
-         */
-        function validateSubjectValue(row) {
-            var elTableCells = row. getElementsByTagName('td');
-            if ((elTableCells[2].childNodes[0].value == '') ||
-                (elTableCells[3].childNodes[0].value == '') ||
-                (elTableCells[4].childNodes[0].value == '')) {
-                return false;
-            }
-            
-            return true;
-        }
-        
-        function submitSearchSubject(pagename) {
-            if(http){
-                http.open("GET", pagename ,true);
+        function SendRequest(){
+              if(http){
+                http.open("GET", "../../ManageClassController?action=filter&year="+year+"&semester="+semester  ,true);
                 http.onreadystatechange = searchResponeHandler;
                 http.send(null);
-            }
-        }
-        
-        function searchResponeHandler() {
+             }
+         }
+       function searchResponeHandler() {
             if(http.readyState == 4 && http.status == 200){
-                var detail=document.getElementById("tablelistsubject");
+                var detail=document.getElementById("table-list-train-class");
                 detail.innerHTML=http.responseText;
             }
+        }
+        function search(){
+           value= document.getElementById("searchValue").value;
+           if(value.length == 0 )
+               alert("Chưa nhập từ khóa tìm kiếm");
+           else
+           searchByInputValue();
+        }
+        function searchByInputValue(){
+             if(http){
+                http.open("GET", "../../ManageClassController?action=search&value="+value  ,true);
+                http.onreadystatechange = searchResponeHandler;
+                http.send(null);
+             }
         }
     </script>
 </html>
