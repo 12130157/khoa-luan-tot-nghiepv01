@@ -11,7 +11,7 @@ import uit.cnpm02.dkhp.utilities.ExecuteResult;
  */
 public interface ITrainClassService {
     
-    List<TrainClass> getTrainClass(int currentPage);
+    List<TrainClass> getTrainClass(String year, int semester);
     
     List<TrainClass> getTrainClass();
     
