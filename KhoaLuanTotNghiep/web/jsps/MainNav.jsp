@@ -10,17 +10,21 @@
 
 <html>
     <style media="all" type="text/css">
+        #mainmenu{
+            z-index: 999;
+            overflow: visible;
+        }
         #mainmenu a{
             font-family:Arial, Helvetica, sans-serif;
             font-size:12px;
-            color:#ffffff;
+            color:#000;
             font-weight:bold;
             text-decoration:none;
             margin-left: 20px;
         }
         #mainmenu a:hover{
             color:red;
-            font-style: italic;
+            font-style: normal;
         }
         #mainmenu li{
             list-style:none;
@@ -39,14 +43,22 @@
         }
         #mainmenu ul li ul{
             position:absolute;
-            margin-left:10px;
-            display:none;
+            margin-left:-98px;
+            opacity:0;
             top: 322px;
-            left: 378px;
+            left: 300px;
+            -moz-transition-duration:1s;
+            -webkit-transition-duration:1s;
+            z-index: 0;
+             width: 15%;
+    
         }
+    
         #mainmenu li:hover>ul{
-            display:block;
-            width: 15%;
+            /*display:block;*/
+            opacity:1;
+        
+            left: 382px;
         }
     </style>
     <head>
