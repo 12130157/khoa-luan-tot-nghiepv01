@@ -35,6 +35,8 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
+                 <%@include file="../News.jsp" %>
+                <%--
                 <%
                     if (listNews != null) {
                         for (int i = 0; i < listNews.size(); i++) {
@@ -47,6 +49,7 @@
                             }
                         }
                     %>
+                --%>
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->

@@ -11,7 +11,7 @@
 
 <html>
     <head>
-        <link href="../../csss/menugv.css" rel="stylesheet" type="text/css" media="screen">
+        <link href="../../csss/menu.css" rel="stylesheet" type="text/css" media="screen">
 
     </head>
     <body>
@@ -30,7 +30,7 @@
             </OBJECT>
         </DIV>
     </div>
-    <div id = "menugv">
+    <div id = "menu">
         <ul>
              <li><a href="../../HomepageController?actor=Lecturer"> Trang chủ |</a></li>
              <li><a href="../HomepageController?action=view"> Thời khóa biểu |</a></li>
