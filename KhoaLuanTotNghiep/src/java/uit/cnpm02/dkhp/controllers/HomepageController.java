@@ -16,7 +16,6 @@ import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.NewsDAO;
 import uit.cnpm02.dkhp.model.Account;
 import uit.cnpm02.dkhp.model.News;
-import uit.cnpm02.dkhp.service.SessionManager;
 import uit.cnpm02.dkhp.utilities.password.PasswordProtector;
 
 /**
