@@ -182,11 +182,6 @@
                             </tr>
                         </table>
                     </div>
-                    <div id="">
-                        <a href="">Download file Excel</a>
-                    </div>
-                    
-                        
                 </div>
                 
             </div><!--End Contents-->

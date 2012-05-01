@@ -80,13 +80,8 @@
                     <div style="padding-bottom: 10px;
                          padding-left: 10px;
                          ">
-                        <input type = "text" placeholder = "Nhập thông tin tìm kiếm" />
-                        <input type = "button" onclick = "" value = "Tìm">
-                    </div>
-                    <div style="padding-bottom: 5px;
-                         padding-left: 10px;
-                         ">
-                        <input type = "button" onclick = "" value = "Xóa mục đã chọn">
+                        <input type = "text" placeholder = "Nhập thông tin tìm kiếm" id="search-box" />
+                        <input type = "button" onclick = "searchSubject()" value = "Tìm">
                     </div>
                     <form method="post" action="../../ManageSubjectController?function=add_subject">
                         <div style="padding-bottom: 5px;
@@ -106,15 +101,12 @@
                     </div>
                     <table id = "tablelistsubject" name = "tablelistsubject">
                         <tr>
-                        <th><INPUT type = "checkbox" 
-                                   name = "chkAll" 
-                                   onclick = "selectAll('tablelistsubject', 0)"/></th>
                         <th> STT </th>
-                        <th> Mã MH </th>
-                        <th> Tên Môn học </th>
-                        <th> Số TC </th>
-                        <th> Số TCLT </th>
-                        <th> Số TCTH </th>
+                        <th><a href="#" onclick="sort('MaMH', '')"> Mã MH </a></th>
+                        <th><a href="#" onclick="sort('TenMH', '')"> Tên Môn học </a></th>
+                        <th><a href="#" onclick="sort('SoTC', '')"> Số TC </a></th>
+                        <th><a href="#" onclick="sort('SoTCLT', '')"> Số TCLT </a></th>
+                        <th><a href="#" onclick="sort('SoTCTH', '')"> Số TCTH </a></th>
                         <th> Sửa </th>
                         <th> Xóa </th>
                         <%--Should be sorted when click on table's header--%>
@@ -122,7 +114,6 @@
                         <%if ((subjects != null) && !subjects.isEmpty()) {%>
                         <% for (int i = 0; i < subjects.size(); i++) {%>
                         <tr>
-                        <td><INPUT type="checkbox" name="chk<%= i%>"/></td>
                         <td> <%= (i + 1)%> </td>
                         <td> <%= subjects.get(i).getId()%> </td> 
                         <td> <%= subjects.get(i).getSubjectName()%> </td>
@@ -165,6 +156,7 @@
         var currentpage = 1;
         var http = createRequestObject();
         var numpage = document.getElementById("numpage").value;
+        var sortType = "ASC";
         function firstPage(){
             currentpage = 1;
             sendRequest();
@@ -191,68 +183,6 @@
             }
         }
         
-        /*
-         * Util functions for get data from a table
-         * 
-         * @Param tableId table's id
-         */
-        function getDataStringFromTable(tableID) {
-            var datas = '';
-            var selectOne = false;
-            try {
-                var table = document.getElementById(tableID);
-                var rowCount = table.rows.length;
-                for(var i = 1; i < rowCount; i++) {
-                    var row = table.rows[i];
-                    var chkbox = row.cells[0].childNodes[0];
-                    if((null != chkbox) && (true == chkbox.checked)) {
-                        if (validateSubjectValue(row) == false) {
-                            alert('Vui lòng nh\u1eadp đầy thông tin cần thiết cho dòng ' + i);
-                            return;
-                        }
-                        if (selectOne == false)
-                            selectOne = true;
-                        var elTableCells = row.getElementsByTagName('td');
-                        var currentData = '';
-                        currentData += elTableCells[2].childNodes[0].value + ','; //Ma Mon Hoc
-                        currentData += elTableCells[3].childNodes[0].value + ','; //Ten Mon Hoc
-                        currentData += elTableCells[4].childNodes[0].value + ','; //So TCLT
-                        currentData += row.cells[5].childNodes[0].value; //So TCTH
-                        
-                        if (i < (rowCount - 1)) {
-                            currentData += ';';
-                        }
-                        
-                        datas += currentData;
-                    }
-                }
-            }catch(e) {
-                alert(e);
-            }
-            if (selectOne == false) {
-                alert('Vui lòng ch\u1ecdn ít nhất một hàng.');
-                return;
-            }
-            
-            return datas;
-        }
-        
-        /**
-         * Validate the input data is correct.
-         * 
-         * @Param row row of table.
-         */
-        function validateSubjectValue(row) {
-            var elTableCells = row. getElementsByTagName('td');
-            if ((elTableCells[2].childNodes[0].value == '') ||
-                (elTableCells[3].childNodes[0].value == '') ||
-                (elTableCells[4].childNodes[0].value == '')) {
-                return false;
-            }
-            
-            return true;
-        }
-        
         function submitSearchSubject(pagename) {
             if(http){
                 http.open("GET", pagename ,true);
@@ -261,11 +191,25 @@
             }
         }
         
+        function searchSubject() {
+            var key = document.getElementById("search-box").value;
+            submitSearchSubject("../../ManageSubjectController?function=search&key=" + key);
+        }
+        
         function searchResponeHandler() {
             if(http.readyState == 4 && http.status == 200){
                 var detail=document.getElementById("tablelistsubject");
                 detail.innerHTML=http.responseText;
             }
+        }
+        
+        function sort(by, type) {
+            if (sortType == "ASC")
+                sortType = "DES";
+            else 
+                sortType = "ASC";
+            submitSearchSubject("../../ManageSubjectController?function=sort&by="
+                + by + "&type=" + sortType);
         }
     </script>
 </html>
