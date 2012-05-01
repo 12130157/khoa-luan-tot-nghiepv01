@@ -117,6 +117,8 @@ public class Subject extends  AbstractJdbcModel<String>{
                     numTC,
                     numTCLT,
                     numTCTH,
+                    facultyCode,
+                    type
                 };
     }
 
