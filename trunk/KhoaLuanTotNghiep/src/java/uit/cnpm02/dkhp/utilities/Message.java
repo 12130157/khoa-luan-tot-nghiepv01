@@ -24,4 +24,6 @@ public class Message {
     public static String REPORT_TRAINCLASS_IN_PROGRESS = "So lop dang hoc";
     public static String REPORT_TRAINCLASS_CANCELED = "So lop da bi huy";
     
+    public static String DOWNLOAD_FILE_ERROR = "Loi tai file";
+    
 }
