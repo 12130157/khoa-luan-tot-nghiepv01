@@ -28,24 +28,54 @@ public class TrainClassServiceImpl implements ITrainClassService {
     private LecturerDAO lectureDAO = DAOFactory.getLecturerDao();
     private RuleDAO ruleDao = DAOFactory.getRuleDao();
     
+    
     private static Object mutex = new Object();
     
     @Override
-    public List<TrainClass> getTrainClass(int status) {
-        List<TrainClass> trainClazzs = new ArrayList<TrainClass>(10);
+    public List<TrainClass> getTrainClass(String year, int semester) {
+        List<TrainClass> results = new ArrayList<TrainClass>(10);
         try {
             //if (currentPage < 1) {
             //    currentPage = 1;
             //}
             /*trainClazzs = classDAO.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT,
-                    currentPage,
-                    null, null);
-            */
-            trainClazzs = classDAO.findByStatus(status);
+            currentPage,
+            null, null);
+             */
+            // trainClazzs = classDAO.findByColumNames(new String[]{"NamHoc", "HocKy"}, new Object[]{year,semester});
+           
+            try {
+                List<String> columnName = new ArrayList<String>(10);
+                List<Object> values = new ArrayList<Object>(10);
+
+                if ((year != null)
+                        && !year.isEmpty()
+                        && !year.equalsIgnoreCase("all")) {
+                    columnName.add("NamHoc");
+                    values.add(year);
+                }
+                if (semester > 0) {
+                    columnName.add("HocKy");
+                    values.add(semester);
+                }
+
+                String[] strColumnNames = (String[]) columnName.toArray(
+                        new String[columnName.size()]);
+
+                if ((strColumnNames == null) || (strColumnNames.length <= 0)) {
+                    results = classDAO.findAll();
+                } else {
+                    results = classDAO.findByColumNames(
+                            strColumnNames, values.toArray());
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(
+                        ReporterImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
             // Update External Information
-            if ((trainClazzs != null) && !trainClazzs.isEmpty()) {
+            if ((results != null) && !results.isEmpty()) {
                 try {
-                    for (TrainClass t : trainClazzs) {
+                    for (TrainClass t : results) {
                         String subName = subjectDAO.findById(t.getSubjectCode()).getSubjectName();
                         String lecturerName = lectureDAO.findById(t.getLecturerCode()).getFullName();
 
@@ -59,7 +89,7 @@ public class TrainClassServiceImpl implements ITrainClassService {
         } catch (Exception ex) {
             Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return trainClazzs;
+        return results;
     }
 
     @Override

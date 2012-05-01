@@ -16,6 +16,7 @@ public class Constants {
     public static int ACCOUNT_TYPE_STUDENT = 3;
     public static String ACCOUNT_STATUS_NORMAL = "Bình thường";
     public static String ACCOUNT_STATUS_SPECIAL = "Đặc biệt";
+    public static String DATETIME_PARTERM_DEFAULT = "yyyy-mm-dd";
     /**News's type**/
     public static int NEWS_TYPE_READ = 0;
     public static int NEWS_TYPE_UNREAD = 1;
