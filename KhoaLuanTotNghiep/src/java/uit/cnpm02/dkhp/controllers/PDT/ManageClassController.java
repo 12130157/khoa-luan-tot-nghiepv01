@@ -2,10 +2,13 @@ package uit.cnpm02.dkhp.controllers.PDT;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.jms.Session;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -23,11 +26,10 @@ import uit.cnpm02.dkhp.model.TrainClassID;
 import uit.cnpm02.dkhp.model.web.LecturerWeb;
 import uit.cnpm02.dkhp.model.web.SubjectWeb;
 import uit.cnpm02.dkhp.service.ITrainClassService;
-import uit.cnpm02.dkhp.service.TrainClassStatus;
 import uit.cnpm02.dkhp.service.impl.TrainClassServiceImpl;
 import uit.cnpm02.dkhp.utilities.Constants;
+import uit.cnpm02.dkhp.utilities.DateTimeUtil;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
-import uit.cnpm02.dkhp.utilities.Message;
 
 /**
  * Manage Class
@@ -46,7 +48,7 @@ public class ManageClassController extends HttpServlet {
     private LecturerDAO lectureDAO = DAOFactory.getLecturerDao();
     
     private ITrainClassService trainClassService = new TrainClassServiceImpl();
-
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
@@ -92,20 +94,95 @@ public class ManageClassController extends HttpServlet {
             }else if (requestAction.equals(ClassFunctionSupported.DETAIL.getValue())) {
                 // view detail train class
                 viewDetailClass(request, response);
-               
+            }else if(requestAction.equalsIgnoreCase(ClassFunctionSupported.FILTER.getValue())){
+                filterTrainClass(request, response);
+            }else if(requestAction.equalsIgnoreCase(ClassFunctionSupported.SEARCH.getValue())){
+             searchTrainClass(request, response);   
             }
             
         } finally {
             out.close();
         }
     }
+    private void searchTrainClass(HttpServletRequest request, HttpServletResponse response){
+        try {
+        String value = request.getParameter("value");
+         List<TrainClass> trainClassList = new ArrayList<TrainClass>(10);
+          List<TrainClass> temp = classDAO.findByColumName("MaLopHoc", value);
+            if(temp != null && !temp.isEmpty())
+                trainClassList.addAll(temp);
+            List<Subject> subjectList= subjectDAO.findByColumName("TenMH", value);
+            for(int i=0; i<subjectList.size();i++){
+               temp = classDAO.findByColumName("MaMH", subjectList.get(i).getId());
+               trainClassList.addAll(temp);
+            }
+            List<Lecturer> lectturerList= lectureDAO.findByColumName("HoTen", value);
+            for(int i=0; i<lectturerList.size();i++){
+               temp = classDAO.findByColumName("MaGV", lectturerList.get(i).getId());
+               trainClassList.addAll(temp);
+            }
+            for(int i =0; i< trainClassList.size();i++){
+                trainClassList.get(i).setSubjectName(subjectDAO.findById(trainClassList.get(i).getSubjectCode()).getSubjectName());
+                trainClassList.get(i).setLectturerName(lectureDAO.findById(trainClassList.get(i).getLecturerCode()).getFullName());
+            }
+            PrintWriter out = response.getWriter();
+            writeFilterTrainClass(trainClassList, out);
+        
+       } catch (Exception ex) {
+            Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    private void filterTrainClass(HttpServletRequest request, HttpServletResponse response) throws IOException{
+       String year = request.getParameter("year");
+       int semester = Integer.parseInt(request.getParameter("semester")); 
+       List<TrainClass> trainclasslist = trainClassService.getTrainClass(year, semester);
+       PrintWriter out = response.getWriter();
+       writeFilterTrainClass(trainclasslist, out);
+    }
+    private void writeFilterTrainClass(List<TrainClass> trainclasslist, PrintWriter out){
+        out.println("<tr><th> STT</th><th> Lớp học </th><th> Môn học </th><th> Giảng viên </th><th> Thứ </th><th> Phòng </th><th> Đăng ký </th><th>Ngày thi</th><th>Hủy</th><th>Đóng</th></tr>");
+        if(trainclasslist == null || trainclasslist.isEmpty())
+            out.println("<tr>Không tìm thấy dữ liệu</tr>");
+        else{
+        for(int i=0; i < trainclasslist.size();i++){
+            StringBuffer result = new StringBuffer();
+            result.append("<tr><td>").append(i+1).append("</td>");
+            result.append("<td><a href= '../../ManageClassController?action=detail&classID=").append(trainclasslist.get(i).getId().getClassCode()).append("&year=").append(trainclasslist.get(i).getId().getYear()).append("&semester=").append(trainclasslist.get(i).getId().getSemester()).append("'>").append(trainclasslist.get(i).getId().getClassCode()).append("</a></td>");
+            result.append("<td> ").append(trainclasslist.get(i).getSubjectName()).append("</td>");
+            result.append(" <td> ").append(trainclasslist.get(i).getLectturerName()).append(" </td>");
+            result.append("<td> ").append(trainclasslist.get(i).getStudyDate()).append("</td>");
+            result.append("<td> ").append(trainclasslist.get(i).getClassRoom()).append(" </td>");
+            result.append("<td> ").append(trainclasslist.get(i).getNumOfStudentReg()).append("/").append(trainclasslist.get(i).getNumOfStudent()).append(" </td>");
+            if(trainclasslist.get(i).getTestDate() == null) 
+            result.append("<td>Chưa có</td>");
+            else
+            result.append("<td>").append(trainclasslist.get(i).getTestDate()).append("</td>");
+            result.append("<td><a href='../../ManageClassController?action=cancel&classID=").append(trainclasslist.get(i).getId().getClassCode()).append("'>Hủy</a></td>");
+            result.append("<td><a href='../../ManageClassController?action=close&classID=").append(trainclasslist.get(i).getId().getClassCode()).append("'>Đóng</a></td>");
+            result.append("</tr>");
+            out.println(result.toString());
+        }
+        }
+    }
     private void preUpdateTrainClass(HttpServletRequest request, HttpServletResponse response) throws IOException{
        String path="";
         try{
-        String ClassCode = (String)request.getParameter("classId"); 
-        TrainClassID classID = new TrainClassID(ClassCode, Constants.CURRENT_YEAR, Constants.CURRENT_SEMESTER);
-        TrainClass trainClass = trainClassService.getClassInfomation(classID);
         HttpSession session = request.getSession();
+        String ClassCode = (String)request.getParameter("classId"); 
+        String year =(String) request.getParameter("year");
+        int semester = Integer.parseInt((String) request.getParameter("semester")); 
+        TrainClassID classID = new TrainClassID(ClassCode, year, semester);
+        TrainClass trainClass = trainClassService.getClassInfomation(classID);
+        ArrayList<Lecturer> lecturers = (ArrayList<Lecturer>) lectureDAO.findByColumName("MaKhoa", subjectDAO.findById(classDAO.findById(classID).getSubjectCode()).getFacultyCode());
+          if ((lecturers != null) && (!lecturers.isEmpty())) {
+                ArrayList<LecturerWeb> lws = new ArrayList<LecturerWeb>(10);
+                
+                for (Lecturer l : lecturers) {
+                    LecturerWeb lw = new LecturerWeb(l.getId(), l.getFullName());
+                    lws.add(lw);
+                }
+                session.setAttribute("lecturers", lws);
+            }
         session.setAttribute("trainclass", trainClass);
         path = "./jsps/PDT/UpdateTrainClass.jsp";
         }catch(Exception ex){
@@ -118,8 +195,39 @@ public class ManageClassController extends HttpServlet {
      * @param request
      * @param response 
      */
-    private void updateTrainClass(HttpServletRequest request, HttpServletResponse response){
+    private void updateTrainClass(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        String path="";
+        try{
+        HttpSession session = request.getSession();
+        String ClassCode = (String)request.getParameter("classId"); 
+        String lecturerCode = (String) request.getParameter("lecturer");
+        int studyDate = Integer.parseInt((String) request.getParameter("Date"));
+        int shift = Integer.parseInt((String) request.getParameter("Shift"));
+        String room = (String) request.getParameter("room");
+        Date testDate = DateTimeUtil.parse(request.getParameter("testDate"));
+        String testRoom = (String) request.getParameter("testroom");
+        String testTime = (String) request.getParameter("hh") + ":" + (String) request.getParameter("hh");
+        String year =(String) request.getParameter("year");
+        int semester = Integer.parseInt((String) request.getParameter("semester")); 
         
+        TrainClassID classID = new TrainClassID(ClassCode, year, semester);
+        TrainClass trainClass = trainClassService.getClassInfomation(classID);
+        trainClass.setLecturerCode(lecturerCode);
+        trainClass.setStudyDate(studyDate);
+        trainClass.setShift(shift);
+        trainClass.setClassRoom(room);
+        trainClass.setTestDate(testDate);
+        trainClass.setTestRoom(testRoom);
+        trainClass.setTestHours(testTime);
+        trainClass = classDAO.update(trainClass);        
+        
+       session.setAttribute("trainclass", trainClass);
+        
+        path = "./jsps/PDT/TrainClassDetail.jsp";
+        }catch(Exception ex){
+           path= "./jsps/Message.jsp";
+       }
+         response.sendRedirect(path);
     }
     /**
      * This function use to get class to use view detail
@@ -130,11 +238,13 @@ public class ManageClassController extends HttpServlet {
       String path="";
         try{
         String ClassCode = (String)request.getParameter("classID"); 
-        TrainClassID classID = new TrainClassID(ClassCode, Constants.CURRENT_YEAR, Constants.CURRENT_SEMESTER);
+        String year =(String) request.getParameter("year");
+        int semester = Integer.parseInt((String) request.getParameter("semester")); 
+        TrainClassID classID = new TrainClassID(ClassCode, year, semester);
         TrainClass trainClass = trainClassService.getClassInfomation(classID);
         HttpSession session = request.getSession();
         session.setAttribute("trainclass", trainClass);
-        path = "./jsps/PDT/TrainClassDetail.jsp";
+         path = "./jsps/PDT/TrainClassDetail.jsp";
         }catch(Exception ex){
            path= "./jsps/Message.jsp";
        }
@@ -156,13 +266,15 @@ public class ManageClassController extends HttpServlet {
             currentPage = 1;
         }*/
         
-        List<TrainClass> trainClazzs = trainClassService.getTrainClass(TrainClassStatus.OPEN.getValue());
+        List<TrainClass> trainClazzs = trainClassService.getTrainClass(Constants.CURRENT_YEAR, Constants.CURRENT_SEMESTER);
+        List<String> yearList=getYear(trainClazzs);
         //
         // TODO: Should accept only TrainClass of current semeter.
         //
         if ((trainClazzs != null) && (!trainClazzs.isEmpty())) {
             HttpSession session = request.getSession();
             session.setAttribute("train-clazzs", trainClazzs);
+            session.setAttribute("yearList", yearList);
         }
         
         String path = "./jsps/PDT/TrainClassManager.jsp";
@@ -170,7 +282,23 @@ public class ManageClassController extends HttpServlet {
         
         return;
     }
+    private List<String> getYear(List<TrainClass> trainClassList){
+        ArrayList<String> yearList=new ArrayList<String>();
+        for(int i=0; i<trainClassList.size();i++){
+         if(checkStringExist(trainClassList.get(i).getId().getYear(), yearList)==false)
+             yearList.add(trainClassList.get(i).getId().getYear());
+        }
 
+       return yearList;         
+    }
+    private boolean checkStringExist(String value, List<String> list){
+        boolean result=false;
+        for(int i=0;i<list.size();i++){
+           if(value.equalsIgnoreCase(list.get(i)))
+               result=true;
+        }
+        return result;
+    }
     private void retrieveTrainClassForAjaxQuery(HttpServletRequest request, HttpServletResponse response) throws IOException {
         
         /*int currentPage = 1;
@@ -180,7 +308,7 @@ public class ManageClassController extends HttpServlet {
             currentPage = 1;
         }*/
         
-        List<TrainClass> trainClazzs = trainClassService.getTrainClass(TrainClassStatus.OPEN.getValue());
+        List<TrainClass> trainClazzs = trainClassService.getTrainClass(Constants.CURRENT_YEAR, Constants.CURRENT_SEMESTER);
         //
         // TODO: Should accept only TrainClass of current semeter.
         //
@@ -300,7 +428,7 @@ public class ManageClassController extends HttpServlet {
             Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
    private void writeRespondErrorMessage(ExecuteResult result, PrintWriter out) {
         out.println(result.getMessage());
         if (result.isIsSucces()) {
@@ -338,6 +466,8 @@ public class ManageClassController extends HttpServlet {
         DELETE("delete"),   // Remove class
         DETAIL("detail"),   // view detail class
         PREUPDATE("pre_update"), // prepare update class
+        FILTER("filter"),
+        SEARCH("search"),
         UPDATE("update");   // Update
         
         private String description;
