@@ -16,18 +16,34 @@ public class Subject extends  AbstractJdbcModel<String>{
     private int numTCLT;
     /**Số tín chỉ thực hành**/
     private int numTCTH;
+    private String facultyCode;
+    private int type;
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
 
     public Subject() {
     }
 
-    public Subject(String id, String subjectName, int numTC, int numTCLT) {
+    public Subject(String id, String subjectName, int numTC, int numTCLT, String facultyCode, int Type) {
         setId(id);
         this.subjectName = subjectName;
         this.numTC = numTC;
         this.numTCLT = numTCLT;
         this.numTCTH = numTC - numTCLT;
     }
+    public String getFacultyCode() {
+        return facultyCode;
+    }
 
+    public void setFacultyCode(String FacultyCode) {
+        this.facultyCode = FacultyCode;
+    }
     public int getnumTC() {
         return numTC;
     }
@@ -74,7 +90,9 @@ public class Subject extends  AbstractJdbcModel<String>{
                     "TenMH",
                     "SoTC",
                     "SoTCLT",
-                    "SoTCTH"
+                    "SoTCTH",
+                    "MaKhoa",
+                    "Loai"
                 };
     }
 
@@ -85,6 +103,8 @@ public class Subject extends  AbstractJdbcModel<String>{
             numTC = Integer.parseInt(values[1].toString());
             numTCLT = Integer.parseInt(values[2].toString());
             numTCTH = Integer.parseInt(values[3].toString());
+            facultyCode= values[4].toString();
+            type = Integer.parseInt(values[5].toString());
 
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
