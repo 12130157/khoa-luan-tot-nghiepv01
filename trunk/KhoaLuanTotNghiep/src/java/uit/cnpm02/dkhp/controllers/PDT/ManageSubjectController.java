@@ -3,8 +3,9 @@ package uit.cnpm02.dkhp.controllers.PDT;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -14,12 +15,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
-import uit.cnpm02.dkhp.DAO.StudentDAO;
 import uit.cnpm02.dkhp.DAO.SubjectDAO;
 import uit.cnpm02.dkhp.model.PreSubID;
 import uit.cnpm02.dkhp.model.PreSubject;
-import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.model.Subject;
+import uit.cnpm02.dkhp.service.ISubjectService;
+import uit.cnpm02.dkhp.service.impl.SubjectServiceImpl;
 import uit.cnpm02.dkhp.utilities.Constants;
 
 /**
@@ -34,7 +35,11 @@ import uit.cnpm02.dkhp.utilities.Constants;
 @WebServlet(name = "ManageSubjectController", urlPatterns = {"/ManageSubjectController"})
 public class ManageSubjectController extends HttpServlet {
 
+    private ISubjectService subjectService = new SubjectServiceImpl();
     private int currentPage = 1;
+    public ManageSubjectController() {
+        super();
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
@@ -94,12 +99,9 @@ public class ManageSubjectController extends HttpServlet {
         } catch (Exception ex) {
             //
         }
-
         try {
-
             String action = request.getParameter("function");
             if ((action == null) || action.isEmpty()) {
-                // Not support functions.
                 return;
             }
 
@@ -110,19 +112,27 @@ public class ManageSubjectController extends HttpServlet {
             } catch (Exception ex) {
                 pageAlreadySet = false;
             }
-
             if (!pageAlreadySet || (numpage < 0)) {
-                int numSubExisted = DAOFactory.getSubjectDao().getRowsCount();
-                int numPage = getNumberPage(numSubExisted);
+                int numPage = subjectService.getNumberPage();
                 session.setAttribute("numpage_sub", numPage);
             }
 
-            if (action.equals("list_subject")) {
+            if (action.equals(SubjectManageFunction.LIST_SUBJECT.value())) {
                 listSubject(request, response);
                 path = "./jsps/PDT/SubjectManager.jsp";
-                //} else if (action.equals("insert_sub_from_table")) {
-                //    insertSubFromTable(request, response);
-                //return;
+            } else if (action.equals(SubjectManageFunction.SEARCH.value())) {
+                String key = request.getParameter("key");
+                List<Subject> subject = searchSubject(session.getId(),key);
+                if ((subject != null) && !subject.isEmpty()) {
+                    writeOutListSubject(out, subject);
+                }
+                return;
+            } else if (action.equals(SubjectManageFunction.SORT.value())) {
+                String by = request.getParameter("by");
+                String type = request.getParameter("type");
+                List<Subject> subjects = sort(session.getId(), by, type);
+                writeOutListSubject(out, subjects);
+                return;
             } else if (action.equals("delete_single_subject")) {
                 deleteSingle(request, response);
             } else if (action.equals("add_subject")) {
@@ -143,7 +153,8 @@ public class ManageSubjectController extends HttpServlet {
             }
 
         } catch (Exception ex) {
-            Logger.getLogger(ManageSubjectController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ManageSubjectController.class.getName())
+                    .log(Level.SEVERE, null, ex);
         } finally {
             out.close();
         }
@@ -156,57 +167,68 @@ public class ManageSubjectController extends HttpServlet {
      * @param resp
      * @throws Exception 
      */
-    private void listSubject(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    private void listSubject(HttpServletRequest req
+            , HttpServletResponse resp) throws Exception {
 
-        boolean ajaxCalled = false;
         try {
             currentPage = Integer.parseInt(req.getParameter("currentpage"));
-            ajaxCalled = Boolean.parseBoolean(req.getParameter("ajax"));
         } catch (Exception ex) {
             currentPage = 1;
         }
 
-        SubjectDAO subDao = DAOFactory.getSubjectDao();
-        List<Subject> subjects = subDao.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, currentPage, null, null);
-        if (!ajaxCalled) {
+        List<Subject> subjects = subjectService
+                .findSubjects(req.getSession().getId(), currentPage);
+        
             HttpSession session = req.getSession();
             session.setAttribute("list_subject", subjects);
-        } else if ((subjects != null) && (!subjects.isEmpty())) {
+        /*} else if ((subjects != null) && (!subjects.isEmpty())) {
             PrintWriter out = resp.getWriter();
-            try {
-                String tblHeader = "<tr>"
-                        + "<th><INPUT type = \"checkbox\""
-                        + "name = \"chkAll\""
-                        + "onclick = \"selectAll('tablelistsubject')\"/></th>"
-                        + "<th> STT </th>"
-                        + "<th> Mã MH </th>"
-                        + "<th> Tên Môn học </th>"
-                        + "<th> Số TC </th>"
-                        + "<th> Số TCLT </th>"
-                        + "<th> Số TCTH </th>"
-                        + "<th> Sửa </th>"
-                        + "<th> Xóa </th>"
+            writeOutListSubject(out, subjects);
+        }*/
+    }
+    
+    private List<Subject> searchSubject(String sessionId, String key) {
+        return subjectService.search(sessionId, key);
+    }
+    
+    private List<Subject> sort(String sessionId, String by, String type) {
+        return subjectService.sort(sessionId, by, type);
+    }
+        
+    private void writeOutListSubject(PrintWriter out, List<Subject> subjects) {
+        try {
+            // Search(by, type)
+            String method = "sort('%s','%s')";
+            String tblHeader = "<tr>"
+                    + "<th> STT </th>"
+                    + "<th> <a href='#' onclick=\""
+                        + String.format(method, "MaMH", "ASC") +"\"> Mã MH </a></th>"
+                    + "<th> <a href='#' onclick=\""
+                        + String.format(method, "TenMH", "ASC") +"\"> Tên Môn học </a></th>"
+                    + "<th> <a href='#' onclick=\""
+                        + String.format(method, "SoTC", "ASC") +"\"> Số TC </a></th>"
+                    + "<th> <a href='#' onclick=\""
+                        + String.format(method, "SoTCLT", "ASC") +"\"> Số TCLT </a></th>"
+                    + "<th> <a href='#' onclick=\""
+                        + String.format(method, "SoTCTH", "ASC") +"\"> Số TCTH </a></th>"
+                    + "<th> Sửa </th>"
+                    + "<th> Xóa </th>"
+                    + "</tr>";
+            out.println(tblHeader);
+            for (int i = 0; i < subjects.size(); i++) {
+                String currentLine = "<tr>"
+                        + "<td>" + ((currentPage - 1) * Constants.ELEMENT_PER_PAGE_DEFAULT + i + 1) + "</td>"
+                        + "<td>" + subjects.get(i).getId() + "</td> "
+                        + "<td>" + subjects.get(i).getSubjectName() + "</td>"
+                        + "<td>" + subjects.get(i).getnumTC() + "</td>"
+                        + "<td>" + subjects.get(i).getnumTCLT() + "</td>"
+                        + "<td>" + subjects.get(i).getnumTCTH() + "</td>"
+                        + "<td><a href = \"../../ManageSubjectController?function=edit_subject&subject_code=" + subjects.get(i).getId() + "\">Sửa</a></td>"
+                        + "<td><a href = \"../../ManageSubjectController?function=delete_single_subject&ajax=false&currentpage=" + currentPage + "&subject_code=" + subjects.get(i).getId() + "\">Xóa</a></td>"
                         + "</tr>";
-                out.println(tblHeader);
-                for (int i = 0; i < subjects.size(); i++) {
-                    String currentLine = "<tr>"
-                            + "<td><INPUT type=\"checkbox\" name=\"chk<%= i%>\"/></td>"
-                            + "<td>" + ((currentPage - 1) * Constants.ELEMENT_PER_PAGE_DEFAULT + i + 1) + "</td>"
-                            + "<td>" + subjects.get(i).getId() + "</td> "
-                            + "<td>" + subjects.get(i).getSubjectName() + "</td>"
-                            + "<td>" + subjects.get(i).getnumTC() + "</td>"
-                            + "<td>" + subjects.get(i).getnumTCLT() + "</td>"
-                            + "<td>" + subjects.get(i).getnumTCTH() + "</td>"
-                            + "<td><a href = \"../../ManageSubjectController?function=edit_subject&subject_code=" + subjects.get(i).getId() + "\">Sửa</a></td>"
-                            + "<td><a href = \"../../ManageSubjectController?function=delete_single_subject&ajax=false&currentpage=" + currentPage + "&subject_code=" + subjects.get(i).getId() + "\">Xóa</a></td>"
-                            + "</tr>";
-                    out.println(currentLine);
-                }
-            } catch (Exception ex) {
-                //
-            } finally {
-                out.close();
+                out.println(currentLine);
             }
+        } catch (Exception ex) {
         }
     }
 
@@ -278,8 +300,8 @@ public class ManageSubjectController extends HttpServlet {
             subDao.delete(s);
 
             //Delete success
-            int numSubExisted = subDao.getRowsCount();
-            int numPage = getNumberPage(numSubExisted);
+            
+            int numPage = subjectService.getNumberPage();
             session.setAttribute("numpage_sub", numPage);
 
         } catch (Exception ex) {
@@ -302,15 +324,7 @@ public class ManageSubjectController extends HttpServlet {
      * @param existedRow number entites.
      * @return number page.
      */
-    private int getNumberPage(int existedRow) {
-        int rowsPerPage = Constants.ELEMENT_PER_PAGE_DEFAULT;
-
-        if (existedRow % rowsPerPage == 0) {
-            return existedRow / rowsPerPage;
-        } else {
-            return existedRow / rowsPerPage + 1;
-        }
-    }
+    
 
     /**
      * Add subject from subject form.
@@ -353,7 +367,7 @@ public class ManageSubjectController extends HttpServlet {
                 if ((infos != null) && (infos.length > 0)) {
                     int tclt = Integer.parseInt(infos[2]);
                     int tcth = Integer.parseInt(infos[3]);
-                    Subject sub = new Subject(infos[0], infos[1], tclt + tcth, tcth);
+                    Subject sub = null; //new Subject(infos[0], infos[1], tclt + tcth, tcth);
 
                     String id = DAOFactory.getSubjectDao().add(sub);
                     if ((id != null) && (id.length() > 0)) {
@@ -437,7 +451,7 @@ public class ManageSubjectController extends HttpServlet {
                 if ((infos != null) && (infos.length > 0)) {
                     int tclt = Integer.parseInt(infos[2]);
                     int tcth = Integer.parseInt(infos[3]);
-                    Subject sub = new Subject(infos[0], infos[1], tclt + tcth, tcth);
+                    Subject sub = null; //new Subject(infos[0], infos[1], tclt + tcth, tcth);
 
                     Subject updatedSub = DAOFactory.getSubjectDao().update(sub);
                     if (updatedSub != null) {
@@ -471,6 +485,28 @@ public class ManageSubjectController extends HttpServlet {
             } finally {
                 out.close();
             }
+        }
+    }
+
+
+
+    
+    
+    public enum SubjectManageFunction{
+        LIST_SUBJECT("list_subject"),
+        DELETE_SINGLE("delete_single_subject"),
+        ADD_SUBJECT("add_subject"),
+        SEARCH("search"),
+        SORT("sort"),
+        EDIT_SUBJECT("edit_subject");
+
+        private String function;
+        private SubjectManageFunction(String function) {
+            this.function = function;
+        }
+        
+        public String value() {
+            return function;
         }
     }
 }
