@@ -107,6 +107,7 @@
                         <th> Thứ </th>
                         <th> Phòng </th>
                         <th> Đăng ký </th>
+                        <th>Ngày thi</th>
                         <%--Should be sorted when click on table's header--%>
                         </tr>
                         <%if ((openedClazzs != null) && (!openedClazzs.isEmpty())) {%>
@@ -119,6 +120,11 @@
                         <td> <%= openedClazzs.get(i).getStudyDate()%> </td>
                         <td> <%= openedClazzs.get(i).getClassRoom() %> </td>
                         <td> <%= openedClazzs.get(i).getNumOfStudentReg()+"/"+openedClazzs.get(i).getNumOfStudent()%> </td>
+                        <%if(openedClazzs.get(i).getTestDate() == null ){%>
+                            <td>Chưa có</td>
+                            <%}else {%>
+                            <td><%=openedClazzs.get(i).getTestDate()%></td>
+                            <%}%>
                         <% }%>
                         </tr>
                         <%}%>
