@@ -5,7 +5,7 @@
 
 /*Menu*/
 #menu{
-	margin-left: 150px;
+	margin-left: 218px;
 	margin-top: -40px;
 	background: url(../imgs/topbanner.jpg);
 	float: left;
@@ -23,14 +23,16 @@
 
 #menu li a{
 	display: block;
-	color: #ffffff;
+	color: #000;
         /*border: 1px solid #000000;*/
         background: transparent;/* url(../imgs/headerbg.png);*/
 	font-weight: bold;
 	text-decoration: none;
-        font-size: 12px;
-        height: 22px;
-	padding: .1cm 6px;
+        font-size: 11px;
+        border-right: 1px dotted #b0b0b0;
+        height: 15px;
+        margin-top: 5px;
+	padding: 0 6px 0;
 }
 
 #menu li a:hover{
@@ -53,6 +55,10 @@
 	border: 1px solid #ffffff;
 	background-color: #9f8d39;
 	width: 100%;
+}
+
+#menu .no-border{
+    border-right: none;
 }
 
 /*Logo*/
