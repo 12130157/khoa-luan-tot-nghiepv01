@@ -1,10 +1,11 @@
 package uit.cnpm02.dkhp.service.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
@@ -15,8 +16,10 @@ import uit.cnpm02.dkhp.DAO.TrainClassDAO;
 import uit.cnpm02.dkhp.model.Registration;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.model.TrainClass;
+import uit.cnpm02.dkhp.model.TrainClassID;
 import uit.cnpm02.dkhp.service.IReporter;
 import uit.cnpm02.dkhp.service.TrainClassStatus;
+import uit.cnpm02.dkhp.utilities.Constants;
 
 /**
  *
@@ -31,7 +34,9 @@ public class ReporterImpl implements IReporter {
     /**
      * Keep back data for search purpose
      */
-    private List<TrainClass> trainClasses = new ArrayList<TrainClass>(10);
+    private Map<String, List<TrainClass>> trainClasses = 
+            new HashMap<String, List<TrainClass>>();
+    //private List<TrainClass> trainClasses = new ArrayList<TrainClass>(10);
     
     private static Object mutex = new Object();
     
@@ -86,7 +91,7 @@ public class ReporterImpl implements IReporter {
     }
 
     @Override
-    public List<TrainClass> getTrainClassRegistered(String mssv,
+    public List<TrainClass> getTrainClassRegistered(String sessionId, String mssv,
                                                     boolean fullInfor) {
         List<TrainClass> results = new ArrayList<TrainClass>(10);
 
@@ -121,7 +126,8 @@ public class ReporterImpl implements IReporter {
             Logger.getLogger(ReporterImpl.class.getName())
                     .log(Level.SEVERE, null, ex);
         }
-        trainClasses = results;
+        
+        trainClasses.put(sessionId, results);
         return results;
         //TODO: tobe tested.
     }
@@ -175,12 +181,13 @@ public class ReporterImpl implements IReporter {
     }
 
     @Override
-    public List<TrainClass> sort(final String by, final String type) {
-        if ((trainClasses == null) || trainClasses.isEmpty()) {
-            return trainClasses;
+    public List<TrainClass> sort(String sessionId, final String by, final String type) {
+        List<TrainClass> tcs = trainClasses.get(sessionId);
+        if ((tcs == null) || tcs.isEmpty()) {
+            return tcs;
         }
         
-        Collections.sort(trainClasses, new Comparator<TrainClass>() {
+        Collections.sort(tcs, new Comparator<TrainClass>() {
 
             @Override
             public int compare(TrainClass o1, TrainClass o2) {
@@ -192,6 +199,25 @@ public class ReporterImpl implements IReporter {
 
         });
         
-        return trainClasses;
+        return tcs;
+    }
+
+    @Override
+    public TrainClass getTrainClass(String classId) {
+        String year = Constants.CURRENT_YEAR;
+        int semeter = Constants.CURRENT_SEMESTER;
+        TrainClassID id = new TrainClassID(classId, year, semeter);
+        try {
+            TrainClass t = classDao.findById(id);
+            if (t != null) {
+                t.setSubjectName(subjectDao.findById(
+                        t.getSubjectCode()).getSubjectName());
+            }
+            return t;
+        } catch (Exception ex) {
+            Logger.getLogger(ReporterImpl.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 }
