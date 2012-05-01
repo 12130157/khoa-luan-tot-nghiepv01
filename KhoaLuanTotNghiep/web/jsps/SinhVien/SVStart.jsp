@@ -4,17 +4,16 @@
     Author     : ngloc_it
 --%>
 
-<%@page import="java.util.List"%>
-<%@page import="uit.cnpm02.dkhp.model.News"%>
 <%@include file="MenuSV.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 <%
-    List<News> listNews = (List<News>) session.getAttribute("news");
+/*    List<News> listNews = (List<News>) session.getAttribute("news");
 
     int newsPerPage = 5;
     int currentPage = 1;
+ */ 
 %>
 <html>
     <head>
@@ -29,7 +28,9 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-           <%
+                <%@include file="../News.jsp" %>
+           <%--
+                <%
                     if (listNews != null) {
                         for (int i = 0; i < listNews.size(); i++) {
                             News n = listNews.get(i);
@@ -41,6 +42,7 @@
                             }
                         }
                     %>
+           --%>
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->

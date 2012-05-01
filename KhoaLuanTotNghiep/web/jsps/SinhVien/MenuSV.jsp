@@ -11,7 +11,7 @@
 
 <html>
     <head>
-        <link href="../../csss/menusv.css" rel="stylesheet" type="text/css" media="screen">
+        <link href="../../csss/menu.css" rel="stylesheet" type="text/css" media="screen">
 
     </head>
     <body>
@@ -30,26 +30,26 @@
             </OBJECT>
         </DIV>
     </div>
-    <div id = "menusv">
+    <div id = "menu">
         <ul>
-             <li><a href="../../HomepageController?actor=Student"> Trang chủ |</a></li>
-             <li><a href="../../ScheduleController?action=view"> Thời khóa biểu |</a></li>
-             <li><a href="../../RegistryController?action=view"> Đăng ký học phần |</a></li>
-             <li><a href="../../StudyResultController?action=view"> Kết quả học tập |</a></li>
-             <li><a href="../../TrainProgramController?action=view"> Chương trình đào tạo |</a></li>
-             <li><a href=""> Quy định |</a>
+             <li><a href="../../HomepageController?actor=Student"> Trang chủ </a></li>
+             <li><a href="../../ScheduleController?action=view"> Thời khóa biểu </a></li>
+             <li><a href="../../RegistryController?action=view"> Đăng ký học phần </a></li>
+             <li><a href="../../StudyResultController?action=view"> Kết quả học tập </a></li>
+             <li><a href="../../TrainProgramController?action=view"> Chương trình đào tạo </a></li>
+             <li><a href=""> Quy định </a>
                  <ul>
                      <li><a href="../../PreSubjectController?action=view"> Môn học tiên quyết</a></li>
                      <li><a href="../../RuleController?action=view"> Quy định</a></li>
                  </ul>
              </li>
-             <li><a href=""> Cá nhân |</a>
+             <li><a href=""> Cá nhân </a>
                  <ul>
                      <li><a href="../../AccountController?action=Info"> Thông tin cá nhân</a></li>
                      <li><a href="ChangePass.jsp"> Đổi mật khẩu</a></li>
                  </ul>
              </li>
-             <li><a href="../../Login?function=logout"> Đăng xuất |</a></li>
+             <li><a href="../../Login?function=logout"> Đăng xuất </a></li>
              <li><a href="../../StudentCommentController?action=send"> Liên hệ </a></li>
          </ul>
     </div>       
