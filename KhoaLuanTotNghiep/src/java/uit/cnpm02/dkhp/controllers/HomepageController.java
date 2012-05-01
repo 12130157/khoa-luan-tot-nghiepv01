@@ -11,8 +11,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import uit.cnpm02.dkhp.DAO.AccountDAO;
+import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.NewsDAO;
+import uit.cnpm02.dkhp.model.Account;
 import uit.cnpm02.dkhp.model.News;
+import uit.cnpm02.dkhp.service.SessionManager;
+import uit.cnpm02.dkhp.utilities.password.PasswordProtector;
 
 /**
  *
@@ -33,9 +38,16 @@ public class HomepageController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession();
+        /**
+         * Check if !Login
+         * return ...
+         */
         PrintWriter out = response.getWriter();
         String path="";
         String actor=request.getParameter("actor") ;
+
+        //updatePassword();
+        
         try {
             NewsDAO newsDao = new NewsDAO();
             List<News> news = newsDao.findAll();
@@ -53,7 +65,8 @@ public class HomepageController extends HttpServlet {
                  path = "./jsps/GiangVien/GVStart.jsp";
             response.sendRedirect(path);
         } catch (Exception ex) {
-            Logger.getLogger(HomepageController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(HomepageController.class.getName())
+                    .log(Level.SEVERE, null, ex);
 
         } finally {
             out.close();
@@ -95,4 +108,27 @@ public class HomepageController extends HttpServlet {
     public String getServletInfo() {
         return "This servlet controller data to send to Homepage of website";
     }// </editor-fold>
+
+    private void updatePassword() {
+        AccountDAO accountDao = DAOFactory.getAccountDao();
+        try {
+            List<Account> accounts = accountDao.findAll();
+            if ((accounts != null) && !accounts.isEmpty()) {
+                for (Account a : accounts) {
+                    String pwd = a.getPassword();
+                    if ((pwd != null)
+                            && !pwd.isEmpty()
+                            && (pwd.length() < 30)) {
+                        String safePass = PasswordProtector.getMD5(pwd);
+                        a.setPassword(safePass);
+                        accountDao.update(a);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(HomepageController.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+    }
+
 }
