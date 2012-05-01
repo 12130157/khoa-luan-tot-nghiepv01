@@ -11,7 +11,7 @@
 
 <html>
     <head>
-        <link href="../../csss/menupdt.css" rel="stylesheet" type="text/css" media="screen">
+        <link href="../../csss/menu.css" rel="stylesheet" type="text/css" media="screen">
 
     </head>
     <body>
@@ -30,24 +30,24 @@
             </OBJECT>
         </DIV>
     </div>
-    <div id = "menupdt">
+    <div id = "menu">
         <ul>
-             <li><a href="../../HomepageController?actor=PDT"> Trang chủ |</a></li>
-             <li><a href=""> Quản lý con người |</a>
+             <li><a href="../../HomepageController?actor=PDT"> Trang chủ </a></li>
+             <li><a href=""> Quản lý con người </a>
                  <ul>
                      <li><a href="../../ManageStudentController?function=liststudent"> Quản lý sinh viên</a></li>
                      <li><a href="../../ManageLecturerController?function=listlecturer"> Quản lý giảng viên</a></li>
                  </ul>
              </li>
-             <li><a href="../../AccountController?action=manager"> Quản lý tài khoản |</a></li>
-             <li><a href="#"> Quản lý học vụ |</a>
+             <li><a href="../../AccountController?action=manager"> Quản lý tài khoản </a></li>
+             <li><a href="#"> Quản lý học vụ </a>
                  <ul>
                      <li><a href="../../ManageSubjectController?function=list_subject&ajax=false"> Quản lý môn học</a></li>
                      <li><a href="../../ManageClassController?action=default"> Quản lý lớp học</a></li>
                      <li><a href="../../ReportController?action=default"> Thống kê đăng ký</a></li>
                 </ul>
              </li>
-             <li><a href=""> Đào tạo |</a>
+             <li><a href=""> Đào tạo </a>
                  <ul>
                      <li><a href="#"> Khóa học</a></li>
                      <li><a href="#"> Quản lý khoa</a></li>
@@ -56,13 +56,13 @@
                  </ul>
              </li>
              <li><a href="../../ManageScoreController?function=manage"> Điểm cuối kỳ |</a></li>
-             <li><a href=""> Quy định |</a>
+             <li><a href=""> Quy định </a>
                  <ul>
                      <li><a href="../../PreSubjectController?action=manage"> Môn học tiên quyết</a></li>
                      <li><a href="#"> Quy định</a></li>
                  </ul>
              </li>
-             <li><a href=""> Giao tiếp |</a>
+             <li><a href=""> Giao tiếp </a>
                  <ul>
                      <li><a href="../../NewsController?action=manager"> Quản lý tin tức</a></li>
                      <li><a href="../../CommentController?action=manager"> Quản lý yêu cầu</a></li>
