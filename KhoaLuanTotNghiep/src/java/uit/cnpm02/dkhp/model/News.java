@@ -14,6 +14,7 @@ public class News extends AbstractJdbcModel<Integer> {
     private String author;
     private String createdDate;
     private int type;
+    private String imgPath;
 
     public News() {
         super();
@@ -26,8 +27,17 @@ public class News extends AbstractJdbcModel<Integer> {
         this.author = author;
         this.createdDate = createdDate;
         this.type = type;
+        imgPath = "";
     }
 
+    public void setImgPath(String imgPath) {
+        this.imgPath = imgPath;
+    }
+    
+    public String getImgPath() {
+        return imgPath;
+    }
+    
     public String getAuthor() {
         return author;
     }
@@ -86,7 +96,8 @@ public class News extends AbstractJdbcModel<Integer> {
                     "NoiDung",
                     "NguoiDang",
                     "NgayTao",
-                    "Loai"
+                    "Loai",
+                    "HinhDaiDien"
                 };
     }
 
@@ -97,7 +108,8 @@ public class News extends AbstractJdbcModel<Integer> {
                     content,
                     author,
                     createdDate,
-                    type
+                    type,
+                    imgPath
                 };
     }
 
@@ -107,8 +119,9 @@ public class News extends AbstractJdbcModel<Integer> {
             title = values[0].toString();
             content = values[1].toString();
             author = values[2].toString();
-            createdDate =values[3].toString();
+            createdDate = values[3].toString();
             type = Integer.parseInt(values[4].toString());
+            imgPath = (values[5] == null) ? null : values[5].toString();
 
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
