@@ -10,6 +10,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.service.IReporter;
@@ -17,7 +18,9 @@ import uit.cnpm02.dkhp.service.IStudentService;
 import uit.cnpm02.dkhp.service.TrainClassStatus;
 import uit.cnpm02.dkhp.service.impl.ReporterImpl;
 import uit.cnpm02.dkhp.service.impl.StudentServiceImpl;
+import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.Message;
+import uit.cnpm02.dkhp.utilities.filedownload.FileDownloadUtility;
 
 /**
  *
@@ -44,8 +47,10 @@ public class ReportController extends HttpServlet {
     protected void processRequest(HttpServletRequest request,
                                         HttpServletResponse response)
             throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
+        HttpSession session = request.getSession();
         String requestAction;
         try {
             requestAction = (String) request.getParameter("action");
@@ -84,7 +89,7 @@ public class ReportController extends HttpServlet {
                             && !type.equalsIgnoreCase("DES")) {
                         type = "ASC";
                     }
-                    List<TrainClass> trainClassReg = reportService.sort(by, type);
+                    List<TrainClass> trainClassReg = reportService.sort(session.getId(), by, type);
                     if ((trainClassReg != null) && !trainClassReg.isEmpty()) {
                         writeStudentReportDetail(mssv, trainClassReg, out);
                     } else {
@@ -104,7 +109,7 @@ public class ReportController extends HttpServlet {
             } else if (requestAction.equals(ReportFunctionSupported.
                                                 STUDENT_REPORT.getValue())) {
                 mssv = request.getParameter("value");
-                List<TrainClass> trainClassReg = getStudentReport(mssv);
+                List<TrainClass> trainClassReg = getStudentReport(mssv, session.getId());
                 if ((trainClassReg != null) && !trainClassReg.isEmpty()) {
                     writeStudentReportDetail(mssv, trainClassReg, out);
                 } else {
@@ -138,6 +143,17 @@ public class ReportController extends HttpServlet {
                 } else {
                     writeTrainClassReport(trainClassReg, out);
                 }
+                return;
+            } else if (requestAction.equals(ReportFunctionSupported.
+                                                DOWNLOAD_STUDENT_REPORT.getValue())) {
+                //downloadStudentReport(response);
+                //return;
+            } else if (requestAction.equals(ReportFunctionSupported.
+                                                CLASS_DETAIL.getValue())) {
+                String classId = request.getParameter("classid");
+                updateClassDetailReport(classId, session);
+                String path = "./jsps/PDT/TrainClassReport.jsp";
+                response.sendRedirect(path);
                 return;
             }
         } catch(Exception ex) {
@@ -213,8 +229,8 @@ public class ReportController extends HttpServlet {
         out.println("</table>");
     }
 
-    private List<TrainClass> getStudentReport(String mssv) {
-        return reportService.getTrainClassRegistered(mssv, true);
+    private List<TrainClass> getStudentReport(String mssv, String sessionId) {
+        return reportService.getTrainClassRegistered(sessionId, mssv, true);
     }
     
     private void writeStudentReportDetail(String mssv, List<TrainClass> datas,
@@ -242,7 +258,11 @@ public class ReportController extends HttpServlet {
         for (int i = 0; i < datas.size(); i++) {
             out.println("<tr>");
             out.println("<td> " + (i + 1) + " </td>");
-            out.println("<td>" + datas.get(i).getId().getClassCode() + "</td>");
+            String classId = datas.get(i).getId().getClassCode();
+            out.println("<td> <a href=\"../../ReportController?action=class-detail&classid=" 
+                    + classId + "\">" 
+                    + classId
+                    + "</a></td>");
             out.println("<td> " + datas.get(i).getSubjectName() + " </td>");
             out.println("<td> " + datas.get(i).getId().getYear() + " </td>");
             out.println("<td> " + datas.get(i).getId().getSemester() + " </td>");
@@ -251,7 +271,8 @@ public class ReportController extends HttpServlet {
         out.println("</table>");
         out.println("... Thong tin khac </br>");
         
-        out.println("<a href='#'>Tai file excel</a>");
+        out.println("<a href='../../ReportController?action=download-student-report'>Tai file excel</a>");
+        //<a href="../DownloadFile?action=studentresult&mssv=<%=student.getCode()%>"> Tải file</a>
     }
 
     private List<TrainClass> getTrainClassByYearAndSemeter(
@@ -302,6 +323,43 @@ public class ReportController extends HttpServlet {
         out.println("<a href='#'>Tai file excel</a>");
     }
 
+    private void downloadStudentReport(HttpServletResponse resp, String sessionId) {
+        List<TrainClass> trainClasses = reportService
+                                  .getTrainClassRegistered(sessionId, mssv, true);
+        String fileName = 
+                FileDownloadUtility.exportStudentReportFile(mssv, trainClasses);
+        if (!fileName.isEmpty()) {
+            try {
+                FileDownloadUtility.downloadFile(fileName, resp);
+            } catch (IOException ex) {
+                Logger.getLogger(ReportController.class.getName())
+                        .log(Level.SEVERE, null, ex);
+            }
+        }
+        
+    }
+
+    /**
+     * User, after search some student, the click handler for 
+     * link at each student include detail class
+     * but, we need detail for each class, so this function
+     * will update nedded data.
+     * @param classId
+     * @param session 
+     */
+    private void updateClassDetailReport(String classId, HttpSession session) {
+        TrainClass clazz = reportService.getTrainClass(classId);
+        String clazzId = clazz.getId().getClassCode();
+        String year = Constants.CURRENT_YEAR;
+        int semeter = Constants.CURRENT_SEMESTER;
+        
+        List<Student> students = studentService
+                .getStudent(clazzId, year, semeter);
+        
+        session.setAttribute("trainclass", clazz);
+        session.setAttribute("students", students);
+    }
+
      /**
      * An enum define all supported function of serverlet
      * .
@@ -311,7 +369,9 @@ public class ReportController extends HttpServlet {
         SEARCH_STUDENT("search_student"),
         STUDENT_REPORT("student-report"),
         STUDENT_REPORT_SORT("sort-student-report"),
-        CLASS_REPORT("class-report");
+        CLASS_REPORT("class-report"),
+        CLASS_DETAIL("class-detail"),
+        DOWNLOAD_STUDENT_REPORT("download-student-report");
         
         private String description;
         ReportFunctionSupported(String description) {
