@@ -2,8 +2,6 @@ package uit.cnpm02.dkhp.controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +25,7 @@ import uit.cnpm02.dkhp.model.Class;
 import uit.cnpm02.dkhp.model.Course;
 import uit.cnpm02.dkhp.model.Faculty;
 import uit.cnpm02.dkhp.utilities.Constants;
+import uit.cnpm02.dkhp.utilities.DateTimeUtil;
 import uit.cnpm02.dkhp.utilities.Log;
 import uit.cnpm02.dkhp.utilities.StringUtils;
 import uit.cnpm02.dkhp.utilities.password.PasswordProtector;
@@ -105,9 +104,8 @@ public class AccountController extends HttpServlet {
         String home = request.getParameter("home");
         String address = request.getParameter("address");
         String phone = request.getParameter("phone");
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        Date birthday = df.parse(request.getParameter("birthday"));
-        Date startDate = df.parse(request.getParameter("startdate"));
+        Date birthday = DateTimeUtil.parse(request.getParameter("birthday"));
+        Date startDate = DateTimeUtil.parse(request.getParameter("startdate"));
         student.setIdentityNumber(IndentityCard);
         student.setGender(gender);
         student.setHomeAddr(home);
@@ -403,7 +401,7 @@ public class AccountController extends HttpServlet {
                 str.append("<td>").append(accounts.get(i).getFullName()).append("</td>");
                 str.append("<td>").append(accounts.get(i).getStatus()).append("</td>");
                 String type = StringUtils.getAccountTypeDescription(accounts.get(i).getType());
-                str.append("<td> " + type + "</td>");
+                str.append("<td> ").append(type).append("</td>");
 
                 str.append("<td><a href='../../AccountController?action=editaccount&username=").append(accounts.get(i).getId()).append("'>Sửa</a></td>");
                 str.append("<td><a href='../../AccountController?action=deleteaccount&username=").append(accounts.get(i).getId()).append("'>Xóa</a></td>");
