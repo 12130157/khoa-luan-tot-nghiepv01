@@ -181,8 +181,7 @@
                 alert("Số sinh viên cho một lớp tối thiểu là 10 tối đa là 120");
             }else{
              if (http) {
-                 alert("123232");
-                http.open("GET", "../../ManageClassController?action=create" +
+               http.open("GET", "../../ManageClassController?action=create" +
                 "&classcode=" + classCode +
                 "&subject=" + subject +
                 "&lecturer="+ lecturer +
