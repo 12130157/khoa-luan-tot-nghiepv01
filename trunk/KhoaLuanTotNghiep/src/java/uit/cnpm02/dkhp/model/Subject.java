@@ -126,6 +126,59 @@ public class Subject extends  AbstractJdbcModel<String>{
     public boolean isIdAutoIncrement() {
         return false;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Subject))
+            return false;
+        if (obj == null)
+            return false;
+        Subject s = (Subject) obj;
+        return this.getId().equals(s.getId());
+    }
+
+    public int compare(Subject o1, String by) {
+        int result = 0;
+        if (by.equalsIgnoreCase("MaMH")) {
+            result = this.getId()
+                    .compareTo(o1.getId());
+        } else if (by.equalsIgnoreCase("TenMH")) {
+            result = this.getSubjectName()
+                    .compareTo(o1.getSubjectName());
+        } else if (by.equalsIgnoreCase("SoTC")) {
+            result = this.getnumTC() - o1.getnumTC();
+        } else if (by.equalsIgnoreCase("SoTCLT")) {
+            result = this.getnumTCLT() - o1.getnumTCLT();
+        } else if (by.equalsIgnoreCase("SoTCTH")) {
+            result = this.getnumTCTH() - o1.getnumTCTH();
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Definition for subject type.
+     */
+    public enum SubjectType {
+        REQUIRED(0, "Bắt buộc"),
+        SELECTIVE(1, "Tự chọn");
+        
+        private int value;
+        private String description;
+        
+        SubjectType(int value, String description) {
+            this.value = value;
+            this.description = description;
+        }
+        
+        public int value() {
+            return value;
+        }
+        
+        public String description() {
+            return this.description;
+        }
+    }
      
 }
 
