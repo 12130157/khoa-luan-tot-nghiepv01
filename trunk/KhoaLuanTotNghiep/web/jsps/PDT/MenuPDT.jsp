@@ -44,9 +44,8 @@
                  <ul>
                      <li><a href="../../ManageSubjectController?function=list_subject&ajax=false"> Quản lý môn học</a></li>
                      <li><a href="../../ManageClassController?action=default"> Quản lý lớp học</a></li>
-             
-             
-                 </ul>
+                     <li><a href="../../ReportController?action=default"> Thống kê đăng ký</a></li>
+                </ul>
              </li>
              <li><a href=""> Đào tạo |</a>
                  <ul>
