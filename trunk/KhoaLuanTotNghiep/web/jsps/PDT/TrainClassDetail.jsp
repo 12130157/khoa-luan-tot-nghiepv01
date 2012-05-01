@@ -3,6 +3,7 @@
     Created on : 11-11-2011, 23:45:21
     Author     : LocNguyen
 --%>
+<%@page import="uit.cnpm02.dkhp.utilities.DateTimeUtil"%>
 <%@page import="java.util.List"%>
 <%@page import="uit.cnpm02.dkhp.model.TrainClass"%>
 <%@include file="MenuPDT.jsp"%>
@@ -71,7 +72,7 @@
                 </div>
                 <hr/><hr/><br>
 
-                <form id="classDetail" action="../../ManageClassController?action=pre_update&classId=<%=trainClass.getId().getClassCode()%>" method="post" >
+                <form id="classDetail" action="../../ManageClassController?action=pre_update&classId=<%=trainClass.getId().getClassCode()%>&year=<%= trainClass.getId().getYear()%>&semester=<%= trainClass.getId().getSemester()%>" method="post" >
                    <table id="table_mh">
                         <tr>
                             <td width="100px"> Mã lớp: </td>
@@ -110,7 +111,7 @@
                             <%if(trainClass.getTestDate() == null ){%>
                             <td>Chưa có</td>
                             <%}else {%>
-                            <td><%=trainClass.getTestDate()%></td>
+                            <td><%=DateTimeUtil.format(trainClass.getTestDate())%></td>
                             <%}%>
                         </tr>
                         <tr>
@@ -132,19 +133,17 @@
                         <tr>
                              <td></td>
                              <td>
-                              <input type="submit" id="update" name="update" value="  Cập nhật  "/> 
+                             <input type="submit" id="update" name="update" value="  Cập nhật  "/> 
                              </td>
                         </tr>
                     </table>
-
+                        <div id="message"></div>
                 </form>
             </div><!--End Contents-->
-
             <div id="footer"><!--Footer-->
                 <%@include file="../Footer.jsp" %>
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
     </body>
-   
 </html>
