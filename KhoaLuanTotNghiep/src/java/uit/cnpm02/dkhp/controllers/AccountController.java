@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -28,6 +29,7 @@ import uit.cnpm02.dkhp.model.Faculty;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.Log;
 import uit.cnpm02.dkhp.utilities.StringUtils;
+import uit.cnpm02.dkhp.utilities.password.PasswordProtector;
 
 /**
  *
@@ -42,6 +44,8 @@ public class AccountController extends HttpServlet {
     private FacultyDAO facultyDao = DAOFactory.getFacultyDao();
     private CourseDAO courseDao = DAOFactory.getCourseDao();
     private int numpage = 0;
+    
+    private List<Account> accounts = new ArrayList<Account>(10);
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -59,8 +63,6 @@ public class AccountController extends HttpServlet {
         String action = request.getParameter("action");
 
         try {
-           
-
             if (action.equalsIgnoreCase("changePass")) {
                 changePass(request, response, session);
             } else if (action.equalsIgnoreCase("Info")) {
@@ -88,11 +90,11 @@ public class AccountController extends HttpServlet {
 
             //
         } catch (Exception ex) {
-            Logger.getLogger(AccountController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AccountController.class.getName())
+                    .log(Level.SEVERE, null, ex);
         } finally {
             out.close();
         }
-
     }
 
     private void updateInfo(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
@@ -163,7 +165,8 @@ public class AccountController extends HttpServlet {
         try {
             String user = (String) session.getAttribute("username");
             Account account = accDao.findById(user);
-            String newPass = request.getParameter("newpass");
+            String newTxtPass = request.getParameter("newpass");
+            String newPass = PasswordProtector.getMD5(newTxtPass);
             account.setPassword(newPass);
             accDao.update(account);
             session.setAttribute("password", newPass);
@@ -211,14 +214,19 @@ public class AccountController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void listAccount(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
+    private void listAccount(HttpServletRequest request,
+                HttpServletResponse response, HttpSession session)
+                throws Exception {
         int currentPage = 1;
         try {
             currentPage = Integer.parseInt(request.getParameter("curentPage"));
         } catch (Exception ex) {
+            currentPage = 1;
         }
 
-        List<Account> accounts = accDao.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, currentPage, "TenDangNhap", "DESC");
+        accounts = accDao.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT,
+                currentPage, "TenDangNhap", "DESC");
+        
         session.setAttribute("account", accounts);
 
         String path = "./jsps/PDT/AccountManager.jsp";
@@ -246,8 +254,10 @@ public class AccountController extends HttpServlet {
 
 
         try {
-            Account acc = new Account(userName, pwd, fullName, false, 0, getType(type));
-             accDao.add(acc);
+            String safePass = PasswordProtector.getMD5(pwd);
+            Account acc = new Account(userName, safePass, fullName,
+                    false, AccounType.NORMAL.value(), getType(type));
+            accDao.add(acc);
 
             String editor = (String) session.getAttribute("logineduser");
 
@@ -260,7 +270,8 @@ public class AccountController extends HttpServlet {
         response.sendRedirect(path);
     }
 
-    private void editAccount(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
+    private void editAccount(HttpServletRequest request,
+            HttpServletResponse response, HttpSession session) throws IOException {
         String path = "./jsps/PDT/EditAccount.jsp";
         session.removeAttribute("error");
         String userName = request.getParameter("username");
@@ -294,6 +305,9 @@ public class AccountController extends HttpServlet {
 
             session.setAttribute("error", "Cập nhật thành công");
             try {
+                if ((pwd != null) && !pwd.isEmpty()) {
+                    pwd = PasswordProtector.getMD5(pwd);
+                }
                 Account acc = new Account(userName, pwd, fullName, false, status, getType(type));
                 accDao.update(acc);
 
@@ -408,5 +422,26 @@ public class AccountController extends HttpServlet {
             numpage = rows / rowsPerPage + 1;
         }
         return numpage;
+    }
+    
+    public enum AccounType {
+        NORMAL(0, "Bình thường"),
+        LOCK(1, "Bị khóa");
+        
+        private int value;
+        private String description;
+        
+        AccounType(int value, String description) {
+            this.value = value;
+            this.description = description;
+        }
+        
+        public int value() {
+            return this.value;
+        }
+        
+        public String description() {
+            return this.description;
+        }
     }
 }
