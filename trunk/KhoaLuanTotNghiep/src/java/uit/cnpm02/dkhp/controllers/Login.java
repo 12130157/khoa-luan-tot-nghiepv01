@@ -18,6 +18,7 @@ import uit.cnpm02.dkhp.DAO.AccountDAO;
 import uit.cnpm02.dkhp.bo.AccountBO;
 import uit.cnpm02.dkhp.model.Account;
 import uit.cnpm02.dkhp.utilities.Constants;
+import uit.cnpm02.dkhp.utilities.password.PasswordProtector;
 
 /**
  *
@@ -72,7 +73,8 @@ public class Login extends HttpServlet {
      */
     private void Login(HttpSession session, HttpServletRequest request, HttpServletResponse response) throws Exception {
         String user = request.getParameter("txtUsername");
-        String pass = request.getParameter("txtPassword");
+        String textPass = request.getParameter("txtPassword");
+        String pass = PasswordProtector.getMD5(textPass);
         AccountBO accBo = new AccountBO();
         String path = "";
         if (accBo.Login(user, pass)) {
