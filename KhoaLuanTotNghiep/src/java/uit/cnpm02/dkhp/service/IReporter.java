@@ -19,18 +19,24 @@ public interface IReporter {
     List<TrainClass> getTrainClass(String year, int semeter,
             TrainClassStatus status);
     /**
+     * Retrieve TrainClass at current year and semeter.
+     * @param classId class ID
+     * @return 
+     */
+    TrainClass getTrainClass(String classId);
+    /**
      * 
      * @param ti
      * @param type default ASC
      * @return 
      */
-    List<TrainClass> sort(String by, String type);
+    List<TrainClass> sort(String sessionId, String by, String type);
     
     //
     // Student report
     //
     List<Student> searchStudent(String key);
-    List<TrainClass> getTrainClassRegistered(String mssv, boolean fullInfor);
+    List<TrainClass> getTrainClassRegistered(String sessionId, String mssv, boolean fullInfor);
     List<TrainClass> getTrainClassRegistered(String mssv, String year, int semeter);
     
 }
