@@ -9,7 +9,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
+import uit.cnpm02.dkhp.DAO.PreSubjectDAO;
 import uit.cnpm02.dkhp.DAO.SubjectDAO;
+import uit.cnpm02.dkhp.model.PreSubID;
+import uit.cnpm02.dkhp.model.PreSubject;
 import uit.cnpm02.dkhp.model.Subject;
 import uit.cnpm02.dkhp.service.ISubjectService;
 import uit.cnpm02.dkhp.utilities.Constants;
@@ -23,16 +26,54 @@ public class SubjectServiceImpl implements ISubjectService {
     private Map<String, List<Subject>> subjectMap
             = new HashMap<String, List<Subject>>();
     private SubjectDAO subjectDao;
+    private PreSubjectDAO preSubDao;
     
     private Object mutex = new Object();
     
     public SubjectServiceImpl() {
         subjectDao = DAOFactory.getSubjectDao();
+        preSubDao = DAOFactory.getPreSubDao();
     }
 
     @Override
-    public Subject addSubject(Subject sub) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Subject addSubject(Subject sub) throws Exception {
+        // validate subject
+        if (subjectDao.findById(sub.getId()) != null) {
+            // Already existed
+            throw new Exception("Môn học đã có");
+        }
+        try {
+            // Add subject into database
+            String subId = subjectDao.add(sub);
+
+            // Add requried
+            List<Subject> requiredSub = sub.getPreSub();
+            if ((requiredSub != null) && !requiredSub.isEmpty()) {
+                List<PreSubject> preSubject = new ArrayList<PreSubject>(5);
+                for (Subject s : requiredSub) {
+                    PreSubject pSub = new PreSubject(s.getId(), sub.getId());
+                    PreSubID id = new PreSubID(sub.getId(), s.getId());
+                    pSub.setId(id);
+
+                    if (preSubject.contains(pSub)) {
+                        preSubject.add(pSub);
+                    } else {
+                        sub.getPreSub().remove(s);
+                    }
+                }
+                if (!preSubject.isEmpty()) {
+                    preSubDao.addAll(preSubject);
+                }
+            }
+            sub.setId(subId);
+            
+            return sub;
+        } catch (Exception ex) {
+            Logger.getLogger(SubjectServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            throw new Exception("Rất tiếc đã có lỗi xảy ra: " + ex.toString());
+        } finally {
+            // Roll back process if some error occur...
+        }
     }
 
     @Override
