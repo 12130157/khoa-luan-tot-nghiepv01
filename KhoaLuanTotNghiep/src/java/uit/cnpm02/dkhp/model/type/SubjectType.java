@@ -31,8 +31,10 @@ public enum SubjectType {
         return this.description;
     }
     
-    private static Map<Integer, SubjectType> lookup_on_index = new HashMap<Integer, SubjectType> ();
-    private static Map<String, SubjectType> lookup_on_text = new HashMap<String, SubjectType> ();
+    private static Map<Integer, SubjectType> lookup_on_index 
+            = new HashMap<Integer, SubjectType> ();
+    private static Map<String, SubjectType> lookup_on_text 
+            = new HashMap<String, SubjectType> ();
     static {
         for (SubjectType st : EnumSet.allOf(SubjectType.class)) {
             lookup_on_index.put(st.value(), st);
