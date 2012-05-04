@@ -82,8 +82,58 @@ public class SubjectServiceImpl implements ISubjectService {
     }
 
     @Override
-    public boolean deleteSubject(Subject sub) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean deleteSubject(String sessionId, String subId)
+                                                throws Exception {
+        boolean deletePreSub = false;
+        List<PreSubject> preSubjects = new ArrayList<PreSubject>(10);
+        String errorMsg = "";
+        try {
+            // Find Pre-Subject - Remove if existed
+            errorMsg = "Không thể xóa môn học tiên quyết.";
+            List<PreSubject> temp = preSubDao.findByColumName("MaMH", subId);
+            if ((temp != null) && !temp.isEmpty()) {
+                preSubjects.addAll(temp);
+            }
+            temp = preSubDao.findByColumName("MaMHTQ", subId);
+            if ((temp != null) && !temp.isEmpty()) {
+                preSubjects.addAll(temp);
+            }
+            
+            if ((preSubjects != null) && !preSubjects.isEmpty()) {
+                preSubDao.delete(preSubjects);
+                deletePreSub = true;
+            }
+            
+            // Remove Subject
+            errorMsg = "Không thể xóa môn học.";
+            Subject sub = subjectDao.findById(subId);
+            if (sub != null) {
+                subjectDao.delete(sub);
+            } else {
+                throw new Exception("Không tìm thấy môn học.");
+            }
+
+            // If remove unsuccess, Please restore deleted Pre-Subject
+            List<Subject> subjectsOfSession = subjectMap.get(sessionId);
+            if ((subjectsOfSession != null) && subjectsOfSession.contains(sub)) {
+                subjectsOfSession.remove(sub);
+                subjectMap.put(sessionId, subjectsOfSession);
+            }
+
+            return true;
+        } catch (Exception ex) {
+            throw new Exception(errorMsg, ex);
+        } finally {
+            if (deletePreSub && (!preSubjects.isEmpty())) {
+                try {
+                    // Rollback data.
+                    errorMsg = "Đã xóa môn học tiên quyết, không thể xóa môn học.";
+                    preSubDao.addAll(preSubjects);
+                } catch (Exception ex) {
+                    // Don't know what to do...
+                }
+            }
+        }
     }
 
     @Override
@@ -167,6 +217,10 @@ public class SubjectServiceImpl implements ISubjectService {
             Logger.getLogger(SubjectServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return results;
+    }
+    
+    public List<Subject> getCurrentSubjects(String sessionId) {
+        return subjectMap.get(sessionId);
     }
     
 }
