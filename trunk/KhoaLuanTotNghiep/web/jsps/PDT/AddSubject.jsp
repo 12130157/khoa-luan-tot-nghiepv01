@@ -93,7 +93,7 @@
                                     <option value="X"> X </option>
                                 <%
                                 if ((subjects != null) && !subjects.isEmpty()) {
-                                    for (int j = i; j < subjects.size(); j++) {
+                                    for (int j = 0; j < subjects.size(); j++) {
                                         Subject s = subjects.get(j);
                                     %>
                                         <option value="<%=s.getId()%>"> <%=s.getSubjectName()%> </option>
@@ -114,6 +114,7 @@
                     </div>
                 </div>
                     <div id="add-result">
+                        
                     </div>
             </div><!--End Contents-->
 
