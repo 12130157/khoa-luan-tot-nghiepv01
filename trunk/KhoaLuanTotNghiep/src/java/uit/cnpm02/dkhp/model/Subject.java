@@ -1,5 +1,6 @@
 package uit.cnpm02.dkhp.model;
 
+import java.util.List;
 import uit.cnpm02.dkhp.access.JDBC.AbstractJdbcModel;
 import uit.cnpm02.dkhp.access.mapper.MapperConstant;
 /**
@@ -18,6 +19,16 @@ public class Subject extends  AbstractJdbcModel<String>{
     private int numTCTH;
     private String facultyCode;
     private int type;
+    /**Hold back requred subject**/
+    private List<Subject> preSub;
+
+    public List<Subject> getPreSub() {
+        return preSub;
+    }
+
+    public void setPreSub(List<Subject> preSub) {
+        this.preSub = preSub;
+    }
 
     public int getType() {
         return type;
