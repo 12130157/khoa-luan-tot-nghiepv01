@@ -70,7 +70,7 @@
             <ul>
                 <li><a href="../HomepageController?action=view"> Trang chủ </a></li>
                 <li> <a href="">Quản lý khoa</a>
-                    <ul>
+                   <!-- <ul>
                         <li><a href="">Quản lý giảng viên</a> </li>
                         <li><a href="">Quản lý sinh viên</a> </li>
                         <li><a href="">Quản lý môn học</a> </li>
@@ -82,15 +82,15 @@
                         <li><a href="">Quản lý Tài Khoản</a> </li>
                         <li><a href="">Quản lý commnent</a> </li>  
                         <li><a href="">Quy định</a> </li>
-                    </ul>
+                    </ul>-->
                 </li>
                 <li><a href=""> Giảng viên </a>
-                    <ul>
+                    <!--<ul>
                         <li><a href="">Điểm kết thúc môn</a> </li>  
-                    </ul>
+                    </ul>-->
                 </li>
                 <li><a href=""> Sinh viên </a>
-                    <ul>
+                    <!-- <ul>
                         <li><a href="">Danh sách lớp học</a> </li>
                         <li> <a href="">Đăng Ký Môn Học</a> </li>
                         <li><a href="">Xem Chương Trình Đào Tạo</a> </li>
@@ -99,7 +99,7 @@
                         <li><a href="">Thông tin sinh viên</a> </li>
                         <li> <a href="">Đổi mật khẩu</a> </li>
                         <li> <a href="">Gửi Yêu Cầu</a> </li>
-                    </ul>
+                    </ul>-->
                 </li>
                 <li><a href="jspLienHe.jsp">Liên Hệ</a></li>
             </ul>
