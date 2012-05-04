@@ -55,7 +55,7 @@ public class SubjectServiceImpl implements ISubjectService {
                     PreSubID id = new PreSubID(sub.getId(), s.getId());
                     pSub.setId(id);
 
-                    if (preSubject.contains(pSub)) {
+                    if (!preSubject.contains(pSub)) {
                         preSubject.add(pSub);
                     } else {
                         sub.getPreSub().remove(s);
