@@ -25,5 +25,6 @@ public class Message {
     public static String REPORT_TRAINCLASS_CANCELED = "So lop da bi huy";
     
     public static String DOWNLOAD_FILE_ERROR = "Loi tai file";
+    public static String ADD_SUBJECT_ERROR = "Da co loi xay ra trong qua trinh them mon hoc.";
     
 }
