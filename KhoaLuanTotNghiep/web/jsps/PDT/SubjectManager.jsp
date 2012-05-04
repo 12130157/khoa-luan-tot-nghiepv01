@@ -83,7 +83,7 @@
                         <input type = "text" placeholder = "Nhập thông tin tìm kiếm" id="search-box" />
                         <input type = "button" onclick = "searchSubject()" value = "Tìm">
                     </div>
-                    <form method="post" action="../../ManageSubjectController?function=add_subject">
+                    <form method="post" action="../../ManageSubjectController?function=pre_add_subject">
                         <div style="padding-bottom: 5px;
                              float: right; padding-right: 15px;
                              ">
