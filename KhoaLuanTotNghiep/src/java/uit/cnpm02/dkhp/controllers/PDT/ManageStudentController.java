@@ -239,7 +239,7 @@ public class ManageStudentController extends HttpServlet {
             }
 
             Collection<String> id_Students = DAOFactory.getStudentDao()
-                                                        .addAll(students);
+                    .addAll(students);
             if (id_Students == null) {
                 return "Thêm không thành công";
             }
