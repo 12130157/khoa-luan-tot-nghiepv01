@@ -13,24 +13,28 @@ public class PreSubject extends AdvancedAbstractJdbcModel<PreSubID> {
     private String subjectName;
     public PreSubject() {
     }
-    public PreSubject(String _preSubCode, String _subCode) {
-        PreSubID preId=new PreSubID(_subCode, _preSubCode);
-        setId(preId);
-        this.preSubjectName="";
-        this.subjectName="";
+
+    public PreSubject(String preSubjectName, String subjectName) {
+        this.preSubjectName = preSubjectName;
+        this.subjectName = subjectName;
     }
-    public String getPreSubjectName(){
-        return this.preSubjectName;
+
+    public String getPreSubjectName() {
+        return preSubjectName;
     }
-    public void setPreSubjectName(String _preSubjectName){
-        this.preSubjectName=_preSubjectName;
+
+    public void setPreSubjectName(String preSubjectName) {
+        this.preSubjectName = preSubjectName;
     }
-     public String getSubjectName(){
-        return this.subjectName;
+
+    public String getSubjectName() {
+        return subjectName;
     }
-    public void setSubjectName(String _subjectName){
-        this.subjectName=_subjectName;
+
+    public void setSubjectName(String subjectName) {
+        this.subjectName = subjectName;
     }
+
     @Override
     public String[] getColumnNames() {
         return new String[]{};
@@ -65,4 +69,28 @@ public class PreSubject extends AdvancedAbstractJdbcModel<PreSubID> {
         return getId().getIDValues();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof PreSubject)) {
+            return false;
+        }
+        if ((this == null) && (obj == null)) {
+            return true;
+        }
+        
+        PreSubject other = (PreSubject) obj;
+        return this.getId().getSudId().equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 79 * hash + (this.preSubjectName != null ? 
+                                            this.preSubjectName.hashCode() : 0);
+        hash = 79 * hash + (this.subjectName != null ? 
+                                                this.subjectName.hashCode() : 0);
+        return hash;
+    }
+
+   
 }
