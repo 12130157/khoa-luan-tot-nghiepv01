@@ -8,7 +8,7 @@ import uit.cnpm02.dkhp.model.Subject;
  * @author LocNguyen
  */
 public interface ISubjectService {
-    Subject addSubject(Subject sub);
+    Subject addSubject(Subject sub) throws Exception;
     Subject updateSubject(Subject sub);
     boolean deleteSubject(Subject sub);
     
