@@ -8,7 +8,7 @@
 	margin-left: 300px;
 	margin-top: -40px;
 	background: url(../imgs/topbanner.jpg);
-	float: left;
+	float: left;       
 }
 
 #menu ul{
@@ -33,6 +33,8 @@
         height: 15px;
         margin-top: 5px;
 	padding: 0 6px 0;
+        font-family: Georgia;
+        text-transform: uppercase;
 }
 
 #menu li a:hover{
