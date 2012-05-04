@@ -249,8 +249,8 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
             con = getConnection();
             statement = con.prepareStatement(sqlQuery);
             statement.setString(1, room);
-            statement.setInt(2, date);
-            statement.setInt(3, shift);
+            statement.setInt(2, shift);
+            statement.setInt(3, date);
             statement.setInt(4, status);
             
             rs = statement.executeQuery();
@@ -280,8 +280,8 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
             con = getConnection();
             statement = con.prepareStatement(sqlQuery);
             statement.setString(1, lectureCode);
-            statement.setInt(2, date);
-            statement.setInt(3, shift);
+            statement.setInt(2, shift);
+            statement.setInt(3, date);
             statement.setInt(4, status);
             
             rs = statement.executeQuery();
