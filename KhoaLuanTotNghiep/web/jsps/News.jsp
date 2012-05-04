@@ -45,6 +45,9 @@
                 <div id="short-description">
                 <%=(n.getContent().length() >= 200 ? n.getContent().substring(0, 200)+"..." : n.getContent())%><br>
                 </div>
+                <div id="new-to-detail">
+                    <a href="../NewsController?Actor=normal&action=detail&Id=<%=n.getId()%>"> Chi tiết </a>
+                </div>
                 </div>
                 <div class="clear"></div>
                 <%}
