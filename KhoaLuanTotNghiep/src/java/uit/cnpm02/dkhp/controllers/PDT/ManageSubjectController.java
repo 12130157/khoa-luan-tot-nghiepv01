@@ -3,9 +3,7 @@ package uit.cnpm02.dkhp.controllers.PDT;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -16,12 +14,17 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.SubjectDAO;
+import uit.cnpm02.dkhp.model.Faculty;
 import uit.cnpm02.dkhp.model.PreSubID;
 import uit.cnpm02.dkhp.model.PreSubject;
 import uit.cnpm02.dkhp.model.Subject;
+import uit.cnpm02.dkhp.service.IFacultyService;
 import uit.cnpm02.dkhp.service.ISubjectService;
+import uit.cnpm02.dkhp.service.impl.FacultyServiceImpl;
 import uit.cnpm02.dkhp.service.impl.SubjectServiceImpl;
 import uit.cnpm02.dkhp.utilities.Constants;
+import uit.cnpm02.dkhp.utilities.ExecuteResult;
+import uit.cnpm02.dkhp.utilities.Message;
 
 /**
  * This controller support function to manage subject include
@@ -36,6 +39,7 @@ import uit.cnpm02.dkhp.utilities.Constants;
 public class ManageSubjectController extends HttpServlet {
 
     private ISubjectService subjectService = new SubjectServiceImpl();
+    private IFacultyService facultyService = new FacultyServiceImpl();
     private int currentPage = 1;
     public ManageSubjectController() {
         super();
@@ -133,13 +137,17 @@ public class ManageSubjectController extends HttpServlet {
                 List<Subject> subjects = sort(session.getId(), by, type);
                 writeOutListSubject(out, subjects);
                 return;
-            } else if (action.equals("delete_single_subject")) {
-                deleteSingle(request, response);
-            } else if (action.equals("add_subject")) {
-                addSubject(request, response);
+            } else if (action.equals(SubjectManageFunction.PRE_ADD_SUBJECT.value())) {
+                preDataForAddSubject(session);
                 path = "./jsps/PDT/AddSubject.jsp";
                 response.sendRedirect(path);
                 return;
+            } else if (action.equals(SubjectManageFunction.ADD_SUBJECT.value())) {
+                ExecuteResult er = addSubject(request);
+                writeResponeAddSubject(er, out);
+                return;
+            } else if (action.equals("delete_single_subject")) {
+                deleteSingle(request, response);
             } else if (action.equals("edit_subject")) {
                 editSubject(request, response);
                 path = "./jsps/PDT/EditSubject.jsp";
@@ -193,6 +201,19 @@ public class ManageSubjectController extends HttpServlet {
     
     private List<Subject> sort(String sessionId, String by, String type) {
         return subjectService.sort(sessionId, by, type);
+    }
+    
+    private void preDataForAddSubject(HttpSession session) {
+        // List al faculties
+        List<Faculty> faculties = facultyService.getAllFaculty();
+        if ((faculties != null) && !faculties.isEmpty()) {
+            session.setAttribute("faculty", faculties);
+        }
+        
+        List<Subject> subjects = facultyService.getSubject("");
+        if ((subjects != null) && !subjects.isEmpty()) {
+            session.setAttribute("subjects", subjects);
+        }
     }
         
     private void writeOutListSubject(PrintWriter out, List<Subject> subjects) {
@@ -275,8 +296,6 @@ public class ManageSubjectController extends HttpServlet {
             Logger.getLogger(ManageSubjectController.class.getName()).log(Level.SEVERE, null, ex);
             out.println("Đã có lỗi xảy ra. " + ex.toString());
         }
-
-
     }
 
     /**
@@ -317,88 +336,82 @@ public class ManageSubjectController extends HttpServlet {
     }
 
     /**
-     * Return number page of number subject.
-     * This number maybe change when add or
-     * remove some entity(ies).
-     * 
-     * @param existedRow number entites.
-     * @return number page.
-     */
-    
-
-    /**
      * Add subject from subject form.
      * 
      * @param request
      * @param response 
      */
-    private void addSubject(HttpServletRequest request, HttpServletResponse response) {
-        HttpSession session = request.getSession();
+    private ExecuteResult addSubject(HttpServletRequest request) {
+        ExecuteResult result = new ExecuteResult(true, "");
         String data = (String) request.getParameter("data");
 
-        if (data == null) {
-            try {
-                //Just repare data
-                //
-                List<Subject> subs = DAOFactory.getSubjectDao().findAll();
-                if ((subs != null) && (!subs.isEmpty())) {
-                    List<String> subjectsStr = new ArrayList<String>();
-                    for (int i = 0; i < subs.size(); i++) {
-                        subjectsStr.add(subs.get(i).getId() + "-" + subs.get(i).getSubjectName());
-                    }
-                    session.setAttribute("subjects", subjectsStr);
-                }
-
-                //return;
-            } catch (Exception ex) {
-                Logger.getLogger(ManageSubjectController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
+        //
+        // Parsing data, get result with full information
+        // include pre-required subject
+        //
+        Subject sub = initialSubjectFromRequest(data);
+        if(sub == null) {
+            result.setIsSucces(false);
+            result.setMessage(Message.ADD_SUBJECT_ERROR);
         } else {
-            // Process action add subject
-            // Data get from AddSubject.jsp form
-            // and it's saved in data string.
-            // in format: ...
-            PrintWriter out = null;
             try {
-                out = response.getWriter();
-
-                String[] infos = data.split("-");
-                if ((infos != null) && (infos.length > 0)) {
-                    int tclt = Integer.parseInt(infos[2]);
-                    int tcth = Integer.parseInt(infos[3]);
-                    Subject sub = null; //new Subject(infos[0], infos[1], tclt + tcth, tcth);
-
-                    String id = DAOFactory.getSubjectDao().add(sub);
-                    if ((id != null) && (id.length() > 0)) {
-                        //Add subject successful
-                        //Init Pre subject.
-                        List<PreSubject> preSubjects = new ArrayList<PreSubject>(10);
-                        for (int i = 4; i < infos.length; i++) {
-                            PreSubID preId = new PreSubID(infos[0], infos[i]);
-                            PreSubject ps = new PreSubject();
-                            ps.setId(preId);
-                            preSubjects.add(ps);
-                        }
-
-                        if (!preSubjects.isEmpty()) {
-                            DAOFactory.getPreSubDao().addAll(preSubjects);
-                        }
-                    }
-
-                    out.println("Thêm môn học thành công.");
-                } else {
-                    out.println("Thêm môn học không thành công.");
-                }
+                sub = subjectService.addSubject(sub);
+                result.setData(sub);
             } catch (Exception ex) {
-                out.println("Thêm môn học không thành công: " + ex.toString());
-                Logger.getLogger(ManageSubjectController.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                out.close();
+                result.setIsSucces(false);
+                result.setMessage(Message.ADD_SUBJECT_ERROR + " -- " + ex.toString());
+                Logger.getLogger(ManageSubjectController.class.getName())
+                        .log(Level.SEVERE, null, ex);
             }
         }
+            
+        return result;
     }
 
+    /*+ subjectName + ";"
+     * + tclt + ";"
+     * + tcth + ";"
+     * + faculty + ";"
+     * + type + ";"
+     * + preSubject;
+     */
+    private Subject initialSubjectFromRequest(String data) {
+        Subject sub = null;
+         try {
+            String[] infos = data.split(";");
+            if ((infos == null) && (infos.length < 1)) {
+                return null;
+            }
+
+            String subjectId = infos[0];
+            String subjectName = infos[1];
+            int tclt = Integer.parseInt(infos[2]);
+            int tcth = Integer.parseInt(infos[3]);
+            String faculty = infos[4];
+            int type = Integer.parseInt(infos[5]);
+            sub = new Subject(subjectId, subjectName, tclt + tcth,
+                    tclt, faculty, type);
+            
+            // Check if existed some required subject
+            // Then initial required subject.
+            //
+            if (infos.length >= 7) {
+                String preSubId[] = infos[6].split("-");
+                List<Subject> preSubs = new ArrayList<Subject>(3);
+                for (int i = 0; i < preSubId.length; i++) {
+                    Subject preSub = new Subject();
+                    preSub.setId(subjectId);
+                    //preSub.sets
+                    preSubs.add(preSub);
+                }
+                sub.setPreSub(preSubs);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ManageSubjectController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return sub;
+    }
+    
     private void editSubject(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
         String data = (String) request.getParameter("data");
@@ -488,13 +501,39 @@ public class ManageSubjectController extends HttpServlet {
         }
     }
 
+    /**
+     * After add subject submited, please send back information
+     * notify user...
+     * @param er data include subject's information
+     * @param out user output stream
+     */
+    private void writeResponeAddSubject(ExecuteResult er, PrintWriter out) {
+        if (!er.isIsSucces()) {
+            out.println("Print out error please...");
+        } else {
+            Subject s = (Subject) er.getData();
+            out.println("Đã thêm thành công môn học mới:");
+            out.println("<table>");
+            // Print header of table...
+            out.println("<tr>"
+                    + "<td> Mã MH </td>"
+                    + "<td> Tên MH </td>"
+                    + "<td> Something else... </td>"
+                    + "</tr>");
+            // Print out content
+            out.println("<tr>"
+                    + "<td><a href=''>" + s.getId() + "</a></td>"
+                    + "<td>" + s.getSubjectName() + "</td>"
+                    + "<td> ... </td>"
+                    + "</tr>");
+            out.println("</table>");
+        }
+    }
 
-
-    
-    
-    public enum SubjectManageFunction{
+    public enum SubjectManageFunction {
         LIST_SUBJECT("list_subject"),
         DELETE_SINGLE("delete_single_subject"),
+        PRE_ADD_SUBJECT("pre_add_subject"),
         ADD_SUBJECT("add_subject"),
         SEARCH("search"),
         SORT("sort"),
