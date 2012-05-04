@@ -3,6 +3,7 @@ html, body, div, span, h1, h2, h3, h4, strong, ol, ul, li{
     padding: 0;
     border: 0;
     outline: 0;
+    font-family: arial !important;
     font-size: 100%;
     color: #000;
     vertical-align: baseline;
@@ -10,6 +11,7 @@ html, body, div, span, h1, h2, h3, h4, strong, ol, ul, li{
     /*background: url("../imgs/background.jpg") repeat fixed center center #474C52;*/
     background: url("../imgs/bgr/earthrisechopped.jpg") fixed center bottom no-repeat #fff;
 }
+
 body{
     line-height: 1.5;
     font-size: 100%;
@@ -95,14 +97,30 @@ ol, ul{
 }
 
 #title {
-    font-family: Gill, Helvetica, sans-serif;
-    font-style: oblique;
-   
-    padding-top: 32px;
-    padding-bottom: 12px;
+    background-color: #fff;
+    text-align: left;
+    padding-top: 12px;
+    padding-bottom: 10px;
+    text-transform: uppercase;
 }
+#title a {
+    text-decoration: none;
+}
+
 #short-description {
     font-style: normal;
+}
+
+#new-to-detail {
+    text-align: right;
+    font-style: italic;
+    padding-right: 45px;
+    padding-top: 25px;
+    color: #0000ff;
+}
+
+#new-to-detail a {
+    text-decoration: none;
 }
 
 #image {
