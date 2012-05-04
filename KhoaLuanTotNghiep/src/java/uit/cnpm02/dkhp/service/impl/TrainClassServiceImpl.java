@@ -151,7 +151,7 @@ public class TrainClassServiceImpl implements ITrainClassService {
             //////
             // Lecturer - In a time --> 1 train class
             //
-            existedClasses = classDAO.findByLecturerAndTime(obj.getClassRoom(),
+            existedClasses = classDAO.findByLecturerAndTime(obj.getLecturerCode(),
                     obj.getStudyDate(), obj.getShift(),
                     TrainClassStatus.OPEN.getValue());
             if ((existedClasses != null) && (!existedClasses.isEmpty())) {
