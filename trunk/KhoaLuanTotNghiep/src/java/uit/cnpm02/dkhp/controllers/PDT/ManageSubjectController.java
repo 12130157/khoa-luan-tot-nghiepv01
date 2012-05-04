@@ -25,6 +25,7 @@ import uit.cnpm02.dkhp.service.impl.SubjectServiceImpl;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
 import uit.cnpm02.dkhp.utilities.Message;
+import uit.cnpm02.dkhp.utilities.StringUtils;
 
 /**
  * This controller support function to manage subject include
@@ -146,9 +147,11 @@ public class ManageSubjectController extends HttpServlet {
                 ExecuteResult er = addSubject(request);
                 writeResponeAddSubject(er, out);
                 return;
-            } else if (action.equals("delete_single_subject")) {
-                deleteSingle(request, response);
-            } else if (action.equals("edit_subject")) {
+            } else if (action.equals(SubjectManageFunction.DELETE_SINGLE.value())) {
+                String subId = request.getParameter("subject_code");
+                ExecuteResult er = deleteSingle(session.getId(), subId);
+                writeResponeDeleteSubject(er, out);
+            } else if (action.equals(SubjectManageFunction.EDIT_SUBJECT.value())) {
                 editSubject(request, response);
                 path = "./jsps/PDT/EditSubject.jsp";
                 response.sendRedirect(path);
@@ -293,7 +296,8 @@ public class ManageSubjectController extends HttpServlet {
             SubjectDAO subDao = DAOFactory.getSubjectDao();
             subDao.addAll(subjects);
         } catch (Exception ex) {
-            Logger.getLogger(ManageSubjectController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ManageSubjectController.class.getName())
+                    .log(Level.SEVERE, null, ex);
             out.println("Đã có lỗi xảy ra. " + ex.toString());
         }
     }
@@ -303,36 +307,28 @@ public class ManageSubjectController extends HttpServlet {
      * The infomation is attached in session
      * by its id.
      * 
-     * @param request HttpServletRequest object
-     * @param response HttpServletResponse object
+     * @param sessionId
+     * @param subId
      */
-    private void deleteSingle(HttpServletRequest request, HttpServletResponse response) {
-        String subId = request.getParameter("subject_code");
-        if ((subId == null) || (subId.isEmpty())) {
-            return;
+    private ExecuteResult deleteSingle(String sessionId, String subId) {
+        ExecuteResult result = new ExecuteResult(true, "");
+        if (StringUtils.isEmpty(subId)) {
+            result.setIsSucces(false);
+            result.setMessage("Không tìm thấy môn học.");
+            return result;
         }
-
-        HttpSession session = request.getSession();
         try {
-            SubjectDAO subDao = DAOFactory.getSubjectDao();
-            Subject s = subDao.findById(subId);
-            subDao.delete(s);
-
-            //Delete success
-            
-            int numPage = subjectService.getNumberPage();
-            session.setAttribute("numpage_sub", numPage);
-
+            subjectService.deleteSubject(sessionId, subId);
+            result.setIsSucces(true);
         } catch (Exception ex) {
-            Logger.getLogger(ManageSubjectController.class.getName()).log(Level.SEVERE, null, ex);
-            session.setAttribute("error", "Xóa không thành công: " + ex.toString());
+            result.setIsSucces(false);
+            result.setMessage("Đã có lỗi xảy ra: " + ex.toString());
+            Logger.getLogger(ManageSubjectController.class.getName())
+                    .log(Level.SEVERE, null, ex);
         }
-
-        try {
-            listSubject(request, response);
-        } catch (Exception ex) {
-            Logger.getLogger(ManageSubjectController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        List<Subject> subjects = subjectService.getCurrentSubjects(sessionId);
+        result.setData(subjects);
+        return result;
     }
 
     /**
@@ -359,7 +355,8 @@ public class ManageSubjectController extends HttpServlet {
                 result.setData(sub);
             } catch (Exception ex) {
                 result.setIsSucces(false);
-                result.setMessage(Message.ADD_SUBJECT_ERROR + " -- " + ex.toString());
+                result.setMessage(Message.ADD_SUBJECT_ERROR + " -- " 
+                        + ex.toString());
                 Logger.getLogger(ManageSubjectController.class.getName())
                         .log(Level.SEVERE, null, ex);
             }
@@ -395,12 +392,12 @@ public class ManageSubjectController extends HttpServlet {
             // Check if existed some required subject
             // Then initial required subject.
             //
-            if (infos.length >= 7) {
+            if ((infos.length >= 7) && !infos[6].equals("X")) {
                 String preSubId[] = infos[6].split("-");
                 List<Subject> preSubs = new ArrayList<Subject>(3);
                 for (int i = 0; i < preSubId.length; i++) {
                     Subject preSub = new Subject();
-                    preSub.setId(subjectId);
+                    preSub.setId(preSubId[i]);
                     //preSub.sets
                     preSubs.add(preSub);
                 }
@@ -412,7 +409,8 @@ public class ManageSubjectController extends HttpServlet {
         return sub;
     }
     
-    private void editSubject(HttpServletRequest request, HttpServletResponse response) {
+    private void editSubject(HttpServletRequest request
+                                , HttpServletResponse response) {
         HttpSession session = request.getSession();
         String data = (String) request.getParameter("data");
         String subId = (String) request.getParameter("subject_code");
@@ -509,24 +507,37 @@ public class ManageSubjectController extends HttpServlet {
      */
     private void writeResponeAddSubject(ExecuteResult er, PrintWriter out) {
         if (!er.isIsSucces()) {
-            out.println("Print out error please...");
+            out.println("Lỗi: " + er.getMessage());
         } else {
             Subject s = (Subject) er.getData();
             out.println("Đã thêm thành công môn học mới:");
-            out.println("<table>");
+            out.println("<table class='general-table'>");
             // Print header of table...
             out.println("<tr>"
-                    + "<td> Mã MH </td>"
-                    + "<td> Tên MH </td>"
-                    + "<td> Something else... </td>"
+                    + "<th> Mã MH </th>"
+                    + "<th> Tên MH </th>"
+                    + "<th> Số TCLT </th>"
+                    + "<th> Số TCTH </th>"
                     + "</tr>");
             // Print out content
             out.println("<tr>"
                     + "<td><a href=''>" + s.getId() + "</a></td>"
                     + "<td>" + s.getSubjectName() + "</td>"
-                    + "<td> ... </td>"
+                    + "<td>" + s.getnumTCLT() + "</td>"
+                    + "<td>" + s.getnumTCTH() + "</td>"
                     + "</tr>");
             out.println("</table>");
+        }
+    }
+
+    private void writeResponeDeleteSubject(ExecuteResult er, PrintWriter out) {
+        if (!er.isIsSucces()) {
+            out.println("Lỗi: " + er.getMessage());
+        } else {
+            List<Subject> subjects = (List<Subject>) er.getData();
+            if ((subjects != null) && !subjects.isEmpty()) {
+                writeOutListSubject(out, subjects);
+            }
         }
     }
 
@@ -537,7 +548,8 @@ public class ManageSubjectController extends HttpServlet {
         ADD_SUBJECT("add_subject"),
         SEARCH("search"),
         SORT("sort"),
-        EDIT_SUBJECT("edit_subject");
+        EDIT_SUBJECT("edit_subject"),
+        DELETE_SUBJECT("delete_subject");
 
         private String function;
         private SubjectManageFunction(String function) {
