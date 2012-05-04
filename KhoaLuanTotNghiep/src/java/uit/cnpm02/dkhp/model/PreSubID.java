@@ -59,4 +59,25 @@ public class PreSubID implements IID {
         preSudId = idValues[1].toString();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof PreSubID)) {
+            return false;
+        }
+        if ((this == null) && (obj == null)) {
+            return true;
+        }
+        
+        PreSubID other = (PreSubID) obj;
+        return (this.getSudId().equals(other.getSudId())
+                && this.getPreSudId().equals(other.getPreSudId()));
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 19 * hash + (this.sudId != null ? this.sudId.hashCode() : 0);
+        hash = 19 * hash + (this.preSudId != null ? this.preSudId.hashCode() : 0);
+        return hash;
+    }
 }

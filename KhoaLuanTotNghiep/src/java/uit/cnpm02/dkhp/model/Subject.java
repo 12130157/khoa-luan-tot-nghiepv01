@@ -166,30 +166,4 @@ public class Subject extends  AbstractJdbcModel<String>{
         
         return result;
     }
-    
-    /**
-     * Definition for subject type.
-     */
-    public enum SubjectType {
-        REQUIRED(0, "Bắt buộc"),
-        SELECTIVE(1, "Tự chọn");
-        
-        private int value;
-        private String description;
-        
-        SubjectType(int value, String description) {
-            this.value = value;
-            this.description = description;
-        }
-        
-        public int value() {
-            return value;
-        }
-        
-        public String description() {
-            return this.description;
-        }
-    }
-     
 }
-
