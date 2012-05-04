@@ -28,7 +28,7 @@ public class SubjectServiceImpl implements ISubjectService {
     private SubjectDAO subjectDao;
     private PreSubjectDAO preSubDao;
     
-    private Object mutex = new Object();
+    private final Object mutex = new Object();
     
     public SubjectServiceImpl() {
         subjectDao = DAOFactory.getSubjectDao();
@@ -42,37 +42,39 @@ public class SubjectServiceImpl implements ISubjectService {
             // Already existed
             throw new Exception("Môn học đã có");
         }
-        try {
-            // Add subject into database
-            String subId = subjectDao.add(sub);
+        synchronized (mutex) {
+            try {
+                // Add subject into database
+                String subId = subjectDao.add(sub);
 
-            // Add requried
-            List<Subject> requiredSub = sub.getPreSub();
-            if ((requiredSub != null) && !requiredSub.isEmpty()) {
-                List<PreSubject> preSubject = new ArrayList<PreSubject>(5);
-                for (Subject s : requiredSub) {
-                    PreSubject pSub = new PreSubject(s.getId(), sub.getId());
-                    PreSubID id = new PreSubID(sub.getId(), s.getId());
-                    pSub.setId(id);
+                // Add requried
+                List<Subject> requiredSub = sub.getPreSub();
+                if ((requiredSub != null) && !requiredSub.isEmpty()) {
+                    List<PreSubject> preSubject = new ArrayList<PreSubject>(5);
+                    for (Subject s : requiredSub) {
+                        PreSubject pSub = new PreSubject(s.getId(), sub.getId());
+                        PreSubID id = new PreSubID(sub.getId(), s.getId());
+                        pSub.setId(id);
 
-                    if (!preSubject.contains(pSub)) {
-                        preSubject.add(pSub);
-                    } else {
-                        sub.getPreSub().remove(s);
+                        if (!preSubject.contains(pSub)) {
+                            preSubject.add(pSub);
+                        } else {
+                            sub.getPreSub().remove(s);
+                        }
+                    }
+                    if (!preSubject.isEmpty()) {
+                        preSubDao.addAll(preSubject);
                     }
                 }
-                if (!preSubject.isEmpty()) {
-                    preSubDao.addAll(preSubject);
-                }
+                sub.setId(subId);
+
+                return sub;
+            } catch (Exception ex) {
+                Logger.getLogger(SubjectServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                throw new Exception("Rất tiếc đã có lỗi xảy ra: " + ex.toString());
+            } finally {
+                // Roll back process if some error occur...
             }
-            sub.setId(subId);
-            
-            return sub;
-        } catch (Exception ex) {
-            Logger.getLogger(SubjectServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-            throw new Exception("Rất tiếc đã có lỗi xảy ra: " + ex.toString());
-        } finally {
-            // Roll back process if some error occur...
         }
     }
 
