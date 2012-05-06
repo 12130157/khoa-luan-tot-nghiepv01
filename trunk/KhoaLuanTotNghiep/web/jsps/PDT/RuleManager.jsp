@@ -122,7 +122,6 @@
         }
         
         function save(index, ruleId) {
-            alert("Enter save function.");
             var editValueRange = document.getElementById("td-value" + index);
             var newValue = document.getElementById("txt-value").value;
             editValueRange.innerHTML = newValue;
@@ -193,7 +192,6 @@
         }
 
         function updateRules(tableId) {
-            alert("Entered updateRules called.");
             if(http){
                 http.open("GET", "" ,true);
                 http.onreadystatechange = responeHandler;
