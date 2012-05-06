@@ -16,7 +16,7 @@ public class Rule extends  AbstractJdbcModel<String>{
         this.description = "";
     }
 
-    public Rule(String id, int value) {
+    public Rule(String id, float value) {
         setId(id);
         this.value = value;
         this.description = "";
@@ -68,7 +68,7 @@ public class Rule extends  AbstractJdbcModel<String>{
             throw new IllegalArgumentException(e);
         }
     }
-     @Override
+    @Override
     public Object[] getColumnValues() {
          return new Object[]{
                      value,
