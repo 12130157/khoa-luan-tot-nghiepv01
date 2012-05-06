@@ -4,21 +4,22 @@ import java.util.List;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import uit.cnpm02.dkhp.DAO.DAOFactory;
-import uit.cnpm02.dkhp.DAO.PreSubjectDAO;
-import uit.cnpm02.dkhp.DAO.SubjectDAO;
 import uit.cnpm02.dkhp.model.PreSubID;
 import uit.cnpm02.dkhp.model.PreSubject;
 import uit.cnpm02.dkhp.model.Subject;
+import uit.cnpm02.dkhp.service.IPreSubject;
+import uit.cnpm02.dkhp.service.ISubjectService;
+import uit.cnpm02.dkhp.service.impl.PreSubjectImpl;
+import uit.cnpm02.dkhp.service.impl.SubjectServiceImpl;
+import uit.cnpm02.dkhp.utilities.ExecuteResult;
 
 /**
  *
@@ -27,7 +28,9 @@ import uit.cnpm02.dkhp.model.Subject;
 @WebServlet(name = "PreSubjectController", urlPatterns = {"/PreSubjectController"})
 public class PreSubjectController extends HttpServlet {
 
-    private PreSubjectDAO preDao = new PreSubjectDAO();
+    //private PreSubjectDAO preDao = new PreSubjectDAO();
+    private IPreSubject preSubService = new PreSubjectImpl();
+    private ISubjectService subjectService = new SubjectServiceImpl();
 
     /** 
      * 
@@ -36,122 +39,74 @@ public class PreSubjectController extends HttpServlet {
      * @throws ServletException
      * @throws IOException 
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void processRequest(HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
         PrintWriter out = response.getWriter();
         try {
             String action = request.getParameter("action");
-            if (action.equalsIgnoreCase("view")) {
-                viewPreSubject(response, session);
-            } else if (action.equalsIgnoreCase("manage")) {
+            if (action.equalsIgnoreCase(PreSubManageFunction.DEFAULT.value())) {
+                loadDefault(session, response);
+                return;
+            }else if (action.equalsIgnoreCase("view")) { // Student only
+                List<PreSubject> preSubs = getAll(session.getId());
+                session.setAttribute("preSub", preSubs);
+                String path = "./jsps/SinhVien/PreSubject.jsp";
+                response.sendRedirect(path);
+                return;
+            }/* else if (action.equalsIgnoreCase("manage")) {
                 loadDataForManage(request, response);
-            } else if (action.equalsIgnoreCase("check-existed")) {
+            }*/else if (action.equalsIgnoreCase(PreSubManageFunction.CHECK_EXIST.value())) {
                 doCheckExisted(request, response);
-            } else if (action.equalsIgnoreCase("add-pre-sub")) {
-                addSub(request, response);
-            } else if (action.equalsIgnoreCase("delete")) {
-                String message = deleteSub(request);
-                if (!message.isEmpty()) {
-                    session.setAttribute("error", message);
-                }
+            } else if (action.equalsIgnoreCase(PreSubManageFunction.SEARCH.value())) {
+                String key = request.getParameter("key");
+                search(session.getId(), key, out);
+            } else if (action.equalsIgnoreCase(PreSubManageFunction.ADD_PRESUB.value())) {
+                addSub(request, out);
+            } else if (action.equalsIgnoreCase(PreSubManageFunction.DELETE_PRESUB.value())) {
+                String subId = request.getParameter("subid");
+                String preSubId = request.getParameter("presubid");
+                doDeletePreSub(out, session, subId, preSubId);
+            } else if (action.equalsIgnoreCase(PreSubManageFunction.SORT.value())) {
+                String by = request.getParameter("by");
+                String type = request.getParameter("type");
+                doSort(out, session.getId(), by, type);
                 
-                loadDataForManage(request, response);
             }
         } finally {
             out.close();
         }
     }
-
-    private void viewPreSubject(HttpServletResponse response, HttpSession session) throws IOException {
-        String path = "";
+    
+    private void loadDefault(HttpSession session, HttpServletResponse response) {
         try {
-            List<PreSubject> preSub = preDao.findAll();
-            setSubjectName(preSub);
-            session.setAttribute("preSub", preSub);
-            path = "./jsps/SinhVien/PreSubject.jsp";
-        } catch (Exception ex) {
-            path = "./jsps/Message.jsp";
-        }
-        response.sendRedirect(path);
-    }
+            List<PreSubject> preSubs = getAll(session.getId());
+            List<Subject> subjects = subjectService.getAll("");
 
-    private void setSubjectName(List<PreSubject> preSub) throws Exception {
-        SubjectDAO subjectDao = new SubjectDAO();
-        for (int i = 0; i < preSub.size(); i++) {
-            preSub.get(i).setPreSubjectName(subjectDao.findById(preSub.get(i).getId().getPreSudId()).getSubjectName());
-            preSub.get(i).setSubjectName(subjectDao.findById(preSub.get(i).getId().getSudId()).getSubjectName());
+            if ((preSubs != null) && !preSubs.isEmpty()) {
+                session.setAttribute("list_pre_sub", preSubs);
+            }
+            
+            if ((subjects != null) && !subjects.isEmpty()) {
+                session.setAttribute("list_sub", subjects);
+            }
+            String path = "./jsps/PDT/PreSubjectManager.jsp";
+            response.sendRedirect(path);
+        } catch (Exception ex) {
+            Logger.getLogger(PreSubjectController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    //
-    // For admin functional.
-    //
-    private Map<String, String> subNameMapping = new HashMap<String, String>(10);
-
-    private void loadDataForManage(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        SubjectDAO subDao = DAOFactory.getSubjectDao();
-        List<String> data = new ArrayList<String>(10);
-        List<Subject> subs = null;
-        List<PreSubject> preSubs = null;
-
+    
+    private List<PreSubject> getAll(String sessionId) throws IOException {
+        List<PreSubject> results = new ArrayList<PreSubject>(10);
         try {
-            HttpSession session = request.getSession();
-            subs = subDao.findAll();
-
-            if ((subs != null) && (!subs.isEmpty())) {
-                for (Subject sub : subs) {
-                    String temp = sub.getSubjectName() + " - " + sub.getId();
-                    data.add(temp);
-                    subNameMapping.put(sub.getId(), sub.getSubjectName());
-                }
-            }
-
-            //preSubs = preDao.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, 1, null, null);
-            preSubs = preDao.findAll();
-
-            Collections.sort(data);
-
-            for (PreSubject preSub : preSubs) {
-                String subName = subNameMapping.get(preSub.getId().getSudId());
-                String preName = subNameMapping.get(preSub.getId().getPreSudId());
-
-                preSub.setSubjectName(subName);
-                preSub.setPreSubjectName(preName);
-            }
-
-            session.setAttribute("list_sub", data);
-            session.setAttribute("list_pre_sub", preSubs);
+            results = preSubService.getAll(sessionId, true);
         } catch (Exception ex) {
-            log("Error while try to get all subject", ex);
+            //
         }
-
-        String path = "./jsps/PDT/PreSubjectManager.jsp";
-        response.sendRedirect(path);
-
-    }
-
-    private CheckResult checkPreSubjectExisted(String subjectId, String preSubjectId) {
-        String message = null;
-        boolean value = true;
-        try {
-            if (subjectId.equals(preSubjectId)) {
-                message = "Giá trị không hợp lệ"; //Mon hoc tien quyet khong the la chinh no
-                value = false;
-            } else {
-                PreSubID id = new PreSubID(subjectId, preSubjectId);
-                if (DAOFactory.getPreSubDao().findById(id) != null) {
-                    message = "Đã tồn tại";
-                    value = false;
-                } else {
-                    message = "Giá trị hợp lệ";
-                }
-            }
-        } catch (Exception ex) {
-            log("Error occur while do checking the pre subject", ex);
-        }
-        return new CheckResult(value, message);
+        return results;
     }
 
     /**
@@ -159,38 +114,23 @@ public class PreSubjectController extends HttpServlet {
      * @param preSub
      * @return 
      */
-    private void doCheckExisted(HttpServletRequest req, HttpServletResponse resp) {
+    private void doCheckExisted(HttpServletRequest req,
+                                                HttpServletResponse resp) {
         PrintWriter out = null;
 
         try {
-            String subjectNameStr = req.getParameter("sub");
-            String preSubjectNameStr = req.getParameter("pre-sub");
+            String subjectID = req.getParameter("sub");
+            String preSubjectID = req.getParameter("pre-sub");
             out = resp.getWriter();
+            ExecuteResult er = preSubService.isExisted(subjectID, preSubjectID);
 
-            if (subjectNameStr == null
-                    || preSubjectNameStr == null
-                    || subjectNameStr.isEmpty()
-                    || preSubjectNameStr.isEmpty()) {
-                out.println("Đã có lỗi xảy ra.");
-                return;
-            }
+            //CheckResult checkResult = checkPreSubjectExisted(subjectID,
+            //        preSubjectID);
+            out.println(er.getMessage());
 
-            String[] subjectData = subjectNameStr.split("-");
-            String[] preSubjectData = preSubjectNameStr.split("-");
-
-            String message = "";
-            CheckResult checkResult = null;
-            if (subjectData.length < 2
-                    || preSubjectData.length < 2) {
-                message = "Đã có lỗi xảy ra";
-            } else {
-                checkResult = checkPreSubjectExisted(subjectData[1].trim(), preSubjectData[1].trim());
-                message = checkResult.getMessage();
-            }
-
-            out.println(message);
         } catch (Exception ex) {
-            log("Error occur while do checking the pre subject", ex);
+            log("Có lỗi xảy ra trong quá trình kiểm tra. ", ex);
+            out.println("Có lỗi xảy ra trong quá trình kiểm tra. " + ex.toString());
         } finally {
             try {
                 out.close();
@@ -200,80 +140,81 @@ public class PreSubjectController extends HttpServlet {
         }
     }
 
-    private String deleteSub(HttpServletRequest req) {
-        String message = "";
+    private void doDeletePreSub(PrintWriter out, HttpSession session,
+                                        String subId, String preSubId) {
         try {
-            String subId = req.getParameter("sub-id");
-            String preSubId = req.getParameter("pre-sub-id");
-
             if (subId == null
                     || preSubId == null
                     || subId.isEmpty()
                     || preSubId.isEmpty()) {
-                return "Đã có lỗi xảy ra.";
+                return;
             }
 
-            PreSubID id = new PreSubID(subId, preSubId);
-            PreSubject preSub = preDao.findById(id);
+            preSubService.deletePreSubject(session.getId(), subId, preSubId);
             
-            if (preSub != null) {
-                preDao.delete(preSub);
+            List<PreSubject> preSubjects = preSubService
+                                .getCurrentPreSubjects(session.getId());
+            
+            writeOutListPreSubject(out, preSubjects, true, true);
+        } catch (Exception ex) {
+            log("Error occur while do checking the pre subject", ex);
+        }
+    }
+
+    private void addSub(HttpServletRequest req, PrintWriter out) {
+        try {
+            String subjectId = req.getParameter("sub");
+            String preSubjectId = req.getParameter("pre-sub");
+
+            ExecuteResult er = preSubService.isExisted(subjectId, preSubjectId);
+            if (er.isIsSucces() == false) {
+                out.println(er.getMessage());
+                return;
+            }
+
+            PreSubID id = new PreSubID(subjectId, preSubjectId);
+            PreSubject preSub = new PreSubject();
+            preSub.setId(id);
+            preSub = preSubService.addPreSubject(preSub);
+
+            if (preSub == null) {
+                out.println("Đã có lỗi xảy ra.");
+            } else {
+                List<PreSubject> data = new ArrayList<PreSubject>(5);
+                data.add(preSub);
+                out.println("Thêm thành công.");
+                writeOutListPreSubject(out, data, false, false);
             }
         } catch (Exception ex) {
             log("Error occur while do checking the pre subject", ex);
         }
-        
-        return message;
     }
-
-    private void addSub(HttpServletRequest req, HttpServletResponse resp) {
-        PrintWriter out = null;
-
+    
+    private void writeOutListPreSubject(PrintWriter out, List<PreSubject> preSubjects,
+            boolean includeLinkSort, boolean includeBtnDelete) {
         try {
-            String subjectNameStr = req.getParameter("sub");
-            String preSubjectNameStr = req.getParameter("pre-sub");
-            out = resp.getWriter();
-
-            if (subjectNameStr == null
-                    || preSubjectNameStr == null
-                    || subjectNameStr.isEmpty()
-                    || preSubjectNameStr.isEmpty()) {
-                out.println("Đã có lỗi xảy ra.");
-                return;
+            out.println("<table class='general-table'>");
+            String tblHeader = "<tr>"
+                    + "<th> STT </th>"
+                    + "<th> " + (includeLinkSort ? "<a href='#' onclick =\"sort('TenMH')\">" : "") + " Môn học " + (includeLinkSort ? "</a>" : "") + " </th>"
+                    + "<th> " + (includeLinkSort ? "<a href='#' onclick =\"sort('TenMHTQ')\">" : "") + "Môn học tiên quyết " + (includeLinkSort ? "</a>" : "") + " </th>"
+                    + ((includeBtnDelete == true) ? "<th></th>" : "")
+                      + "</tr>";
+            out.println(tblHeader);
+            //<a href="deletePreSub(<%=preSubjects.get(j).getId().getSudId()%>, <%=preSubjects.get(j).getId().getPreSudId() %>)"></a>
+            String btnOk = "<a href='#' onclick=\"deletePreSub('%s', '%s')\"> Xóa</a>";
+            for (int i = 0; i < preSubjects.size(); i++) {
+                PreSubject ps = preSubjects.get(i);
+                String currentLine = "<tr>"
+                        + "<td> " + (i + 1) + " </td>"
+                        + "<td> " + ps.getSubjectName() + " </td>"
+                        + "<td> " + ps.getPreSubjectName() + " </td> "
+                        + "<td> " + ((includeBtnDelete == true) ? String.format(btnOk, ps.getId().getSudId(), ps.getId().getPreSudId()) : "") + "</td>"
+                        + "</tr>";
+                out.println(currentLine);
             }
-
-            String[] subjectData = subjectNameStr.split("-");
-            String[] preSubjectData = preSubjectNameStr.split("-");
-
-            String message = "Thêm thành công";
-            if (subjectData.length < 2
-                    || preSubjectData.length < 2) {
-                message = "Đã có lỗi xảy ra";
-            } else {
-                PreSubID id = new PreSubID(subjectData[1].trim(), preSubjectData[1].trim());
-                CheckResult check = checkPreSubjectExisted(id.getSudId(), id.getPreSudId());
-
-                if (check.isOK) {
-                    PreSubject preSub = new PreSubject();
-                    preSub.setId(id);
-                    id = preDao.add(preSub);
-                    if (id == null) {
-                        message = "Đã có lỗi xảy ra.";
-                    }
-                } else {
-                    message = check.getMessage();
-                }
-            }
-
-            out.println(message);
+            out.println("</table>");
         } catch (Exception ex) {
-            log("Error occur while do checking the pre subject", ex);
-        } finally {
-            try {
-                out.close();
-            } catch (Exception e) {
-                //
-            }
         }
     }
 
@@ -312,33 +253,45 @@ public class PreSubjectController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private class CheckResult {
-
-        private boolean isOK;
-        private String message;
-
-        public CheckResult() {
+    private void search(String sessionId, String key, PrintWriter out) {
+        List<PreSubject> preSubjects = preSubService.search(sessionId, key);
+        
+        if(preSubjects == null) {
+            out.print("Không tìm thấy dữ liệu");
+        } else {
+            out.print("<b>Danh sách môn học tiên quyết:</b>");
+            writeOutListPreSubject(out, preSubjects, true, true);
         }
+    }
 
-        public CheckResult(boolean isOK, String message) {
-            this.isOK = isOK;
-            this.message = message;
+    private void doSort(PrintWriter out, String sessionId, String by, String type) {
+        preSubService.sort(sessionId, by, type);
+        List<PreSubject> preSubjects = preSubService.getCurrentPreSubjects(sessionId);
+        
+        if ((preSubjects != null) && !preSubjects.isEmpty()) {
+            String newType = (type.equalsIgnoreCase("ASC") ? "DES" : "ASC");
+            out.println("<input type=\"hidden\" id=\"sort-type\" value=\"" + newType + "\" />");
+            writeOutListPreSubject(out, preSubjects, true, true);
         }
+    }
 
-        public boolean isIsOK() {
-            return isOK;
+    public enum PreSubManageFunction {
+        DEFAULT("manage"),
+        VIEW("view"),
+        LIST_PRESUB("list_presubject"),
+        DELETE_PRESUB("delete"),
+        ADD_PRESUB("add-pre-sub"),
+        CHECK_EXIST("check-existed"),
+        SEARCH("search"),
+        SORT("sort");
+
+        private String function;
+        private PreSubManageFunction(String function) {
+            this.function = function;
         }
-
-        public void setIsOK(boolean isOK) {
-            this.isOK = isOK;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public void setMessage(String message) {
-            this.message = message;
+        
+        public String value() {
+            return function;
         }
     }
 }
