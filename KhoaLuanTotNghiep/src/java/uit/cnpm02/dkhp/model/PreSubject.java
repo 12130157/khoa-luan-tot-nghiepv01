@@ -79,7 +79,8 @@ public class PreSubject extends AdvancedAbstractJdbcModel<PreSubID> {
         }
         
         PreSubject other = (PreSubject) obj;
-        return this.getId().getSudId().equals(other.getId());
+        return ((this.getId().getSudId().equals(other.getId().getSudId()))
+                && (this.getId().getPreSudId().equals(other.getId().getPreSudId())));
     }
 
     @Override
@@ -92,5 +93,16 @@ public class PreSubject extends AdvancedAbstractJdbcModel<PreSubID> {
         return hash;
     }
 
-   
+    public int compare(PreSubject o2, String by) {
+        int result = 0;
+        if (by.equalsIgnoreCase("TenMH")) {
+            result = this.getSubjectName()
+                    .compareTo(o2.getSubjectName());
+        } else if (by.equalsIgnoreCase("TenMHTQ")) {
+            result = this.getPreSubjectName()
+                    .compareTo(o2.getPreSubjectName());
+        }
+        
+        return result;
+    }
 }
