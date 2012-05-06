@@ -158,7 +158,7 @@ ol, ul{
 
 table.general-table{
     width: 100%;
-    padding-left: 10px;
+    /*padding-left: 10px;*/
     padding-right: 10px;
     text-align: center;
 }
@@ -179,4 +179,3 @@ table.general-table td{
     width:120px;
     font-zize: 10px;
 }
-
