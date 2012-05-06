@@ -126,6 +126,7 @@
                         </table>
                     </div>
                 </div>
+                <div class="clear"></div>
                 <hr/><hr/><br>
 
                 <%--Form add new Train subject--%>
