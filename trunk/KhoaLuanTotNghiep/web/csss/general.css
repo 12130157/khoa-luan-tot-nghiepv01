@@ -175,5 +175,8 @@ table.general-table td{
 }
 
 
-#new-range img{width:120px;}
+#new-range img{
+    width:120px;
+    font-zize: 10px;
+}
 
