@@ -26,5 +26,8 @@ public class Message {
     
     public static String DOWNLOAD_FILE_ERROR = "Loi tai file";
     public static String ADD_SUBJECT_ERROR = "Da co loi xay ra trong qua trinh them mon hoc.";
+
+    public static String RULE_ADD_ERROR_ID_EXISTED = "Mã Rule đã tồn tại.";
+    public static String RULE_ADD_ERROR_ID_or_DESCRIPTION_EMPTY = "ID hoặc mô tả không hợp lệ.";
     
 }
