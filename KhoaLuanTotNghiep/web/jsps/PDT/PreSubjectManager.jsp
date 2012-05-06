@@ -4,6 +4,7 @@
     Author     : LocNguyen
 --%>
 
+<%@page import="uit.cnpm02.dkhp.model.Subject"%>
 <%@page import="uit.cnpm02.dkhp.model.PreSubID"%>
 <%@page import="uit.cnpm02.dkhp.model.PreSubject"%>
 <%@page import="java.util.List"%>
@@ -21,7 +22,7 @@
     String error = (String) session.getAttribute("error");
     session.removeAttribute("error");
 
-    List<String> subjects = (List<String>) session.getAttribute("list_sub");
+    List<Subject> subjects = (List<Subject>) session.getAttribute("list_sub");
     List<PreSubject> preSubjects = (List<PreSubject>) session.getAttribute("list_pre_sub");
 
 %>
@@ -33,30 +34,19 @@
         <title>Trang quản lý môn học tiên quyết</title>
         
         <style media="all" type="text/css">
-            #tableadd, #tablelist{
-                width: 100%;
-                padding-left: 10px;
-                padding-right: 10px;
-                text-align: center;
-            }
-            #tableadd th, #tablelist th{
-                background-color:#00ff00;
-                height: 30px;
-                border-color: black;
-            }
-
-            #tableadd td, #tablelist td{
-                text-align: center;
-                background-color: #5F676D;
-            }
-            #title{
-                text-align: center;
-            }
             #page{
                 text-align: center;
             }
             a {
                 color: violet;
+            }
+            #sidebar {
+                height:400px;
+                overflow:auto;
+            }
+            #list-pre-sub {
+                height:400px;
+                overflow:auto;
             }
         </style>
     </head>
@@ -77,7 +67,7 @@
 
                 <div id = "add-new" name="add-new">
                     <h3> Thêm môn học tiên quyết: </h3>
-                    <table id="tableadd" name="tableadd">
+                    <table id="tableadd" name="tableadd" class="general-table">
                         <tr>
                             <th> Chọn môn học </th>
                             <th> Môn học tiên quyết </th>
@@ -88,7 +78,7 @@
                                 <% if ((subjects != null) && (!subjects.isEmpty())) {
                                         for (int i = 0; i < subjects.size(); i++) {
                                 %>
-                                <option> <%= subjects.get(i)%> </option>
+                                <option value="<%=subjects.get(i).getId()%>" > <%= subjects.get(i).getSubjectName() %> </option>
                                 <% }
                                     }%>
                             </select>
@@ -98,47 +88,49 @@
                                 <% if ((subjects != null) && (!subjects.isEmpty())) {
                                         for (int i = 0; i < subjects.size(); i++) {
                                 %>
-                                <option> <%= subjects.get(i)%> </option>
+                                <option value="<%=subjects.get(i).getId()%>" > <%= subjects.get(i).getSubjectName() %> </option>
                                 <% }
                                     }%>
                             </select>
                         </td>
                     </table>
-
-                    <div id="check-respone">
-                    </div>
-
                     <div id = "btn-add">
                         <input type="button" onclick="checkPreSubjectExisted()" value="Kiểm tra" />
                         <input type="button" onclick="addPreSub()" value="Thêm" />
                     </div>
+                            
+                    <div id="check-respone">
+                    </div>
                 </div>
 
                 <br /> <hr /> <hr />            
+                <div id="pre-sub-search">
+                    <%--<i>Nhập thông tin tìm kiếm </i>--%>
+                    <input type="text" id="txt-search" />
+                    <input type="button" value="Tìm" onclick="search()" />
+                </div>
                 <div id = "list-pre-sub" name="list-pre-sub">
+                    <input type="hidden" id="sort-type" value="ASC" />
                     <h3> Danh sách môn học tiên quyết: </h3>
-                    <table id="tablelist" name="tablelist">
+                    <table id="tablelist" class="general-table" name="tablelist">
                         <tr>
                         <th> STT </th>
-                        <th> Tên môn học </th>
-                        <th> Tên MHTQ </th>
-                        <th>  </th>
+                        <th> <a href="#" onclick ="sort('TenMH')">Tên môn học </a></th>
+                        <th> <a href="#" onclick="sort('TenMHTQ')"> Tên MHTQ </a></th>
+                        <th> </th>
                         </tr>
                         <%
                             if ((preSubjects != null) && (!preSubjects.isEmpty())) {
                                 for (int j = 0; j < preSubjects.size(); j++) {
-                                    PreSubID id = preSubjects.get(j).getId();
+                                    PreSubject pSub = preSubjects.get(j);
                         %>
                         <tr>
                         <td> <%= (j + 1)%> </td>
-                        <td> <%= preSubjects.get(j).getSubjectName()%> </td>
-                        <td> <%= preSubjects.get(j).getPreSubjectName()%> </td>
+                        <td> <%= pSub.getSubjectName()%> </td>
+                        <td> <%= pSub.getPreSubjectName()%> </td>
                         <td> 
-                            <form method="post" action="../../PreSubjectController?action=delete&sub-id=<%= id.getSudId()%>&pre-sub-id=<%= id.getPreSudId()%>">
-                                <input type="submit" value="Xóa">
-                            </form>
+                            <a href="#" onclick="deletePreSub('<%=pSub.getId().getSudId()%>', '<%=pSub.getId().getPreSudId()%>')"> Xóa </a>
                         </td>
-                        <!--td> <input type="button" onclick="deletePreSubject()" value="Xóa"> </td-->
                         </tr>
                         <%        }
                             }
@@ -174,6 +166,7 @@
          * showed after the call to this function finished.
          */
         function checkPreSubjectExisted() {
+            // In ID not name
             var sub = document.getElementById("select-sub").value;
             var preSub = document.getElementById("select-pre-sub").value;
             var pageName = "../../PreSubjectController?action=check-existed&sub=" + sub
@@ -193,6 +186,7 @@
         }
         
         function addPreSub() {
+            // In ID not name
             var sub = document.getElementById("select-sub").value;
             var preSub = document.getElementById("select-pre-sub").value;
             var pageName = "../../PreSubjectController?action=add-pre-sub&sub=" + sub
@@ -232,5 +226,50 @@
                 //ajaxfunction("../../AccountController?action=Filter&curentPage="+currentpage);
             }
         }
+        
+        function search() {
+            var key = document.getElementById("txt-search").value;
+            if(http){
+                http.open(
+                "GET", "../../PreSubjectController?action=search&key=" + key ,true);
+                http.onreadystatechange = mainListPreSubject;
+                http.send(null);
+            }
+        }
+        
+        function mainListPreSubject() {
+            if(http.readyState == 4 && http.status == 200){
+                var detail = document.getElementById("list-pre-sub");
+                detail.innerHTML = http.responseText;
+            }
+        }
+        
+        function deletePreSub(subId, preSubId) {
+            if(http){
+                http.open(
+                    "GET", "../../PreSubjectController?action=delete&subid="
+                                    + subId + "&presubid=" + preSubId ,true);
+                http.onreadystatechange = mainListPreSubject;
+                http.send(null);
+            }
+        }
+        
+        function sort(by) {
+            var type = "ASC";
+            try {
+                type = document.getElementById("sort-type").value;
+            } catch(err) {
+                type = "ASC";
+            }
+            
+            if(http){
+                http.open(
+                    "GET", "../../PreSubjectController?action=sort&by="
+                                    + by + "&type=" + type, true);
+                http.onreadystatechange = mainListPreSubject;
+                http.send(null);
+            }
+        }
+        
     </script>
 </html>
