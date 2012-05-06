@@ -59,7 +59,7 @@
              <li><a href=""> Quy định </a>
                  <ul>
                      <li><a href="../../PreSubjectController?action=manage"> Môn học tiên quyết</a></li>
-                     <li><a href="#"> Quy định</a></li>
+                     <li><a href="../../ManageRuleController?action=default"> Quy định</a></li>
                  </ul>
              </li>
              <li><a href=""> Giao tiếp </a>
