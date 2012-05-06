@@ -67,7 +67,7 @@
 
                 <div id = "add-new" name="add-new">
                     <h3> Thêm môn học tiên quyết: </h3>
-                    <table id="tableadd" name="tableadd" class="general-table">
+                    <table id="tableadd" name="tableadd" class="general-table" style="width:450px !important">
                         <tr>
                             <th> Chọn môn học </th>
                             <th> Môn học tiên quyết </th>
@@ -269,6 +269,7 @@
                 http.onreadystatechange = mainListPreSubject;
                 http.send(null);
             }
+            return false;
         }
         
     </script>
