@@ -76,6 +76,11 @@ public class Rule extends  AbstractJdbcModel<String>{
                  };
     }
 
+    @Override
+    public boolean isIdAutoIncrement() {
+        return false;
+    }
+
     public int compare(Rule o2, String by) {
         int result = 0;
         if (by.equalsIgnoreCase("Ma")) {
