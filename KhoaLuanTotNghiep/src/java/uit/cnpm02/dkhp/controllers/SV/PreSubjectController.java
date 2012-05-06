@@ -193,7 +193,7 @@ public class PreSubjectController extends HttpServlet {
     private void writeOutListPreSubject(PrintWriter out, List<PreSubject> preSubjects,
             boolean includeLinkSort, boolean includeBtnDelete) {
         try {
-            out.println("<table class='general-table'>");
+            out.println("<table class='general-table'" + (!includeBtnDelete ? " style=\"width:547px !important\"" : "") + ">");
             String tblHeader = "<tr>"
                     + "<th> STT </th>"
                     + "<th> " + (includeLinkSort ? "<a href='#' onclick =\"sort('TenMH')\">" : "") + " Môn học " + (includeLinkSort ? "</a>" : "") + " </th>"
