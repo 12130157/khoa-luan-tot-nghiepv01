@@ -269,8 +269,6 @@ public class ReportController extends HttpServlet {
             out.println("</tr>");// <a hreft > abc </a>
         }
         out.println("</table>");
-        out.println("... Thong tin khac </br>");
-        
         out.println("<a href='../../ReportController?action=download-student-report'>Tai file excel</a>");
         //<a href="../DownloadFile?action=studentresult&mssv=<%=student.getCode()%>"> Tải file</a>
     }
