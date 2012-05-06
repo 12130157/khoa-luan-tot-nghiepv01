@@ -99,23 +99,8 @@
                 <input type="hidden" id="subs" value="<%= subjectStr%>">
                 <input type="hidden" id="pre_subs" value="<%= preSubStr%>">
                 <form action="" method="post">
-                    <div style="padding-bottom: 20px;
-                         margin-left: 40px;">
-                        <input type="button"
-                               onclick="submitEditSubject('../../ManageSubjectController?function=edit_subject&ajax=true')"
-                               value="Hoàn thành" />
-                        <!--input type="button" onclick="clearData()" value="Xóa" /-->
-                    </div>
-                    <div id="insert_from_table_error"
-                         style="font-size: 10px;
-                         color: #cc0033;
-                         float: right;">
 
-                        <% if ((error != null) && !error.isEmpty()) {%>
-                        <%= error %>
-                        <% } %>
-                    </div>
-                    
+                    <b><u>Vui lòng cập nhật thông tin môn học và nhấn "Hoàn thành"</u></b>
                     <table id="table_mh" >
                         <tr>
                         <td> Mã MH </td>
@@ -168,6 +153,20 @@
                         </td>
                         </tr>
                     </table>
+                    <div style="padding-bottom: 20px;
+                         margin-left: 138px;">
+                        <input type="button"
+                               onclick="submitEditSubject('../../ManageSubjectController?function=edit_subject&ajax=true')"
+                               value="Hoàn thành" />
+                        <!--input type="button" onclick="clearData()" value="Xóa" /-->
+                    </div>
+                    <div id="insert_from_table_error"
+                         style="color: #cc0033;">
+
+                        <% if ((error != null) && !error.isEmpty()) {%>
+                        <%= error %>
+                        <% } %>
+                    </div>
                 </form>
             </div><!--End Contents-->
 
@@ -350,12 +349,12 @@
             var preSubStr = document.getElementById('pre_subs').value;//pre_subs
             var table = document.getElementById(tableID);
             var rowCount = table.rows.length;
-            var row = table.insertRow(rowCount);
-            row.backgroundColor = '#AA25FF';
-            row. color = "#FFDD33";
             
             var preSubArray = preSubStr.split(";")
             for (var i = 0; i < preSubArray.length; i ++) {
+                var row = table.insertRow(rowCount);
+                row.backgroundColor = '#AA25FF';
+                row. color = "#FFDD33";
                 //Selection
                 var values = valuesStr.split(";");
                 createNewSelectionCell(row, 'selectSubject' + rowCount, 0, values, preSubArray[i]);
