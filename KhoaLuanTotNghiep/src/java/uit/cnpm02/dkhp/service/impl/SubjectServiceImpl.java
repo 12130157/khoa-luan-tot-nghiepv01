@@ -36,6 +36,12 @@ public class SubjectServiceImpl implements ISubjectService {
     }
 
     @Override
+    public List<Subject> getAll(String facultyId) throws Exception{
+        // TODO: fillter by faculty code.
+        return subjectDao.findAll();
+    }
+
+    @Override
     public Subject addSubject(Subject sub) throws Exception {
         // validate subject
         if (subjectDao.findById(sub.getId()) != null) {
