@@ -16,6 +16,7 @@ import uit.cnpm02.dkhp.model.PreSubject;
 import uit.cnpm02.dkhp.model.Subject;
 import uit.cnpm02.dkhp.service.ISubjectService;
 import uit.cnpm02.dkhp.utilities.Constants;
+import uit.cnpm02.dkhp.utilities.ExecuteResult;
 
 /**
  *
@@ -85,8 +86,46 @@ public class SubjectServiceImpl implements ISubjectService {
     }
 
     @Override
-    public Subject updateSubject(Subject sub) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public ExecuteResult updateSubject(Subject sub) {
+        ExecuteResult er = new ExecuteResult(true, "");
+        try {
+            Subject s = subjectDao.update(sub);
+            List<PreSubject> preSubExists = preSubDao.findByColumName("MaMH", s.getId());
+            if ((preSubExists != null) && !preSubExists.isEmpty()) {
+                preSubDao.delete(preSubExists);
+            }
+            
+            List<Subject> preSub = s.getPreSub();
+            if ((preSub != null) && !preSub.isEmpty()) {
+                List<PreSubject> newPreSubs = new ArrayList<PreSubject>(10);
+                for (int i = 0; i < preSub.size(); i++) {
+                    Subject s_temp = preSub.get(i);
+                    PreSubID id = new PreSubID(s.getId(), s_temp.getId());
+                    PreSubject preSub_temp = new PreSubject();
+                    preSub_temp.setId(id);
+                    if (!newPreSubs.contains(preSub_temp)) {
+                        newPreSubs.add(preSub_temp);
+                    } else {
+                        preSub.remove(s_temp);
+                        i--;
+                    }
+                }
+                s.setPreSub(preSub);
+                preSubDao.addAll(newPreSubs);
+                // Update full information
+                for (Subject p : preSub) {
+                    p.setSubjectName(subjectDao.findById(p.getId())
+                            .getSubjectName());
+                }
+            }
+            er.setData(s);
+        } catch (Exception ex) {
+            Logger.getLogger(SubjectServiceImpl.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            return new ExecuteResult(false, 
+                    "Đã có lỗi trong quá trình cập nhật môn học. " + ex.toString());
+        }
+        return er;
     }
 
     @Override
@@ -230,5 +269,15 @@ public class SubjectServiceImpl implements ISubjectService {
     public List<Subject> getCurrentSubjects(String sessionId) {
         return subjectMap.get(sessionId);
     }
-    
+
+    @Override
+    public Subject findById(String id) {
+        try {
+            return subjectDao.findById(id);
+        } catch (Exception ex) {
+            Logger.getLogger(SubjectServiceImpl.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
 }
