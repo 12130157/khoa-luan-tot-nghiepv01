@@ -8,6 +8,7 @@ import uit.cnpm02.dkhp.model.Subject;
  * @author LocNguyen
  */
 public interface ISubjectService {
+    List<Subject> getAll(String facultyId) throws Exception;
     Subject addSubject(Subject sub) throws Exception;
     Subject updateSubject(Subject sub);
     boolean deleteSubject(String sessionId, String subId) throws Exception;
