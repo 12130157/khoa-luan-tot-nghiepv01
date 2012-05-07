@@ -9,6 +9,7 @@ import uit.cnpm02.dkhp.DAO.LecturerDAO;
 import uit.cnpm02.dkhp.DAO.RuleDAO;
 import uit.cnpm02.dkhp.DAO.SubjectDAO;
 import uit.cnpm02.dkhp.DAO.TrainClassDAO;
+import uit.cnpm02.dkhp.model.Rule;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.model.TrainClassID;
 import uit.cnpm02.dkhp.service.ITrainClassService;
@@ -119,52 +120,19 @@ public class TrainClassServiceImpl implements ITrainClassService {
 
     @Override
     public ExecuteResult addNewTrainClass(TrainClass obj) {
-        ExecuteResult result = new ExecuteResult(true, Message.ADD_TRAINCLASS_SUCCSESS);
+        ExecuteResult result = null;
         try {
-            //////
-            // TrainClass hasn't existed yet.
-            //
-            boolean checkPass = true;
-            TrainClass classExisted;
-
-            classExisted = classDAO.findById(obj.getId());
-            if (classExisted != null) {
-                result.setMessage(Message.ADD_TRAINCLASS_ERROR_CLASS_EXISTED);
-                checkPass = false;
-            }
+            result = internal_checkCreateNewTrainClass(obj);
             
-            //
-            // Check max and min number of student for open class
-            //
-            
-            
-            //////
-            // Room - In a time --> 1 train class
-            //
-            List<TrainClass> existedClasses = classDAO.findByClassRoomAndTime(
-                    obj.getClassRoom(), obj.getStudyDate(),
-                    obj.getShift(), TrainClassStatus.OPEN.getValue());
-            if ((existedClasses != null) && (!existedClasses.isEmpty())) {
-                result.setMessage(Message.ADD_TRAINCLASS_ERROR_ROOM_DUPLECATE);
-                checkPass = false;
-            }
-            //////
-            // Lecturer - In a time --> 1 train class
-            //
-            existedClasses = classDAO.findByLecturerAndTime(obj.getLecturerCode(),
-                    obj.getStudyDate(), obj.getShift(),
-                    TrainClassStatus.OPEN.getValue());
-            if ((existedClasses != null) && (!existedClasses.isEmpty())) {
-                result.setMessage(Message.ADD_TRAINCLASS_ERROR_LECTURER_DUPLECATE);
-                checkPass = false;
-            }
-
-            if (!checkPass) {
-                result.setIsSucces(false);
+            if (!result.isIsSucces()) {
                 return result;
             }
 
             classDAO.add(obj);
+            String className = subjectDAO.findById(obj.getSubjectCode()).getSubjectName();
+            String lectureName = lectureDAO.findById(obj.getLecturerCode()).getFullName();
+            obj.setSubjectName(className);
+            obj.setLectturerName(lectureName);
             result.setData(obj);
         } catch (Exception ex) {
             Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -174,7 +142,89 @@ public class TrainClassServiceImpl implements ITrainClassService {
         
         return result;
     }
+    
+    @Override
+    public ExecuteResult checkOpenClassCondition(TrainClass obj) {
+        try {
+            return internal_checkCreateNewTrainClass(obj);
+        } catch (Exception ex) {
+            Logger.getLogger(TrainClassServiceImpl.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            return new ExecuteResult(false, "Lỗi server: " + ex.toString());
+        }
+    }
 
+    private ExecuteResult internal_checkCreateNewTrainClass(TrainClass obj) throws Exception {
+        ExecuteResult result = new ExecuteResult(true, Message.ADD_TRAINCLASS_SUCCSESS);
+        boolean checkPass = true;
+            TrainClass classExisted;
+            classExisted = classDAO.findById(obj.getId());
+            if (classExisted != null) {
+                result.setMessage(Message.ADD_TRAINCLASS_ERROR_CLASS_EXISTED);
+                checkPass = false;
+            }
+            
+            //
+            //Check so SV toi da, toi thieu
+            List<Rule> rules = ruleDao.findAll();
+            int numMax = 120;
+            int numMin = 30;
+            if ((rules != null) && !rules.isEmpty()) {
+                for (Rule r : rules) {
+                    try {
+                        if (r.getId().equalsIgnoreCase("SoSinhVienToiDa")) {
+                            numMax = (int) r.getValue();
+                        } else if (r.getId().equalsIgnoreCase("SoSinhVienToiThieu")) {
+                            numMin = (int) r.getValue();
+                        }
+                    } catch (Exception ex) {
+                    }
+                }
+            }
+            
+            if ((obj.getNumOfStudent() < numMin)
+                ||(obj.getNumOfStudent() > numMax)) {
+                String msg = "Số SV không thỏa mãn (" + numMin + " < " + obj.getNumOfStudent() + " < " + numMax +").";
+                return new ExecuteResult(false, msg);
+            }
+                        
+            //////
+            // Room - In a time --> 1 train class
+            //
+            List<TrainClass> existedClasses = classDAO.findByClassRoomAndTime(
+                    obj.getClassRoom(), obj.getStudyDate(),
+                    obj.getShift(), TrainClassStatus.OPEN.getValue());
+            if ((existedClasses != null) && (!existedClasses.isEmpty())) {
+                String message = "<b>Lớp không hợp lệ: Tại phòng " + obj.getClassRoom()
+                        + ", ca " + obj.getShift() + ", ngày thứ " + obj.getStudyDate()
+                        + " có lớp " + existedClasses.get(0).getId().getClassCode() + "</b>";
+                        //result.setMessage(Message.ADD_TRAINCLASS_ERROR_ROOM_DUPLECATE);
+                result.setMessage(message);
+                checkPass = false;
+            }
+            //////
+            // Lecturer - In a time --> 1 train class
+            //
+            existedClasses = classDAO.findByLecturerAndTime(obj.getLecturerCode(),
+                    obj.getStudyDate(), obj.getShift(),
+                    TrainClassStatus.OPEN.getValue());
+            if ((existedClasses != null) && (!existedClasses.isEmpty())) {
+                String message = "<b>Lớp không hợp lệ: Giảng viên " + obj.getLecturerCode()
+                        + " bị trùng giờ tại lớp: " + existedClasses.get(0).getId().getClassCode() + "</b>";
+                        //result.setMessage(Message.ADD_TRAINCLASS_ERROR_ROOM_DUPLECATE);
+                result.setMessage(message);
+                result.setMessage(Message.ADD_TRAINCLASS_ERROR_LECTURER_DUPLECATE);
+                checkPass = false;
+            }
+
+            if (!checkPass) {
+                result.setIsSucces(false);
+                return result;
+            }
+            
+            return result;
+    }
+    
     @Override
     public ExecuteResult updateTrainClass(TrainClass obj) {
         //TODO: implementation.
