@@ -79,10 +79,13 @@ public class ManageClassController extends HttpServlet {
                 return;
             } else if (requestAction.equals(ClassFunctionSupported.CREATE.getValue())) {
                 ExecuteResult result = createNewTrainClass(request);
-                writeRespondErrorMessage(result, out);
+                writeRespondCreateNewTrainClass(result, out);
                 return;
-                
-            } else if (requestAction.equals(ClassFunctionSupported.DELETE.getValue())) {
+            } else if (requestAction.equals(ClassFunctionSupported.CHECK_CREATE.getValue())) {
+                ExecuteResult result = checkCreate(request);
+                writeRespondCreateNewTrainClass(result, out);
+                return;
+            }else if (requestAction.equals(ClassFunctionSupported.DELETE.getValue())) {
                 // Delete a TrainClass specified
             } else if (requestAction.equals(ClassFunctionSupported.PREUPDATE.getValue())) {
                 // Prepare to update TrainClass
@@ -386,8 +389,36 @@ public class ManageClassController extends HttpServlet {
             return trainClassService.addNewTrainClass(clazz);
         } catch (Exception ex) {
             Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
+            return new ExecuteResult(false, "Lỗi server: " + ex.toString());
         }
-        return null;
+        
+    }
+    
+     private ExecuteResult checkCreate(HttpServletRequest req) {
+         String id = req.getParameter("classcode");
+        int semester = Constants.CURRENT_SEMESTER;
+        String year = Constants.CURRENT_YEAR;
+        String subjectCode = req.getParameter("subject");
+        String lectureCode = req.getParameter("lecturer");
+        int SLSV = Integer.parseInt(req.getParameter("slsv"));
+        int SLDK = 0;
+        int date = Integer.parseInt(req.getParameter("Date"));
+        int shift = Integer.parseInt(req.getParameter("Shift"));
+        String room = req.getParameter("room");
+
+        TrainClass clazz = null;
+        try {
+            TrainClassID classID = new TrainClassID(id, year, semester);
+            clazz = new TrainClass(id, year, semester, subjectCode, lectureCode,
+                    room, SLSV, SLDK, date, shift, null, "", "");
+            clazz.setId(classID);
+            
+            return trainClassService.checkOpenClassCondition(clazz);
+        } catch (Exception ex) {
+            Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
+            return new ExecuteResult(false, "Lỗi server: " + ex.toString());
+        }
+        
     }
     
     private void createNewClassRespond(HttpServletResponse resp, TrainClass clazz) {
@@ -428,11 +459,12 @@ public class ManageClassController extends HttpServlet {
         }
     }
     
-   private void writeRespondErrorMessage(ExecuteResult result, PrintWriter out) {
+   private void writeRespondCreateNewTrainClass(ExecuteResult result, PrintWriter out) {
         out.println(result.getMessage());
         if (result.isIsSucces()) {
+            out.println("<b>Tạo mới thành công lớp học:</b>");
             TrainClass data = (TrainClass) result.getData();
-            out.println("<table id = \"table-list-train-class\" name = \"table-list-train-class\">");
+            out.println("<table id = \"table-list-train-class\" name = \"table-list-train-class\" class=\"general-table\">");
             
             out.println("<tr>" +
                         //"<th> STT </th>" +
@@ -449,7 +481,7 @@ public class ManageClassController extends HttpServlet {
             out.println("<td> " + data.getStudyDate() + " </td>");
             out.println("<td> " + data.getClassRoom() + " </td>");
             out.println("<td> " + data.getNumOfStudent() + " </td>");
-            out.println("</tr>");
+            out.println("</tr>"); 
             out.println("</table>");
         }
     }
@@ -461,6 +493,7 @@ public class ManageClassController extends HttpServlet {
     public enum ClassFunctionSupported {
         DEFAULT("default"), // List first page of class opened.
         PRECREATE("pre_create"),
+        CHECK_CREATE("check_create"),
         CREATE("create"),   // Create new class form support
         DELETE("delete"),   // Remove class
         DETAIL("detail"),   // view detail class
