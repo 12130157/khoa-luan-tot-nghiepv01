@@ -41,7 +41,7 @@
                 text-align: center;
             }
             #sidebar {
-                height:250px;
+                height:450px;
                 overflow:auto;
             }
             a {
@@ -91,6 +91,7 @@
                                 style="background-color: #f40f0f;"
                                 type = "submit" value = "Thêm môn học">
                         </div>
+                        <div class="clear"></div>
                     </form>
                     <div id="error">
                         <%
@@ -99,6 +100,7 @@
                             <%}
                         %>
                     </div>
+                    <div id="sidebar">
                     <table id = "tablelistsubject" name = "tablelistsubject">
                         <tr>
                         <th> STT </th>
@@ -126,6 +128,7 @@
                         </tr>
                         <%}%>
                     </table>
+                    </div>
                     <div id="page">
                         <input type="button" value="|<<" onclick="firstPage()"/>- 
                         <input type="button" value="<<" onclick="prePage()"/>-
