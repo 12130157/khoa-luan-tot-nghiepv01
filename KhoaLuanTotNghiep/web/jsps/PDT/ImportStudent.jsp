@@ -100,12 +100,12 @@
             }
 
             #error {
-                background-color: #73726E;
-                color: #ffffff;
+                /*background-color: #73726E;*/
+                /*color: #ffffff;*/
                 border-width: 2px;
                 border-color: #9f8d39;
                 font-size: 10px;
-                float: right;
+                float: left;
             }
         </style>
     </head>
@@ -126,16 +126,7 @@
 
                 <br>
                 <hr/><hr/><br>
-                <p id="error">
-                    <%
-                        String error = (String) session.getAttribute("error");
-                        if ((error != null) && !error.isEmpty()) {
-                            session.removeAttribute("error");
-                    %>
-                    <%= error%>
-                    <%  }
-                    %>
-                </p>
+                
 
                 <p>
                     <INPUT type="button" value="Thêm hàng" onclick="addRow('dataTable')" />
@@ -222,6 +213,17 @@
                     </table>
                     <%}%>
                 </div>
+               <div class="clear"></div>
+                <p id="error">
+                    <%
+                        String error = (String) session.getAttribute("error");
+                        if ((error != null) && !error.isEmpty()) {
+                            session.removeAttribute("error");
+                    %>
+                    <%= error%>
+                    <%  }
+                    %>
+                </p>
 
             </div><!--End Contents-->
 
