@@ -262,7 +262,24 @@ public class ManageStudentController extends HttpServlet {
                 }
             }
 
-            Collection<String> id_Students = DAOFactory.getStudentDao()
+            List<Student> existedStudents = new ArrayList<Student>(10);
+            StudentDAO sDao = DAOFactory.getStudentDao();
+            for (Student s : students) {
+                if (sDao.findById(s.getId()) != null) {
+                    existedStudents.add(s);
+                }
+            }
+            
+            if (existedStudents.size() > 0) {
+                String shortData = "Mã SV đã tồn tại: ";
+                for (Student ss : existedStudents) {
+                    shortData += ss.getId() + "; ";
+                }
+                
+                return new ExecuteResult(false, shortData);
+            }
+            
+            Collection<String> id_Students = sDao
                     .addAll(students);
             //if (id_Students == null) {
             //    return new ExecuteResult(false, "Thêm không thành công");
