@@ -461,7 +461,9 @@ public class ManageClassController extends HttpServlet {
     
    private void writeRespondCreateNewTrainClass(ExecuteResult result, PrintWriter out) {
         out.println(result.getMessage());
-        if (result.isIsSucces()) {
+        if (result.isIsSucces() && (result.getData() == null)) {
+            return;
+        } else if (result.isIsSucces()) {
             out.println("<b>Tạo mới thành công lớp học:</b>");
             TrainClass data = (TrainClass) result.getData();
             out.println("<table id = \"table-list-train-class\" name = \"table-list-train-class\" class=\"general-table\">");

@@ -146,7 +146,11 @@ public class TrainClassServiceImpl implements ITrainClassService {
     @Override
     public ExecuteResult checkOpenClassCondition(TrainClass obj) {
         try {
-            return internal_checkCreateNewTrainClass(obj);
+            ExecuteResult er = internal_checkCreateNewTrainClass(obj);
+            if (er.isIsSucces()) {
+                er.setMessage("Lớp hợp lệ.");
+            }
+            return er;
         } catch (Exception ex) {
             Logger.getLogger(TrainClassServiceImpl.class.getName())
                     .log(Level.SEVERE, null, ex);
