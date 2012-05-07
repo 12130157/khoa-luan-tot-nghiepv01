@@ -153,6 +153,7 @@
                         </td>
                         </tr>
                     </table>
+                    <i style="font-size:11px">Nếu chọn nhiều môn học tiên quyết trùng nhau, chỉ 1 môn được tính.</i>
                     <div style="padding-bottom: 20px;
                          margin-left: 138px;">
                         <input type="button"
