@@ -34,7 +34,7 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <%@include file="../News.jsp" %>
+                <%@include file="News.jsp" %>
                 <%--
                 <div id="image">
                     
