@@ -15,6 +15,8 @@ public interface ITrainClassService {
     
     List<TrainClass> getTrainClass();
     
+    ExecuteResult checkOpenClassCondition(TrainClass obj);
+    
     ExecuteResult addNewTrainClass(TrainClass obj);
     
     TrainClass getClassInfomation(TrainClassID obj);
@@ -24,4 +26,6 @@ public interface ITrainClassService {
     boolean isExisted(TrainClass obj);
     
     boolean validate(TrainClass obj);
+    
+    
 }

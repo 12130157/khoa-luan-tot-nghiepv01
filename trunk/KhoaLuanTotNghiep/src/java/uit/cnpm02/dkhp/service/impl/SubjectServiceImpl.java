@@ -245,23 +245,28 @@ public class SubjectServiceImpl implements ISubjectService {
     public List<Subject> search(String sessionId, String key) {
         List<Subject> results = new ArrayList<Subject>(10);
         try {
-            // Search by Subject ID
-            results = subjectDao.findByColumName("MaMH", key);
-            
-            // Search by subject name
-            List<Subject> temp = subjectDao.findByColumName("TenMH", key);
-            if ((temp != null) && !temp.isEmpty()) {
-                for (Subject s : temp) {
-                    if (!results.contains(s)) {
-                        results.add(s);
+            if (key.equals("*") || key.equalsIgnoreCase("All")) {
+                results = subjectDao.findAll();
+            } else {
+
+                // Search by Subject ID
+                results = subjectDao.findByColumName("MaMH", key);
+
+                // Search by subject name
+                List<Subject> temp = subjectDao.findByColumName("TenMH", key);
+                if ((temp != null) && !temp.isEmpty()) {
+                    for (Subject s : temp) {
+                        if (!results.contains(s)) {
+                            results.add(s);
+                        }
                     }
                 }
             }
-            if ((results != null) && !results.isEmpty()) {
-                subjectMap.put(sessionId, results);
-            }
         } catch (Exception ex) {
             Logger.getLogger(SubjectServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if ((results != null) && !results.isEmpty()) {
+            subjectMap.put(sessionId, results);
         }
         return results;
     }
