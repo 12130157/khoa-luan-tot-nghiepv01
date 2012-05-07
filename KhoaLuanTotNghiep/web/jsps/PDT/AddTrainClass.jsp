@@ -147,7 +147,12 @@
                              </td>
                         </tr>
                     </table>
+                     
                     <div id="error">
+                        
+                    </div>
+                             
+                    <div id="createNew-result">
                         
                     </div>
 
@@ -189,7 +194,7 @@
                 "&Date=" + date +
                 "&Shift=" + shift +
                 "&room=" + room ,true);
-                http.onreadystatechange = handleResponse;
+                http.onreadystatechange = handleResponseForCreateNew;
                 http.send(null);
               }
         
@@ -202,6 +207,13 @@
                     "&room=" + room, handleResponse);*/
             }
         }
+        function handleResponseForCreateNew() {
+             if(http.readyState == 4 && http.status == 200){
+                 var detail=document.getElementById("createNew-result");
+                 detail.innerHTML=http.responseText;
+             }
+         }
+        
          function handleResponse() {
              if(http.readyState == 4 && http.status == 200){
                  var detail=document.getElementById("error");
