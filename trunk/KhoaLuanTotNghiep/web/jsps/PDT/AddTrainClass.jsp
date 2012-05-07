@@ -182,8 +182,6 @@
                 alert("Hãy nhập mã lớp học");
             }else if(slsv.length ==0 ){
                 alert("Hãy nhập số sinh viên tối đa cho lớp");
-            }else if(slsv>120 || slsv <30){
-                alert("Số sinh viên cho một lớp tối thiểu là 10 tối đa là 120");
             }else{
              if (http) {
                http.open("GET", "../../ManageClassController?action=create" +
@@ -197,16 +195,38 @@
                 http.onreadystatechange = handleResponseForCreateNew;
                 http.send(null);
               }
+            }
+        }
         
-/*                submit("../../ManageClassController?action=create&classcode=" + classCode +
+    function CheckClass() {
+        var classCode = document.getElementById("classcode").value;
+        var lecturer = document.getElementById("lecturer").value;
+        var subject = document.getElementById("subject").value;
+        var slsv = document.getElementById("slsv").value;
+        var date = document.getElementById("Date").value;
+        var shift = document.getElementById("Shift").value;
+        var room = document.getElementById("room").value;
+        
+        if(classCode.length == 0){
+            alert("Hãy nhập mã lớp học");
+        }else if(slsv.length == 0 ){
+            alert("Hãy nhập số sinh viên tối đa cho lớp");
+        } else {
+            if (http) {
+                http.open("GET", "../../ManageClassController?action=check_create" +
+                    "&classcode=" + classCode +
                     "&subject=" + subject +
                     "&lecturer="+ lecturer +
                     "&slsv=" + slsv +
-                    "&date=" + date +
-                    "Shift=" + shift +
-                    "&room=" + room, handleResponse);*/
+                    "&Date=" + date +
+                    "&Shift=" + shift +
+                    "&room=" + room ,true);
+                http.onreadystatechange = handleResponseForCreateNew;
+                http.send(null);
             }
         }
+    }
+ 
         function handleResponseForCreateNew() {
              if(http.readyState == 4 && http.status == 200){
                  var detail=document.getElementById("createNew-result");

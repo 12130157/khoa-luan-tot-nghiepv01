@@ -184,7 +184,7 @@ public class TrainClassServiceImpl implements ITrainClassService {
             
             if ((obj.getNumOfStudent() < numMin)
                 ||(obj.getNumOfStudent() > numMax)) {
-                String msg = "Số SV không thỏa mãn (" + numMin + " < " + obj.getNumOfStudent() + " < " + numMax +").";
+                String msg = "Số SV không thỏa mãn (" + numMin + " < SLSV < " + numMax +").";
                 return new ExecuteResult(false, msg);
             }
                         

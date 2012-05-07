@@ -127,7 +127,6 @@
                 <br>
                 <hr/><hr/><br>
                 
-
                 <p>
                     <INPUT type="button" value="Thêm hàng" onclick="addRow('dataTable')" />
                     <INPUT type="button" value="Xóa mục đã chọn" onclick="deleteRowT('dataTable')" />
@@ -268,7 +267,8 @@
             createNewInputCell(row, 'txtName', 3);
             //Ngày Sinh
             // ==> share be update to calenda
-            createNewInputCell(row, 'txtBirthDay', 4);
+            createNewDateCell(row, 'txtBirthDay', 4);
+            //createNewInputCell(row, 'txtBirthDay', 4);
             
             //Giới Tính
             createNewSelectionCell(row, 'selectSex', 5, new Array("Nam", "N\u1eef"));
@@ -458,6 +458,19 @@
             
             return true;
         }
+        
+    function createNewDateCell(row, name, index) {
+        var cell = row.insertCell(index);
+        var element = document.createElement("input");
+        element.name = name;
+        element.type = "text";
+        element.id = name;
+        cell.appendChild(element);
+        
+        var el1 = "<img src=\"../../imgs/cal.gif\" style=\"cursor: pointer;\" onclick=\"javascript:NewCssCal('" + name + "','YYMMMDD')\" />";
+        var element1 = document.createElement(el1);
+        cell.appendChild(element1);
+    }
         
     </SCRIPT>
 </html>
