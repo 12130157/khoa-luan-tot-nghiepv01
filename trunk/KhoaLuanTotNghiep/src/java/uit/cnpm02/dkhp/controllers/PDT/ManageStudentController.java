@@ -22,6 +22,7 @@ import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.StudentDAO;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.utilities.Constants;
+import uit.cnpm02.dkhp.utilities.ExecuteResult;
 import uit.cnpm02.dkhp.utilities.FileUtils;
 
 /**
@@ -55,6 +56,12 @@ public class ManageStudentController extends HttpServlet {
         session.removeAttribute("error");
 
         try {
+            session.removeAttribute("error");
+            session.removeAttribute("students_added");
+        } catch (Exception ex) {
+            //
+        }
+        try {
             numPage = getNumberPage();
             session.setAttribute("numpage", numPage);
             String action = request.getParameter("function");
@@ -70,13 +77,25 @@ public class ManageStudentController extends HttpServlet {
             } else if (action.equalsIgnoreCase("import")) {
                 //Data input in format: student1; student2; student 3 ...
                 //Student: mssv, hoten, ...
-                String result = importStudentFromDataString(datas);
-                session.setAttribute("error", result);
-                String path = "./jsps/PDT/ImportStudent.jsp";
-                response.sendRedirect(path);
+                ExecuteResult result = importStudentFromDataString(datas);
+                if (!result.isIsSucces()) {
+                    out.println("Đã có lỗi xảy ra: " + result.getMessage());
+                } else {
+                    List<Student> students = (List<Student>)result.getData();
+                    out.println("<u>Thêm thành công sinh viên:</u></br>");
+                    wirteOutListStudent(out, students);
+                }
+                //session.setAttribute("error", result);
+                //String path = "./jsps/PDT/ImportStudent.jsp";
+                //response.sendRedirect(path);
             } else if (action.equalsIgnoreCase("importfromfile")) {
-                String result = importStudentFromFile(request, response);
-                session.setAttribute("error", result);
+                ExecuteResult result = importStudentFromFile(request, response);
+                
+                if (!result.isIsSucces()) {
+                    session.setAttribute("error", result.getMessage());
+                } else {
+                    session.setAttribute("students_added", (List<Student>)result.getData());
+                }
                 String path = "./jsps/PDT/ImportStudent.jsp";
                 response.sendRedirect(path);
             } else if (action.equalsIgnoreCase("delete")) {
@@ -154,9 +173,9 @@ public class ManageStudentController extends HttpServlet {
      * @return
      * @throws Exception 
      */
-    private String importStudentFromDataString(String datas) throws Exception {
+    private ExecuteResult importStudentFromDataString(String datas) throws Exception {
         if ((datas == null) || (datas.length() < 1)) {
-            return "Vui lòng kiểm tra lại dữ liệu nhập";
+            return new ExecuteResult(false, "Vui lòng kiểm tra lại dữ liệu nhập");
         }
 
         List<Student> students = new ArrayList<Student>(10);
@@ -168,6 +187,7 @@ public class ManageStudentController extends HttpServlet {
                 s.setId(studentDetail[0]);                        //MSSV        0
                 s.setFullName(studentDetail[1]);                  //Ho Ten      1
                 Date startDate = dateFormat.parse(studentDetail[2]);
+                s.setDateStart(startDate);                         //Ngay Nhap Hoc 14
                 s.setBirthday(startDate);                         //Ngay Sinh   2 
                 s.setGender(studentDetail[3]);                    //Gioi Tinh      3
                 s.setIdentityNumber(studentDetail[4]);            //CMND   4
@@ -181,7 +201,8 @@ public class ManageStudentController extends HttpServlet {
                 s.setStatus(studentDetail[12]);                   //TinhTrang     12
                 s.setStudyLevel(studentDetail[13]);               //Bac hoc       13
                 Date birthDay = dateFormat.parse(studentDetail[14]);
-                s.setDateStart(birthDay);                         //Ngay Nhap Hoc 14
+                s.setBirthday(birthDay);                         //Ngay Sinh   2 
+                
                 s.setStudyType(studentDetail[15]);                //Loai hinh hoc 15
                 s.setNote(studentDetail[16]);                     //Ghi chu       16
 
@@ -192,10 +213,13 @@ public class ManageStudentController extends HttpServlet {
         Collection<String> id_Students = DAOFactory.getStudentDao().addAll(students);
 
         if (id_Students == null) {
-            return "Thêm không thành công";
+            return new ExecuteResult(false, "Thêm không thành công");
         }
+        
+        ExecuteResult er = new ExecuteResult(true, "");
+        er.setData(students);
 
-        return "Thêm thành công.";
+        return er;
     }
 
     /**
@@ -206,7 +230,7 @@ public class ManageStudentController extends HttpServlet {
      * @return string
      * @throws Exception 
      */
-    private String importStudentFromFile(HttpServletRequest request,
+    private ExecuteResult importStudentFromFile(HttpServletRequest request,
                             HttpServletResponse response) throws Exception {
         List<Student> students = new ArrayList<Student>();
         try {
@@ -240,13 +264,15 @@ public class ManageStudentController extends HttpServlet {
 
             Collection<String> id_Students = DAOFactory.getStudentDao()
                     .addAll(students);
-            if (id_Students == null) {
-                return "Thêm không thành công";
-            }
-            return "Thêm thành công.";
+            //if (id_Students == null) {
+            //    return new ExecuteResult(false, "Thêm không thành công");
+            //}
+            ExecuteResult result = new ExecuteResult(true, "");
+            result.setData(students);
+            return result;
 
         } catch (Exception ex) {
-            throw ex;
+            return new ExecuteResult(false, "Thêm không thành công. Lỗi: " + ex.toString());
         }
     }
 
@@ -436,5 +462,45 @@ public class ManageStudentController extends HttpServlet {
             numPage = rows / rowsPerPage + 1;
         }
         return numPage;
+    }
+    
+    private void wirteOutListStudent(PrintWriter out, List<Student> students) {
+            String respStr = "<tr id=\"tableliststudent-th\">"
+                    /*+ "<td><INPUT type=\"checkbox\" name=\"chkAll\""
+                    + " onclick=\"selectAll('tableliststudent')\" /></td>"*/
+                    + "<th> STT </th>"
+                    + "<th> MSSV </th>"
+                    + "<th> Họ Tên </th>"
+                    + "<th> Lớp </th>"
+                    + "<th> Khoa </th>"
+                    /*+ "<td> Ngày sinh </td>"*/
+                    + "<th> Giới tính </th>"
+                    + "<th> Loại </th>"
+                    /*+ "<td> Sửa </td>"
+                    + "<td> Xóa </td>"*/
+                    + "</tr>";
+            out.append("<table class=\"general-table\">");
+            out.println(respStr);
+            for (int i = 0; i < students.size(); i++) {
+                respStr = "<tr>"
+                        /*+ "<td><INPUT type=\"checkbox\" name=\"chk" + i + "\"/></td>"*/
+                        + "<td> " + (i + 1) + " </td>"
+                        + "<td> " + students.get(i).getId() + "</td> "
+                        + "<td> " + students.get(i).getFullName() + "</td>"
+                        + "<td> " + students.get(i).getClassCode() + "</td>"
+                        + "<td> " + students.get(i).getFacultyCode() + "</td>"
+                        /*+ "<td> " + students.get(i).getBirthday() + "</td>"*/
+                        + "<td> " + students.get(i).getGender() + "</td>"
+                        + "<td> " + students.get(i).getStudyType() + "</td>"
+                        /*+ "<td> <a href=\"../../ManageStudentController?function=editstudent&mssv=" 
+                                                            + students.get(i).getId() 
+                                                            + "\">Sửa</a></td>"
+                        + "<td> <a href=\"../../ManageStudentController?function=delete&ajax=true&data="
+                                                            + students.get(i).getId()
+                                                            + "\"> Xóa</a></td>"*/
+                        + "</tr>";
+                out.println(respStr);
+            }
+            out.append("</table>");
     }
 }

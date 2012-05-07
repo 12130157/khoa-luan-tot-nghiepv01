@@ -4,6 +4,7 @@
     Author     : LocNguyen
 --%>
 
+<%@page import="uit.cnpm02.dkhp.model.Student"%>
 <%@page import="uit.cnpm02.dkhp.model.Course"%>
 <%@page import="uit.cnpm02.dkhp.DAO.DAOFactory"%>
 <%@page import="uit.cnpm02.dkhp.model.Faculty"%>
@@ -47,6 +48,8 @@
             listClass += clazz.get(i).getId();
         }
     }
+    
+    List<Student> studentsAdded = (List<Student>) session.getAttribute("students_added");
 %>
 <html>
     <head>
@@ -92,7 +95,7 @@
                 border: 2px solid #ff092d;
             }
             #sidebar {
-                height:400px;
+                height:300px;
                 overflow:auto;
             }
 
@@ -164,8 +167,9 @@
                             <td align="center"> Ghi chú</td>
                         </tr>
                     </table>
-
                 </div> 
+                <div id="add-from-table-result">
+                </div>
 
                 <br />
                 <hr /><hr />
@@ -181,6 +185,43 @@
                         </tr>
                     </table>
                 </form><br>
+                
+                <div>
+                    <%
+                    if ((studentsAdded != null) && !studentsAdded.isEmpty()) {
+                    %>
+                    <u>Thêm thành công sinh viên:</u>
+                    <table class="general-table">
+                        <tr>
+                            <th> STT </th>
+                            <th> MSSV </th>
+                            <th> Họ Tên </th>
+                            <th> Lớp </th>
+                            <th> Khoa </th>
+                            <th> Giới tính </th>
+                            <th> Loại </th>
+                        </tr>
+                    <%
+                    for (int j = 0; j < studentsAdded.size(); j++) {
+                        Student temp = studentsAdded.get(j);
+                        %>
+                        <tr>
+                            <td> <%= (j + 1)%> </td>
+                            <td> <%= temp.getId() %> </td>
+                            <td> <%= temp.getFullName() %> </td>
+                            <td> <%= temp.getClassCode() %> </td>
+                            <td> <%= temp.getFacultyCode() %> </td>
+                            <td> <%= temp.getGender() %> </td>
+                            <td> <%= temp.getStudyType() %> </td>
+                        </tr>
+                    
+                    <%}
+                    %>
+                        
+                    
+                    </table>
+                    <%}%>
+                </div>
 
             </div><!--End Contents-->
 
@@ -298,11 +339,17 @@
             var controller = pagename + '&data=' + datas;
             if(http){
                 http.open("GET", controller ,true);
-                http.onreadystatechange = handleResponse;
+                http.onreadystatechange = addStudentFromTableRespone;
                 http.send(null);
-                
             }
         }
+        function addStudentFromTableRespone() {
+        if(http.readyState == 4 && http.status == 200){
+            var detail = document.getElementById("add-from-table-result");
+            detail.innerHTML = http.responseText;
+        }
+        }
+        
         
         /**
          * Insert students(s) from file

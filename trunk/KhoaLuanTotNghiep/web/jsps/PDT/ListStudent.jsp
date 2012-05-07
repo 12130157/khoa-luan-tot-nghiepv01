@@ -139,11 +139,13 @@
                     </table>
                     <form id="testid">
                     </form>
-                    <input style="position:absolute; left:650px;" type="button" value="|<<" onclick="firstPage()">
-                    <input style="position:absolute; left:680px;" type="button" value="<<" onclick="prePage()">
-                    <input style="position:absolute; left:710px;" type="button" value=">>" onclick="nextPage()">
-                    <input style="position:absolute; left:740px;" type="button" value=">>|" onclick="endPage()"><br>
-                    <input type="hidden" value="<%= numpage %>" id="numpage" />
+                    <div id="paggind">
+                        <input style="position:absolute; left:650px;" type="button" value="|<<" onclick="firstPage()">
+                        <input style="position:absolute; left:680px;" type="button" value="<<" onclick="prePage()">
+                        <input style="position:absolute; left:710px;" type="button" value=">>" onclick="nextPage()">
+                        <input style="position:absolute; left:740px;" type="button" value=">>|" onclick="endPage()"><br>
+                        <input type="hidden" value="<%= numpage%>" id="numpage" />
+                    </div>
                 </form>
             </div><!--End Contents-->
 
