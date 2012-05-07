@@ -10,7 +10,7 @@ package uit.cnpm02.dkhp.utilities;
  */
 public class Message {
     public static String ADD_TRAINCLASS_SUCCSESS = "Thêm lớp thành công.";
-    public static String ADD_TRAINCLASS_ERROR_CLASS_EXISTED = "Lop da ton tai.";
+    public static String ADD_TRAINCLASS_ERROR_CLASS_EXISTED = "Mã lớp học bị trùng.";
     public static String ADD_TRAINCLASS_ERROR_LECTURER_DUPLECATE = "Giang vien da co lich";
     public static String ADD_TRAINCLASS_ERROR_ROOM_DUPLECATE = "Phong hoc da duoc dung.";
     public static String ADD_TRAINCLASS_ERROR = "Da co loi xay ra trong qua trinh mo lop";
