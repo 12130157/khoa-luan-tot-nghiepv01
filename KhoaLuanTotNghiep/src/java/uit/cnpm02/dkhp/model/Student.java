@@ -286,6 +286,11 @@ public class Student extends AbstractJdbcModel<String> {
     }
 
     @Override
+    public boolean isIdAutoIncrement() {
+        return false;
+    }
+    
+    @Override
     public int hashCode() {
         int hash = 7;
         hash = 89 * hash + (this.identityNumber != null ? this.identityNumber.hashCode() : 0);
