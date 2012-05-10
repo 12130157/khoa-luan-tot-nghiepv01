@@ -23,4 +23,8 @@ public interface IStudentService {
     
     
     ExecuteResult addStudent(Student s);
+
+    public ExecuteResult validateNewStudent(Student s);
+
+    public ExecuteResult deleteStudent(String mssv);
 }
