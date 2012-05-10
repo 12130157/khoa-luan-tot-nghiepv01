@@ -25,25 +25,6 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Quản lý sinh viên</title>
         <style media="all" type="text/css">
-            #tableliststudent{
-                margin-left: 10px;
-                margin-top: 20px;
-                margin-bottom: 20px;
-                width: 95%;
-                border: 3px solid #73726E;
-            }
-            #tableliststudent-th{
-                height: 32px;
-                font-weight: bold;
-                background-color: #175F6E;
-                text-align: center;
-            }
-            #tableliststudent td{
-                background: url("../../imgs/opaque_10.png") repeat scroll 0 0 transparent;
-                padding: 2px 5px 2px 5px;
-                text-align: center;
-                width: auto;
-            }
             #formsearch{
                 margin-top: 10px;
                 margin-left: 20px;
@@ -98,25 +79,26 @@
                         </td></tr>
                     </table>
                 </form>
-                <p align="right"><b><a href="./ImportStudent.jsp">Tiếp nhận sinh viên</a></b></p>
+                <p align="right"><b><a href="../../ManageStudentController?function=pre-import-student">Tiếp nhận sinh viên</a></b></p>
+                <%--<p align="right"><b><a href="./ImportStudent.jsp">Tiếp nhận sinh viên</a></b></p>--%>
                 <hr><hr>
 
                 <form id="formdown" name="formdown" action="../DownloadFile?action=test" method="post">
                     Danh sách sinh viên:<br/>
                     <input type="button" onclick="deleteStudent('tableliststudent')" value="Xóa mục đã chọn" />
-                    <table id="tableliststudent" name="tableliststudent">
+                    <table id="tableliststudent" name="tableliststudent" class="general-table">
                         <tr id="tableliststudent-th">
-                        <td><INPUT type="checkbox" name="chkAll" onclick="selectAll('tableliststudent', 0)" /></td>
-                        <td> STT </td>
-                        <td> MSSV </td>
-                        <td> Họ Tên </td>
-                        <td> Lớp </td>
-                        <td> Khoa </td>
-                        <td> Ngày sinh </td>
-                        <td> Giới tính </td>
-                        <td> Loại </td>
-                        <td> Sửa </td>
-                        <td> Xóa </td>
+                        <th><INPUT type="checkbox" name="chkAll" onclick="selectAll('tableliststudent', 0)" /></th>
+                        <th> STT </th>
+                        <th> MSSV </th>
+                        <th> Họ Tên </th>
+                        <th> Lớp </th>
+                        <th> Khoa </th>
+                        <th> Ngày sinh </th>
+                        <th> Giới tính </th>
+                        <th> Loại </th>
+                        <th> Sửa </th>
+                        <th> Xóa </th>
                         <%--Should be sorted when click on table's header--%>
                         </tr>
                         <%if ((listStudent != null) && !listStudent.isEmpty()) {%>
