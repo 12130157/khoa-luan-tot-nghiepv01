@@ -155,6 +155,10 @@ ol, ul{
 .clear{
     clear: both;
 }
+.clear-right {
+    float: right;
+    margin-right: 25px;
+}
 
 table.general-table{
     width: 100%;
@@ -178,4 +182,53 @@ table.general-table td{
 #new-range img{
     width:120px;
     font-zize: 10px;
+}
+.atag {
+    cursor: pointer;
+    color: #0000ff;
+}
+.atag:hover {
+    text-decoration: underline;
+}
+
+/*Import student page*/
+#import-student-one {
+    
+}
+
+#student-persional-info {
+    float: left;
+}
+
+#student-university-info {
+    margin-left: 55px;
+    float: left;
+}
+
+#import-student-button {
+    margin-left: 106px;
+    padding-top: 25px;
+}
+
+#import-student-from-file {
+    display: none;
+}
+#file-format-view{
+    display: none;
+}
+
+#file-inport {
+    
+}
+
+.input-minwidth {
+    min-width: 140px;
+}
+
+.input-text-area {
+    max-width: 15cm;
+    max-height: 1cm;
+    background: #fff !important;
+    border: 1px solid #C5CBD0 !important;
+    color: #000 !important;
 }
