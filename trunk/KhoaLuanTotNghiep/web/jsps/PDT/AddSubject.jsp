@@ -49,11 +49,11 @@
                         </tr>
                         <tr>
                             <td> Số TCLT </td>
-                            <td> <input type="text" id="txt-tclt"> </td>
+                            <td> <input type="text" id="txt-tclt" onkeypress="return checknumber(event)"> </td>
                         </tr>
                         <tr>
                             <td> Số TCTH </td>
-                            <td> <input type="text" id="txt-tcth"> </td>
+                            <td> <input type="text" id="txt-tcth" onkeypress="return checknumber(event)"> </td>
                         </tr>
                         <tr>
                             <td> Khoa </td>
@@ -117,7 +117,9 @@
                         
                     </div>
             </div><!--End Contents-->
-
+            <form id="back" action="../../ManageSubjectController?function=list_subject&ajax=false" method="post">
+                
+            </form>
             <div id="footer"><!--Footer-->
                 <%@include file="../Footer.jsp" %>
             </div><!--End footer-->
@@ -138,7 +140,12 @@
             var preSubject2 = document.getElementById("pre-sub2").value;
             var preSubject3 = document.getElementById("pre-sub3").value;
             var preSubject = 'X';
-            if ((preSubject1 != null) && (preSubject1.length > 0) && (preSubject1 != "X")) {
+            if(subjectId.length == 0 || subjectName.length==0 || tclt.length==0 || tcth.length ==0 )
+            {
+                alert("Vui lòng nhập đủ thông tin");
+                return;
+            }
+           if ((preSubject1 != null) && (preSubject1.length > 0) && (preSubject1 != "X")) {
                 preSubject = preSubject1;
             }
             if ((preSubject2 != null) && (preSubject2.length > 0) && (preSubject2 != "X")) {
@@ -168,7 +175,7 @@
         }
         
         function moveBack() {
-            alert("Called move back");
+           document.forms["back"].submit();
         }
         
         function addSubjectRespone() {
@@ -177,6 +184,14 @@
                 detail.innerHTML=http.responseText;
             }
         }
-        
+        function checknumber(evt){
+           var e = event || evt; // for trans-browser compatibility
+	var charCode = e.which || e.keyCode;
+
+	if (charCode > 31 && (charCode < 48 || charCode > 57))
+		return false;
+
+	return true;
+        }
     </script>
 </html>
