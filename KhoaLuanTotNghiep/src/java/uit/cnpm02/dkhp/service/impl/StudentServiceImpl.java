@@ -10,6 +10,7 @@ import uit.cnpm02.dkhp.DAO.StudentDAO;
 import uit.cnpm02.dkhp.model.Registration;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.service.IStudentService;
+import uit.cnpm02.dkhp.utilities.ExecuteResult;
 
 /**
  *
@@ -89,6 +90,21 @@ public class StudentServiceImpl implements IStudentService {
                     ReporterImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return students;
+    }
+
+    @Override
+    public ExecuteResult addStudent(Student s) {
+        ExecuteResult er = new ExecuteResult(true, "");
+        try {
+            studentDao.add(s);
+        } catch (Exception ex) {
+            Logger.getLogger(StudentServiceImpl.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            er.setIsSucces(false);
+            er.setMessage("Thêm SV không thành công: " + ex.toString());
+        }
+        
+        return er;
     }
     
 }
