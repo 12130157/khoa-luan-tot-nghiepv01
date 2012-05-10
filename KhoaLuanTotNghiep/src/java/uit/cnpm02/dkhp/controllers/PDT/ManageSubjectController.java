@@ -318,8 +318,8 @@ public class ManageSubjectController extends HttpServlet {
             return result;
         }
         try {
-            subjectService.deleteSubject(sessionId, subId);
-            result.setIsSucces(true);
+            boolean r= subjectService.deleteSubject(sessionId, subId);
+            result.setIsSucces(r);
         } catch (Exception ex) {
             result.setIsSucces(false);
             result.setMessage("Đã có lỗi xảy ra: " + ex.toString());
@@ -547,7 +547,7 @@ public class ManageSubjectController extends HttpServlet {
                     + "</tr>");
             // Print out content
             out.println("<tr>"
-                    + "<td><a href=''>" + s.getId() + "</a></td>"
+                    + "<td>" + s.getId() + "</td>"
                     + "<td>" + s.getSubjectName() + "</td>"
                     + "<td>" + s.getnumTCLT() + "</td>"
                     + "<td>" + s.getnumTCTH() + "</td>"

@@ -64,6 +64,13 @@ public class RegistryController extends HttpServlet {
             out.close();
         }
     }
+    /**
+     * 
+     * @param response
+     * @param request
+     * @param session
+     * @throws Exception 
+     */
  private void detailTrainClass(HttpServletResponse response, HttpServletRequest request, HttpSession session) throws Exception{
     String path="";
      try{
@@ -88,6 +95,11 @@ public class RegistryController extends HttpServlet {
     }
     
  }
+ /**
+  * 
+  * @param registried
+  * @return 
+  */
  private int getNumTCRegistry(List<TrainClass> registried){
        int numTC=0;
         if(registried.isEmpty()==false){
@@ -97,6 +109,12 @@ public class RegistryController extends HttpServlet {
         }
       return numTC;
     }
+ /**
+  * 
+  * @param classCode
+  * @return
+  * @throws Exception 
+  */
 private boolean checkNumOfStudentReg(String classCode) throws Exception{
     boolean result=false;
     TrainClassID trainClassId=new TrainClassID(classCode, Constants.CURRENT_YEAR, Constants.CURRENT_SEMESTER);
@@ -105,6 +123,12 @@ private boolean checkNumOfStudentReg(String classCode) throws Exception{
        result=true;
     return result;
 }
+/**
+ * 
+ * @param registried
+ * @return
+ * @throws Exception 
+ */
 private boolean isNotEnoughTC(List<TrainClass> registried) throws Exception{
     boolean result=false;
     int minNumTC= (int)DAOFactory.getRuleDao().findById("SoTinChiToiThieu").getValue();
@@ -112,6 +136,12 @@ private boolean isNotEnoughTC(List<TrainClass> registried) throws Exception{
         result=true;
     return result;
 }
+/**
+ * 
+ * @param registried
+ * @return
+ * @throws Exception 
+ */
 private boolean isOverTC(List<TrainClass> registried) throws Exception{
     boolean result=false;
     int maxNumTC= (int)DAOFactory.getRuleDao().findById("SoTinChiToiDa").getValue();
@@ -119,6 +149,49 @@ private boolean isOverTC(List<TrainClass> registried) throws Exception{
         result=true;
     return result;
 }
+/**
+ * 
+ * @param registried
+ * @return 
+ */
+private boolean IsEnoughRequiredTC(List<TrainClass> registried){
+    boolean result=false;   
+    try {
+          int maxNumTC= (int)DAOFactory.getRuleDao().findById("SoTinChiBatBuocToiThieu").getValue();
+          if(getNumRequirdTC(registried) > maxNumTC)
+          result=true;
+            
+        } catch (Exception ex) {
+            Logger.getLogger(RegistryController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+}
+/**
+ * 
+ * @param registried
+ * @return 
+ */
+private int getNumRequirdTC(List<TrainClass> registried){
+    int numTC=0;
+        if(registried.isEmpty()==false){
+         for(int i=0; i<registried.size();i++){
+                try {
+                    if(DAOFactory.getSubjectDao().findById(registried.get(i).getSubjectCode()).getType()==0)
+                       numTC+=registried.get(i).getNumTC();
+                } catch (Exception ex) {
+                    Logger.getLogger(RegistryController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+             }
+        }
+      return numTC;
+}
+/**
+ * 
+ * @param subjectCode
+ * @param studentCode
+ * @return
+ * @throws Exception 
+ */
 private boolean isPresubNotComplete(String subjectCode, String studentCode) throws Exception{
     boolean result=false;
     float markPass= DAOFactory.getRuleDao().findById("DiemQuaMon").getValue();
@@ -131,7 +204,13 @@ private boolean isPresubNotComplete(String subjectCode, String studentCode) thro
     }
     return result;
 }
-
+/**
+ * 
+ * @param response
+ * @param request
+ * @param session
+ * @throws IOException 
+ */
  private void completeRegistration(HttpServletResponse response, HttpServletRequest request, HttpSession session) throws IOException{
      String path="";
      try{
@@ -155,6 +234,19 @@ private boolean isPresubNotComplete(String subjectCode, String studentCode) thro
          }
          else if(isOverTC(registried)){
              session.setAttribute("error", "Số tín chỉ đăng ký quá quy định, tối đa là "+(int)DAOFactory.getRuleDao().findById("SoTinChiToiDa").getValue()+ " TC. Xem thêm quy định.");
+             Student student =DAOFactory.getStudentDao().findById(studentCode);
+             Class classes = DAOFactory.getClassDao().findById(student.getClassCode());
+             Faculty faculty =DAOFactory.getFacultyDao().findById(student.getFacultyCode());
+             session.setAttribute("student", student);
+             session.setAttribute("classes", classes);
+             session.setAttribute("faculty", faculty);
+             session.setAttribute("registriedClass", registried);
+             session.setAttribute("semester", Constants.CURRENT_SEMESTER);
+             session.setAttribute("year", Constants.CURRENT_YEAR);
+             path= "./jsps/SinhVien/PreviewRegistration.jsp";
+              response.sendRedirect(path);
+         }else if(!IsEnoughRequiredTC(registried)){
+             session.setAttribute("error", "Số tín chỉ bắt buộc chưa đủ quy định, tối thiểu là "+(int)DAOFactory.getRuleDao().findById("SoTinChiBatBuocToiThieu").getValue()+ " TC. Xem thêm quy định.");
              Student student =DAOFactory.getStudentDao().findById(studentCode);
              Class classes = DAOFactory.getClassDao().findById(student.getClassCode());
              Faculty faculty =DAOFactory.getFacultyDao().findById(student.getFacultyCode());
@@ -198,6 +290,14 @@ private boolean isPresubNotComplete(String subjectCode, String studentCode) thro
      }
       
  }
+ /**
+  * 
+  * @param response
+  * @param request
+  * @param session
+  * @throws IOException
+  * @throws Exception 
+  */
  private void preRegistry(HttpServletResponse response, HttpServletRequest request, HttpSession session) throws IOException, Exception{
      String path="";
      try{
@@ -228,12 +328,19 @@ private boolean isPresubNotComplete(String subjectCode, String studentCode) thro
      }
       response.sendRedirect(path);
  }
+ /**
+  * 
+  * @param response
+  * @param session
+  * @throws Exception 
+  */
  private void reRegistry(HttpServletResponse response, HttpSession session) throws Exception{
      String path="";
      try{
       String studentCode=(String)session.getAttribute("username");
       Student student =DAOFactory.getStudentDao().findById(studentCode);
-      List<TrainClass> trainClass=DAOFactory.getTrainClassDAO().findAllBySemesterAndYear();
+      String facultyCode= student.getFacultyCode();
+      List<TrainClass> trainClass=DAOFactory.getTrainClassDAO().findAllByFacultyCodeAndTime(facultyCode);
       List<String> registried=new ArrayList<String>();
       setSubjectAndLecturer(trainClass);
       Class classes = DAOFactory.getClassDao().findById(student.getClassCode());
@@ -253,6 +360,12 @@ private boolean isPresubNotComplete(String subjectCode, String studentCode) thro
       response.sendRedirect(path);
       
  }
+ /**
+  * 
+  * @param studentCode
+  * @return
+  * @throws Exception 
+  */
  private List<String> registried(String studentCode) throws Exception{
      ArrayList<String> result=new ArrayList<String>();
      List<Registration> registration=DAOFactory.getRegistrationDAO().findAllByStudentCode(studentCode); 
@@ -261,6 +374,12 @@ private boolean isPresubNotComplete(String subjectCode, String studentCode) thro
      }
      return result;
  }
+ /**
+  * 
+  * @param response
+  * @param session
+  * @throws Exception 
+  */
  private void forward(HttpServletResponse response, HttpSession session) throws Exception {
      String path="";  
      try{
@@ -280,9 +399,17 @@ private boolean isPresubNotComplete(String subjectCode, String studentCode) thro
        }
        response.sendRedirect(path);
 }
+ /**
+  * 
+  * @param response
+  * @param session
+  * @param studentCode
+  * @throws Exception 
+  */
  private void getAllClass(HttpServletResponse response, HttpSession session, String studentCode) throws Exception{
       Student student =DAOFactory.getStudentDao().findById(studentCode);
-      List<TrainClass> trainClass=DAOFactory.getTrainClassDAO().findAllBySemesterAndYear();
+      String facultyCode= student.getFacultyCode();
+      List<TrainClass> trainClass=DAOFactory.getTrainClassDAO().findAllByFacultyCodeAndTime(facultyCode);
       ArrayList<String> registried=new ArrayList<String>();
       setSubjectAndLecturer(trainClass);
       Class classes = DAOFactory.getClassDao().findById(student.getClassCode());
@@ -298,6 +425,11 @@ private boolean isPresubNotComplete(String subjectCode, String studentCode) thro
       response.sendRedirect(path);
       
  }
+ /**
+  * 
+  * @param trainClass
+  * @throws Exception 
+  */
  private void setSubjectAndLecturer(List<TrainClass> trainClass) throws Exception{
     SubjectDAO subjectDao=new SubjectDAO();
     LecturerDAO lecturerDao=new LecturerDAO();
@@ -307,6 +439,14 @@ private boolean isPresubNotComplete(String subjectCode, String studentCode) thro
         trainClass.get(i).setNumTC(subjectDao.findById(trainClass.get(i).getSubjectCode()).getnumTC() );
     }
 }
+ /**
+  * 
+  * @param registration
+  * @param response
+  * @param session
+  * @param studentCode
+  * @throws Exception 
+  */
  private void showRegitration(List<Registration> registration, HttpServletResponse response, HttpSession session, String studentCode) throws Exception{
       Student student =DAOFactory.getStudentDao().findById(studentCode);
       Class classes = DAOFactory.getClassDao().findById(student.getClassCode());
@@ -348,11 +488,11 @@ private boolean isPresubNotComplete(String subjectCode, String studentCode) thro
     }
 
     /** 
-     * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException 
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -365,8 +505,8 @@ private boolean isPresubNotComplete(String subjectCode, String studentCode) thro
     }
 
     /** 
-     * Returns a short description of the servlet.
-     * @return a String containing servlet description
+     * 
+     * @return 
      */
     @Override
     public String getServletInfo() {
