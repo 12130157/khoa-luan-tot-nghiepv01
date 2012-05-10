@@ -2,6 +2,7 @@ package uit.cnpm02.dkhp.service;
 
 import java.util.List;
 import uit.cnpm02.dkhp.model.Student;
+import uit.cnpm02.dkhp.utilities.ExecuteResult;
 
 /**
  *
@@ -19,4 +20,7 @@ public interface IStudentService {
      * @return 
      */
     List<Student> getStudent(String classID, String year, int semeter);
+    
+    
+    ExecuteResult addStudent(Student s);
 }
