@@ -94,8 +94,14 @@ public class ManageStudentController extends HttpServlet {
                 String path = "./jsps/PDT/EditStudent.jsp";
                 response.sendRedirect(path);
             } else if (action.equalsIgnoreCase(ManageStudentSupport
+                                                .VALIDATE_ADD_ONE.getValue())) {
+                doValidateAddOne(out, request);
+            } else if (action.equalsIgnoreCase(ManageStudentSupport
                                                 .ADD_ONE.getValue())) {
                 doAddOne(out, request);
+            } else if (action.equalsIgnoreCase(ManageStudentSupport
+                                                .CANCEL_ADD_ONE.getValue())) {
+                doCancelOne(out, request);
             }
             /* else if (action.equalsIgnoreCase("import")) {
                 //Data input in format: student1; student2; student 3 ...
@@ -600,20 +606,8 @@ public class ManageStudentController extends HttpServlet {
                     + "</option>");
         }
     }
-
-    /**
-     * Do add one student from submit form
-     * This include following actions:
-     *  Validate student information
-     *  Persistent to database
-     *  Write out result respone to user
-     *  (In result send back, user should has
-     * a choice to cancel his/her action).
-     * @param out out put stream
-     * @param request request object.
-     */
-    private void doAddOne(PrintWriter out, HttpServletRequest request) {
-        // Get data from request instance.
+    
+    private Student getStudentFromRequest(HttpServletRequest request) {
         String mssv = request.getParameter("mssv");
         String fullname = request.getParameter("fullname");
         String birthDay = request.getParameter("birthDay");
@@ -650,24 +644,97 @@ public class ManageStudentController extends HttpServlet {
         Student s = new Student(mssv, fullname, birthDayD, gender, cmnd, homeAddress,
                 addsress, phone, email, clazz, faculty, course, status,
                 level, dateStart, studyType, note);
+        
+        return s;
+    }
+
+    private void doValidateAddOne(PrintWriter out, HttpServletRequest request) {
+         // Get data from request instance.
+        Student s = getStudentFromRequest(request);
+        ExecuteResult er = studentService.validateNewStudent(s);
+        
+        // Write out back result
+        writeOutValidateAddOneResult(out, er);
+    }
+    
+    /**
+     * Do add one student from submit form
+     * This include following actions:
+     *  Validate student information
+     *  Persistent to database
+     *  Write out result respone to user
+     *  (In result send back, user should has
+     * a choice to cancel his/her action).
+     * @param out out put stream
+     * @param request request object.
+     */
+    private void doAddOne(PrintWriter out, HttpServletRequest request) {
+        // Get data from request instance.
+        Student s = getStudentFromRequest(request);
         ExecuteResult er = studentService.addStudent(s);
         
         // Write out back result
         writeOutAddOneResult(out, er);
     }
     
+    private void writeOutValidateAddOneResult(PrintWriter out, ExecuteResult er) {
+        if (!er.isIsSucces()) {
+            out.println(er.getMessage());
+        } else {
+            out.println("Thông tin hợp lệ");
+        }
+    }
+    
     private void writeOutAddOneResult(PrintWriter out, ExecuteResult er) {
         if (!er.isIsSucces()) {
             out.println("Thêm SV không thành công: " + er.getMessage());
         } else {
-            out.println("Thêm SV thành công <a href='#'> Hủy </a>");
+            Student s = (Student) er.getData();
+            //../../ManageStudentController?function=cancel-add-one&mssv=" 
+            String cancelFunction = "cancelAddOne('" + s.getId() + "')";
+            out.println("Thêm SV: <b>" + s.getFullName() 
+                    + "</b> thành công "
+                    + "<span class=\"atag\" onclick=\"" + cancelFunction + "\"><b>Hủy</b></span>");
+            out.println("<table class=\"general-table\">");
+            out.println("<tr>"
+                        + "<th> MSSV </th>"
+                        + "<th> Họ và tên </th>"
+                        + "<th> Giới tính </th>"
+                        + "<th> Quê quán </th>"
+                    + "</tr>");
+            out.println("<tr>"
+                    + "<td>" + s.getId() + "</td>"
+                    + "<td>" + s.getFullName() + "</td>"
+                    + "<td>" + s.getGender() + "</td>"
+                    + "<td>" + s.getHomeAddr() + "</td>"
+                    + "</tr>");
+            out.println("</table>");
+        }
+    }
+
+    private void doCancelOne(PrintWriter out, HttpServletRequest request) {
+         String mssv = request.getParameter("mssv");
+         
+         ExecuteResult er = studentService.deleteStudent(mssv);
+         writeOutCancelAddOneResult(out, er);
+    }
+    
+     private void writeOutCancelAddOneResult(PrintWriter out, ExecuteResult er) {
+        if (!er.isIsSucces()) {
+            out.println("Không thể xóa SV. " + er.getMessage());
+            out.println("Vui lòng truy cập trang </b>Quản lý Sinh viên</b> để thử lại");
+        } else {
+            Student s = (Student) er.getData();
+            out.println("Xóa thành công sinh viên <b>" + s.getFullName() + "</b>");
         }
     }
     
     public enum ManageStudentSupport {
         DEFAULT("default"), // List first page of class opened.
         PRE_IMPORT("pre-import-student"),
+        VALIDATE_ADD_ONE("validate-add-one"),
         ADD_ONE("add-one"),
+        CANCEL_ADD_ONE("cancel-add-one"),
         FACULTY_CHANGED("faculty-change");
         
         private String description;
