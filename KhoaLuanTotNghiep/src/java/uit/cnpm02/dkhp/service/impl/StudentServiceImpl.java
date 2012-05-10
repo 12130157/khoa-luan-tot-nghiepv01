@@ -97,11 +97,53 @@ public class StudentServiceImpl implements IStudentService {
         ExecuteResult er = new ExecuteResult(true, "");
         try {
             studentDao.add(s);
+            er.setData(s);
         } catch (Exception ex) {
             Logger.getLogger(StudentServiceImpl.class.getName())
                     .log(Level.SEVERE, null, ex);
             er.setIsSucces(false);
-            er.setMessage("Thêm SV không thành công: " + ex.toString());
+            er.setMessage("[StudentService][Add-One] - " + ex.toString());
+        }
+        
+        return er;
+    }
+
+    @Override
+    public ExecuteResult validateNewStudent(Student s) {
+        ExecuteResult er = new ExecuteResult(true, "");
+        try {
+            // Check mssv existed.
+            if (studentDao.findById(s.getId()) != null) {
+                er.setIsSucces(false);
+                er.setMessage("Mã số SV bị trùng");
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(StudentServiceImpl.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            er.setIsSucces(false);
+            er.setMessage("Đã có lỗi xảy ra: " + ex.toString());
+        }
+        
+        return er;
+    }
+
+    @Override
+    public ExecuteResult deleteStudent(String mssv) {
+        ExecuteResult er = new ExecuteResult(true, "Xóa thành công.");
+        try {
+            Student s = studentDao.findById(mssv);
+            if (s == null) {
+                er.setIsSucces(false);
+                er.setMessage("Không tìm thấy Sinh viên");
+            } else {
+                studentDao.delete(s);
+                er.setData(s);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(StudentServiceImpl.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            er.setIsSucces(false);
+            er.setMessage(ex.toString());
         }
         
         return er;
