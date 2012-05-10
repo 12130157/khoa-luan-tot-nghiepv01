@@ -32,48 +32,29 @@ public class Student extends AbstractJdbcModel<String> {
         
     }
 
-     /**
-     * Constructor with parameter input:
-     * @param _studentCode: 
-     * @param _fullName
-     * @param _birthday
-     * @param _gender
-     * @param _identityCard
-     * @param _home
-     * @param _address
-     * @param _phone
-     * @param _email
-     * @param _classCode
-     * @param _facultyCode
-     * @param _courseCode
-     * @param _status
-     * @param _studyLevel
-     * @param _dateStart
-     * @param _loaiHinHoc
-     * @param _note 
-     */
-    
-    public Student(String id, String _fullName, Date _birthday, String _gender, String _identityNumber, String _home,
-            String _address, String _phone, String _email, String _classCode, String _facultyCode, String _courseCode, 
-            String _status, String _studyLevel, Date _dateStart, String _typeStydy, String _note){
-     setId(id);
-     this.fullName=_fullName;
-     this.birthday=_birthday;
-     this.gender=_gender;
-     this.identityNumber=_identityNumber;
-     this.homeAddr=_home;
-     this.address=_address;
-     this.phone=_phone;
-     this.email=_email;
-     this.classCode=_classCode;
-     this.facultyCode=_facultyCode;
-     this.courseCode=_courseCode;
-     this.status=_status;
-     this.studyLevel=_studyLevel;
-     this.dateStart=_dateStart;
-     this.studyType=_typeStydy;
-     this.note="";
-    }     
+    public Student(String mssv, String fullName, Date birthday, String gender,
+            String identityNumber, String homeAddr, String address,
+            String phone, String email, String classCode, String facultyCode,
+            String courseCode, String status, String studyLevel, Date dateStart,
+            String studyType, String note) {
+        setId(mssv);
+        this.fullName = fullName;
+        this.birthday = birthday;
+        this.gender = gender;
+        this.identityNumber = identityNumber;
+        this.homeAddr = homeAddr;
+        this.address = address;
+        this.phone = phone;
+        this.email = email;
+        this.classCode = classCode;
+        this.facultyCode = facultyCode;
+        this.courseCode = courseCode;
+        this.status = status;
+        this.studyLevel = studyLevel;
+        this.dateStart = dateStart;
+        this.studyType = studyType;
+        this.note = note;
+    }
     //****
     //get parameter
     //****
