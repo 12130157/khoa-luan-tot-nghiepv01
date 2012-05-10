@@ -68,12 +68,16 @@ List<Rule> rule=(List<Rule>) session.getAttribute("rule");
                    <table>
                         <tr>
                             <td>Số tín chỉ tối thiểu có thể đăng ký:</td>
-                            <th><%=(int)rule.get(4).getValue()%> </th>
+                            <th><%=(int)rule.get(5).getValue()%> </th>
                         </tr> 
                          <tr>
                             <td>Số tín chỉ tối đa có thể đăng ký:</td>
+                            <th><%=(int)rule.get(4).getValue()%> </th>
+                        </tr>  
+                        <tr>
+                            <td>Số tín chỉ bắt buộc tối thiếu:</td>
                             <th><%=(int)rule.get(3).getValue()%> </th>
-                        </tr>   
+                        </tr>  
                          <tr>
                             <td>Số sinh viên tối thiểu để mở lớp:</td>
                             <th><%=(int)rule.get(2).getValue()%> </th>
@@ -87,10 +91,11 @@ List<Rule> rule=(List<Rule>) session.getAttribute("rule");
                             <th><%=rule.get(0).getValue()%> </th>
                         </tr> 
                     </table>
+                        <br><br>
                 </form>
                </div>      
             </div><!--End Contents-->
-
+            
             <div id="footer"><!--Footer-->
                 <%@include file="../Footer.jsp" %>
             </div><!--End footer-->
