@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,10 +22,18 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.StudentDAO;
+import uit.cnpm02.dkhp.model.Class;
+import uit.cnpm02.dkhp.model.Course;
+import uit.cnpm02.dkhp.model.Faculty;
 import uit.cnpm02.dkhp.model.Student;
+import uit.cnpm02.dkhp.service.IPDTService;
+import uit.cnpm02.dkhp.service.IStudentService;
+import uit.cnpm02.dkhp.service.impl.PDTServiceImpl;
+import uit.cnpm02.dkhp.service.impl.StudentServiceImpl;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
 import uit.cnpm02.dkhp.utilities.FileUtils;
+import uit.cnpm02.dkhp.utilities.StringUtils;
 
 /**
  *
@@ -31,6 +41,9 @@ import uit.cnpm02.dkhp.utilities.FileUtils;
  */
 @WebServlet(name = "ManageStudentController", urlPatterns = {"/ManageStudentController"})
 public class ManageStudentController extends HttpServlet {
+    
+    private IPDTService pdtService = new PDTServiceImpl();
+    private IStudentService studentService = new StudentServiceImpl();
 
     private StudentDAO studentDao = DAOFactory.getStudentDao();
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
@@ -70,11 +83,21 @@ public class ManageStudentController extends HttpServlet {
                 listStudent(request, response);
                 String path = "./jsps/PDT/ListStudent.jsp";
                 response.sendRedirect(path);
+            } else if (action.equalsIgnoreCase(ManageStudentSupport
+                                                    .PRE_IMPORT.getValue())) {
+                doPrepareDataForImportStudent(session, response);
+            } else if (action.equalsIgnoreCase(ManageStudentSupport
+                                                    .FACULTY_CHANGED.getValue())) {
+                facultyChangeFromImportPage(request, out);
             } else if (action.equalsIgnoreCase("editstudent")) {
                 editStudent(request, response);
                 String path = "./jsps/PDT/EditStudent.jsp";
                 response.sendRedirect(path);
-            } else if (action.equalsIgnoreCase("import")) {
+            } else if (action.equalsIgnoreCase(ManageStudentSupport
+                                                .ADD_ONE.getValue())) {
+                doAddOne(out, request);
+            }
+            /* else if (action.equalsIgnoreCase("import")) {
                 //Data input in format: student1; student2; student 3 ...
                 //Student: mssv, hoten, ...
                 ExecuteResult result = importStudentFromDataString(datas);
@@ -85,10 +108,7 @@ public class ManageStudentController extends HttpServlet {
                     out.println("<u>Thêm thành công sinh viên:</u></br>");
                     wirteOutListStudent(out, students);
                 }
-                //session.setAttribute("error", result);
-                //String path = "./jsps/PDT/ImportStudent.jsp";
-                //response.sendRedirect(path);
-            } else if (action.equalsIgnoreCase("importfromfile")) {
+            }*/ else if (action.equalsIgnoreCase("importfromfile")) {
                 ExecuteResult result = importStudentFromFile(request, response);
                 
                 if (!result.isIsSucces()) {
@@ -422,19 +442,19 @@ public class ManageStudentController extends HttpServlet {
             session.setAttribute("liststudent", students);
         } else {
             PrintWriter out = response.getWriter();
-            String respStr = "<tr id=\"tableliststudent-th\">"
-                    + "<td><INPUT type=\"checkbox\" name=\"chkAll\""
-                    + " onclick=\"selectAll('tableliststudent')\" /></td>"
-                    + "<td> STT </td>"
-                    + "<td> MSSV </td>"
-                    + "<td> Họ Tên </td>"
-                    + "<td> Lớp </td>"
-                    + "<td> Khoa </td>"
-                    + "<td> Ngày sinh </td>"
-                    + "<td> Giới tính </td>"
-                    + "<td> Loại </td>"
-                    + "<td> Sửa </td>"
-                    + "<td> Xóa </td>"
+            String respStr = "<tr>"
+                    + "<th><INPUT type=\"checkbox\" name=\"chkAll\""
+                    + " onclick=\"selectAll('tableliststudent')\" /></th>"
+                    + "<th> STT </th>"
+                    + "<th> MSSV </th>"
+                    + "<th> Họ Tên </th>"
+                    + "<th> Lớp </th>"
+                    + "<th> Khoa </th>"
+                    + "<th> Ngày sinh </th>"
+                    + "<th> Giới tính </th>"
+                    + "<th> Loại </th>"
+                    + "<th> Sửa </th>"
+                    + "<th> Xóa </th>"
                     + "</tr>";
             out.println(respStr);
             for (int i = 0; i < students.size(); i++) {
@@ -519,5 +539,145 @@ public class ManageStudentController extends HttpServlet {
                 out.println(respStr);
             }
             out.append("</table>");
+    }
+
+    /**
+     * Prepare data for Import student page usaged.
+     * - List Classes
+     * - List Faculties
+     * - List course
+     * @param session 
+     */
+    private void doPrepareDataForImportStudent(HttpSession session,
+                           HttpServletResponse response) throws IOException {
+        List<uit.cnpm02.dkhp.model.Class> clazzes = pdtService.getAllClass();
+        List<Faculty> faculties = pdtService.getAllFaculty();
+        List<Course> courses = pdtService.getAllCourse();
+        
+        if (clazzes != null) {
+            session.setAttribute("clazzes", clazzes);
+        }
+        if (faculties != null) {
+            session.setAttribute("faculties", faculties);
+        }
+        if (courses != null) {
+            session.setAttribute("courses", courses);
+        }
+        
+        String path = "./jsps/PDT/ImportStudent.jsp";
+        response.sendRedirect(path);
+    }
+
+    /**
+     * At import student page, when user change faculty
+     * the class must be changed correspond with faculty
+     * selected.
+     * @param request
+     * @param out 
+     */
+    private void facultyChangeFromImportPage(HttpServletRequest request,
+                                                        PrintWriter out) {
+        String facultyId = request.getParameter("facultyId");
+        if (StringUtils.isEmpty(facultyId)) {
+            return;
+        }
+        
+        List<uit.cnpm02.dkhp.model.Class> clazzes = 
+                pdtService.getClassByFaculty(facultyId);
+        writeListClassWhenFacultyChanged(out, clazzes);
+    }
+
+    private void writeListClassWhenFacultyChanged(PrintWriter out,
+                                            List<Class> clazzes) {
+        if ((clazzes == null) || clazzes.isEmpty()) {
+            return;
+        }
+        
+        for (Class c : clazzes) {
+            out.println("<option value=\"" 
+                    + c.getId() + "\">" 
+                    + c.getClassName() 
+                    + "</option>");
+        }
+    }
+
+    /**
+     * Do add one student from submit form
+     * This include following actions:
+     *  Validate student information
+     *  Persistent to database
+     *  Write out result respone to user
+     *  (In result send back, user should has
+     * a choice to cancel his/her action).
+     * @param out out put stream
+     * @param request request object.
+     */
+    private void doAddOne(PrintWriter out, HttpServletRequest request) {
+        // Get data from request instance.
+        String mssv = request.getParameter("mssv");
+        String fullname = request.getParameter("fullname");
+        String birthDay = request.getParameter("birthDay");
+        String cmnd = request.getParameter("cmnd");
+        String homeAddress = request.getParameter("homeAddress");
+        String gender = request.getParameter("gender");
+        String phone = request.getParameter("phone");
+        String email = request.getParameter("email");
+        String addsress = request.getParameter("addsress");
+        String enterDate = request.getParameter("enterDate");
+        String faculty = request.getParameter("faculty");
+        String clazz = request.getParameter("clazz");
+        String course = request.getParameter("course");
+        String status = request.getParameter("status");
+        String level = request.getParameter("level");
+        String studyType = request.getParameter("studyType");
+        String note = request.getParameter("note");
+        
+        SimpleDateFormat sdf = new SimpleDateFormat(
+                                        Constants.DATETIME_PARTERM_DEFAULT);
+        
+        // Validate
+        
+        // Add
+        Date birthDayD = null;
+        Date dateStart = null;
+        try {
+            dateStart = sdf.parse(enterDate);
+            birthDayD = sdf.parse(birthDay);
+        } catch (Exception ex) {
+            Logger.getLogger(ManageScoreController.class.getName())
+                    .log(Level.WARNING, null, ex);
+        }
+        Student s = new Student(mssv, fullname, birthDayD, gender, cmnd, homeAddress,
+                addsress, phone, email, clazz, faculty, course, status,
+                level, dateStart, studyType, note);
+        ExecuteResult er = studentService.addStudent(s);
+        
+        // Write out back result
+        writeOutAddOneResult(out, er);
+    }
+    
+    private void writeOutAddOneResult(PrintWriter out, ExecuteResult er) {
+        if (!er.isIsSucces()) {
+            out.println("Thêm SV không thành công: " + er.getMessage());
+        } else {
+            out.println("Thêm SV thành công <a href='#'> Hủy </a>");
+        }
+    }
+    
+    public enum ManageStudentSupport {
+        DEFAULT("default"), // List first page of class opened.
+        PRE_IMPORT("pre-import-student"),
+        ADD_ONE("add-one"),
+        FACULTY_CHANGED("faculty-change");
+        
+        private String description;
+        ManageStudentSupport(String description) {
+            this.description = description;
+        }
+        
+        public String getValue() {
+            return description;
+        }
+        
     }
 }
