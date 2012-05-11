@@ -21,6 +21,7 @@ public class DAOFactory {
     private static PreSubjectDAO preSubDao = null;
     private static StudyResultDAO studyResultDAO = null;
     private static LecturerDAO lecturerDao = null;
+    private static RegistrationTimeDAO timeDao=null;
 
     public static PreSubjectDAO getPreSubDao() {
         if (preSubDao == null) {
@@ -128,5 +129,11 @@ public class DAOFactory {
             lecturerDao = new LecturerDAO();
         }
         return lecturerDao;
+    }
+    public static RegistrationTimeDAO getRegistrationTimeDAO() {
+        if (timeDao == null) {
+            timeDao = new RegistrationTimeDAO();
+        }
+        return timeDao;
     }
 }
