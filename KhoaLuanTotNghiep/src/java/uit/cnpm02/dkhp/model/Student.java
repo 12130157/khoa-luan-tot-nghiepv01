@@ -3,6 +3,7 @@ package uit.cnpm02.dkhp.model;
 import java.util.Date;
 import uit.cnpm02.dkhp.access.JDBC.AbstractJdbcModel;
 import uit.cnpm02.dkhp.access.mapper.MapperConstant;
+import uit.cnpm02.dkhp.utilities.DateTimeUtil;
 
 /**
  *
@@ -295,5 +296,28 @@ public class Student extends AbstractJdbcModel<String> {
         int hash = 7;
         hash = 89 * hash + (this.identityNumber != null ? this.identityNumber.hashCode() : 0);
         return hash;
+    }
+
+    public int compare(Student o2, String by) {
+        int result = 0;
+        if (by.equalsIgnoreCase("MSSV")) {
+            result = this.getId()
+                    .compareTo(o2.getId());
+        } else if (by.equalsIgnoreCase("HoTen")) {
+            result = this.getFullName()
+                    .compareTo(o2.getFullName());
+        } else if (by.equalsIgnoreCase("MaLop")) {
+            result = this.getClassCode().compareTo(o2.getClassCode());
+        } else if (by.equalsIgnoreCase("MaKhoa")) {
+            result = this.getFacultyCode().compareTo(o2.getFacultyCode());
+        } else if (by.equalsIgnoreCase("NgaySinh")) {
+            result = this.getBirthday().compareTo(o2.getBirthday());
+        } else if (by.equalsIgnoreCase("GioiTinh")) {
+            result = this.getGender().compareTo(o2.getGender());
+        } else if (by.equalsIgnoreCase("LoaiHinhHoc")) {
+            result = this.getStudyType().compareTo(o2.getStudyType());
+        }
+        
+        return result;
     }
 }
