@@ -4,6 +4,7 @@
     Author     : ngloc_it
 --%>
 
+<%@page import="uit.cnpm02.dkhp.utilities.DateTimeUtil"%>
 <%@page import="uit.cnpm02.dkhp.model.Course"%>
 <%@page import="uit.cnpm02.dkhp.model.Faculty"%>
 <%@page import="uit.cnpm02.dkhp.model.Student"%>
@@ -72,7 +73,7 @@ Course course=(Course)session.getAttribute("course");
                     <table>
                         <tr>
                             <td><i>Ngày sinh</i> </td>
-                            <th><%=student.getBirthday()%></th>
+                            <th><%=DateTimeUtil.format(student.getBirthday())%></th>
                         </tr>  
                         <tr>
                             <td><i>Giới tính</i> </td>
@@ -100,7 +101,7 @@ Course course=(Course)session.getAttribute("course");
                         </tr>
                         <tr>
                             <td><i>Ngày nhập học</i> </td>
-                            <th><%=student.getDateStart()%></th>
+                            <th><%=DateTimeUtil.format(student.getDateStart())%></th>
                         </tr>
                         <tr>
                             <td><i>CMND </i></td>
