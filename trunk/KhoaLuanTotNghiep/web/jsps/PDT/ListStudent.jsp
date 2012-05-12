@@ -52,90 +52,97 @@
     <body onload="">
         <!--Div Wrapper-->
         <div id="wrapper">
-            <div id="mainNav"><!--Main Navigation-->
+            <!--Main Navigation-->
+            <div id="mainNav">
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
                 <p id="error">
-
                 </p>
-
                 <br/>
-
-                <h1>Tìm kiếm sinh viên:</h1>
-                <form>
-                    <table>
-                        <tr><td>
-                            <input type="text" name="txtName" id="txtName" placeholder="Nhap ten SV"/>
-                            <input type="button" onclick="searchByName()" value="Tìm theo tên SV"/>
-                        </td></tr>
-                        <tr><td>
-                            <input type="text" name="txtClass" id="txtClass" placeholder="Nhap ma lop"/>
-                            <input type="button" onclick="searchByClass()" value="Tìm theo lớp"/>
-                        </td></tr>
-                        <tr><td>
-                            <input type="text" name="txtCourse" id="txtCourse" placeholder="Nhap ma khoa"/>
-                            <input type="button" onclick="searchByCourse()" value="Tìm theo khoa"/>
-                        </td></tr>
-                    </table>
-                </form>
+                <%-- Link import student --%>
                 <p align="right"><b><a href="../../ManageStudentController?function=pre-import-student">Tiếp nhận sinh viên</a></b></p>
-                <%--<p align="right"><b><a href="./ImportStudent.jsp">Tiếp nhận sinh viên</a></b></p>--%>
                 <hr><hr>
 
-                <form id="formdown" name="formdown" action="../DownloadFile?action=test" method="post">
-                    Danh sách sinh viên:<br/>
-                    <input type="button" onclick="deleteStudent('tableliststudent')" value="Xóa mục đã chọn" />
-                    <table id="tableliststudent" name="tableliststudent" class="general-table">
-                        <tr id="tableliststudent-th">
-                        <th><INPUT type="checkbox" name="chkAll" onclick="selectAll('tableliststudent', 0)" /></th>
-                        <th> STT </th>
-                        <th> MSSV </th>
-                        <th> Họ Tên </th>
-                        <th> Lớp </th>
-                        <th> Khoa </th>
-                        <th> Ngày sinh </th>
-                        <th> Giới tính </th>
-                        <th> Loại </th>
-                        <th> Sửa </th>
-                        <th> Xóa </th>
-                        <%--Should be sorted when click on table's header--%>
-                        </tr>
-                        <%if ((listStudent != null) && !listStudent.isEmpty()) {%>
-                        <% for (int i = 0; i < listStudent.size(); i++) {%>
-                        <tr>
-                        <td><INPUT type="checkbox" name="chk<%= i%>"/></td>
-                        <td> <%= (i + 1)%> </td>
-                        <td> <%= listStudent.get(i).getId()%> </td> 
-                        <td> <%= listStudent.get(i).getFullName()%> </td>
-                        <td> <%= listStudent.get(i).getClassCode()%> </td>
-                        <td> <%= listStudent.get(i).getFacultyCode()%> </td>
-                        <td> <%= listStudent.get(i).getBirthday()%> </td>
-                        <td> <%= listStudent.get(i).getGender()%> </td>
-                        <td> <%= listStudent.get(i).getStudyType()%> </td>
-                        <td><a href="../../ManageStudentController?function=editstudent&mssv=<%= listStudent.get(i).getId()%>">Sửa</a></td>
-                        <td><a href="../../ManageStudentController?function=delete&ajax=true&data=<%= listStudent.get(i).getId()%>">Xóa</a></td>
-                        <% }%>
-                        </tr>
-                        <%}%>
-                    </table>
-                    <form id="testid">
-                    </form>
-                    <div id="paggind">
-                        <input style="position:absolute; left:650px;" type="button" value="|<<" onclick="firstPage()">
-                        <input style="position:absolute; left:680px;" type="button" value="<<" onclick="prePage()">
-                        <input style="position:absolute; left:710px;" type="button" value=">>" onclick="nextPage()">
-                        <input style="position:absolute; left:740px;" type="button" value=">>|" onclick="endPage()"><br>
-                        <input type="hidden" value="<%= numpage%>" id="numpage" />
+                Danh sách sinh viên:<br/>
+                <%-- Search Form --%>
+                <div id="search-student-form">
+                    <%-- BUTTON DELETE SELECT ROW --%>
+                    <div id="btn-form" class="clear-left">
+                        <input type="button" onclick="deleteStudent('tableliststudent')" value="Xóa mục đã chọn" />
                     </div>
+                    <%--SEARCH FORM--%>
+                    <div id="search-form" class="clear-right" style="margin-right: 12px !important;">
+                        <%-- Filter by Faculty and class --%>
+                        <div id="filter-student">
+                            <select id="txt-faculty">
+                                <option value="1"> Khoa CNPM 01 </option>
+                                <option value="2"> Khoa HTTT </option>
+                                <option value="3"> .... </option>
+                            </select>
+                            <select id="txt-class">
+                                <option value="1"> Lớp CNPM 01 </option>
+                                <option value="2"> Khoa CNPM 02 </option>
+                                <option value="3"> .... </option>
+                            </select>
+                        </div>
+                        <input type="text" id="txt-search" placeholder="Nhập mssv hoặc Họ tên" />
+                        <input type="button" value="Tìm" onclick="searchStudent()" />
+                    </div>
+                </div>
+                <div class="clear"></div>
+                <div id="list-students">
+                    <%-- List student (Table)--%>
+                    <table id="tableliststudent" name="tableliststudent" class="general-table">
+                            <tr id="tableliststudent-th">
+                            <th><INPUT type="checkbox" name="chkAll" onclick="selectAll('tableliststudent', 0)" /></th>
+                            <th> STT </th>
+                            <th> <span class="atag" onclick="sort('MSSV')" > MSSV </span></th>
+                            <th> <span class="atag" onclick="sort('HoTen')" >  Họ Tên </span></th>
+                            <th> <span class="atag" onclick="sort('MaLop')" >  Lớp </span></th>
+                            <th> <span class="atag" onclick="sort('MaKhoa')" >  Khoa </span></th>
+                            <th> <span class="atag" onclick="sort('NgaySinh')" > Ngày sinh </span></th>
+                            <th> <span class="atag" onclick="sort('GioiTinh')" >  Giới tính </span></th>
+                            <th> <span class="atag" onclick="sort('LoaiHinhHoc')" >  Loại </span></th>
+                            <th> Sửa </th>
+                            <th> Xóa </th>
+                            <%--Should be sorted when click on table's header--%>
+                            </tr>
+                            <%if ((listStudent != null) && !listStudent.isEmpty()) {%>
+                            <% for (int i = 0; i < listStudent.size(); i++) {%>
+                            <tr>
+                            <td><INPUT type="checkbox" name="chk<%= i%>"/></td>
+                            <td> <%= (i + 1)%> </td>
+                            <td> <%= listStudent.get(i).getId()%> </td> 
+                            <td> <%= listStudent.get(i).getFullName()%> </td>
+                            <td> <%= listStudent.get(i).getClassCode()%> </td>
+                            <td> <%= listStudent.get(i).getFacultyCode()%> </td>
+                            <td> <%= listStudent.get(i).getBirthday()%> </td>
+                            <td> <%= listStudent.get(i).getGender()%> </td>
+                            <td> <%= listStudent.get(i).getStudyType()%> </td>
+                            <td><a href="../../ManageStudentController?function=editstudent&mssv=<%= listStudent.get(i).getId()%>">Sửa</a></td>
+                            <td><span class="atag" onclick="deleteOneStudent('<%=listStudent.get(i).getId()%>')" > Xóa </span></td>
+                            <% }%>
+                            </tr>
+                            <%}%>
+                        </table>
+                </div>
+                <%--  PAGGING --%>
+                <div id="paggind">
+                    <input type="button" value="|<<" onclick="firstPage()">
+                    <input type="button" value="<<" onclick="prePage()">
+                    <input type="button" value=">>" onclick="nextPage()">
+                    <input type="button" value=">>|" onclick="endPage()"><br>
+                    <input type="hidden" value="<%= numpage%>" id="numpage" />
+                </div>
+                 <%-- Download file form --%>
+                <form id="formdown" name="formdown" action="../DownloadFile?action=test" method="post">    
                 </form>
-            </div><!--End Contents-->
-
+            </div>
             <div id="footer"><!--Footer-->
                 <%@include file="../Footer.jsp" %>
             </div><!--End footer-->
-        </div>
-        <!--End Wrapper-->
+        </div><!--End Wrapper-->
     </body>
 
     <script src="../../javascripts/UtilTable.js"></script>
@@ -179,6 +186,57 @@
             currentpage = numpage;
             submitSearch();
         }
+        
+        function searchStudent() {
+            var key = document.getElementById("txt-search").value;
+            var pagename = "../../ManageStudentController?function=search-students&key=" + key;
+            if(http){
+                http.open("GET", pagename, true);
+                http.onreadystatechange = handleResponseSearch;
+                http.send(null);
+            }
+        }
+        
+        function handleResponseSearch(){
+            if((http.readyState == 4) && (http.status == 200)){
+                var detail = document.getElementById("list-students");
+                detail.innerHTML = http.responseText;
+            }
+        }
+        
+        function sort(sortBy) {
+            var pagename = "../../ManageStudentController?function=sort&by=" + sortBy;
+            if(http){
+                http.open("GET", pagename, true);
+                http.onreadystatechange = handleResponseSearch;
+                http.send(null);
+            }
+        }
+        
+        function deleteOneStudent(mssv) {
+            alert("Entered DELETE " + mssv);
+            var pagename = "../../ManageStudentController?function=delete-one&mssv=" + mssv;
+            if(http){
+                http.open("GET", pagename, true);
+                http.onreadystatechange = handleResponseDeleteOne;
+                http.send(null);
+            }
+        }
+        
+        function handleResponseDeleteOne(){
+            if((http.readyState == 4) && (http.status == 200)){
+                var responeResult = http.responseText;
+                if (responeResult.substring(0, 5) == "error") {
+                    var error = responeResult.substring(6, responeResult.length-1);
+                    alert("Error: " + error);
+                    return;
+                }
+                
+                var detail = document.getElementById("list-students");
+                detail.innerHTML = http.responseText;
+            }
+        }
+        
         
         function searchHandler() {
             if(http.readyState == 4 && http.status == 200){
