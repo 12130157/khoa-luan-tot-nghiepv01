@@ -14,7 +14,6 @@
 <%@page import="uit.cnpm02.dkhp.model.type.StudentStatus"%>
 <%@page import="uit.cnpm02.dkhp.model.Student"%>
 <%@page import="uit.cnpm02.dkhp.model.Course"%>
-<%@page import="uit.cnpm02.dkhp.DAO.DAOFactory"%>
 <%@page import="uit.cnpm02.dkhp.model.Faculty"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Date"%>
@@ -297,43 +296,6 @@
                 </div>
                 
                 <div class="clear"></div>
-                
-                <%--    
-                <p>
-                    <INPUT type="button" value="Thêm hàng" onclick="addRow('dataTable')" />
-                    <INPUT type="button" value="Xóa mục đã chọn" onclick="deleteRowT('dataTable')" />
-                    <INPUT type="submit" value="Hoàn thành" onclick="submitInsertStudentFromTable('../../ManageStudentController?function=import', 'dataTable')" />
-                </p>
-                <hr/><hr/>
-                <div id="sidebar">
-                    <table id="dataTable" class="general-table">
-                        <tr id="dataTable-th">
-                            <td><INPUT type="checkbox" name="chkAll" onclick="selectAll('dataTable', 0)" /></td>
-                            <td align: center> STT </td>
-                            <td align="center"> MSSV </td>
-                            <td align="center"> Họ Và Tên </td>
-                            <td align="center"> Ngày Sinh </td>
-                            <td align="center"> Giới Tính </td>
-                            <td align="center"> CMND </td>
-                            <td align="center"> Quê quán </td>
-                            <td align="center"> Địa chỉ </td>
-                            <td align="center"> Điện thoại </td>
-                            <td align="center"> Email </td>
-                            <td align="center"> Lớp </td>
-                            <td align="center"> Khoa </td>
-                            <td align="center"> Khóa học </td>
-                            <td align="center"> Tình Trạng </td>
-                            <td align="center"> Bậc học </td>
-                            <td align="center"> Ngày nhập học </td>
-                            <td align="center"> Loại hình học </td>
-                            <td align="center"> Ghi chú</td>
-                        </tr>
-                    </table>
-                </div> 
-                
-                <div id="add-from-table-result">
-                </div>
-                --%>
 
                 <br />
                 <hr /><hr />
@@ -438,44 +400,6 @@
                 
                 <%-- ----------- --%>
                 <%-- Show result --%>
-                <%-- 
-                <div>
-                    <%
-                    if ((studentsAdded != null) && !studentsAdded.isEmpty()) {
-                    %>
-                    <u>Thêm thành công sinh viên:</u>
-                    <table class="general-table">
-                        <tr>
-                            <th> STT </th>
-                            <th> MSSV </th>
-                            <th> Họ Tên </th>
-                            <th> Lớp </th>
-                            <th> Khoa </th>
-                            <th> Giới tính </th>
-                            <th> Loại </th>
-                        </tr>
-                    <%
-                    for (int j = 0; j < studentsAdded.size(); j++) {
-                        Student temp = studentsAdded.get(j);
-                        %>
-                        <tr>
-                            <td> <%= (j + 1)%> </td>
-                            <td> <%= temp.getId() %> </td>
-                            <td> <%= temp.getFullName() %> </td>
-                            <td> <%= temp.getClassCode() %> </td>
-                            <td> <%= temp.getFacultyCode() %> </td>
-                            <td> <%= temp.getGender() %> </td>
-                            <td> <%= temp.getStudyType() %> </td>
-                        </tr>
-                    
-                    <%}
-                    %>
-                        
-                    
-                    </table>
-                    <%}%>
-                </div>
-                --%>
                <div class="clear"></div>
                 <p id="error">
                     <%
