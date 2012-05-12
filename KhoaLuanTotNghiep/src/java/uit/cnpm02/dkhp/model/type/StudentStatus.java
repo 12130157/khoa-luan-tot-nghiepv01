@@ -39,11 +39,11 @@ public enum StudentStatus {
         }
     }
     
-    public static StudentStatus getSubjectType(int value) {
+    public static StudentStatus getStudyStatus(int value) {
         return lookup_on_index.get(value);
     }
     
-    public static StudentStatus getSubjectType(String value) {
+    public static StudentStatus getStudyStatus(String value) {
         return lookup_on_text.get(value);
     }
 }
