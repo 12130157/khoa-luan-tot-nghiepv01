@@ -109,6 +109,14 @@
                     <input type="text" id="txt-search" />
                     <input type="button" value="Tìm" onclick="search()" />
                 </div>
+                <div id="pre-sub-filter">
+                    <%--Filter by faculty--%>
+                    Tìm theo khoa 
+                    <select id="txt-search" onchange="" class="input-minwidth">
+                        <option value="all">Tất cả</option>
+                    </select>
+                </div>
+                <div class="clear"></div>
                 <div id = "list-pre-sub" name="list-pre-sub">
                     <input type="hidden" id="sort-type" value="ASC" />
                     <h3> Danh sách môn học tiên quyết: </h3>

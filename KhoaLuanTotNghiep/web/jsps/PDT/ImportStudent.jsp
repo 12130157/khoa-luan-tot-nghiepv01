@@ -4,6 +4,7 @@
     Author     : LocNguyen
 --%>
 
+<%@page import="uit.cnpm02.dkhp.utilities.ExecuteResult"%>
 <%@page import="uit.cnpm02.dkhp.utilities.Constants"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="java.util.Calendar"%>
@@ -28,6 +29,19 @@
             (List<uit.cnpm02.dkhp.model.Class>)session.getAttribute("clazzes");
     List<Faculty> faculties = (List<Faculty>) session.getAttribute("faculties");
     List<Course> courses = (List<Course>) session.getAttribute("courses");
+    
+    /**Is this page load by response when submit import student
+        from file ?**/
+    boolean isRespForImpFromFile = false;
+    try {
+        isRespForImpFromFile = (Boolean)session.getAttribute("import.from.file.response");
+    } catch (Exception ex) {
+        isRespForImpFromFile = false;
+    }
+    ExecuteResult importFromFileER = null;
+    if (isRespForImpFromFile) {
+        importFromFileER = (ExecuteResult)session.getAttribute("import-from-file-result");
+    }
 %>
 <html>
     <head>
@@ -70,6 +84,7 @@
         </style>
     </head>
     <body>
+        <input type="hidden" id="is-respone-for-import-from-file" value="<%= isRespForImpFromFile %>"/>
         <!--Div Wrapper-->
         <div id="wrapper">
             <div id="mainNav"><!--Main Navigation-->
@@ -262,7 +277,16 @@
                                 <td> <input type="text" id="txt-note"/> </td>
                             </tr>
                         </table>
-                        <div id="add-one-result">
+                    </div>
+                    <div class="clear"></div>
+                    <div id="import-student-button">
+                        <input type="button" value="Kiểm tra" onclick="checkAddOneStudent()" />
+                        <input type="button" value="Thêm SV" onclick="addStudentFromForm()" />
+                    </div>
+                    <%--div id="error"></div--%>
+                    <div id="add-from-table-result"></div>
+                    <div class="clear"></div>
+                    <div id="add-one-result" style="padding-top: 12px;">
                             <%-- 
                                 After submit to add one student from form
                                 User expect to see result here
@@ -270,14 +294,6 @@
                                 to cancel action...
                             --%>
                         </div>
-                    </div>
-                    <div class="clear"></div>
-                    <div id="import-student-button">
-                        <input type="button" value="Kiểm tra" onclick="validateData()" />
-                        <input type="button" value="Thêm SV" onclick="addStudentFromForm()" />
-                    </div>
-                    <%--div id="error"></div--%>
-                    <div id="add-from-table-result"></div>
                 </div>
                 
                 <div class="clear"></div>
@@ -321,36 +337,100 @@
 
                 <br />
                 <hr /><hr />
-                <div id="file-inport">
+                <%-- Import from File --%>
+                <div id="file-import">
                     <div id="btn-show-import-file" class="clear-right">
                         <span onclick="showStuff('import-student-from-file', 'btn-show-import-file', 'Thêm từ file', 'Ẩn')"
                               class="atag"> Thêm từ file 
                         </span>
                     </div>
                     <div id="import-student-from-file">
-                        <form id="importFromFile" action="../../ManageStudentController?function=importfromfile" method="post" name="importFromFile" enctype="multipart/form-data">
-                            <u>Chọn File</u><br/>
+                        <form id="importFromFile" 
+                              action="../../ManageStudentController?function=importfromfile&import-as-possible=false"
+                              method="post" name="importFromFile" enctype="multipart/form-data">
+                            <u>Chọn File</u>
                             <table id="tblFromFile">
-                                <tr>
-                                    <td><input type="file" name="txtPath" id="txtPath"></td>
-                                </tr>
-                                <tr>
-                                    <td><input type="submit" value="Hoàn thành."></td>
-                                </tr>
+                                <tr><td><input type="file" name="txtPath" id="txtPath"></td></tr>
+                                <tr><td><input type="submit" value="Hoàn thành"></td></tr>
                             </table>
                         </form><br>
-                        <%--------------------%>
+                        <div id="import-from-file-result">
+                            <%-- Show response result --%>
+                            <%
+                            if (isRespForImpFromFile && (importFromFileER != null)) {
+                                List<Student> students = new ArrayList<Student>();
+                                if (!importFromFileER.isIsSucces()) {
+                                    %>
+                                    <i> <%= importFromFileER.getMessage()%> </i>
+                                    <%
+                                    students = (List<Student>)importFromFileER.getData();
+                                    if ((students != null) && !students.isEmpty()) {
+                                         %>
+                                          </br>
+                                         <span class="atag" onclick="retryImportFromFile()">
+                                            <b>Thử lại</b>
+                                        </span><i> ( *Chỉ Thêm những SV hợp lệ)</i>
+                                        <table class="general-table" style="width: 450px;">
+                                            <tr><th> STT </th><th>MSSV</th><th> Họ và tên </th><th>CMND</th></tr>
+                                        <%
+                                        for (int i = 0; i < students.size(); i++) {
+                                        %>
+                                            <tr>
+                                                <td><%= (i + 1) %></td>
+                                                <td><%= students.get(i).getId() %></td>
+                                                <td><%= students.get(i).getFullName() %></td>
+                                                <td><%= students.get(i).getIdentityNumber() %></td>
+                                            </tr>
+                                        <%
+                                        }//End For loop
+                                        %>
+                                        </table>
+                                        <%
+                                    }
+                                } else {
+                                    students = (List<Student>)importFromFileER.getData();
+                                    if ((students != null) && !students.isEmpty()) {
+                                        %>
+                                        <i> Thêm thành công các SV: </i>
+                                        <table class="general-table" style="width: 450px;">
+                                            <tr><th> STT </th><th>MSSV</th><th> Họ và tên </th><th>CMND</th></tr>
+                                        <%
+                                        for (int i = 0; i < students.size(); i++) {
+                                        %>
+                                            <tr>
+                                                <td><%= (i + 1) %></td>
+                                                <td><%= students.get(i).getId() %></td>
+                                                <td><%= students.get(i).getFullName() %></td>
+                                                <td><%= students.get(i).getIdentityNumber() %></td>
+                                            </tr>
+
+                                        <%
+                                        }//End For loop
+                                        %>
+                                        </table>
+                                        <%
+                                   } else {
+                                        %>
+                                        <i>Không có SV nào được thêm, vui lòng kiểm tra lại file</i>
+                                        <%
+                                   }
+                                } // end if
+                            } //Eend if
+                            %>
+                            <%--------------------%>
+                                
+                        </div>
                         <%--Show file format--%>
+                        <div id="btn-show-file-format" class="clear-right">
+                            <span onclick="showStuff('file-format-view', 'btn-show-file-format', 'File format', 'Ẩn')"
+                                  class="atag"> File format 
+                            </span>
+                        </div>
                         <div id="file-format-view">
                             <b>
                                 Show file format here
                                 This format should be update by PĐT
                             </b>
-                        </div>
-                        <div id="btn-show-file-format" class="clear-right">
-                            <span onclick="showStuff('file-format-view', 'btn-show-file-format', 'File format', 'Ẩn')"
-                                  class="atag"> File format 
-                            </span>
                         </div>
                     </div>
                     
@@ -414,12 +494,31 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
+        <script language="javascript">
+            //call after page loaded
+            window.onload = doAfterPageLoaded; 
+        </script>
     </body>
 
     <script src="../../javascripts/UtilTable.js"></script>
     <script src="../../javascripts/AjaxUtil.js"></script>
     <SCRIPT language="javascript">
         var http = createRequestObject();
+        window.onload = doAfterPageLoaded; 
+        function doAfterPageLoaded() {
+            var isFormStudentInfoHidden = document.getElementById("is-respone-for-import-from-file").value;
+            var hiddenValue = '';
+            try {
+                hiddenValue = document.getElementById("btn-hide-import-form").value;
+            } catch (err) {
+                //
+            }
+            //if ((isFormStudentInfoHidden == 'true') && (hiddenValue == 'Ẩn')) {
+                hideStuff('import-student-one', 'btn-hide-import-form', 'Thêm Sinh Viên', 'Ẩn');
+            //}
+            //showStuff('import-student-one', 'btn-hide-import-form', 'Thêm Sinh Viên', 'Ẩn')
+            showStuff('import-student-from-file', 'btn-show-import-file', 'Thêm từ file', 'Ẩn');
+        }
         
         function changeFaculty() {
             var facultyId = document.getElementById("txt-faculty").value;
@@ -444,12 +543,12 @@
         function validateData() {
             // Validate not null fields
             // MSSV // Ho Ten // Ngay Sinh // CMND // Que Quan // Ngay Nhap hoc
-            var mssv = null;
-            var fullName = null;
-            var birthDay = null;
-            var cmnd = null;
-            var homeAddress = null;
-            var enterDate = null;
+            var mssv = "";
+            var fullName = "";
+            var birthDay = "";
+            var cmnd = "";
+            var homeAddress = "";
+            var enterDate = "";
             try {
                 mssv = document.getElementById("txt-mssv").value;
                 fullName = document.getElementById("txt-fullname").value;
@@ -461,22 +560,21 @@
                 alert("[ImportStudent][Validate] - An error occur:" + err);
                 return;
             }
-            
             var error = "";
-            if ((mssv == null) || (mssv.lenght == 0))
+            if ((mssv == null) || (mssv.length == 0))
                 error = "MSSV, ";
             if ((fullName == null) || (fullName.length == 0))
-                error += "Họ tên, "
-            if ((birthDay == null) || (birthDay.lenght == 0))
-                error += "Ngày sinh, "
-            if ((cmnd == null) || (cmnd.lenght == 0))
-                error += "CMND, "
-            if ((homeAddress == null) || (homeAddress.lenght == 0))
-                error += "Quê quán, "
-            if ((enterDate == null) || (enterDate.lenght == 0))
-                error += "Ngày nhập học"
-            if (error.lenght > 0) {
-                alert("Các trường không hợp lệ: " + error);
+                error += "Họ tên, ";
+            if ((birthDay == null) || (birthDay.length == 0))
+                error += "Ngày sinh, ";
+            if ((cmnd == null) || (cmnd.length == 0))
+                error += "CMND, ";
+            if ((homeAddress == null) || (homeAddress.length == 0))
+                error += "Quê quán, ";
+            if ((enterDate == null) || (enterDate.length == 0))
+                error += "Ngày nhập học";
+            if (error.length > 0) {
+                alert("Các trường sau không được để trống: " + error);
                 return false;
             } else {
                 // Validate something else...
@@ -484,11 +582,7 @@
             }
         }
         
-        function addStudentFromForm() {
-            if (!validateData()) {
-                return;
-            }
-            
+        function getInformationFromForm() {
             // Basic information
             var mssv = null;
             var fullName = null;
@@ -531,39 +625,97 @@
                 alert("[ImportStudent][Validate] - An error occur:" + err);
                 return;
             }
-            var controller = "../../ManageStudentController?function=add-one" 
-                            + "&mssv=" + mssv
-                            + "&fullname=" + fullName
-                            + "&birthDay=" + birthDay
-                            + "&cmnd=" + cmnd
-                            + "&homeAddress=" + homeAddress
-                            + "&gender=" + gender
-                            + "&phone=" + phone
-                            + "&email=" + email
-                            + "&addsress=" + address
-                            + "&enterDate=" + enterDate
-                            + "&faculty=" + faculty
-                            + "&clazz=" + clazz
-                            + "&course=" + course
-                            + "&status=" + status
-                            + "&level=" + level
-                            + "&studyType=" + studyType
-                            + "&note=" + note;
+            var data = "&mssv=" + mssv
+                        + "&fullname=" + fullName
+                        + "&birthDay=" + birthDay
+                        + "&cmnd=" + cmnd
+                        + "&homeAddress=" + homeAddress
+                        + "&gender=" + gender
+                        + "&phone=" + phone
+                        + "&email=" + email
+                        + "&addsress=" + address
+                        + "&enterDate=" + enterDate
+                        + "&faculty=" + faculty
+                        + "&clazz=" + clazz
+                        + "&course=" + course
+                        + "&status=" + status
+                        + "&level=" + level
+                        + "&studyType=" + studyType
+                        + "&note=" + note;
+            return data;
+        }
+        
+        function checkAddOneStudent() {
+            if (!validateData()) {
+                return;
+            }
+            
+            // Incase validate passed: continue send data to server
+            // for special check...
+            var controller = "../../ManageStudentController?function=validate-add-one" 
+                            + getInformationFromForm();
             if(http){
                 http.open("GET", controller ,true);
-                http.onreadystatechange = changeFacultyResponseHandler;
+                http.onreadystatechange = addOneStudentResponseHandler;
                 http.send(null);
             } else {
                 alert("Error: http object not found");
             }
         }
         
-        function changeFacultyResponseHandler() {
+        function addStudentFromForm() {
+            if (!validateData()) {
+                return;
+            }
+            
+            var controller = "../../ManageStudentController?function=add-one" 
+                            + getInformationFromForm();
+            if(http){
+                http.open("GET", controller ,true);
+                http.onreadystatechange = addOneStudentResponseHandler;
+                http.send(null);
+            } else {
+                alert("Error: http object not found");
+            }
+        }
+        
+        function addOneStudentResponseHandler() {
             if(http.readyState == 4 && http.status == 200){
                 var detail = document.getElementById("add-one-result");
                 detail.innerHTML = http.responseText;
             }
         }
+        
+        function cancelAddOne(mssv) {
+            var controller = "../../ManageStudentController?function=cancel-add-one" 
+                            + "&mssv=" + mssv;
+            if(http){
+                http.open("GET", controller ,true);
+                http.onreadystatechange = addOneStudentResponseHandler;
+                http.send(null);
+            } else {
+                alert("Error: http object not found");
+            }
+        }
+        
+        function retryImportFromFile() {
+            var controller = "../../ManageStudentController?function=retry-import-from-file";
+            if(http){
+                http.open("GET", controller ,true);
+                http.onreadystatechange = retryImportStudentResponseHandler;
+                http.send(null);
+            } else {
+                alert("Error: http object not found");
+            }
+        }
+        
+        function retryImportStudentResponseHandler() {
+            if(http.readyState == 4 && http.status == 200){
+                var detail = document.getElementById("import-from-file-result");
+                detail.innerHTML = http.responseText;
+            }
+        }
+        
         
         var facultiesArray = new Array();
         var courseArray = new Array();
