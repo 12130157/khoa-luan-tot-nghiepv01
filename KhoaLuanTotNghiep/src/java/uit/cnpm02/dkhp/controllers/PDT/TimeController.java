@@ -6,6 +6,7 @@ package uit.cnpm02.dkhp.controllers.PDT;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -18,6 +19,7 @@ import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.model.RegistrationTime;
 import uit.cnpm02.dkhp.model.RegistrationTimeID;
 import uit.cnpm02.dkhp.utilities.Constants;
+import uit.cnpm02.dkhp.utilities.DateTimeUtil;
 
 /**
  *
@@ -33,7 +35,6 @@ public class TimeController extends HttpServlet {
      * @throws ServletException
      * @throws IOException 
      */
-    DAOFactory df = new DAOFactory();
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
          request.setCharacterEncoding("UTF-8");
@@ -43,18 +44,53 @@ public class TimeController extends HttpServlet {
            String action = request.getParameter("action");
            if(action.equalsIgnoreCase("default"))
                showTimeRegistration(request, response);
+           else if(action.equalsIgnoreCase("pre_update"))
+              preUpdateRegistrationTime(request, response);
+           else if(action.equalsIgnoreCase("update"))
+              updateRegistrationTime(request, response);
         } finally {            
             out.close();
+        }
+    }
+    private void updateRegistrationTime(HttpServletRequest request, HttpServletResponse response) throws IOException{
+       String path="";
+        try {
+        Date startDate = DateTimeUtil.parse(request.getParameter("startDate"));
+        Date endDate = DateTimeUtil.parse(request.getParameter("endDate"));
+        RegistrationTimeID id = new RegistrationTimeID(Constants.CURRENT_SEMESTER, Constants.CURRENT_YEAR);
+        RegistrationTime regisTime = new RegistrationTime(id, startDate, endDate);
+        regisTime = DAOFactory.getRegistrationTimeDAO().update(regisTime);
+        HttpSession session = request.getSession();
+        session.setAttribute("registrationTime", regisTime);
+        path="./jsps/PDT/RegistrationTime.jsp";
+        response.sendRedirect(path);
+        } catch (Exception ex) {
+            path= "./jsps/Message.jsp";
+           response.sendRedirect(path);
+        }
+    }
+    private void preUpdateRegistrationTime(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        RegistrationTimeID id = new RegistrationTimeID(Constants.CURRENT_SEMESTER, Constants.CURRENT_YEAR);
+        String path="";
+        try {
+            RegistrationTime registrationTime = DAOFactory.getRegistrationTimeDAO().findById(id);
+            HttpSession session = request.getSession();
+            session.setAttribute("registrationTime", registrationTime);
+            path="./jsps/PDT/ChangeRegistrationTime.jsp";
+            response.sendRedirect(path);
+        } catch (Exception ex) {
+            path= "./jsps/Message.jsp";
+           response.sendRedirect(path);
         }
     }
     private void showTimeRegistration(HttpServletRequest request, HttpServletResponse response) throws IOException{
         RegistrationTimeID id = new RegistrationTimeID(Constants.CURRENT_SEMESTER, Constants.CURRENT_YEAR);
         String path="";
         try {
-            RegistrationTime registrationTime = df.getRegistrationTimeDAO().findById(id);
+            RegistrationTime registrationTime = DAOFactory.getRegistrationTimeDAO().findById(id);
             HttpSession session = request.getSession();
             session.setAttribute("registrationTime", registrationTime);
-            path="";
+            path="./jsps/PDT/RegistrationTime.jsp";
             response.sendRedirect(path);
         } catch (Exception ex) {
             path= "./jsps/Message.jsp";

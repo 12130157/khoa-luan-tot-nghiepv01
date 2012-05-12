@@ -7,6 +7,7 @@ package uit.cnpm02.dkhp.controllers.SV;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,6 +24,8 @@ import uit.cnpm02.dkhp.DAO.SubjectDAO;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.model.Class;
 import uit.cnpm02.dkhp.model.Faculty;
+import uit.cnpm02.dkhp.model.RegistrationTime;
+import uit.cnpm02.dkhp.model.RegistrationTimeID;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.model.TrainClassID;
 import uit.cnpm02.dkhp.utilities.Constants;
@@ -384,7 +387,7 @@ private boolean isPresubNotComplete(String subjectCode, String studentCode) thro
      try{
           String user=(String)session.getAttribute("username");
         List<Registration> registration=DAOFactory.getRegistrationDAO().findAllByStudentCode(user);
-        if(Constants.INTIME_REGISTRY){
+        if(InTimeRegistry()){
         if (registration.isEmpty()) {
             getAllClass(response, session, user);
         } else {
@@ -398,6 +401,23 @@ private boolean isPresubNotComplete(String subjectCode, String studentCode) thro
        }
        response.sendRedirect(path);
 }
+ private boolean InTimeRegistry(){
+     try {
+            RegistrationTimeID id = new RegistrationTimeID(Constants.CURRENT_SEMESTER, Constants.CURRENT_YEAR);
+            RegistrationTime registrationTime = DAOFactory.getRegistrationTimeDAO().findById(id);
+            Date today = new Date();
+            if(registrationTime.getEndDate().getYear()< today.getYear())
+                return false;
+            else if (registrationTime.getEndDate().getMonth() < today.getMonth())
+                return false;
+            else if (registrationTime.getEndDate().getDate() < today.getDate() )
+                return false;
+            else return true;
+        } catch (Exception ex) {
+            Logger.getLogger(RegistryController.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+ } 
  /**
   * 
   * @param response
@@ -455,7 +475,7 @@ private boolean isPresubNotComplete(String subjectCode, String studentCode) thro
       session.setAttribute("faculty", faculty);
       session.setAttribute("semester", Constants.CURRENT_SEMESTER);
       session.setAttribute("year", Constants.CURRENT_YEAR);
-      session.setAttribute("inTimeRegistry", Constants.INTIME_REGISTRY);
+      session.setAttribute("inTimeRegistry", InTimeRegistry());
       ArrayList<TrainClass> registried=new ArrayList<TrainClass>();
       for(int i=0; i<registration.size();i++){
           String classCode=registration.get(i).getId().getClassCode();

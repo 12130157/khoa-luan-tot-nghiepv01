@@ -16,6 +16,14 @@ public class RegistrationTime extends AdvancedAbstractJdbcModel<RegistrationTime
 private Date startDate;
 private Date endDate;
 
+public RegistrationTime(){
+    
+}
+public RegistrationTime(RegistrationTimeID id, Date _startDate, Date _enđate){
+    setId(id);
+    this.startDate=_startDate;
+    this.endDate=_enđate;
+}
     public Date getEndDate() {
         return endDate;
     }
@@ -54,8 +62,8 @@ private Date endDate;
      @Override
     public void setColumnValues(Object[] values) {
         try {
-            startDate = (Date) (values[2] == null ? null : values[2]);
-            endDate = (Date) (values[3] == null ? null : values[3]);
+            startDate = (Date) (values[0] == null ? null : values[0]);
+            endDate = (Date) (values[1] == null ? null : values[1]);
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
