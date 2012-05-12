@@ -25,11 +25,15 @@ import uit.cnpm02.dkhp.model.Class;
 import uit.cnpm02.dkhp.model.Course;
 import uit.cnpm02.dkhp.model.Faculty;
 import uit.cnpm02.dkhp.model.Student;
+import uit.cnpm02.dkhp.model.type.StudentStatus;
+import uit.cnpm02.dkhp.model.type.StudyLevel;
+import uit.cnpm02.dkhp.model.type.StudyType;
 import uit.cnpm02.dkhp.service.IPDTService;
 import uit.cnpm02.dkhp.service.IStudentService;
 import uit.cnpm02.dkhp.service.impl.PDTServiceImpl;
 import uit.cnpm02.dkhp.service.impl.StudentServiceImpl;
 import uit.cnpm02.dkhp.utilities.Constants;
+import uit.cnpm02.dkhp.utilities.DateTimeUtil;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
 import uit.cnpm02.dkhp.utilities.FileUtils;
 import uit.cnpm02.dkhp.utilities.StringUtils;
@@ -79,9 +83,7 @@ public class ManageStudentController extends HttpServlet {
             String action = request.getParameter("function");
             //String datas = request.getParameter("data");
             if (action.equalsIgnoreCase("liststudent")) {
-                listStudent(request, response);
-                String path = "./jsps/PDT/ListStudent.jsp";
-                response.sendRedirect(path);
+                doListStudent(request, response);
             } else if (action.equalsIgnoreCase(ManageStudentSupport
                                                     .PRE_IMPORT.getValue())) {
                 doPrepareDataForImportStudent(session, response);
@@ -108,11 +110,19 @@ public class ManageStudentController extends HttpServlet {
             } else if (action.equalsIgnoreCase(ManageStudentSupport
                                                 .RETRY_IMPORT_FROM_FILE.getValue())) {
                 doRetryImportFromFile(request, response);
-                
+            } else if (action.equalsIgnoreCase(ManageStudentSupport
+                                                .SEARCH.getValue())) {
+                doSearchStudent(request, response);
+            } else if (action.equalsIgnoreCase(ManageStudentSupport
+                                                .SORT.getValue())) {
+                doSortStudent(request, response);
+            } else if (action.equalsIgnoreCase(ManageStudentSupport
+                                                .DELETE_ONE.getValue())) {
+                doDeleteOne(request, response);
             } else if (action.equalsIgnoreCase("delete")) {
                 String result = deleteStudent(request, response);
                 session.setAttribute("error", result);
-                listStudent(request, response);
+                //listStudent(request, response); TODO
                 String path = "./jsps/PDT/ListStudent.jsp";
                 response.sendRedirect(path);
             }
@@ -309,90 +319,6 @@ public class ManageStudentController extends HttpServlet {
         }
     }
 
-    /**
-     * This function will be called at the first time go
-     * to manager student page.
-     */
-    private void listStudent(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        List<Student> students;
-        String searchType = (String) request.getParameter("searchtype");
-        String searchValue = (String) request.getParameter("searchvalue");
-        String ajaxRespone = (String) request.getParameter("ajax");
-        try {
-            currentPage = Integer.parseInt(request.getParameter("currentpage"));
-            if (currentPage < 0) {
-                currentPage = 0;
-            } else if (currentPage > numPage) {
-                currentPage = numPage;
-            }
-        } catch (Exception ex) {
-            currentPage = 1;
-        }
-
-        if ((searchType == null) || searchType.isEmpty()
-                || (searchValue == null) || searchValue.isEmpty()
-                || searchValue.equalsIgnoreCase("*")
-                || searchValue.equalsIgnoreCase("all")) {
-            students = studentDao.findAll(rowPerPage, currentPage, "HoTen", null);
-        } else {
-            String searchTypeStr = "";
-            if (searchType.equals("name")) {
-                searchTypeStr = "HoTen";
-            } else if (searchType.equals("clazz")) {
-                searchTypeStr = "MaLop";
-            } else if (searchType.equals("course")) {
-                searchTypeStr = "MaKhoa";
-            }
-            students = studentDao.findAll(rowPerPage, currentPage,
-                    searchTypeStr, "'%" + searchValue + "%'", "HoTen", null);
-        }
-        if ((ajaxRespone == null)
-                || ajaxRespone.isEmpty()
-                || ajaxRespone.equals("false")) {
-            HttpSession session = request.getSession();
-            session.setAttribute("liststudent", students);
-        } else {
-            PrintWriter out = response.getWriter();
-            String respStr = "<tr>"
-                    + "<th><INPUT type=\"checkbox\" name=\"chkAll\""
-                    + " onclick=\"selectAll('tableliststudent')\" /></th>"
-                    + "<th> STT </th>"
-                    + "<th> MSSV </th>"
-                    + "<th> Họ Tên </th>"
-                    + "<th> Lớp </th>"
-                    + "<th> Khoa </th>"
-                    + "<th> Ngày sinh </th>"
-                    + "<th> Giới tính </th>"
-                    + "<th> Loại </th>"
-                    + "<th> Sửa </th>"
-                    + "<th> Xóa </th>"
-                    + "</tr>";
-            out.println(respStr);
-            for (int i = 0; i < students.size(); i++) {
-                respStr = "<tr>"
-                        + "<td><INPUT type=\"checkbox\" name=\"chk" + i + "\"/></td>"
-                        + "<td> " + (i + 1) + " </td>"
-                        + "<td> " + students.get(i).getId() + "</td> "
-                        + "<td> " + students.get(i).getFullName() + "</td>"
-                        + "<td> " + students.get(i).getClassCode() + "</td>"
-                        + "<td> " + students.get(i).getFacultyCode() + "</td>"
-                        + "<td> " + students.get(i).getBirthday() + "</td>"
-                        + "<td> " + students.get(i).getGender() + "</td>"
-                        + "<td> " + students.get(i).getStudyType() + "</td>"
-                        + "<td> <a href=\"../../ManageStudentController?function=editstudent&mssv=" 
-                                                            + students.get(i).getId() 
-                                                            + "\">Sửa</a></td>"
-                        + "<td> <a href=\"../../ManageStudentController?function=delete&ajax=true&data="
-                                                            + students.get(i).getId()
-                                                            + "\"> Xóa</a></td>"
-                        + "</tr>";
-                out.println(respStr);
-            }
-            out.close();
-        }
-    }
-
     private void editStudent(HttpServletRequest request,
                         HttpServletResponse response) throws Exception {
         String mssv = request.getParameter("mssv");
@@ -534,6 +460,16 @@ public class ManageStudentController extends HttpServlet {
         
         SimpleDateFormat sdf = new SimpleDateFormat(
                                         Constants.DATETIME_PARTERM_DEFAULT);
+        try {
+            int statusInt = Integer.parseInt(status);
+            int studyLevelInt = Integer.parseInt(level);
+            int typeInt = Integer.parseInt(studyType);
+            status = StudentStatus.getStudyStatus(statusInt).description();
+            level = StudyLevel.getStudyLevel(studyLevelInt).description();
+            studyType = StudyType.getStudyType(typeInt).description();
+        } catch (Exception ex) {
+            //
+        }
         
         // Validate
         
@@ -621,7 +557,8 @@ public class ManageStudentController extends HttpServlet {
     private void doCancelOne(PrintWriter out, HttpServletRequest request) {
          String mssv = request.getParameter("mssv");
          
-         ExecuteResult er = studentService.deleteStudent(mssv);
+         ExecuteResult er = studentService.deleteStudent(
+                 mssv, false, request.getSession().getId());
          writeOutCancelAddOneResult(out, er);
     }
     
@@ -689,8 +626,127 @@ public class ManageStudentController extends HttpServlet {
             }
         }
     }
+
+    private void doSearchStudent(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        String key = "*";
+        try {
+            key = request.getParameter("key");
+        } catch(Exception ex) {
+            //
+        }
+        List<Student> students = studentService.search(
+                key, request.getSession().getId());
+        
+        writeOutSearchResult(response.getWriter(), students);
+    }
     
+    private void writeOutSearchResult(PrintWriter out, List<Student> students) {
+        if (students == null) {
+            return;
+        }
+        //if (students.size() > 15) {
+        //    out.println("<div id=\"sidebar\">");
+        //}
+        out.println("<table id=\"tableliststudent\" name=\"tableliststudent\" class=\"general-table\">");
+        out.println("<tr>"
+                + "<th><INPUT type=\"checkbox\" name=\"chkAll\" onclick=\"selectAll('tableliststudent', 0)\" /></th>"
+                + "<th> STT </th>"
+                + "<th> <span class=\"atag\" onclick=\"sort('MSSV')\" > MSSV </span></th>"
+                + "<th> <span class=\"atag\" onclick=\"sort('HoTen')\" >  Họ tên </span> </th>"
+                + "<th> <span class=\"atag\" onclick=\"sort('MaLop')\" >  Lớp </span> </th>"
+                + "<th> <span class=\"atag\" onclick=\"sort('MaKhoa')\" >  Khoa </span> </th>"
+                + "<th> <span class=\"atag\" onclick=\"sort('NgaySinh')\" > Ngày sinh </span> </th>"
+                + "<th> <span class=\"atag\" onclick=\"sort('GioiTinh')\" >  Giới tính </span> </th>"
+                + "<th> <span class=\"atag\" onclick=\"sort('LoaiHinhHoc')\" >  Loại </span> </th>"
+                + "<th> Sửa </th>"
+                + "<th> Xóa </th>"
+                + "</tr>");
+
+        if (!students.isEmpty()) {
+            for (int i = 0; i < students.size(); i++) {
+                out.println("<tr>"
+                        + "<td><INPUT type=\"checkbox\" name=\"chk" + i + "\"/></td>"
+                        + "<td>" + (i + 1) + "</td>"
+                        + "<td>" + students.get(i).getId() + "</td>"
+                        + "<td>" + students.get(i).getFullName() + "</td>"
+                        + "<td>" + students.get(i).getClassCode() + "</td>"
+                        + "<td>" + students.get(i).getFacultyCode() + "</td>"
+                        + "<td>" + DateTimeUtil.format(students.get(i).getBirthday()) + "</td>"
+                        + "<td>" + students.get(i).getGender() + "</td>"
+                        + "<td>" + students.get(i).getStudyType() + "</td>"
+                        + "<td>" + "<a href=\"../../ManageStudentController?function=editstudent&mssv=" + students.get(i).getId() + "\">Sửa</a></td>"
+                        + "<td><span class=\"atag\" onclick=\"deleteOneStudent('" + students.get(i).getId() + "')\">Xóa</span></td>"
+                        + "</tr>");
+            }
+        }
+        out.println("</table>");
+        //if (students.size() > 15) {
+        //    out.println();
+        //}
+    }
+
+    private void doListStudent(HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        List<Student> students;
+        try {
+            currentPage = Integer.parseInt(request.getParameter("currentpage"));
+            if (currentPage < 0) {
+                currentPage = 0;
+            } else if (currentPage > numPage) {
+                currentPage = numPage;
+            }
+        } catch (Exception ex) {
+            currentPage = 1;
+        }
+
+        //students = studentDao.findAll(rowPerPage, currentPage, "HoTen", null);
+        students = studentService.getStudents(
+                currentPage, request.getSession().getId());
+        if ((students != null) && !students.isEmpty()) {
+            HttpSession session = request.getSession();
+            session.setAttribute("liststudent", students);
+        }
+        
+        String path = "./jsps/PDT/ListStudent.jsp";
+        response.sendRedirect(path);
+    }
+
+    private void doSortStudent(
+            HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        String by = "MSSV";
+        try {
+            by = request.getParameter("by");
+        } catch (Exception ex) {
+            //
+        }
+        List<Student> students = studentService.sort(
+                request.getSession().getId(), by);
+        writeOutSearchResult(response.getWriter(), students);
+    }
+
+    private void doDeleteOne(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        PrintWriter out = response.getWriter();
+        //out.println("error Please come back to Manage Student controller and fix me...");
+        String mssv = request.getParameter("mssv");
+        String sessionId = request.getSession().getId();
+        ExecuteResult er = studentService.deleteStudent(
+                            mssv, false, sessionId);
+        
+        if (!er.isIsSucces()) {
+            out.append("error " + er.getMessage());
+        } else {
+            List<Student> students = studentService.getStudents(sessionId);
+            if ((students != null) && !students.isEmpty()) {
+                writeOutSearchResult(out, null);
+            }
+        }
+    }
     
+
+    //#############################################
     public enum ManageStudentSupport {
         DEFAULT("default"), // List first page of class opened.
         PRE_IMPORT("pre-import-student"),
@@ -699,7 +755,10 @@ public class ManageStudentController extends HttpServlet {
         IMPORT_FROM_FILE("importfromfile"),
         RETRY_IMPORT_FROM_FILE("retry-import-from-file"),
         CANCEL_ADD_ONE("cancel-add-one"),
-        FACULTY_CHANGED("faculty-change");
+        FACULTY_CHANGED("faculty-change"),
+        SEARCH("search-students"),
+        SORT("sort"),
+        DELETE_ONE("delete-one");
         
         private String description;
         ManageStudentSupport(String description) {
@@ -712,7 +771,3 @@ public class ManageStudentController extends HttpServlet {
         
     }
 }
-
-
-
-// importAsPossible = Boolean.parseBoolean(request.getParameter("import-as-possible"));
