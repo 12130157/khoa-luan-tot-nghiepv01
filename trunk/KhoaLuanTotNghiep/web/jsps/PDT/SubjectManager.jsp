@@ -13,24 +13,6 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Quản lý tài khoản</title>
         <style media="all" type="text/css">
-
-            #tablelistsubject, #tableaddsubject{
-                width: 100%;
-                padding-left: 10px;
-                padding-right: 10px;
-                text-align: center;
-
-            }
-            #tablelistsubject th, #tableaddsubject th{
-                background-color:#00ff00;
-                height: 30px;
-                border-color: black;
-            }
-
-            #tablelistsubject td, #tableaddsubject td{
-                text-align: center;
-                background-color: #5F676D;
-            }
             #title{
                 background-color: #2f4e3d;
                 text-align: center;
@@ -101,7 +83,7 @@
                         %>
                     </div>
                     <div id="sidebar">
-                    <table id = "tablelistsubject" name = "tablelistsubject">
+                    <table id = "tablelistsubject" class="general-table" name = "tablelistsubject">
                         <tr>
                         <th> STT </th>
                         <th><a href="#" onclick="sort('MaMH', '')"> Mã MH </a></th>
