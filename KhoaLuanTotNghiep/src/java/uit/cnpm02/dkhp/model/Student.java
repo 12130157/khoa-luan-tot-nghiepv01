@@ -245,7 +245,7 @@ public class Student extends AbstractJdbcModel<String> {
             studyLevel = values[12].toString();
             dateStart = (Date) values[13];
             studyType = values[14].toString();
-            note = values[15] == null ? "" : values[9].toString();
+            note = values[15] == null ? "" : values[15].toString();
 
 
         } catch (Exception e) {
