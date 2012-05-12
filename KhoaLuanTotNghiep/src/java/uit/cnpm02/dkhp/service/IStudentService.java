@@ -12,6 +12,10 @@ public interface IStudentService {
 
     Student getStudent(String mssv);
     
+    List<Student> getStudents(int page, String session);
+    
+    List<Student> getStudents(String session);
+    
     /**
      * Retrieve all student registered at a class
      * @param classID
@@ -36,5 +40,9 @@ public interface IStudentService {
 
     ExecuteResult validateNewStudent(Student s);
 
-    ExecuteResult deleteStudent(String mssv);
+    ExecuteResult deleteStudent(String mssv, boolean deleteAnyway, String sessionId);
+
+    List<Student> search(String key, String session);
+
+    public List<Student> sort(String sessionId, final String by);
 }
