@@ -58,5 +58,44 @@ public class StudentDAO extends AbstractJdbcDAO<Student, String>{
             close(con);
         }
     }
+    
+    public Student findByIdentifier(String cmnd) throws Exception {
+        checkModelWellDefined();
+
+        if ((cmnd == null) || (cmnd.isEmpty())) {
+            throw new NullPointerException("cmnd is null.");
+        }
+        
+        Student t = new Student();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        try {
+            String selectQuery = "Select * from " + t.getTableName() + " where CMND = ?";
+            
+            con = getConnection();
+            statement = con.prepareStatement(selectQuery);
+            statement.setObject(1, cmnd);
+            rs = statement.executeQuery();
+            if (rs.next()) {
+                Object[] obj = new Object[t.getColumnNames().length];
+                for (int j = 0; j < obj.length; j++) {
+                    obj[j] = rs.getObject(t.getColumnNames()[j]);
+                }
+                Student ti = new Student();
+                String id = (String) rs.getString(ti.getIdColumnName());
+
+                ti.setId(id);
+                ti.setColumnValues(obj);
+                return ti;
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new Exception(e);
+        } finally {
+            close(rs, statement);
+            close(con);
+        }
+    }
 }
 
