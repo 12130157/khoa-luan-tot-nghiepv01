@@ -440,7 +440,6 @@
             //if ((isFormStudentInfoHidden == 'true') && (hiddenValue == 'Ẩn')) {
                 hideStuff('import-student-one', 'btn-hide-import-form', 'Thêm Sinh Viên', 'Ẩn');
             //}
-            //showStuff('import-student-one', 'btn-hide-import-form', 'Thêm Sinh Viên', 'Ẩn')
             showStuff('import-student-from-file', 'btn-show-import-file', 'Thêm từ file', 'Ẩn');
         }
         
