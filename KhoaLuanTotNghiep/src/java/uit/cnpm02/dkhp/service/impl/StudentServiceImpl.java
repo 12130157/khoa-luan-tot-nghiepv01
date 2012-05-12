@@ -1,7 +1,10 @@
 package uit.cnpm02.dkhp.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
@@ -19,6 +22,14 @@ import uit.cnpm02.dkhp.utilities.ExecuteResult;
 public class StudentServiceImpl implements IStudentService {
     private StudentDAO studentDao;
     private RegistrationDAO regDao;
+    /**
+     * Backup for import from file case (include
+     * students have correct information)
+     * 
+     * SessionID - List<Student>
+     **/
+    private Map<String, List<Student>> importStudents
+            = new HashMap<String, List<Student>>();
     
     private Object mutex = new Object();
     
@@ -148,5 +159,55 @@ public class StudentServiceImpl implements IStudentService {
         
         return er;
     }
-    
+
+    @Override
+    public ExecuteResult addStudents(List<Student> students
+            , boolean addIfPossible, String sessionId) {
+        try {
+            if (addIfPossible) {
+                List<Student> s_temps = importStudents.get(sessionId);
+                if ((s_temps == null) || s_temps.isEmpty()) {
+                    return new ExecuteResult(false, "Dữ liệu không tồn tại, "
+                            + "có thể do phiên làm việc hết hiệu lực, vui lòng"
+                            + "thử lại bằng cách submit lại file.");
+                } else {
+                    studentDao.addAll(s_temps);
+                    importStudents.remove(sessionId);
+                    ExecuteResult e = new ExecuteResult(true, "");
+                    e.setData(s_temps);
+                    
+                    return e;
+                }
+            }
+            
+            List<Student> existedStudents = new ArrayList<Student>(10);
+            for (Student s : students) {
+                if ((studentDao.findById(s.getId()) != null)
+                        || studentDao.findByIdentifier(s.getIdentityNumber()) != null) {
+                    existedStudents.add(s);
+                }
+            }
+
+            ExecuteResult result = new ExecuteResult(true, "");
+            if (existedStudents.size() > 0) {
+                students.removeAll(existedStudents);
+                // Incase these are some information incorrect
+                // please send it back to user
+                result.setIsSucces(false);
+                result.setMessage("Một số SV có MSSV hoặc số CMND bị trùng");
+                result.setData(existedStudents);
+
+                importStudents.put(sessionId, students);
+
+            } else {
+                studentDao.addAll(students);
+                result.setData(students);
+            }
+            return result;
+        } catch (Exception ex) {
+            Logger.getLogger(StudentServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            return new ExecuteResult(
+                    false, "[Error][StudentService]: " + ex.toString());
+        }
+    }
 }
