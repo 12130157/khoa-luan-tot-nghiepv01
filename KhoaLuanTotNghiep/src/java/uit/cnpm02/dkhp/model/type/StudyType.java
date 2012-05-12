@@ -39,11 +39,11 @@ public enum StudyType {
         }
     }
     
-    public static StudyType StudyType(int value) {
+    public static StudyType getStudyType(int value) {
         return lookup_on_index.get(value);
     }
     
-    public static StudyType StudyType(String value) {
+    public static StudyType getStudyType(String value) {
         return lookup_on_text.get(value);
     }
 }
