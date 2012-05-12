@@ -23,8 +23,18 @@ public interface IStudentService {
     
     
     ExecuteResult addStudent(Student s);
+    /**
+     * Add a list of student
+     * 
+     * @param addIfPossible if true: any student is correct are added althought
+     * there are some other not.
+     * @return add information
+     *  if successful: result will include list of students added
+     *  if fail: result will include all student could not be added
+     */
+    ExecuteResult addStudents(List<Student> students, boolean addIfPossible, String sessionId);
 
-    public ExecuteResult validateNewStudent(Student s);
+    ExecuteResult validateNewStudent(Student s);
 
-    public ExecuteResult deleteStudent(String mssv);
+    ExecuteResult deleteStudent(String mssv);
 }
