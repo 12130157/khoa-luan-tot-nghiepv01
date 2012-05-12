@@ -1,7 +1,8 @@
 package uit.cnpm02.dkhp.service.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,12 +15,15 @@ import uit.cnpm02.dkhp.model.Registration;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.service.IStudentService;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
+import uit.cnpm02.dkhp.utilities.StringUtils;
 
 /**
  *
  * @author LocNguyen
  */
 public class StudentServiceImpl implements IStudentService {
+    private int rowPerPage = 15;//Constants.ELEMENT_PER_PAGE_DEFAULT;
+    
     private StudentDAO studentDao;
     private RegistrationDAO regDao;
     /**
@@ -30,6 +34,12 @@ public class StudentServiceImpl implements IStudentService {
      **/
     private Map<String, List<Student>> importStudents
             = new HashMap<String, List<Student>>();
+    
+    private Map<String, List<Student>> currentStudents
+            = new HashMap<String, List<Student>>();
+    /**SORT TYPE**/
+    private Map<String, String> sortTypes
+            = new HashMap<String, String>();
     
     private Object mutex = new Object();
     
@@ -139,16 +149,39 @@ public class StudentServiceImpl implements IStudentService {
     }
 
     @Override
-    public ExecuteResult deleteStudent(String mssv) {
+    public ExecuteResult deleteStudent(String mssv,
+                                boolean deleteAnyway, String sessionId) {
         ExecuteResult er = new ExecuteResult(true, "Xóa thành công.");
+        boolean deleted = false;
         try {
             Student s = studentDao.findById(mssv);
             if (s == null) {
                 er.setIsSucces(false);
                 er.setMessage("Không tìm thấy Sinh viên");
             } else {
-                studentDao.delete(s);
-                er.setData(s);
+                // Validate: Just delete student,
+                //if he/she hasn't registerd any subject
+                List<Registration> regs = regDao.findByColumName("MSSV", mssv);
+                if ((regs == null) || regs.isEmpty()) {
+                    // It's good time for deleting...
+                    studentDao.delete(s);
+                    deleted = true;
+                } else {
+                    if (deleteAnyway) {
+                        regDao.delete(regs);
+                        studentDao.delete(s);
+                        deleted = true;
+                    } else {
+                        er.setIsSucces(false);
+                        er.setMessage("Không thể xóa SV đã đk môn học");
+                    }
+                }
+            }
+            if (deleted) {
+                List<Student> students = currentStudents.get(sessionId);
+                if ((students != null) && students.contains(s)) {
+                    students.remove(s);
+                }
             }
         } catch (Exception ex) {
             Logger.getLogger(StudentServiceImpl.class.getName())
@@ -159,7 +192,7 @@ public class StudentServiceImpl implements IStudentService {
         
         return er;
     }
-
+    
     @Override
     public ExecuteResult addStudents(List<Student> students
             , boolean addIfPossible, String sessionId) {
@@ -205,9 +238,123 @@ public class StudentServiceImpl implements IStudentService {
             }
             return result;
         } catch (Exception ex) {
-            Logger.getLogger(StudentServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StudentServiceImpl.class.getName())
+                    .log(Level.SEVERE, null, ex);
             return new ExecuteResult(
                     false, "[Error][StudentService]: " + ex.toString());
         }
+    }
+
+    @Override
+    public List<Student> search(String key, String session) {
+        
+        List<Student> results = new ArrayList<Student>(10);
+        List<Student> results_temp = new ArrayList<Student>(10);
+        try {
+            // Search by FullName
+            results_temp = studentDao.findByColumName("HoTen", key);
+            addList(results, results_temp);
+            
+            // Search by MSSV
+            results_temp = studentDao.findByColumName("MSSV", key);
+            addList(results, results_temp);
+            
+            if ((results != null) && !results.isEmpty()) {
+                try {
+                    currentStudents.remove(session);
+                } catch (Exception ex) {
+                    // new session, maybe...
+                }
+                currentStudents.put(session, results);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(StudentServiceImpl.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+        return results;
+    }
+    
+    private void addList(List<Student> parent, List<Student> child) {
+        if ((child == null) || child.isEmpty()) {
+            return;
+        }
+        
+        if (parent == null) { // first time
+            parent = new ArrayList<Student>(10);
+            parent.addAll(child);
+            return;
+        }
+        
+        for (Student s : child) {
+            if (!parent.contains(s)) {
+                parent.add(s);
+            }
+        }
+    }
+
+    @Override
+    public List<Student> getStudents(int page, String session) {
+        List<Student> results = null;
+        try {
+            results = studentDao.findAll(rowPerPage, page, "HoTen", null);
+            if ((results != null) && !results.isEmpty()) {
+                try {
+                    currentStudents.remove(session);
+                } catch (Exception ex) {
+                    // new session, maybe...
+                }
+                currentStudents.put(session, results);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(StudentServiceImpl.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+        return results;
+    }
+
+    @Override
+    public List<Student> sort(String sessionId, final String by) {
+        String sortType = "ASC";
+        try {
+            sortType = sortTypes.get(sessionId);
+            sortTypes.remove(sessionId);
+        } catch (Exception ex) {
+            sortType = "ASC";
+        }
+        if (StringUtils.isEmpty(sortType)) {
+            sortType = "ASC";
+        }
+        
+        if (sortType.equalsIgnoreCase("ASC")) {
+            sortTypes.put(sessionId, "DES");
+        } else {
+            sortTypes.put(sessionId, "ASC");
+        }
+
+        final String sortType_final = sortType;
+        List<Student> students = currentStudents.get(sessionId);
+        if ((students == null) || students.isEmpty()) {
+            students = getStudents(1, sessionId);
+        }
+        
+        if ((students != null) && (!students.isEmpty())) {
+            Collections.sort(students, new Comparator<Student>() {
+            @Override
+            public int compare(Student o1, Student o2) {
+                if (sortType_final.equals("ASC"))
+                    return o1.compare(o2, by);
+                else
+                    return o2.compare(o1, by);
+            }
+
+        });
+        }
+        
+        return students;
+    }
+
+    @Override
+    public List<Student> getStudents(String session) {
+        return currentStudents.get(session);
     }
 }
