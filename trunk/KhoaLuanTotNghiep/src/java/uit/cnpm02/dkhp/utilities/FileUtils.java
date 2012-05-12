@@ -1,10 +1,10 @@
 package uit.cnpm02.dkhp.utilities;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
@@ -18,12 +18,12 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  */
 public class FileUtils {
 
-    public static HSSFWorkbook getWorkbook(HttpServletRequest req, HttpServletResponse response) throws IOException, FileUploadException {
+    public static HSSFWorkbook getWorkbook(HttpServletRequest req)
+                            throws IOException, FileUploadException {
         boolean isMultipart = ServletFileUpload.isMultipartContent(req);
         if (isMultipart) {
             ServletFileUpload upload = new ServletFileUpload();
             FileItemIterator iter;
-            String fileNamSource = req.getParameter("txtPath");
             try {
                 iter = upload.getItemIterator(req);
                 FileItemStream item = null;
@@ -38,7 +38,7 @@ public class FileUtils {
                     } else {
                         name = item.getName();
                         if (name != null && !"".equals(name)) {
-                            String fileName = new File(item.getName()).getName();
+                            //String fileName = new File(item.getName()).getName();
                             POIFSFileSystem fs = new POIFSFileSystem(stream);
                             HSSFWorkbook wb = new HSSFWorkbook(fs);
                             return wb;
@@ -46,9 +46,11 @@ public class FileUtils {
                     }
                 }
             } catch (FileUploadException ex) {
-                response.getWriter().println(ex.toString());
+                 Logger.getLogger(FileUtils.class.getName())
+                        .log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
-                response.getWriter().println(ex.toString());
+                Logger.getLogger(FileUtils.class.getName())
+                        .log(Level.SEVERE, null, ex);
             }
         }
         return null;
