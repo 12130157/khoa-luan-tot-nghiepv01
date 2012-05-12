@@ -221,6 +221,14 @@ table.general-table td{
     
 }
 
+#pre-sub-search {
+    float: left;
+}
+#pre-sub-filter {
+    float: right;
+    padding-right: 33px;
+}
+
 .input-minwidth {
     min-width: 140px;
 }
