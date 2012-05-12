@@ -90,10 +90,9 @@ public class ManageStudentController extends HttpServlet {
             } else if (action.equalsIgnoreCase(ManageStudentSupport
                                                     .FACULTY_CHANGED.getValue())) {
                 facultyChangeFromImportPage(request, out);
-            } else if (action.equalsIgnoreCase("editstudent")) {
-                editStudent(request, response);
-                String path = "./jsps/PDT/EditStudent.jsp";
-                response.sendRedirect(path);
+            } else if (action.equalsIgnoreCase(ManageStudentSupport
+                                                        .PRE_EDIT.getValue())) {
+                doPrepareDataForEditStudent(request, response);                
             } else if (action.equalsIgnoreCase(ManageStudentSupport
                                                 .VALIDATE_ADD_ONE.getValue())) {
                 doValidateAddOne(out, request);
@@ -317,14 +316,6 @@ public class ManageStudentController extends HttpServlet {
         } catch (Exception ex) {
             return null;
         }
-    }
-
-    private void editStudent(HttpServletRequest request,
-                        HttpServletResponse response) throws Exception {
-        String mssv = request.getParameter("mssv");
-        Student s = studentDao.findById(mssv);
-        HttpSession session = request.getSession();
-        session.setAttribute("student", s);
     }
 
     private int getNumberPage() throws Exception {
@@ -729,7 +720,6 @@ public class ManageStudentController extends HttpServlet {
     private void doDeleteOne(HttpServletRequest request,
             HttpServletResponse response) throws IOException {
         PrintWriter out = response.getWriter();
-        //out.println("error Please come back to Manage Student controller and fix me...");
         String mssv = request.getParameter("mssv");
         String sessionId = request.getSession().getId();
         ExecuteResult er = studentService.deleteStudent(
@@ -740,12 +730,23 @@ public class ManageStudentController extends HttpServlet {
         } else {
             List<Student> students = studentService.getStudents(sessionId);
             if ((students != null) && !students.isEmpty()) {
-                writeOutSearchResult(out, null);
+                writeOutSearchResult(out, students);
             }
         }
     }
-    
 
+    private void doPrepareDataForEditStudent(HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        String mssv = request.getParameter("mssv");
+        Student s = studentService.getStudent(mssv);
+        
+        HttpSession session = request.getSession();
+        session.setAttribute("student", s);
+        String path = "./jsps/PDT/EditStudent.jsp";
+        response.sendRedirect(path);
+    }
+    
     //#############################################
     public enum ManageStudentSupport {
         DEFAULT("default"), // List first page of class opened.
@@ -758,7 +759,8 @@ public class ManageStudentController extends HttpServlet {
         FACULTY_CHANGED("faculty-change"),
         SEARCH("search-students"),
         SORT("sort"),
-        DELETE_ONE("delete-one");
+        DELETE_ONE("delete-one"),
+        PRE_EDIT("editstudent");
         
         private String description;
         ManageStudentSupport(String description) {
