@@ -39,11 +39,11 @@ public enum StudyLevel {
         }
     }
     
-    public static StudyLevel getStudyStatus(int value) {
+    public static StudyLevel getStudyLevel(int value) {
         return lookup_on_index.get(value);
     }
     
-    public static StudyLevel getStudyStatus(String value) {
+    public static StudyLevel getStudyLevel(String value) {
         return lookup_on_text.get(value);
     }
 }
