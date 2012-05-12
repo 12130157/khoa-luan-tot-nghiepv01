@@ -277,7 +277,7 @@ public class ManageLecturerController extends HttpServlet {
     private String importLectuererFromFile(HttpServletRequest request, HttpServletResponse response) {
         List<Lecturer> lecturers = new ArrayList<Lecturer>();
         try {
-            HSSFWorkbook wb = FileUtils.getWorkbook(request, response);
+            HSSFWorkbook wb = FileUtils.getWorkbook(request);
             HSSFSheet sheet = wb.getSheetAt(0);
             HSSFRow rowTemp;
             HSSFCell cellTemp;
