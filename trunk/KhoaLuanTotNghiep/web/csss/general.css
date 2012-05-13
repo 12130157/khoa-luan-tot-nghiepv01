@@ -63,10 +63,7 @@ ol, ul{
 
 }
 
-
-
 #footer{
-
     height: 60px;
     clear: both;
     background: url("../imgs/opaque_10.png") repeat-x scroll 0 0 transparent;
@@ -93,6 +90,8 @@ ol, ul{
 }
 
 #paggind {
+    padding-top: 12px;
+    padding-bottom: 12px;
     text-align: center;
 }
 
@@ -132,10 +131,7 @@ ol, ul{
 #new-range {
     padding-bottom: 30px;
     padding-top: 15px;
-    
-
     border-bottom-style: dotted;
-   
     border-right-width: 2px;
     border-left-width: 2px;
     border-bottom-width: 2px;
@@ -155,6 +151,11 @@ ol, ul{
 .clear{
     clear: both;
 }
+.clear-left {
+    float: left;
+    margin-left: 0px;
+}
+
 .clear-right {
     float: right;
     margin-right: 25px;
@@ -186,6 +187,7 @@ table.general-table td{
 .atag {
     cursor: pointer;
     color: #0000ff;
+    background: none !important;
 }
 .atag:hover {
     text-decoration: underline;
@@ -208,6 +210,7 @@ table.general-table td{
 #import-student-button {
     margin-left: 106px;
     padding-top: 25px;
+    padding-bottom: 12px;
 }
 
 #import-student-from-file {
