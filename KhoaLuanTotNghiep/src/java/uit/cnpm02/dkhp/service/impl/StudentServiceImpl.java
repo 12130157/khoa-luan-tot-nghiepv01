@@ -14,6 +14,7 @@ import uit.cnpm02.dkhp.DAO.StudentDAO;
 import uit.cnpm02.dkhp.model.Registration;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.service.IStudentService;
+import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
 import uit.cnpm02.dkhp.utilities.StringUtils;
 
@@ -22,7 +23,7 @@ import uit.cnpm02.dkhp.utilities.StringUtils;
  * @author LocNguyen
  */
 public class StudentServiceImpl implements IStudentService {
-    private int rowPerPage = 15;//Constants.ELEMENT_PER_PAGE_DEFAULT;
+    private int rowPerPage = Constants.ELEMENT_PER_PAGE_DEFAULT;
     
     private StudentDAO studentDao;
     private RegistrationDAO regDao;
