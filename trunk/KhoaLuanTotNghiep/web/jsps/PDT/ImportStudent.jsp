@@ -49,37 +49,6 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Quản lý sinh viên</title>
         <style media="all" type="text/css">
-            #formsearch{
-                margin-top: 10px;
-                margin-left: 20px;
-                padding: 5px 10px 5px 10px;
-                background: url("../../imgs/opaque_10.png") repeat scroll 0 0 transparent;
-                border: 3px solid #73726E;
-                width: 320px;
-            }
-            #red{
-                margin-left: 32px;
-                margin-top: 15px;
-                background-color: #e4e4e3;
-                width: 250px;
-                height: 32px;
-            }
-            #red:hover {
-                border: 2px solid #ff092d;
-            }
-            #sidebar {
-                height:300px;
-                overflow:auto;
-            }
-
-            #error {
-                /*background-color: #73726E;*/
-                /*color: #ffffff;*/
-                border-width: 2px;
-                border-color: #9f8d39;
-                font-size: 10px;
-                float: left;
-            }
         </style>
     </head>
     <body>
@@ -533,7 +502,7 @@
                 cmnd = document.getElementById("txt-cmnd").value;
                 homeAddress = document.getElementById("txt-home").value;
                 gender = document.getElementById("txt-gender").value;
-                phone = document.getElementById("txt-gender").value;
+                phone = document.getElementById("txt-phone").value;
                 email = document.getElementById("txt-email").value;
                 address = document.getElementById("txt-address").value;
                 enterDate = document.getElementById("txt-date-enter").value;

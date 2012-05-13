@@ -25,28 +25,6 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Quản lý sinh viên</title>
         <style media="all" type="text/css">
-            #formsearch{
-                margin-top: 10px;
-                margin-left: 20px;
-                padding: 5px 10px 5px 10px;
-                background: url("../../imgs/opaque_10.png") repeat scroll 0 0 transparent;
-                border: 3px solid #73726E;
-                width: 320px;
-            }
-            #red{
-                margin-left: 32px;
-                margin-top: 15px;
-                background-color: #e4e4e3;
-                width: 250px;
-                height: 32px;
-            }
-            #red:hover {
-                border: 2px solid #ff092d;
-            }
-            #sidebar {
-                height:400px;
-                overflow:auto;
-            }
         </style>
     </head>
     <body onload="">
@@ -74,7 +52,7 @@
                     <%--SEARCH FORM--%>
                     <div id="search-form" class="clear-right" style="margin-right: 12px !important;">
                         <%-- Filter by Faculty and class --%>
-                        <div id="filter-student">
+                        <div id="filter-student" style="margin-right: 160px; float: left;">
                             <select id="txt-faculty">
                                 <option value="1"> Khoa CNPM 01 </option>
                                 <option value="2"> Khoa HTTT </option>
@@ -86,8 +64,10 @@
                                 <option value="3"> .... </option>
                             </select>
                         </div>
-                        <input type="text" id="txt-search" placeholder="Nhập mssv hoặc Họ tên" />
-                        <input type="button" value="Tìm" onclick="searchStudent()" />
+                        <div id="search-student" style="float: right;">
+                            <input type="text" id="txt-search" placeholder="Nhập mssv hoặc Họ tên" />
+                            <input type="button" value="Tìm" onclick="searchStudent()" />
+                        </div>
                     </div>
                 </div>
                 <div class="clear"></div>
@@ -214,7 +194,6 @@
         }
         
         function deleteOneStudent(mssv) {
-            alert("Entered DELETE " + mssv);
             var pagename = "../../ManageStudentController?function=delete-one&mssv=" + mssv;
             if(http){
                 http.open("GET", pagename, true);
