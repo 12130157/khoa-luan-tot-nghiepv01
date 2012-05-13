@@ -49,7 +49,7 @@ public class ManageStudentController extends HttpServlet {
     private IStudentService studentService = new StudentServiceImpl();
 
     private StudentDAO studentDao = DAOFactory.getStudentDao();
-    private int rowPerPage = Constants.ELEMENT_PER_PAGE_DEFAULT;
+    //private int rowPerPage = Constants.ELEMENT_PER_PAGE_DEFAULT;
     private int numPage = 1;
     private int currentPage = 1;
 
@@ -94,6 +94,9 @@ public class ManageStudentController extends HttpServlet {
                                                         .PRE_EDIT.getValue())) {
                 doPrepareDataForEditStudent(request, response);                
             } else if (action.equalsIgnoreCase(ManageStudentSupport
+                                                        .UPDATE.getValue())) {
+                doUpdateStudent(request, response);                
+            } else if (action.equalsIgnoreCase(ManageStudentSupport
                                                 .VALIDATE_ADD_ONE.getValue())) {
                 doValidateAddOne(out, request);
             } else if (action.equalsIgnoreCase(ManageStudentSupport
@@ -118,13 +121,7 @@ public class ManageStudentController extends HttpServlet {
             } else if (action.equalsIgnoreCase(ManageStudentSupport
                                                 .DELETE_ONE.getValue())) {
                 doDeleteOne(request, response);
-            } else if (action.equalsIgnoreCase("delete")) {
-                String result = deleteStudent(request, response);
-                session.setAttribute("error", result);
-                //listStudent(request, response); TODO
-                String path = "./jsps/PDT/ListStudent.jsp";
-                response.sendRedirect(path);
-            }
+            }// else if delete multi case...
         } catch (Exception ex) {
             out.println("Đã xảy ra sự cố: </br>" + ex);
         } finally {
@@ -144,47 +141,6 @@ public class ManageStudentController extends HttpServlet {
                                     HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
-    }
-
-    /**
-     * 
-     * @param students
-     * @throws Exception 
-     */
-    private void updateStudent(List<Student> students) throws Exception {
-        if (studentDao != null) {
-            studentDao.update(students);
-        } else {
-            throw new Exception("Couldn't create Student DAO");
-        }
-    }
-
-    /**
-     * Delete list student.
-     * @param students
-     * @throws Exception 
-     */
-    private String deleteStudent(HttpServletRequest req,
-                        HttpServletResponse resp) throws Exception {
-        String result = "";
-        String data = (String) req.getParameter("data");
-
-        if ((data == null) || data.isEmpty()) {
-            return "Xóa không thành công.";
-        }
-        String[] mssv = data.split("-");
-        if (studentDao == null) {
-            studentDao = DAOFactory.getStudentDao();
-        }
-
-        List<Student> students = studentDao.findByIds(mssv);
-        if (!students.isEmpty()) {
-            studentDao.delete(students);
-            result = "Đã xóa " + students.size() + " sinh viên";
-            return result;
-        }
-        result = "Chưa xóa SV nào.";
-        return result;
     }
 
     /**
@@ -330,46 +286,6 @@ public class ManageStudentController extends HttpServlet {
         return numPage;
     }
     
-    private void wirteOutListStudent(PrintWriter out, List<Student> students) {
-            String respStr = "<tr id=\"tableliststudent-th\">"
-                    /*+ "<td><INPUT type=\"checkbox\" name=\"chkAll\""
-                    + " onclick=\"selectAll('tableliststudent')\" /></td>"*/
-                    + "<th> STT </th>"
-                    + "<th> MSSV </th>"
-                    + "<th> Họ Tên </th>"
-                    + "<th> Lớp </th>"
-                    + "<th> Khoa </th>"
-                    /*+ "<td> Ngày sinh </td>"*/
-                    + "<th> Giới tính </th>"
-                    + "<th> Loại </th>"
-                    /*+ "<td> Sửa </td>"
-                    + "<td> Xóa </td>"*/
-                    + "</tr>";
-            out.append("<table class=\"general-table\">");
-            out.println(respStr);
-            for (int i = 0; i < students.size(); i++) {
-                respStr = "<tr>"
-                        /*+ "<td><INPUT type=\"checkbox\" name=\"chk" + i + "\"/></td>"*/
-                        + "<td> " + (i + 1) + " </td>"
-                        + "<td> " + students.get(i).getId() + "</td> "
-                        + "<td> " + students.get(i).getFullName() + "</td>"
-                        + "<td> " + students.get(i).getClassCode() + "</td>"
-                        + "<td> " + students.get(i).getFacultyCode() + "</td>"
-                        /*+ "<td> " + students.get(i).getBirthday() + "</td>"*/
-                        + "<td> " + students.get(i).getGender() + "</td>"
-                        + "<td> " + students.get(i).getStudyType() + "</td>"
-                        /*+ "<td> <a href=\"../../ManageStudentController?function=editstudent&mssv=" 
-                                                            + students.get(i).getId() 
-                                                            + "\">Sửa</a></td>"
-                        + "<td> <a href=\"../../ManageStudentController?function=delete&ajax=true&data="
-                                                            + students.get(i).getId()
-                                                            + "\"> Xóa</a></td>"*/
-                        + "</tr>";
-                out.println(respStr);
-            }
-            out.append("</table>");
-    }
-
     /**
      * Prepare data for Import student page usaged.
      * - List Classes
@@ -743,8 +659,38 @@ public class ManageStudentController extends HttpServlet {
         
         HttpSession session = request.getSession();
         session.setAttribute("student", s);
+        
+        List<uit.cnpm02.dkhp.model.Class> clazzes = 
+                (List<uit.cnpm02.dkhp.model.Class>) session.getAttribute("clazzes");
+        List<Faculty> faculties = (List<Faculty>) session.getAttribute("faculties");
+        List<Course> courses = (List<Course>) session.getAttribute("courses");
+        
+        if ((clazzes == null) || clazzes.isEmpty()) {
+            clazzes = pdtService.getAllClass();
+            session.setAttribute("clazzes", clazzes);
+        }
+        if ((faculties == null) || faculties.isEmpty()) {
+            faculties = pdtService.getAllFaculty();
+            session.setAttribute("faculties", faculties);
+        }
+        if ((courses == null) || courses.isEmpty()) {
+            courses = pdtService.getAllCourse();
+            session.setAttribute("courses", courses);
+        }
+        
         String path = "./jsps/PDT/EditStudent.jsp";
         response.sendRedirect(path);
+    }
+
+    private void doUpdateStudent(HttpServletRequest request,
+                    HttpServletResponse response) throws IOException {
+        // Get data from request instance.
+        Student s = getStudentFromRequest(request);
+        ExecuteResult er = studentService
+                .addUpdateStudent(request.getSession().getId(), s);
+        
+        PrintWriter out = response.getWriter();
+        out.println(er.getMessage());
     }
     
     //#############################################
@@ -760,7 +706,8 @@ public class ManageStudentController extends HttpServlet {
         SEARCH("search-students"),
         SORT("sort"),
         DELETE_ONE("delete-one"),
-        PRE_EDIT("editstudent");
+        PRE_EDIT("editstudent"),
+        UPDATE("update");
         
         private String description;
         ManageStudentSupport(String description) {
