@@ -3,7 +3,6 @@ package uit.cnpm02.dkhp.model;
 import java.util.Date;
 import uit.cnpm02.dkhp.access.JDBC.AbstractJdbcModel;
 import uit.cnpm02.dkhp.access.mapper.MapperConstant;
-import uit.cnpm02.dkhp.utilities.DateTimeUtil;
 
 /**
  *
@@ -245,9 +244,7 @@ public class Student extends AbstractJdbcModel<String> {
             studyLevel = values[12].toString();
             dateStart = (Date) values[13];
             studyType = values[14].toString();
-            note = values[15] == null ? "" : values[15].toString();
-
-
+            note = (values[15] == null ? "" : values[15].toString());
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
