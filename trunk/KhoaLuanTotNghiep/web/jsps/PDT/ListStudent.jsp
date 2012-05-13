@@ -52,6 +52,8 @@
                     <%--SEARCH FORM--%>
                     <div id="search-form" class="clear-right" style="margin-right: 12px !important;">
                         <%-- Filter by Faculty and class --%>
+                        <%-- Not supported now... --%>
+                        <%--
                         <div id="filter-student" style="margin-right: 160px; float: left;">
                             <select id="txt-faculty">
                                 <option value="1"> Khoa CNPM 01 </option>
@@ -64,6 +66,7 @@
                                 <option value="3"> .... </option>
                             </select>
                         </div>
+                        --%>
                         <div id="search-student" style="float: right;">
                             <input type="text" id="txt-search" placeholder="Nhập mssv hoặc Họ tên" />
                             <input type="button" value="Tìm" onclick="searchStudent()" />
@@ -128,7 +131,6 @@
     <script src="../../javascripts/UtilTable.js"></script>
     <script src="../../javascripts/AjaxUtil.js"></script>
     <script  type = "text/javascript" >
-        var ajax = false;
         var currentpage = 1;
         var numpage = document.getElementById("numpage").value;
         var searchType = 'none';
@@ -136,13 +138,11 @@
         var http = createRequestObject();
         
         function firstPage(){
-            ajax = true;
             currentpage = 1;
             submitSearch();
         }
         
         function prePage(){
-            ajax = true;
             currentpage--;
             if(currentpage < 1) {
                 currentpage = 1;
@@ -152,7 +152,7 @@
         }
         
         function nextPage(){
-            ajax = true;
+            alert("Page: " + currentpage + "/" + " " + numpage)
             currentpage ++;
             if(currentpage > numpage) {
                 currentpage = numpage;
@@ -162,9 +162,18 @@
         }
         
         function endPage(){
-            ajax = true;
             currentpage = numpage;
             submitSearch();
+        }
+        
+        function submitSearch() {
+            var pagename = "../../ManageStudentController?function=pagging"
+                + "&currentpage=" + currentpage;
+            if(http){
+                http.open("GET", pagename, true);
+                http.onreadystatechange = searchHandler;
+                http.send(null);
+            }
         }
         
         function searchStudent() {
@@ -197,59 +206,11 @@
             var pagename = "../../ManageStudentController?function=delete-one&mssv=" + mssv;
             if(http){
                 http.open("GET", pagename, true);
-                http.onreadystatechange = handleResponseDeleteOne;
+                http.onreadystatechange = handleResponseDelete
                 http.send(null);
             }
         }
         
-        function handleResponseDeleteOne(){
-            if((http.readyState == 4) && (http.status == 200)){
-                var responeResult = http.responseText;
-                if (responeResult.substring(0, 5) == "error") {
-                    var error = responeResult.substring(6, responeResult.length-1);
-                    alert("Error: " + error);
-                    return;
-                }
-                
-                var detail = document.getElementById("list-students");
-                detail.innerHTML = http.responseText;
-            }
-        }
-        
-        
-        function searchHandler() {
-            if(http.readyState == 4 && http.status == 200){
-                location.reload(true);
-            }
-        }
-        
-        function searchByName(){
-            searchType = 'name';
-            searchValue = document.getElementById("txtName").value;
-            submitSearch();
-        }
-        
-        function searchByClass(){
-            searchType = 'clazz';
-            searchValue = document.getElementById("txtclass").value;
-            submitSearch();
-        }
-        
-        function searchByCourse(){
-            searchType = "course";
-            searchValue = document.getElementById("txtCourse").value;
-            submitSearch();
-        }
-        
-        function submitSearch() {
-            var pagename = "../../ManageStudentController?function=liststudent&searchtype=" + searchType + "&searchvalue=" + searchValue + "&currentpage=" + currentpage + "&ajax=true";
-            if(http){
-                http.open("GET", pagename, true);
-                http.onreadystatechange = handleResponseDelete;
-                http.send(null);
-            }
-        }
-
         function deleteStudent(tableId) {
             try {
                 var table = document.getElementById(tableId);
@@ -270,9 +231,9 @@
                     }
                 }
                 data = data.replace(/\s/g,'');
-                var controller = '../../ManageStudentController?function=delete' + '&data=' + data + "&ajax=true";
+                var controller = '../../ManageStudentController?function=delete-multi' 
+                    + '&data=' + data;
                 if(http){
-                    alert('aaaaaaaa');
                     http.open("GET", controller, true);
                     http.onreadystatechange = handleResponseDelete;
                     http.send(null);
@@ -281,12 +242,29 @@
                 alert(e);
             }
         }
-
+        
         function handleResponseDelete(){
             if((http.readyState == 4) && (http.status == 200)){
-                var detail = document.getElementById("tableliststudent");
+                var responeResult = http.responseText;
+                if (responeResult.substring(0, 5) == "error") {
+                    var error = responeResult.substring(6, responeResult.length-1);
+                    alert("Error: " + error);
+                    return;
+                }
+                
+                var detail = document.getElementById("list-students");
                 detail.innerHTML = http.responseText;
             }
         }
+        
+        
+        function searchHandler() {
+            if((http.readyState == 4) && (http.status == 200)){
+                var detail = document.getElementById("list-students");
+                detail.innerHTML = http.responseText;
+            }
+        }
+        
+        
     </script>
 </html>
