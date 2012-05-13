@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -19,8 +20,6 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import uit.cnpm02.dkhp.DAO.DAOFactory;
-import uit.cnpm02.dkhp.DAO.StudentDAO;
 import uit.cnpm02.dkhp.model.Class;
 import uit.cnpm02.dkhp.model.Course;
 import uit.cnpm02.dkhp.model.Faculty;
@@ -48,7 +47,7 @@ public class ManageStudentController extends HttpServlet {
     private IPDTService pdtService = new PDTServiceImpl();
     private IStudentService studentService = new StudentServiceImpl();
 
-    private StudentDAO studentDao = DAOFactory.getStudentDao();
+    //private StudentDAO studentDao = DAOFactory.getStudentDao();
     //private int rowPerPage = Constants.ELEMENT_PER_PAGE_DEFAULT;
     private int numPage = 1;
     private int currentPage = 1;
@@ -78,7 +77,7 @@ public class ManageStudentController extends HttpServlet {
             //
         }
         try {
-            numPage = getNumberPage();
+            numPage = studentService.getNumberPage();
             session.setAttribute("numpage", numPage);
             String action = request.getParameter("function");
             //String datas = request.getParameter("data");
@@ -121,7 +120,13 @@ public class ManageStudentController extends HttpServlet {
             } else if (action.equalsIgnoreCase(ManageStudentSupport
                                                 .DELETE_ONE.getValue())) {
                 doDeleteOne(request, response);
-            }// else if delete multi case...
+            } else if (action.equalsIgnoreCase(ManageStudentSupport
+                                                .DELETE_MULTI.getValue())) {
+                doDeleteMulti(request, response);
+            } else if (action.equalsIgnoreCase(ManageStudentSupport
+                                                .PAGGING.getValue())) {
+                doPaggingData(request, response);
+            }
         } catch (Exception ex) {
             out.println("Đã xảy ra sự cố: </br>" + ex);
         } finally {
@@ -272,18 +277,6 @@ public class ManageStudentController extends HttpServlet {
         } catch (Exception ex) {
             return null;
         }
-    }
-
-    private int getNumberPage() throws Exception {
-        int rows = studentDao.getRowsCount();
-
-        int rowsPerPage = Constants.ELEMENT_PER_PAGE_DEFAULT;
-        if (rows % rowsPerPage == 0) {
-            numPage = rows / rowsPerPage;
-        } else {
-            numPage = rows / rowsPerPage + 1;
-        }
-        return numPage;
     }
     
     /**
@@ -650,6 +643,35 @@ public class ManageStudentController extends HttpServlet {
             }
         }
     }
+    
+    private void doDeleteMulti(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        PrintWriter out = response.getWriter();
+        /** Data hold list of student tobe deleted
+         in format: mssv1 - mssv2 - mssvn**/
+        String data = request.getParameter("data");
+        if (StringUtils.isEmpty(data)) {
+            out.append("error " + "Không lấy được dữ liệu từ Client."
+                    + " Vui lòng thử lại.");
+            return;
+        }
+        
+        List<Student> students = new ArrayList<Student>(10);
+        List<String> mssv = Arrays.asList(data.split("-"));
+        
+        String sessionId = request.getSession().getId();
+        ExecuteResult er = studentService.deleteStudents(
+                            mssv, false, sessionId);
+        
+        if (!er.isIsSucces()) {
+            out.append("error " + er.getMessage());
+        } else {
+            students = studentService.getStudents(sessionId);
+            if ((students != null) && !students.isEmpty()) {
+                writeOutSearchResult(out, students);
+            }
+        }
+    }
 
     private void doPrepareDataForEditStudent(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -681,7 +703,7 @@ public class ManageStudentController extends HttpServlet {
         String path = "./jsps/PDT/EditStudent.jsp";
         response.sendRedirect(path);
     }
-
+    
     private void doUpdateStudent(HttpServletRequest request,
                     HttpServletResponse response) throws IOException {
         // Get data from request instance.
@@ -692,7 +714,24 @@ public class ManageStudentController extends HttpServlet {
         PrintWriter out = response.getWriter();
         out.println(er.getMessage());
     }
-    
+
+    private void doPaggingData(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        
+        try {
+            String page = request.getParameter("currentpage");
+            currentPage = Integer.parseInt(page);
+        } catch(Exception ex) {
+            currentPage = 1;
+        }
+        
+        List<Student> students = studentService
+                .getStudents(currentPage, request.getSession().getId());
+        if ((students != null) && !students.isEmpty()) {
+            writeOutSearchResult(response.getWriter(), students);
+        }
+    }
+
     //#############################################
     public enum ManageStudentSupport {
         DEFAULT("default"), // List first page of class opened.
@@ -706,8 +745,10 @@ public class ManageStudentController extends HttpServlet {
         SEARCH("search-students"),
         SORT("sort"),
         DELETE_ONE("delete-one"),
+        DELETE_MULTI("delete-multi"),
         PRE_EDIT("editstudent"),
-        UPDATE("update");
+        UPDATE("update"),
+        PAGGING("pagging");
         
         private String description;
         ManageStudentSupport(String description) {

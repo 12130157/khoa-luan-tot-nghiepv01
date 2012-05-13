@@ -149,51 +149,6 @@ public class StudentServiceImpl implements IStudentService {
     }
 
     @Override
-    public ExecuteResult deleteStudent(String mssv,
-                                boolean deleteAnyway, String sessionId) {
-        ExecuteResult er = new ExecuteResult(true, "Xóa thành công.");
-        boolean deleted = false;
-        try {
-            Student s = studentDao.findById(mssv);
-            if (s == null) {
-                er.setIsSucces(false);
-                er.setMessage("Không tìm thấy Sinh viên");
-            } else {
-                // Validate: Just delete student,
-                //if he/she hasn't registerd any subject
-                List<Registration> regs = regDao.findByColumName("MSSV", mssv);
-                if ((regs == null) || regs.isEmpty()) {
-                    // It's good time for deleting...
-                    studentDao.delete(s);
-                    deleted = true;
-                } else {
-                    if (deleteAnyway) {
-                        regDao.delete(regs);
-                        studentDao.delete(s);
-                        deleted = true;
-                    } else {
-                        er.setIsSucces(false);
-                        er.setMessage("Không thể xóa SV đã đk môn học");
-                    }
-                }
-            }
-            if (deleted) {
-                List<Student> students = currentStudents.get(sessionId);
-                if ((students != null) && students.contains(s)) {
-                    students.remove(s);
-                }
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(StudentServiceImpl.class.getName())
-                    .log(Level.SEVERE, null, ex);
-            er.setIsSucces(false);
-            er.setMessage(ex.toString());
-        }
-        
-        return er;
-    }
-    
-    @Override
     public ExecuteResult addStudents(List<Student> students
             , boolean addIfPossible, String sessionId) {
         try {
@@ -376,5 +331,117 @@ public class StudentServiceImpl implements IStudentService {
             er.setMessage("Đã có lỗi xảy ra: " + ex.toString());
         }
         return er;
+    }
+
+    @Override
+    public ExecuteResult deleteStudent(String mssv,
+                                boolean deleteAnyway, String sessionId) {
+        ExecuteResult er = new ExecuteResult(true, "Xóa thành công.");
+        boolean deleted = false;
+        try {
+            Student s = studentDao.findById(mssv);
+            if (s == null) {
+                er.setIsSucces(false);
+                er.setMessage("Không tìm thấy Sinh viên");
+            } else {
+                // Validate: Just delete student,
+                //if he/she hasn't registerd any subject
+                List<Registration> regs = regDao.findByColumName("MSSV", mssv);
+                if ((regs == null) || regs.isEmpty()) {
+                    // It's good time for deleting...
+                    studentDao.delete(s);
+                    deleted = true;
+                } else {
+                    if (deleteAnyway) {
+                        regDao.delete(regs);
+                        studentDao.delete(s);
+                        deleted = true;
+                    } else {
+                        er.setIsSucces(false);
+                        er.setMessage("Không thể xóa SV đã đk môn học");
+                    }
+                }
+            }
+            if (deleted) {
+                List<Student> students = currentStudents.get(sessionId);
+                if ((students != null) && students.contains(s)) {
+                    students.remove(s);
+                }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(StudentServiceImpl.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            er.setIsSucces(false);
+            er.setMessage(ex.toString());
+        }
+        
+        return er;
+    }
+    
+    @Override
+    public ExecuteResult deleteStudents(List<String> mssv,
+                                boolean deleteAnyway, String sessionId) {
+        ExecuteResult result = new ExecuteResult(true, "");
+
+        try {
+            List<Student> students = studentDao.findByIds(mssv);
+            if ((students == null) || students.isEmpty()) {
+                return new ExecuteResult(false, "Không tìm thấy sinh viên cần xóa.");
+            }
+            //
+            // TODO: check registered student
+            // >>>>
+            //
+            // Không thể xóa danh sách gồm có SV đã đăng ký môn học
+            List<Student> registeredStudents = new ArrayList<Student>(10);
+            for (Student s : students) {
+                if (!regDao.findByColumName("MSSV", s.getId()).isEmpty()) {
+                    registeredStudents.add(s);
+                }
+            }
+            
+            if (!registeredStudents.isEmpty()) {
+                String msg = "";
+                for (Student s : registeredStudents) {
+                    msg += "</br>- " + s.getFullName() + " (" + s.getId() + ")";
+                }
+                result.setIsSucces(false);
+                result.setMessage(msg);
+                
+                // Doen't support delete any way
+                return result;
+            }
+            
+            studentDao.delete(students);
+            currentStudents.remove(sessionId);
+            students = getStudents(1, sessionId);
+            currentStudents.put(sessionId, students);
+        } catch (Exception ex) {
+            Logger.getLogger(StudentServiceImpl.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            result.setIsSucces(false);
+            result.setMessage("[StudentService][DeleteStudents]: " + ex.toString());
+        }
+        
+        return result;
+    }
+
+    @Override
+    public int getNumberPage() {
+        try {
+            int rows = studentDao.getRowsCount();
+
+            int numPage = 1;
+            if (rows % rowPerPage == 0) {
+                numPage = rows / rowPerPage;
+            } else {
+                numPage = rows / rowPerPage + 1;
+            }
+            return numPage;
+        } catch (Exception ex) {
+            Logger.getLogger(StudentServiceImpl.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+        return 1;
     }
 }
