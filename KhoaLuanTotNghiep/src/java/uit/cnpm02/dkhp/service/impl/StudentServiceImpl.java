@@ -346,7 +346,6 @@ public class StudentServiceImpl implements IStudentService {
                 else
                     return o2.compare(o1, by);
             }
-
         });
         }
         
@@ -356,5 +355,26 @@ public class StudentServiceImpl implements IStudentService {
     @Override
     public List<Student> getStudents(String session) {
         return currentStudents.get(session);
+    }
+
+    @Override
+    public ExecuteResult addUpdateStudent(String sessionId, Student s) {
+        ExecuteResult er = new ExecuteResult(true, "Update thành công.");
+        try {
+            Student persistObj = studentDao.findById(s.getId());
+            if (persistObj == null) {
+                er.setIsSucces(false);
+                er.setMessage("[Error][StudentService] Không tìm thấy SV cần update");
+            } else {
+                studentDao.update(s);
+            }
+            
+        } catch (Exception ex) {
+            Logger.getLogger(StudentServiceImpl.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            er.setIsSucces(false);
+            er.setMessage("Đã có lỗi xảy ra: " + ex.toString());
+        }
+        return er;
     }
 }
