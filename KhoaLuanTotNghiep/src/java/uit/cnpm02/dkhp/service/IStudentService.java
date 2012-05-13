@@ -41,8 +41,15 @@ public interface IStudentService {
     ExecuteResult validateNewStudent(Student s);
 
     ExecuteResult deleteStudent(String mssv, boolean deleteAnyway, String sessionId);
+    
+    public ExecuteResult deleteStudents(List<String> mssv,
+            boolean deleteAnyway, String sessionId);
 
     List<Student> search(String key, String session);
 
     public List<Student> sort(String sessionId, final String by);
+
+    public ExecuteResult addUpdateStudent(String id, Student s);
+    
+    int getNumberPage();
 }
