@@ -42,6 +42,7 @@
              <li><a href="../../AccountController?action=manager"> Quản lý tài khoản </a></li>
              <li><a href="#"> Quản lý học vụ </a>
                  <ul>
+                     <li><a href="../../TimeController?action=default"> Thời khóa biểu</a></li>
                      <li><a href="../../ManageSubjectController?function=list_subject&ajax=false"> Quản lý môn học</a></li>
                      <li><a href="../../ManageClassController?action=default"> Quản lý lớp học</a></li>
                      <li><a href="../../ReportController?action=default"> Thống kê đăng ký</a></li>

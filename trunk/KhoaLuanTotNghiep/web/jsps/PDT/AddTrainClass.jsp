@@ -3,6 +3,8 @@
     Created on : 11-11-2011, 23:45:21
     Author     : LocNguyen
 --%>
+<%@page import="java.util.Date"%>
+<%@page import="uit.cnpm02.dkhp.utilities.DateTimeUtil"%>
 <%@page import="java.util.List"%>
 <%@page import="uit.cnpm02.dkhp.model.web.LecturerWeb"%>
 <%@page import="uit.cnpm02.dkhp.model.web.SubjectWeb"%>
@@ -62,6 +64,7 @@
         </style>
     </head>
     <body>
+        <script src="../../javascripts/DateTimePicker.js" type="text/javascript"></script>
         <!--Div Wrapper-->
         <div id="wrapper">
 
@@ -138,6 +141,20 @@
                                 %>  
                             </select>
                         </td>
+                        <tr>
+                            <td>Ngày bắt đầu học:</td>
+                            <td>
+                                <input type="text" id="startDate" name="startDate" readonly="readonly" value="<%=DateTimeUtil.format(new Date())%>">
+                                <img src="../../imgs/cal.gif" style="cursor: pointer;" onclick="javascript:NewCssCal('startDate','YYMMMDD')" /> 
+                            </td> 
+                        </tr>
+                        <tr>
+                            <td>Ngày kết thúc:</td>
+                            <td>
+                                <input type="text" id="endDate" name="endDate" readonly="readonly" value="<%=DateTimeUtil.format(new Date())%>">
+                                <img src="../../imgs/cal.gif" style="cursor: pointer;" onclick="javascript:NewCssCal('endDate','YYMMMDD')" /> 
+                            </td> 
+                        </tr>
                         </tr>
                          <tr>
                              <td></td>
@@ -178,6 +195,8 @@
             var date = document.getElementById("Date").value;
             var shift = document.getElementById("Shift").value;
             var room = document.getElementById("room").value;
+            var startDate = document.getElementById("startDate").value;
+            var endDate = document.getElementById("endDate").value;
             if(classCode.length == 0){
                 alert("Hãy nhập mã lớp học");
             }else if(slsv.length ==0 ){
@@ -191,7 +210,9 @@
                 "&slsv=" + slsv +
                 "&Date=" + date +
                 "&Shift=" + shift +
-                "&room=" + room ,true);
+                "&room=" + room +
+                "&startDate=" + startDate +
+                "&endDate=" + endDate,true);
                 http.onreadystatechange = handleResponseForCreateNew;
                 http.send(null);
               }
@@ -206,6 +227,8 @@
         var date = document.getElementById("Date").value;
         var shift = document.getElementById("Shift").value;
         var room = document.getElementById("room").value;
+        var startDate = document.getElementById("startDate").value;
+            var endDate = document.getElementById("endDate").value;
         
         if(classCode.length == 0){
             alert("Hãy nhập mã lớp học");
@@ -213,14 +236,16 @@
             alert("Hãy nhập số sinh viên tối đa cho lớp");
         } else {
             if (http) {
-                http.open("GET", "../../ManageClassController?action=check_create" +
+                 http.open("GET", "../../ManageClassController?action=check_create" +
                     "&classcode=" + classCode +
                     "&subject=" + subject +
                     "&lecturer="+ lecturer +
                     "&slsv=" + slsv +
                     "&Date=" + date +
                     "&Shift=" + shift +
-                    "&room=" + room ,true);
+                    "&room=" + room +
+                    "&startDate=" + startDate +
+                     "&endDate=" + endDate,true);
                 http.onreadystatechange = handleResponseForCreateNew;
                 http.send(null);
             }

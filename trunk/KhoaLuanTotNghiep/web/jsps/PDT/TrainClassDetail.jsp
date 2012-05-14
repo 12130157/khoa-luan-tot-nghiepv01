@@ -33,6 +33,7 @@
             #table td{
                 text-align: center;
                 background-color: #5F676D;
+                
             }
             #title{
                 background-color: #2f4e3d;
@@ -75,60 +76,68 @@
                 <form id="classDetail" action="../../ManageClassController?action=pre_update&classId=<%=trainClass.getId().getClassCode()%>&year=<%= trainClass.getId().getYear()%>&semester=<%= trainClass.getId().getSemester()%>" method="post" >
                    <table id="table_mh">
                         <tr>
-                            <td width="100px"> Mã lớp: </td>
-                            <td> <%=trainClass.getId().getClassCode()%> </td>
+                            <td width="200px"> Mã lớp: </td>
+                            <th> <%=trainClass.getId().getClassCode()%> </th>
                         </tr>
                         <tr>
                             <td> Môn học: </td>
-                            <td><%=trainClass.getSubjectName()%> </td>
+                            <th><%=trainClass.getSubjectName()%> </th>
                         </tr>
                         <tr>
                             <td> Giảng viên: </td>
-                            <td><%=trainClass.getLectturerName()%></td>
+                            <th><%=trainClass.getLectturerName()%></th>
                         </tr>
                         <tr>
                             <td> Đã đăng ký </td>
-                            <td> <%=trainClass.getNumOfStudentReg()+" / "+trainClass.getNumOfStudent()%> </td>
+                            <th> <%=trainClass.getNumOfStudentReg()+" / "+trainClass.getNumOfStudent()%> </th>
                         </tr>
                         <tr>
                             <td> Ngày học: </td>
-                            <td><%=trainClass.getStudyDate()%></td>
+                            <th><%=trainClass.getStudyDate()%></th>
                         </tr>
                         <tr>
                             <td> Ca học: </td>
                             <%if(trainClass.getShift()==1){%>
-                            <td>Sáng</td>
+                            <th>Sáng</th>
                             <%}else {%>
-                            <td>Chiều</td>
+                            <th>Chiều</th>
                             <%}%>
                         </tr>
                         <tr>
                             <td>Phòng học:</td>
-                            <td> <%=trainClass.getClassRoom()%></td>
+                            <th> <%=trainClass.getClassRoom()%></th>
                         </tr>
                         <tr>
                             <td>Ngày thi:</td>
                             <%if(trainClass.getTestDate() == null ){%>
-                            <td>Chưa có</td>
+                            <th>Chưa có</th>
                             <%}else {%>
-                            <td><%=DateTimeUtil.format(trainClass.getTestDate())%></td>
+                            <th><%=DateTimeUtil.format(trainClass.getTestDate())%></th>
                             <%}%>
                         </tr>
                         <tr>
                             <td>Phòng thi:</td>
                             <%if(trainClass.getTestRoom() == null || trainClass.getTestRoom().isEmpty() ){%>
-                            <td>Chưa có</td>
+                            <th>Chưa có</th>
                             <%}else {%>
-                            <td><%=trainClass.getTestRoom()%></td>
+                            <th><%=trainClass.getTestRoom()%></th>
                             <%}%>
                         </tr>
                         <tr>
                             <td>Ca thi:</td>
                             <%if(trainClass.getTestHours() == null || trainClass.getTestHours().isEmpty()){%>
-                            <td>Chưa có</td>
+                            <th>Chưa có</th>
                             <%}else {%>
-                            <td><%=trainClass.getTestHours()%></td>
+                            <th><%=trainClass.getTestHours()%></th>
                             <%}%>
+                        </tr>
+                        <tr>
+                            <td>Ngày bắt đầu học:</td>
+                            <th> <%=DateTimeUtil.format(trainClass.getStartDate())%></th>
+                        </tr>
+                        <tr>
+                            <td>Ngày kết thúc dự kiến:</td>
+                            <th> <%=DateTimeUtil.format(trainClass.getEndDate())%></th>
                         </tr>
                         <tr>
                              <td></td>
