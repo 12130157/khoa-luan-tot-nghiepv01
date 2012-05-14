@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import uit.cnpm02.dkhp.DAO.AccountDAO;
 import uit.cnpm02.dkhp.bo.AccountBO;
 import uit.cnpm02.dkhp.model.Account;
+import uit.cnpm02.dkhp.model.type.AccountType;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.password.PasswordProtector;
 
@@ -94,11 +95,11 @@ public class Login extends HttpServlet {
                 //acc.setIsLogined(true);
                 //accDao.update(acc);
                 
-                if (acc.getType() == Constants.ACCOUNT_TYPE_PDT) {
+                if (acc.getType() == AccountType.ADMIN.value()) {
                     path = "./jsps/PDT/PDTStart.jsp";
-                } else if (acc.getType() == Constants.ACCOUNT_TYPE_STUDENT) {
+                } else if (acc.getType() == AccountType.STUDENT.value()) {
                     path = "./jsps/SinhVien/SVStart.jsp";
-                } else if (acc.getType() == Constants.ACCOUNT_TYPE_LECTURE) {
+                } else if (acc.getType() == AccountType.LECTUTER.value()) {
                     path = "./jsps/GiangVien/GVStart.jsp";
                 }
             }
