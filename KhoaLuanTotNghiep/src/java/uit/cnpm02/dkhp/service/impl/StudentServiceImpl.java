@@ -304,7 +304,7 @@ public class StudentServiceImpl implements IStudentService {
             }
         });
         }
-        
+        currentStudents.put(sessionId, students);
         return students;
     }
 
