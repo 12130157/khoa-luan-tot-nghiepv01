@@ -149,5 +149,22 @@ public class Account extends AbstractJdbcModel<String> {
         hash = 29 * hash + (this.userName != null ? this.userName.hashCode() : 0);
         return hash;
     }
+
+    public int compare(Account o2, String by) {
+        int result = 0;
+        if (by.equalsIgnoreCase("TenDangNhap")) {
+            result = this.getId()
+                    .compareTo(o2.getId());
+        } else if (by.equalsIgnoreCase("HoTen")) {
+            result = this.getFullName()
+                    .compareTo(o2.getFullName());
+        } else if (by.equalsIgnoreCase("TinhTrang")) {
+            result = this.getStatus() -  o2.getStatus();
+        } else if (by.equalsIgnoreCase("Loai")) {
+            result = this.getType() - o2.getType();
+        }
+        
+        return result;
+    }
     
 }
