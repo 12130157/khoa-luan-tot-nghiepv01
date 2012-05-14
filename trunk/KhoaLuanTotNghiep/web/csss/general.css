@@ -101,6 +101,8 @@ ol, ul{
     padding-top: 12px;
     padding-bottom: 10px;
     text-transform: uppercase;
+    font-weight: bold;
+    text-align: center;
 }
 #title a {
     text-decoration: none;
