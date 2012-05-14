@@ -129,4 +129,25 @@ public class Account extends AbstractJdbcModel<String> {
             throw new IllegalArgumentException(e);
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null && this == null)
+            return true;
+        
+        if (!(obj instanceof Account)) {
+            return false;
+        }
+        
+        Account other = (Account) obj;
+        return this.getId().equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + (this.userName != null ? this.userName.hashCode() : 0);
+        return hash;
+    }
+    
 }
