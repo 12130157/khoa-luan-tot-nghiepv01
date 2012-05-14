@@ -211,6 +211,8 @@ public class ManageClassController extends HttpServlet {
         String testTime = (String) request.getParameter("hh") + ":" + (String) request.getParameter("hh");
         String year =(String) request.getParameter("year");
         int semester = Integer.parseInt((String) request.getParameter("semester")); 
+        Date startDate = DateTimeUtil.parse(request.getParameter("startDate"));
+        Date endDate = DateTimeUtil.parse(request.getParameter("endDate"));
         
         TrainClassID classID = new TrainClassID(ClassCode, year, semester);
         TrainClass trainClass = trainClassService.getClassInfomation(classID);
@@ -221,6 +223,8 @@ public class ManageClassController extends HttpServlet {
         trainClass.setTestDate(testDate);
         trainClass.setTestRoom(testRoom);
         trainClass.setTestHours(testTime);
+        trainClass.setStartDate(startDate);
+        trainClass.setEndDate(endDate);
         trainClass = classDAO.update(trainClass);        
         
        session.setAttribute("trainclass", trainClass);
@@ -378,12 +382,14 @@ public class ManageClassController extends HttpServlet {
         int date = Integer.parseInt(req.getParameter("Date"));
         int shift = Integer.parseInt(req.getParameter("Shift"));
         String room = req.getParameter("room");
+        Date startDate = DateTimeUtil.parse(req.getParameter("startDate"));
+        Date endDate = DateTimeUtil.parse(req.getParameter("endDate"));
 
         TrainClass clazz = null;
         try {
             TrainClassID classID = new TrainClassID(id, year, semester);
             clazz = new TrainClass(id, year, semester, subjectCode, lectureCode,
-                    room, SLSV, SLDK, date, shift, null, "", "");
+                    room, SLSV, SLDK, date, shift, null, "", "", startDate, endDate);
             clazz.setId(classID);
             
             return trainClassService.addNewTrainClass(clazz);
@@ -405,12 +411,14 @@ public class ManageClassController extends HttpServlet {
         int date = Integer.parseInt(req.getParameter("Date"));
         int shift = Integer.parseInt(req.getParameter("Shift"));
         String room = req.getParameter("room");
+        Date startDate = DateTimeUtil.parse(req.getParameter("startDate"));
+        Date endDate = DateTimeUtil.parse(req.getParameter("endDate"));
 
         TrainClass clazz = null;
         try {
             TrainClassID classID = new TrainClassID(id, year, semester);
             clazz = new TrainClass(id, year, semester, subjectCode, lectureCode,
-                    room, SLSV, SLDK, date, shift, null, "", "");
+                    room, SLSV, SLDK, date, shift, null, "", "", startDate, endDate);
             clazz.setId(classID);
             
             return trainClassService.checkOpenClassCondition(clazz);

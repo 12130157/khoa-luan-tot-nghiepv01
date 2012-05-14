@@ -168,6 +168,20 @@
                             </td>
                         </tr>
                         <tr>
+                            <td>Ngày bắt đầu học:</td>
+                            <td>
+                                <input type="text" id="startDate" name="startDate" readonly="readonly" value="<%=DateTimeUtil.format(trainClass.getStartDate())%>">
+                                <img src="../../imgs/cal.gif" style="cursor: pointer;" onclick="javascript:NewCssCal('startDate','YYMMMDD')" /> 
+                            </td> 
+                        </tr>
+                        <tr>
+                            <td>Ngày kết thúc:</td>
+                            <td>
+                                <input type="text" id="endDate" name="endDate" readonly="readonly" value="<%=DateTimeUtil.format(trainClass.getEndDate())%>">
+                                <img src="../../imgs/cal.gif" style="cursor: pointer;" onclick="javascript:NewCssCal('endDate','YYMMMDD')" /> 
+                            </td> 
+                        </tr>
+                        <tr>
                              <td></td>
                              <td>
                               <input type="submit" id="update" name="update" value="  Cập nhật  "/> 

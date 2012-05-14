@@ -22,6 +22,8 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
     private String testRoom;
     private String subjectName;
     private String lecturerName;
+    private Date startDate;
+    private Date endDate;
     /**
      * Give current status of train class
      * There are 3 status for each TrainClass
@@ -37,7 +39,7 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
 
     public TrainClass(String classCode, String year, int semester, String subjectCode, String lecturerCode,
             String classRoom, int numOfStudent, int numOfStudentReg, int studyDate, int shift,
-            Date testDate, String testRoom, String testHours) {
+            Date testDate, String testRoom, String testHours, Date _startDate, Date _endDate) {
         TrainClassID trainClassID=new TrainClassID(classCode, year, semester);
         setId(trainClassID);
         this.subjectCode = subjectCode;
@@ -53,8 +55,26 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
         this.subjectName = "";
         this.lecturerName = "";
         this.numTC = 0;
+        this.startDate=_startDate;
+        this.endDate = _endDate;
         
         this.status = TrainClassStatus.OPEN;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
     public int getShift() {
@@ -206,7 +226,9 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
                     "NgayThi",
                     "CaThi",
                     "PhongThi",
-                    "TrangThai"
+                    "TrangThai",
+                    "NgayBatDau",
+                    "NgayKetThuc"
               };
     }
 
@@ -223,7 +245,9 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
                     testDate,
                     testHours,
                     testRoom,
-                    (status == null ? null : status.getValue())
+                    (status == null ? null : status.getValue()),
+                    startDate,
+                    endDate
                 };
     }
 
@@ -249,7 +273,8 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
             } else if (statusValue == TrainClassStatus.OPEN.getValue()) {
                 this.status = TrainClassStatus.OPEN;
             }
-
+            startDate = (Date) (values[11] == null ? null : values[11]);
+            endDate = (Date) (values[12] == null ? null : values[12]);
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
