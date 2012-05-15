@@ -15,6 +15,7 @@ import uit.cnpm02.dkhp.service.IAccountService;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
 import uit.cnpm02.dkhp.utilities.StringUtils;
+import uit.cnpm02.dkhp.utilities.password.PasswordProtector;
 
 /**
  *
@@ -180,5 +181,49 @@ public class AccountServiceImpl implements IAccountService {
                     .log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+
+    @Override
+    public ExecuteResult update(Account account, String sessionId) {
+        ExecuteResult result = new ExecuteResult(true, "");
+        try {
+            if (accountDao.findById(account.getId()) == null) {
+                return new ExecuteResult(
+                        false, "Không tìm thấy tài khoản: " + account.getId());
+            }
+            String pass = PasswordProtector.getMD5(account.getPassword());
+            account.setPassword(pass);
+            accountDao.update(account);
+            getAccount(1, sessionId);
+        } catch (Exception ex) {
+            Logger.getLogger(AccountServiceImpl.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            return new ExecuteResult(
+                        false, "Lỗi từ server: " + ex.toString());
+        }
+        
+        return result;
+    }
+
+    @Override
+    public ExecuteResult createNew(Account account, String sessionId) {
+        ExecuteResult result = new ExecuteResult(true, "");
+        try {
+            if (accountDao.findById(account.getId()) != null) {
+                return new ExecuteResult(
+                        false, "Tài khoản đã có (" + account.getId() + ")");
+            }
+            String pass = PasswordProtector.getMD5(account.getPassword());
+            account.setPassword(pass);
+            accountDao.add(account);
+            getAccount(1, sessionId);
+        } catch (Exception ex) {
+            Logger.getLogger(AccountServiceImpl.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            return new ExecuteResult(
+                        false, "Lỗi từ server: " + ex.toString());
+        }
+        
+        return result;
     }
 }
