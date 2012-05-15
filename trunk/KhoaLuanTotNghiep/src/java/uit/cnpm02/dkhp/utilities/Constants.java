@@ -10,9 +10,9 @@ import java.util.List;
 public class Constants {
 
     /**Account type**/
-    //public static int ACCOUNT_TYPE_LECTURE = 2;
-    //public static int ACCOUNT_TYPE_PDT = 1;
-    //public static int ACCOUNT_TYPE_STUDENT = 3;
+    public static int ACCOUNT_TYPE_LECTURE = 2;
+    public static int ACCOUNT_TYPE_PDT = 1;
+    public static int ACCOUNT_TYPE_STUDENT = 3;
     public static String DATETIME_PARTERM_DEFAULT = "yyyy-MM-dd";
     /**News's type**/
     public static int NEWS_TYPE_READ = 0;

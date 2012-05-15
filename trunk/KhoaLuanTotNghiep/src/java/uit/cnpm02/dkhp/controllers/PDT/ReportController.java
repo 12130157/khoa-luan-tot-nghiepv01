@@ -237,7 +237,7 @@ public class ReportController extends HttpServlet {
                                                         PrintWriter out) {
         String studentName = studentService.getStudent(mssv).getFullName();
         
-        out.println("Danh sach cac mon hoc <b>" + studentName + "</b> da dang ky:");
+        out.println("Danh sách các lớp học <b>" + studentName + "</b> đã đăng ký:");
         out.println("<table id = \"student-report\" name = \"student-report\">");
 
         out.println("<tr>"
