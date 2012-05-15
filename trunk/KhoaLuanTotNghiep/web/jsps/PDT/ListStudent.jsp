@@ -36,6 +36,7 @@
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
                 <p id="error">
+                    <%-- NOT USED --%>
                 </p>
                 <br/>
                 <%-- Link import student --%>
@@ -51,22 +52,6 @@
                     </div>
                     <%--SEARCH FORM--%>
                     <div id="search-form" class="clear-right" style="margin-right: 12px !important;">
-                        <%-- Filter by Faculty and class --%>
-                        <%-- Not supported now... --%>
-                        <%--
-                        <div id="filter-student" style="margin-right: 160px; float: left;">
-                            <select id="txt-faculty">
-                                <option value="1"> Khoa CNPM 01 </option>
-                                <option value="2"> Khoa HTTT </option>
-                                <option value="3"> .... </option>
-                            </select>
-                            <select id="txt-class">
-                                <option value="1"> Lớp CNPM 01 </option>
-                                <option value="2"> Khoa CNPM 02 </option>
-                                <option value="3"> .... </option>
-                            </select>
-                        </div>
-                        --%>
                         <div id="search-student" style="float: right;">
                             <input type="text" id="txt-search" placeholder="Nhập mssv hoặc Họ tên" />
                             <input type="button" value="Tìm" onclick="searchStudent()" />
