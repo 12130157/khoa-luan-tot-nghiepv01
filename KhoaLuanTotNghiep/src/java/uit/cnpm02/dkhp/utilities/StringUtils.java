@@ -6,41 +6,40 @@ import java.util.List;
  * Most functions are copied from Apache common lang - StringUtils
  * 
  */
-
 public class StringUtils {
 
-	/**
-	 * @param str The string to be checked.
-	 * @return true if empty or null
-	 */
-	public static boolean isEmpty(String str) {
+    /**
+     * @param str The string to be checked.
+     * @return true if empty or null
+     */
+    public static boolean isEmpty(String str) {
         return str == null || str.length() <= 0;
     }
-	
-	/**
-	 * @param str The string to be checked.
-	 * @return true if empty or null
-	 */
-	public static boolean isEmpty(String[] str) {
+
+    /**
+     * @param str The string to be checked.
+     * @return true if empty or null
+     */
+    public static boolean isEmpty(String[] str) {
         return str == null || str.length <= 0;
     }
-	
-	/**
-	 * 
-	 * @param str The string to be checked.
-	 * @return if true if not empty or null.
-	 */
-	public static boolean isNotEmpty(String str) {
+
+    /**
+     * 
+     * @param str The string to be checked.
+     * @return if true if not empty or null.
+     */
+    public static boolean isNotEmpty(String str) {
         return !isEmpty(str);
     }
-	
-	/**
-	 * @param text The input text.
-	 * @param searchString The search string.
-	 * @param replacement The replacement.
-	 * @return String The replaced input text.
-	 */
-	public static String replaceOnce(String text, String searchString, String replacement) {
+
+    /**
+     * @param text The input text.
+     * @param searchString The search string.
+     * @param replacement The replacement.
+     * @return String The replaced input text.
+     */
+    public static String replaceOnce(String text, String searchString, String replacement) {
         return replace(text, searchString, replacement, 1);
     }
 
@@ -86,16 +85,7 @@ public class StringUtils {
         buf.append(text.substring(start));
         return buf.toString();
     }
-    
-    public static String getAccountTypeDescription(int type) {
-        if (type == 3) {
-            return "Sinh Vien";
-        } else if (type == 2) {
-            return "Giang vien";
-        } else {
-            return "PDT";
-        }
-    }
+
     public static boolean checkStringExitList(String value, List<String> list){
         boolean result=false;
         for(int i=0; i<list.size();i++){
