@@ -30,5 +30,9 @@ public interface IAccountService {
     List<Account> sort(final String by, String sessionId);
 
     public Account findAccount(String userName);
+
+    public ExecuteResult update(Account account, String sessionId);
+
+    public ExecuteResult createNew(Account account, String sessionId);
     
 }
