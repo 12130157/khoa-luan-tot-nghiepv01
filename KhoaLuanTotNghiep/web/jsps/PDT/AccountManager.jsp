@@ -4,6 +4,7 @@
     Author     : LocNguyen
 --%>
 
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="uit.cnpm02.dkhp.utilities.StringUtils"%>
 <%@page import="uit.cnpm02.dkhp.DAO.DAOFactory"%>
 <%@page import="uit.cnpm02.dkhp.model.Account"%>
@@ -25,67 +26,53 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Quản lý tài khoản</title>
         <style media="all" type="text/css">
-
-            #formdetail table{
-                width: 100%;
-                padding-left: 10px;
-                padding-right: 10px;
-                text-align: center;
-
-            }
-            #formdetail table th{
-                background-color:#00ff00;
-                height: 30px;
-                border-color: black;
-            }
-
-            #formdetail table td{
-                text-align: center;
-                background-color: #5F676D;
-            }
-            #title{
-                text-align: center;
-            }
-            #page{
-                text-align: center;
-            }
-            a {
-                color: violet;
-            }
         </style>
     </head>
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
-
-            <div id="mainNav"><!--Main Navigation-->
+            <!--Main Navigation-->
+            <div id="mainNav">
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
-            <div id="content"><!--Main Contents-->
+            <!--Main Contents-->
+            <div id="content">
+                <%---------------------------------%>
+                <%--------------Title--------------%>
+                <%---------------------------------%>
                 <div id="title">
-                    <u><h3>Quản lý tài khoản</h3></u>
+                    Quản lý tài khoản
                 </div>
-
                 <br>
                 <hr/><hr/><br>
+                <%---------------------------------%>
+                <%------------Main content---------%>
+                <%---------------------------------%>
                 <div id="accounts">
                     <a href="CreateNewAccount.jsp"> Tạo mới tài khoản </a>
                     <br /><br />
+                    
+                    <%--------------Search-------------%>
+                    <div id="search-area">
+                        <input type="text" name="txtSearch" id="txtSearch" />
+                        <input type="button" onclick="search()" value="Tìm kiếm">
+                    </div>
+                    <%--
                     <form action="../../AccountController?action=search" method="post">
                         <input type="text" name="txtSearch" id="txtSearch" />
                         <input type="submit" value="Tìm kiếm">
                     </form>
-
-                    <form id="formdetail" name="formdetail">
-                        <table id="accountdetail" name="accountdetail" border="2" bordercolor="yellow" >
+                    --%>
+                    <div id="formdetail">
+                        <table id="accountdetail" name="accountdetail" class="general-table">
                             <tr>
-                            <th>STT</th>
-                            <th>Tên đăng nhập</th>
-                            <th >Họ tên NSD</th>
-                            <th>Tình trạng</th>
-                            <th>Loại tài khoản</th>
-                            <th>Sửa</th>
-                            <th>Xóa</th>
+                                <th> STT </th>
+                                <th> <span class="atag" onclick="sort('TenDangNhap')"> Tên đăng nhập </span></th>
+                                <th> <span class="atag" onclick="sort('HoTen')"> Họ tên NSD </span></th>
+                                <th> <span class="atag" onclick="sort('TinhTrang')"> Tình trạng </span></th>
+                                <th> <span class="atag" onclick="sort('Loai')"> Loại tài khoản </span></th>
+                                <th> Sửa </th>
+                                <th> Xóa </th>
                             </tr>
                             <%
                                 if ((accounts != null) && (!accounts.isEmpty())) {
@@ -93,30 +80,33 @@
                                         Account acc = accounts.get(i);
                             %>
                             <tr>
-                            <td><%= i + 1%></td>
-                            <td><%= acc.getUserName()%></td>
-                            <td><%= acc.getFullName()%></td>
-                            <td><%= acc.getStatus()%></td>
-                            <td><%= StringUtils.getAccountTypeDescription(acc.getType())%></td>
-                            <td><a href="../../AccountController?action=editaccount&username=<%= acc.getId()%>">Sửa</a> </td>
-                            <td><a href="../../AccountController?action=deleteaccount&username=<%= acc.getId()%>">Xóa</a> </td>
+                                <td> <%= i + 1%> </td>
+                                <td> <%= acc.getUserName()%> </td>
+                                <td> <%= acc.getFullName()%> </td>
+                                <td> <%= acc.getStatus()%> </td>
+                                <td> <%= AccountType.getDescription(acc.getType())%> </td>
+                                <td> <a href="../../AccountController?action=editaccount&username=<%= acc.getId()%>">Sửa</a> </td>
+                                <td> <span class="atag" onclick="deleteUser('<%= acc.getId() %>')">Xóa</span> </td>
                             </tr>
                             <%}
                                 }%>
                         </table>
-                        <div id="page">
-                            <input type="button" value="|<<" onclick="FirstPage()"/>- 
-                            <input type="button" value="<<" onclick="PrePage()"/>-
-                            <input type="button" value=">>" onclick="NextPage()"/>-
-                            <input type="button" value=">>|" onclick="EndPage()"/>
-                            <input type="hidden" value="<%=numpage%>" id="numpage" />
-                        </div>
-                        <br/>
-                    </form>
+                        
+                    </div>
+                    <%--------------Pagging-------------%>
+                    <div id="paggind">
+                        <input type="button" value="|<<" onclick="firstPage()"/>
+                        <input type="button" value="<<" onclick="prePage()"/>
+                        <input type="button" value=">>" onclick="nextPage()"/>
+                        <input type="button" value=">>|" onclick="endPage()"/>
+                        <input type="hidden" value="<%=numpage%>" id="numpage" />
+                    </div>
+                    <br/>
                 </div>      
             </div><!--End Contents-->
 
-            <div id="footer"><!--Footer-->
+            <!--Footer-->
+            <div id="footer">
                 <%@include file="../Footer.jsp" %>
             </div><!--End footer-->
         </div>
@@ -128,28 +118,94 @@
         var currentpage = 1;
         var http = createRequestObject();
         numpage = document.getElementById("numpage").value;
-        function FirstPage(){
+        function firstPage(){
             currentpage = 1;
-            SendRequest();
+            sendRequest();
         }
-        function PrePage(){
+        function prePage(){
             currentpage--;
             if(currentpage < 1) currentpage = 1;
-            SendRequest();
+            sendRequest();
         }
-        function NextPage(){
+        function nextPage(){
             currentpage ++;
             if(currentpage > numpage)
                 currentpage = numpage;
-            SendRequest();
+            sendRequest();
         }
-        function EndPage(){
+        function endPage(){
             currentpage = numpage;
-            SendRequest();
+            sendRequest();
         }
-        function SendRequest(){
+        function sendRequest(){
             if(http){
                 ajaxfunction("../../AccountController?action=Filter&curentPage="+currentpage);
+            }
+        }
+        
+        function search() {
+            var key = document.getElementById("txtSearch").value;
+            var pagename = "../../AccountController?action=search&key=" + key;
+            if(http){
+                http.open("GET", pagename, true);
+                http.onreadystatechange = searchHandler;
+                http.send(null);
+            } else {
+                alert("Error: Could not create http object.");
+            }
+        }
+        
+        function searchHandler() {
+            if((http.readyState == 4) && (http.status == 200)){
+                var detail = document.getElementById("formdetail");
+                detail.innerHTML = http.responseText;
+            }
+        }
+
+        function deleteHandler() {
+            if((http.readyState == 4) && (http.status == 200)){
+                var responseText = http.responseText;
+                if (responseText.substring(0, 5) == "error") {
+                    var error = responseText.substring(6, responseText.length-1);
+                    alert("Error: " + error);
+                    return;
+                }
+                
+                var detail = document.getElementById("formdetail");
+                detail.innerHTML = responseText;
+            }
+        }
+
+        function deleteUser(username) {
+            var pagename = "../../AccountController?action=delete&username=" + username;
+            if(http){
+                http.open("GET", pagename, true);
+                http.onreadystatechange = searchHandler;
+                http.send(null);
+            } else {
+                alert("Error: Could not create http object.");
+            }
+        }
+        
+        function sort(by) {
+            var pagename = "../../AccountController?action=sort&by=" + by;
+            if(http){
+                http.open("GET", pagename, true);
+                http.onreadystatechange = searchHandler;
+                http.send(null);
+            } else {
+                alert("Error: Could not create http object.");
+            }
+        }
+        
+        function deleteUser(username) {
+            var pagename = "../../AccountController?action=delete&user=" + username;
+            if(http){
+                http.open("GET", pagename, true);
+                http.onreadystatechange = searchHandler;
+                http.send(null);
+            } else {
+                alert("Error: Could not create http object.");
             }
         }
     </script>
