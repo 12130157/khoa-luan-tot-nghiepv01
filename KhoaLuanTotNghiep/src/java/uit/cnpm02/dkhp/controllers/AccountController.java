@@ -3,7 +3,6 @@ package uit.cnpm02.dkhp.controllers;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,9 +23,11 @@ import uit.cnpm02.dkhp.DAO.FacultyDAO;
 import uit.cnpm02.dkhp.model.Class;
 import uit.cnpm02.dkhp.model.Course;
 import uit.cnpm02.dkhp.model.Faculty;
+import uit.cnpm02.dkhp.model.type.AccountType;
+import uit.cnpm02.dkhp.service.IAccountService;
+import uit.cnpm02.dkhp.service.impl.AccountServiceImpl;
 import uit.cnpm02.dkhp.utilities.Constants;
-import uit.cnpm02.dkhp.utilities.DateTimeUtil;
-import uit.cnpm02.dkhp.utilities.Log;
+import uit.cnpm02.dkhp.utilities.ExecuteResult;
 import uit.cnpm02.dkhp.utilities.StringUtils;
 import uit.cnpm02.dkhp.utilities.password.PasswordProtector;
 
@@ -37,16 +38,18 @@ import uit.cnpm02.dkhp.utilities.password.PasswordProtector;
 @WebServlet(name = "AccountController", urlPatterns = {"/AccountController"})
 public class AccountController extends HttpServlet {
 
+    private IAccountService accountService = new AccountServiceImpl();
+
     private AccountDAO accDao = DAOFactory.getAccountDao();
     private StudentDAO studentDao = DAOFactory.getStudentDao();
     private ClassDAO classDao = DAOFactory.getClassDao();
     private FacultyDAO facultyDao = DAOFactory.getFacultyDao();
     private CourseDAO courseDao = DAOFactory.getCourseDao();
     private int numpage = 0;
-    
+
     private List<Account> accounts = new ArrayList<Account>(10);
 
-    /** 
+    /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
      * @param response servlet response
@@ -62,31 +65,35 @@ public class AccountController extends HttpServlet {
         String action = request.getParameter("action");
 
         try {
+            session.setAttribute("numpage", getNumberPage());
             if (action.equalsIgnoreCase("changePass")) {
                 changePass(request, response, session);
             } else if (action.equalsIgnoreCase("Info")) {
                 getInfo(response, session);
             } else if (action.equals("changeinfo")) {
                 changeInfo(response, session);
-            } else if (action.equalsIgnoreCase("update")) {
-                updateInfo(request, response, session);
-            } else if (action.equalsIgnoreCase("manager")) {
-                session.setAttribute("numpage", getNumberPage());
-                listAccount(request, response, session);
-            } else if (action.equalsIgnoreCase("createnew")) {
-                session.setAttribute("numpage", getNumberPage());
-                createNewAccount(request, response, session);
-            } else if (action.equalsIgnoreCase("editaccount")) {
-                editAccount(request, response, session);
-            } else if (action.equalsIgnoreCase("deleteaccount")) {
-                session.setAttribute("numpage", getNumberPage());
-                deleteAccount(request, response, session);
-            } else if (action.equalsIgnoreCase("search")) {
-                search(request, response, session);
-            } else if (action.equalsIgnoreCase("Filter")) {
-                filterAccount(request, response);
+            } else if (action.equalsIgnoreCase(AccountSupport
+                                        .DEFAULT.description())) {
+                doListAccount(request, response);
+            } else if (action.equalsIgnoreCase(AccountSupport
+                                        .DELETE.description())) {
+                doDeleteAccount(request, response);
+            } else if (action.equalsIgnoreCase(AccountSupport
+                                        .PRE_EDIT_ACCOUNT.description())) {
+                doPreEditAccount(request, response);
+            } else if (action.equalsIgnoreCase(AccountSupport
+                                        .UPDATE_ACCOUNT.description())) {
+                doUpdateAccount(request, response);
+            } else if (action.equalsIgnoreCase(AccountSupport
+                    .CREATE_NEW_ACC.description())) {
+                doCreateNew(request, response);
+            } else if (action.equalsIgnoreCase(AccountSupport
+                    .SEARCH.description())) {
+                doSsearch(request, response);
+            } else if (action.equalsIgnoreCase(AccountSupport
+                                        .SORT.description())) {
+                doSortAccount(request, response);
             }
-
             //
         } catch (Exception ex) {
             Logger.getLogger(AccountController.class.getName())
@@ -96,32 +103,11 @@ public class AccountController extends HttpServlet {
         }
     }
 
-    private void updateInfo(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
-        String user = (String) session.getAttribute("username");
-        Student student = studentDao.findById(user);
-        String IndentityCard = request.getParameter("IdentityCard");
-        String gender = request.getParameter("gender");
-        String home = request.getParameter("home");
-        String address = request.getParameter("address");
-        String phone = request.getParameter("phone");
-        Date birthday = DateTimeUtil.parse(request.getParameter("birthday"));
-        Date startDate = DateTimeUtil.parse(request.getParameter("startdate"));
-        student.setIdentityNumber(IndentityCard);
-        student.setGender(gender);
-        student.setHomeAddr(home);
-        student.setAddress(address);
-        student.setPhone(phone);
-        student.setBirthday(birthday);
-        student.setDateStart(startDate);
-        studentDao.update(student);
-        getInfo(response, session);
-    }
-
     /**
-     * 
+     *
      * @param response
      * @param session
-     * @throws Exception 
+     * @throws Exception
      */
     private void changeInfo(HttpServletResponse response, HttpSession session) throws Exception {
         String path = "./jsps/SinhVien/UpdateInfo.jsp";
@@ -132,10 +118,10 @@ public class AccountController extends HttpServlet {
     }
 
     /**
-     * 
+     *
      * @param response
      * @param session
-     * @throws Exception 
+     * @throws Exception
      */
     private void getInfo(HttpServletResponse response, HttpSession session) throws Exception {
         String path = "./jsps/SinhVien/Info.jsp";
@@ -152,11 +138,11 @@ public class AccountController extends HttpServlet {
     }
 
     /**
-     * 
+     *
      * @param request
      * @param response
      * @param session
-     * @throws Exception 
+     * @throws Exception
      */
     private void changePass(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
         String path = "./jsps/SinhVien/ChangePass.jsp";
@@ -177,7 +163,7 @@ public class AccountController extends HttpServlet {
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    /**
      * Handles the HTTP <code>GET</code> method.
      * @param request servlet request
      * @param response servlet response
@@ -190,7 +176,7 @@ public class AccountController extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
      * @param request servlet request
      * @param response servlet response
@@ -203,7 +189,7 @@ public class AccountController extends HttpServlet {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
      * @return a String containing servlet description
      */
@@ -211,204 +197,6 @@ public class AccountController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
-    private void listAccount(HttpServletRequest request,
-                HttpServletResponse response, HttpSession session)
-                throws Exception {
-        int currentPage = 1;
-        try {
-            currentPage = Integer.parseInt(request.getParameter("curentPage"));
-        } catch (Exception ex) {
-            currentPage = 1;
-        }
-
-        accounts = accDao.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT,
-                currentPage, "TenDangNhap", "DESC");
-        
-        session.setAttribute("account", accounts);
-
-        String path = "./jsps/PDT/AccountManager.jsp";
-        response.sendRedirect(path);
-    }
-
-    private void createNewAccount(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
-        String userName = request.getParameter("txtUsername");
-        String pwd = request.getParameter("txtPassword");
-        String rePwd = request.getParameter("txtRePassword");
-        String fullName = request.getParameter("txtFullName");
-        String type = request.getParameter("selectType");
-
-        String path = "./jsps/PDT/CreateNewAccount.jsp";
-        session.removeAttribute("error");
-        String error = "Tạo tài khoản thành công";
-
-        if ((userName == null) || (userName.isEmpty())
-                || (pwd == null)
-                || (rePwd == null)
-                || (!pwd.equals(rePwd))
-                || pwd.isEmpty()) {
-            error = "Thông tin không hợp lệ";
-        }
-
-
-        try {
-            String safePass = PasswordProtector.getMD5(pwd);
-            Account acc = new Account(userName, safePass, fullName,
-                    false, AccounType.NORMAL.value(), getType(type));
-            accDao.add(acc);
-
-            String editor = (String) session.getAttribute("logineduser");
-
-            Log.getInstance().log(editor, "Tạo mới tài khoản " + userName);
-        } catch (Exception ex) {
-            error = "Đã có lỗi xảy ra. " + ex.toString();
-        }
-
-        session.setAttribute("error", error);
-        response.sendRedirect(path);
-    }
-
-    private void editAccount(HttpServletRequest request,
-            HttpServletResponse response, HttpSession session) throws IOException {
-        String path = "./jsps/PDT/EditAccount.jsp";
-        session.removeAttribute("error");
-        String userName = request.getParameter("username");
-        if ((userName != null) && (!userName.isEmpty())) {
-            try {
-                //Prepare data for edit.
-                Account acc = accDao.findById(userName);
-                if (acc != null) {
-                    session.setAttribute("account", acc);
-                }
-            } catch (Exception ex) {
-                session.setAttribute("error", "Đã có lỗi xảy ra.");
-            }
-        } else {
-
-            userName = request.getParameter("txtUsername");
-            String pwd = request.getParameter("txtPassword");
-            String rePwd = request.getParameter("txtRePassword");
-            String fullName = request.getParameter("txtFullName");
-            String type = request.getParameter("selectType");
-            int status =Integer.parseInt(request.getParameter("selectStatus"));
-
-            if ((userName == null) || (userName.isEmpty())
-                    || (pwd == null)
-                    || (rePwd == null)
-                    || (!pwd.equals(rePwd))
-                    || pwd.isEmpty()) {
-
-                session.setAttribute("error", "Thông tin không hợp lệ");
-            }
-
-            session.setAttribute("error", "Cập nhật thành công");
-            try {
-                if ((pwd != null) && !pwd.isEmpty()) {
-                    pwd = PasswordProtector.getMD5(pwd);
-                }
-                Account acc = new Account(userName, pwd, fullName, false, status, getType(type));
-                accDao.update(acc);
-
-                String editor = (String) session.getAttribute("logineduser");
-                Log.getInstance().log(editor, "Cập nhật thông tin tài khoản " + userName);
-            } catch (Exception ex) {
-                session.setAttribute("error", "Đã có lỗi xảy ra.");
-            }
-        }
-        response.sendRedirect(path);
-    }
-
-    private void deleteAccount(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
-        session.removeAttribute("error");
-        String userName = request.getParameter("username");
-        if ((userName != null) && (!userName.isEmpty())) {
-            try {
-                //Prepare data for edit.
-                Account acc = accDao.findById(userName);
-
-                if (acc != null) {
-                    accDao.delete(acc);
-                    //logineduser
-                    String editor = (String) session.getAttribute("logineduser");
-                    Log.getInstance().log(editor, "Xóa tài khoản " + userName);
-                }
-
-            } catch (Exception ex) {
-            }
-            //session.setAttribute("error", "Xóa thành công.");
-            listAccount(request, response, session);
-        }
-    }
-
-    private void search(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
-        String path = "./jsps/PDT/AccountManager.jsp";
-        session.removeAttribute("error");
-        String search = request.getParameter("txtSearch");
-
-        if ((search == null) || (search.isEmpty()) || (search.equals("*")) || (search.equalsIgnoreCase("all"))) {
-            listAccount(request, response, session);
-        } else {
-            if ((search != null) && (!search.isEmpty())) {
-                try {
-                    List<Account> acc = accDao.search(search);
-                    if (acc != null) {
-                        session.setAttribute("account", acc);
-                        response.sendRedirect(path);
-                    }
-                } catch (Exception ex) {
-                }
-            }
-        }
-        response.sendRedirect(path);
-    }
-
-    private int getType(String typeDescription) {
-        if ((typeDescription.equals("PDT")) || (typeDescription.equals("PĐT"))) {
-            return Constants.ACCOUNT_TYPE_PDT;
-        } else if ((typeDescription.equals("Giang Vien")) || (typeDescription.equals("Giảng Viên"))) {
-            return Constants.ACCOUNT_TYPE_LECTURE;
-        } else if ((typeDescription.equals("Sinh Vien")) || (typeDescription.equals("Sinh Viên"))) {
-            return Constants.ACCOUNT_TYPE_STUDENT;
-        }
-
-        return -1;
-    }
-
-    private void filterAccount(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        PrintWriter out = response.getWriter();
-        int currentPage = 1;
-        try {
-            currentPage = Integer.parseInt(request.getParameter("curentPage"));
-        } catch (Exception ex) {
-        }
-        List<Account> accounts = accDao.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, currentPage, "TenDangNhap", "DESC");
-
-        if ((accounts != null) && (!accounts.isEmpty())) {
-            out.println("<tr>"
-                    + "<th>STT</th>"
-                    + "<th>Tên đăng nhập</th>"
-                    + "<th>Họ tên NSD</th>"
-                    + "<th>Tình Trạng</th>"
-                    + "<th>Loại Tài khoản</th>"
-                    + "<th>Sửa</th>"
-                    + "<th>Xóa</th>"
-                    + "</tr>");
-
-            for (int i = 0; i < accounts.size(); i++) {
-                StringBuffer str = new StringBuffer();
-                str.append("<tr><td>").append((currentPage - 1) * 10 + 1 + i).append("</td>");
-                str.append("<td>").append(accounts.get(i).getId()).append("</td>");
-                str.append("<td>").append(accounts.get(i).getFullName()).append("</td>");
-                str.append("<td>").append(accounts.get(i).getStatus()).append("</td>");
-                String type = StringUtils.getAccountTypeDescription(accounts.get(i).getType());
-                str.append("<td> ").append(type).append("</td>");
-
-                str.append("<td><a href='../../AccountController?action=editaccount&username=").append(accounts.get(i).getId()).append("'>Sửa</a></td>");
-                str.append("<td><a href='../../AccountController?action=deleteaccount&username=").append(accounts.get(i).getId()).append("'>Xóa</a></td>");
-                out.println(str.toString());
-            }
-        }
-    }
 
     private int getNumberPage() throws Exception {
         int rows = accDao.getRowsCount();
@@ -421,25 +209,192 @@ public class AccountController extends HttpServlet {
         }
         return numpage;
     }
+
+    /////////
+    private void doListAccount(HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        List<Account> accs = accountService.getAccount(
+                                1, request.getSession().getId());
+
+        HttpSession session = request.getSession();
+        session.setAttribute("account", accs);
+        String path = "./jsps/PDT/AccountManager.jsp";
+        response.sendRedirect(path);
+    }
+
+    private int slideLimit= 15;
+    private void writeOutListAccount(PrintWriter out, List<Account> accounts) {
+        if (accounts == null) {
+            return;
+        }
+        if (accounts.size() > slideLimit) {
+            out.println("<div id=\"sidebar\">");
+        }
+        out.println("<table id=\"accountdetail\" name=\"accountdetail\" class=\"general-table\">");
+        out.println("<tr>"
+                    + "<th> STT </th>"
+                    + "<th> <span class=\"atag\" onclick=\"sort('TenDangNhap')\"> Tên đăng nhập </span></th>"
+                    + "<th> <span class=\"atag\" onclick=\"sort('HoTen')\"> Họ tên NSD </span></th>"
+                    + "<th> <span class=\"atag\" onclick=\"sort('TinhTrang')\"> Tình trạng </span></th>"
+                    + "<th> <span class=\"atag\" onclick=\"sort('Loai')\"> Loại tài khoản </span></th>"
+                    + "<th> Sửa </th>"
+                    + "<th> Xóa </th>"
+                + "</tr>");
+
+        if (!accounts.isEmpty()) {
+            for (int i = 0; i < accounts.size(); i++) {
+                Account a = accounts.get(i);
+                String accountType =  AccountType.getDescription(a.getType());
+                // StringUtils.getAccountTypeDescription(a.getType());
+                out.println("<tr>"
+                        + "<td>" + (i + 1) + "</td>"
+                        + "<td>" + a.getId() + "</td>"
+                        + "<td>" + a.getFullName() + "</td>"
+                        + "<td>" + a.getStatus() + "</td>"
+                        + "<td>" + accountType + "</td>"
+                        + "<td> <a href=\"../../AccountController?action=editaccount&username=" + a.getId() + "\">Sửa</a> </td>"
+                        + "<td> <span class=\"atag\" onclick=\"deleteUser('" + a.getId() + "')\">Xóa</span></td>"
+                        + "</tr>");
+            }
+        }
+        out.println("</table>");
+        if (accounts.size() > slideLimit) {
+            out.println("</div>");
+        }
+     }
+
+    private void doSsearch(HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        String key = request.getParameter("key");
+        HttpSession session = request.getSession();
+        List<Account> acc = accountService.search(key, session.getId());
+
+        writeOutListAccount(response.getWriter(), acc);
+
+    }
+
+    private void doSortAccount(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        String by = request.getParameter("by");
+        List<Account> acc = accountService.sort(by,
+                        request.getSession().getId());
+
+        writeOutListAccount(response.getWriter(), acc);
+    }
+
+    private void doDeleteAccount(HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        String userName = request.getParameter("user");
+        String session = request.getSession().getId();
+        ExecuteResult er = accountService.deleteAccount(userName, session);
+
+        PrintWriter out = response.getWriter();
+        if (!er.isIsSucces()) {
+            out.println("error " + er.getMessage());
+        } else {
+            List<Account> acc = accountService.getAccount(session);
+            writeOutListAccount(out, acc);
+        }
+    }
+
+    private void doPreEditAccount(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        String userName = request.getParameter("username");
+
+        Account acc = accountService.findAccount(userName);
+        if (acc != null) {
+            HttpSession session = request.getSession();
+            session.setAttribute("account", acc);
+
+            String path = "./jsps/PDT/EditAccount.jsp";
+            response.sendRedirect(path);
+        }
+    }
+
+    private void doUpdateAccount(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        PrintWriter out = response.getWriter();
+        
+        if (!validatePassword(request)) {
+            out.println("Mật khẩu không khớp.");
+            return;
+        }
+        
+        Account account = getAccountFromRequest(request);
+        String sessionId =  request.getSession().getId();
+        ExecuteResult er = accountService.update(
+                    account, sessionId);
+        if (!er.isIsSucces()) {
+            out.println(er.getMessage());
+        } else {
+            out.println("Cập nhật thông tin thành công.");
+        }
+    }
+
+    private void doCreateNew(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        PrintWriter out = response.getWriter();
+        
+        if (!validatePassword(request)) {
+            out.println("Mật khẩu không khớp.");
+            return;
+        }
+        
+        Account account = getAccountFromRequest(request);
+        String sessionId =  request.getSession().getId();
+        ExecuteResult er = accountService.createNew(
+                    account, sessionId);
+        if (!er.isIsSucces()) {
+            out.println(er.getMessage());
+        } else {
+            out.println("Tạo mới thành công.");
+        }
+    }
     
-    public enum AccounType {
-        NORMAL(0, "Bình thường"),
-        LOCK(1, "Bị khóa");
+    private boolean validatePassword(HttpServletRequest request) {
+        String pass = request.getParameter("password");
+        String rePass = request.getParameter("repassword");
+        if (StringUtils.isEmpty(pass) 
+                || (StringUtils.isEmpty(rePass))) {
+            return false;
+        }
         
-        private int value;
+        return pass.equals(rePass);
+    }
+    
+    private Account getAccountFromRequest(HttpServletRequest request) {
+        String userName = request.getParameter("username");
+        String pass = request.getParameter("password");
+        String fullName = request.getParameter("fullName");
+        String status = request.getParameter("type");
+        String type = request.getParameter("status");
+        
+        int int_status = Integer.parseInt(status);
+        int int_type = Integer.parseInt(type);
+        Account account = new Account(
+                userName, pass, fullName, false, int_status, int_type);
+        account.setId(userName);
+        
+        return account;
+    }
+
+    //#############################################
+    public enum AccountSupport {
+        DEFAULT("manager"),
+        SEARCH("search"),
+        SORT("sort"),
+        DELETE("delete"),
+        PRE_EDIT_ACCOUNT("editaccount"),
+        UPDATE_ACCOUNT("update-account"),
+        CREATE_NEW_ACC("create-new");
+
         private String description;
-        
-        AccounType(int value, String description) {
-            this.value = value;
+        AccountSupport(String description) {
             this.description = description;
         }
-        
-        public int value() {
-            return this.value;
-        }
-        
+
         public String description() {
-            return this.description;
+            return description;
         }
     }
 }
