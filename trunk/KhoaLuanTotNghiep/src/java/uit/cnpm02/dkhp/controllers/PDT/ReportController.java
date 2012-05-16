@@ -214,7 +214,7 @@ public class ReportController extends HttpServlet {
         out.println("<table id = \"list-student\" name = \"list-student\">");
         out.println("<tr>"
                 + "<th> STT </th>"
-                + "<th> Họ và tên </th>"
+                + "<th width = 200px> Họ và tên </th>"
                 + "</tr>");
         for (int i = 0; i < datas.size(); i++) {
             out.println("<tr>");
@@ -244,16 +244,16 @@ public class ReportController extends HttpServlet {
                 + "<th> STT </th>"
                 + "<th> <a href='#'"
                     + " onclick=\"sortTrainClass('MaLopHoc', '" + sortType + "')\">"
-                    + " Ma lop </a></th>"
+                    + " Mã lớp </a></th>"
                 + "<th> <a href='#'"
                     + " onclick=\"sortTrainClass('MonHoc', '" + sortType + "')\">"
-                    + " Mon hoc </a></th>"
+                    + " Môn học </a></th>"
                 + "<th> <a href='#'"
                     + " onclick=\"sortTrainClass('NamHoc', '" + sortType + "')\">"
-                    + " Nam hoc </a></th>"
+                    + " Năm học </a></th>"
                 + "<th> <a href = '#'"
                     + " onclick=\"sortTrainClass('HocKy', '" + sortType + "')\">"
-                    + "Hoc ky </a></th>"
+                    + "Học kỳ </a></th>"
                 + "</tr>");
         for (int i = 0; i < datas.size(); i++) {
             out.println("<tr>");

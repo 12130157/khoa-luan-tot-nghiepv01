@@ -12,7 +12,7 @@
     <head>
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Report</title>
+        <title>Quản lý kết quả học tập</title>
         <style media="all" type="text/css">
 
             table {
@@ -78,7 +78,7 @@
             #createLabel{
                 padding-right: 15px;
             }
-            
+                      
         </style>
     </head>
     
@@ -91,100 +91,34 @@
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
                 <div id="title">
-                    THỐNG KÊ THEO SINH VIÊN
+                    Quản lý kết quả học tập sinh viên
                 </div>
                 <div id="search">
                     <table>
                         <tr>
                             <td>
-                                <b>Thông tin tìm kiếm sinh viên </b>
+                                <b>Thông tin tìm kiếm </b>
                                 <input id="search-student" type="text" value="" onKeyPress="keypressed()"/>
                             </td>
                             <td>
-                                <input type="button" onclick="SendRequestFindStudent()" value="Tìm"/>
+                                <input type="button" onclick="FindStudent()" value="Tìm"/>
                             </td>
                         </tr>
                     </table>
                 </div>
                 <div>
                     <div id="list-student">
-                        <table>
-                            <tr>
-                                <td>
-
-                                </td>
-                            </tr>
+                        <table id ="list-studentFind" name = "list-studentFind">
+                           
                         </table>
                     </div>
                     <div id="student-detail">
-                        <table>
-                            <tr>
-                                <td>
-
-                                </td>
-                            </tr>
-                        </table>
+                        
                     </div>
                 </div>
                 <div class="clear"></div>
                 <hr/><hr/><br>
 
-                <%--Form add new Train subject--%>
-                           
-                <div id = "report-range">
-                    THỐNG KÊ THEO LỚP HỌC
-                    <table>
-                        <tr>
-                            <th>
-                                <b>Năm học: </b>
-                                <select id="year" name="year" onchange="">
-                                <option value="*"> All </option>
-                                <%
-                                int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-                                if (currentYear <= 2007)
-                                    currentYear = 2050;
-                                int delta = currentYear - 2007;
-                                for(int i = 0; i < delta; i++){
-                                    String year = Integer.toString(2007 + i) +
-                                            "-" + Integer.toString(2007 + i + 1);
-                                %>
-                                <option value="<%= year %>"><%= year %></option>
-                                <%}
-                                %>
-                                </select>
-                            </th>
-                            <th>
-                                <b>Học Kỳ: </b>
-                                <select id="semeter" name="semeter" onchange="">
-                                    <option value="*"> All </option>
-                                    <option value="1"> 1 </option>
-                                    <option value="2"> 2 </option>
-                                </select>
-                            </th>
-                            <th>
-                                <input type="button" value="Tìm" onclick="getTrainClassReport()" />
-                            </th>
-                        </tr>
-                    </table>
-                    
-                    <div id="trainclass-report">
-                        <table>
-                            <tr>
-                                <td>Tổng số lớp đã tạo: </td>
-                                <td>120</td>
-                            </tr>
-                            <tr>
-                                <td>Tổng số lớp hủy do không đủ điều kiện: </td>
-                                <td>100</td>
-                            </tr>
-                            <tr>
-                                <td>Tổng số lớp chưa kết thúc: </td>
-                                <td>20</td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-                
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
@@ -200,17 +134,17 @@
         //
         // Search Student
         //
-         function keypressed()
+        function keypressed()
     { 
        if(event.keyCode=='13')
        {
-           SendRequestFindStudent();
+           FindStudent();
        } 
       }
-        function SendRequestFindStudent(){
+        function FindStudent(){
             var search = document.getElementById("search-student").value;
              if (http) {
-                http.open("GET", "../../ReportController?action=search_student&value="
+                http.open("GET", "../../RegistrationManager?action=search_student&value="
                     + search, true);
                 http.onreadystatechange = handleResponseFindStudent;
                 http.send(null);
@@ -219,7 +153,7 @@
         
          function handleResponseFindStudent() {
              if(http.readyState == 4 && http.status == 200){
-                 var detail=document.getElementById("list-student");
+                 var detail=document.getElementById("list-studentFind");
                  detail.innerHTML=http.responseText;
              }
          }
@@ -230,7 +164,7 @@
          function getDetailStudentReport(mssv) {
             //var search = document.getElementById("search-student").value;
              if (http) {
-                http.open("GET", "../../ReportController?action=student-report&value="
+                http.open("GET", "../../RegistrationManager?action=student-report&value="
                     + mssv, true);
                 http.onreadystatechange = handleResponseStudentReport;
                 http.send(null);
@@ -254,28 +188,7 @@
              }
          }
          
-         //
-         // Get TrainClass report
-         //
-         function getTrainClassReport() {
-            var year = document.getElementById("year").value;
-            var semeter = document.getElementById("semeter").value;
-            if (http) {
-                http.open("GET", "../../ReportController?action=class-report"
-                    + "&year=" + year
-                    + "&semeter=" + semeter, true);
-                http.onreadystatechange = handleResponseTrainClassReport;
-                http.send(null);
-              }
-         }
-         
-         function handleResponseTrainClassReport() {
-             if(http.readyState == 4 && http.status == 200){
-                 var detail=document.getElementById("trainclass-report");
-                 detail.innerHTML=http.responseText;
-             }
-         }
-         
+                 
          
     </script>
 </html>
