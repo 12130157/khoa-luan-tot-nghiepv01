@@ -98,7 +98,7 @@
                         <tr>
                             <td>
                                 <b>Thông tin tìm kiếm </b>
-                                <input id="search-student" type="text" value=""/>
+                                <input id="search-student" type="text" value="" onKeyPress="keypressed()"/>
                             </td>
                             <td>
                                 <input type="button" onclick="FindStudent()" value="Tìm"/>
@@ -134,6 +134,13 @@
         //
         // Search Student
         //
+        function keypressed()
+    { 
+       if(event.keyCode=='13')
+       {
+           FindStudent();
+       } 
+      }
         function FindStudent(){
             var search = document.getElementById("search-student").value;
              if (http) {
@@ -163,25 +170,20 @@
                 http.send(null);
               }
          }
-         
-         function sortTrainClass(by, type) {
-             if (http) {
-                http.open("GET", "../../ReportController?action=sort-student-report"
-                    + "&by=" + by
-                    + "&type=" + type, true);
-                http.onreadystatechange = handleResponseStudentReport;
-                http.send(null);
-              }
-         }
-         
-         function handleResponseStudentReport() {
+       function handleResponseStudentReport() {
              if(http.readyState == 4 && http.status == 200){
                  var detail=document.getElementById("student-detail");
                  detail.innerHTML=http.responseText;
              }
          }
-         
-                 
-         
+       function deleteTrainClassRegistration(studentCode, classCode){
+           if (http) {
+              http.open("GET", "../../RegistrationManager?action=delete&studentCode="
+                    + studentCode +"&classCode=" +classCode, true);
+                http.onreadystatechange = handleResponseStudentReport;
+                http.send(null);
+              }
+       }  
+          
     </script>
 </html>

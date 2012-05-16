@@ -7,18 +7,24 @@ package uit.cnpm02.dkhp.controllers.PDT;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import uit.cnpm02.dkhp.DAO.DAOFactory;
+import uit.cnpm02.dkhp.model.Registration;
+import uit.cnpm02.dkhp.model.RegistrationID;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.service.IReporter;
 import uit.cnpm02.dkhp.service.IStudentService;
 import uit.cnpm02.dkhp.service.impl.ReporterImpl;
 import uit.cnpm02.dkhp.service.impl.StudentServiceImpl;
+import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.Message;
 
 /**
@@ -70,9 +76,32 @@ public class RegistrationManager extends HttpServlet {
                 }
                 return;
             } 
+            else if (requestAction.equals(ReportFunctionSupported.
+                                                DELETE.getValue())) {
+                mssv = request.getParameter("studentCode");
+                String classCode=request.getParameter("classCode");
+                deleteRegistration(mssv, classCode);
+                List<TrainClass> trainClassReg = getStudentReport(mssv, session.getId());
+                if ((trainClassReg != null) && !trainClassReg.isEmpty()) {
+                    writeStudentReportDetail(mssv, trainClassReg, out);
+                } else {
+                    out.println(Message.STUDENT_REPORT_NO_REPORT);
+                }
+                return;
+            } 
            
         } finally {            
             out.close();
+        }
+    }
+    
+    private void deleteRegistration(String studentCode, String classCode){
+        try {
+             RegistrationID id = new RegistrationID(studentCode, classCode, Constants.CURRENT_SEMESTER, Constants.CURRENT_YEAR);
+             Registration reg = DAOFactory.getRegistrationDAO().findById(id);
+             DAOFactory.getRegistrationDAO().delete(reg);
+        } catch (Exception ex) {
+            Logger.getLogger(RegistrationManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
      private List<TrainClass> getStudentReport(String mssv, String sessionId) {
@@ -85,33 +114,21 @@ public class RegistrationManager extends HttpServlet {
         out.println("Danh sách các lớp học <b>" + studentName + "</b> đã đăng ký:");
         out.println("<table id = \"student-report\" name = \"student-report\">");
 
-        out.println("<tr>"
-                + "<th> STT </th>"
-                + "<th> <a href='#'"
-                    + " onclick=\"sortTrainClass('MaLopHoc', '" + sortType + "')\">"
-                    + " Mã lớp </a></th>"
-                + "<th> <a href='#'"
-                    + " onclick=\"sortTrainClass('MonHoc', '" + sortType + "')\">"
-                    + " Môn học </a></th>"
-                + "<th> <a href='#'"
-                    + " onclick=\"sortTrainClass('NamHoc', '" + sortType + "')\">"
-                    + " Năm học </a></th>"
-                + "<th> <a href = '#'"
-                    + " onclick=\"sortTrainClass('HocKy', '" + sortType + "')\">"
-                    + "Học kỳ </a></th>"
-                + "</tr>");
+        out.println("<tr><th>STT</th><th>Mã lớp</th><th>Môn học</th><th>Năm học</th><th>Học kỳ</th><th>Xóa</th</tr>");
         for (int i = 0; i < datas.size(); i++) {
             out.println("<tr>");
             out.println("<td> " + (i + 1) + " </td>");
             String classId = datas.get(i).getId().getClassCode();
-            out.println("<td> <a href=\"../../ReportController?action=class-detail&classid=" 
-                    + classId + "\">" 
+            out.println("<td> " 
                     + classId
-                    + "</a></td>");
+                    + "</td>");
             out.println("<td> " + datas.get(i).getSubjectName() + " </td>");
             out.println("<td> " + datas.get(i).getId().getYear() + " </td>");
             out.println("<td> " + datas.get(i).getId().getSemester() + " </td>");
-            out.println("</tr>");// <a hreft > abc </a>
+            String method = String.format(" onclick=deleteTrainClassRegistration('%s','%s')>",
+                                                      mssv, datas.get(i).getId().getClassCode());
+            out.println("<td><a href=\'#\' " + method + "Xóa </a> </td>");
+            out.println("</tr>");
         }
         out.println("</table>");
     }
@@ -141,7 +158,7 @@ public class RegistrationManager extends HttpServlet {
         DEFAULT("default"), // List first page of class opened.
         SEARCH_STUDENT("search_student"),
         STUDENT_REPORT("student-report"),
-        STUDENT_REPORT_SORT("sort-student-report"),
+        DELETE("delete"),
         CLASS_REPORT("class-report"),
         CLASS_DETAIL("class-detail"),
         DOWNLOAD_STUDENT_REPORT("download-student-report");
