@@ -47,8 +47,6 @@ public class ManageStudentController extends HttpServlet {
     private IPDTService pdtService = new PDTServiceImpl();
     private IStudentService studentService = new StudentServiceImpl();
 
-    //private StudentDAO studentDao = DAOFactory.getStudentDao();
-    //private int rowPerPage = Constants.ELEMENT_PER_PAGE_DEFAULT;
     private int numPage = 1;
     private int currentPage = 1;
 
@@ -80,7 +78,7 @@ public class ManageStudentController extends HttpServlet {
             numPage = studentService.getNumberPage();
             session.setAttribute("numpage", numPage);
             String action = request.getParameter("function");
-            //String datas = request.getParameter("data");
+
             if (action.equalsIgnoreCase("liststudent")) {
                 doListStudent(request, response);
             } else if (action.equalsIgnoreCase(ManageStudentSupport
