@@ -195,6 +195,11 @@ table.general-table td{
     text-decoration: underline;
 }
 
+#sidebar {
+    height:500px;
+    overflow:auto;
+}
+
 /*Import student page*/
 #import-student-one {
     
