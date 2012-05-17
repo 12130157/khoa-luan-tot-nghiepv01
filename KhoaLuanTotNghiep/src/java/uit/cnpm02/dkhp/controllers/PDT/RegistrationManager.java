@@ -40,10 +40,9 @@ public class RegistrationManager extends HttpServlet {
     private IReporter reportService = new ReporterImpl();
     private IStudentService studentService = new StudentServiceImpl();
      private String mssv = "";
-     private String sortType = "ASC";
-    
+         
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, Exception {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
@@ -132,19 +131,23 @@ public class RegistrationManager extends HttpServlet {
         }
         out.println("</table>");
     }
-    private void writeRespond(List<Student> datas, PrintWriter out) {
+    private void writeRespond(List<Student> datas, PrintWriter out) throws Exception {
         out.println("<tr>"
                 + "<th> STT </th>"
+                + "<th>MSSV</th>"
                 + "<th width = 200px> Họ và tên </th>"
+                + "<th>Lớp</th>"
                 + "</tr>");
         for (int i = 0; i < datas.size(); i++) {
             out.println("<tr>");
             out.println("<td> " + (i + 1) + " </td>");
+            out.println("<td> " + datas.get(i).getId() + " </td>");
             String method = String.format(" onclick=getDetailStudentReport('%s')>",
                                                         datas.get(i).getId());
             out.println("<td> <a href=\'#\'" + method
                     + datas.get(i).getFullName()
                     + "</a> </td>");
+            out.println("<td> " + datas.get(i).getClassCode() + " </td>");
             out.println("</tr>");// <a hreft > abc </a>
         }
         out.println("</table>");
@@ -173,31 +176,38 @@ public class RegistrationManager extends HttpServlet {
         }
         
     }
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
-     * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+  * 
+  * @param request
+  * @param response
+  * @throws ServletException
+  * @throws IOException 
+  */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (Exception ex) {
+            Logger.getLogger(RegistrationManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /** 
-     * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException 
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (Exception ex) {
+            Logger.getLogger(RegistrationManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /** 

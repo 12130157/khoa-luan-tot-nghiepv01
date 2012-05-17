@@ -48,7 +48,7 @@
                      <li><a href="../../ReportController?action=default"> Thống kê đăng ký</a></li>
                      <li><a href="../../TimeController?action=default"> Thời gian đăng ký</a></li>
                      <li><a href="RegistrationManager.jsp"> Quản lý đăng ký môn học</a></li>
-                     <li><a href="../../TimeController?action=default"> Quản lý kết học tập</a></li>
+                     <li><a href="StudyResultManager.jsp"> Quản lý kết học tập</a></li>
                 </ul>
              </li>
              <li><a href=""> Đào tạo </a>

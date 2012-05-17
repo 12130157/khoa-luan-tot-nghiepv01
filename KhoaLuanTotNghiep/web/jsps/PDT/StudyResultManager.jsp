@@ -112,9 +112,6 @@
                            
                         </table>
                     </div>
-                    <div id="student-detail">
-                        
-                    </div>
                 </div>
                 <div class="clear"></div>
                 <hr/><hr/><br>
@@ -144,7 +141,7 @@
         function FindStudent(){
             var search = document.getElementById("search-student").value;
              if (http) {
-                http.open("GET", "../../RegistrationManager?action=search_student&value="
+                http.open("GET", "../../StudyResultManager?action=search_student&value="
                     + search, true);
                 http.onreadystatechange = handleResponseFindStudent;
                 http.send(null);
@@ -157,38 +154,6 @@
                  detail.innerHTML=http.responseText;
              }
          }
-         
-         //
-         // Get student Report
-         //
-         function getDetailStudentReport(mssv) {
-            //var search = document.getElementById("search-student").value;
-             if (http) {
-                http.open("GET", "../../RegistrationManager?action=student-report&value="
-                    + mssv, true);
-                http.onreadystatechange = handleResponseStudentReport;
-                http.send(null);
-              }
-         }
-         
-         function sortTrainClass(by, type) {
-             if (http) {
-                http.open("GET", "../../ReportController?action=sort-student-report"
-                    + "&by=" + by
-                    + "&type=" + type, true);
-                http.onreadystatechange = handleResponseStudentReport;
-                http.send(null);
-              }
-         }
-         
-         function handleResponseStudentReport() {
-             if(http.readyState == 4 && http.status == 200){
-                 var detail=document.getElementById("student-detail");
-                 detail.innerHTML=http.responseText;
-             }
-         }
-         
-                 
          
     </script>
 </html>
