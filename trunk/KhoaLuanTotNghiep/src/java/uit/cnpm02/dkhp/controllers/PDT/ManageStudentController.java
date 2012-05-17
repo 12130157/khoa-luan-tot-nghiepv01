@@ -539,13 +539,14 @@ public class ManageStudentController extends HttpServlet {
         writeOutSearchResult(response.getWriter(), students);
     }
     
+    private final int slideLimit= 15;
     private void writeOutSearchResult(PrintWriter out, List<Student> students) {
         if (students == null) {
             return;
         }
-        //if (students.size() > 15) {
-        //    out.println("<div id=\"sidebar\">");
-        //}
+        if (students.size() > slideLimit) {
+            out.println("<div id=\"sidebar\">");
+        }
         out.println("<table id=\"tableliststudent\" name=\"tableliststudent\" class=\"general-table\">");
         out.println("<tr>"
                 + "<th><INPUT type=\"checkbox\" name=\"chkAll\" onclick=\"selectAll('tableliststudent', 0)\" /></th>"
@@ -579,9 +580,9 @@ public class ManageStudentController extends HttpServlet {
             }
         }
         out.println("</table>");
-        //if (students.size() > 15) {
-        //    out.println();
-        //}
+        if (students.size() > slideLimit) {
+            out.println("</div>");
+        }
     }
 
     private void doListStudent(HttpServletRequest request,
