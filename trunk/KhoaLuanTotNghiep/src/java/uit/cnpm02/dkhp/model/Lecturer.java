@@ -210,4 +210,10 @@ public class Lecturer extends AbstractJdbcModel<String> {
                     note
                 };
     }
+
+    @Override
+    public boolean isIdAutoIncrement() {
+        return false;
+    }
+    
 }
