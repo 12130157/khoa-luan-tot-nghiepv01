@@ -182,8 +182,8 @@ public class Lecturer extends AbstractJdbcModel<String> {
             birthday = (Date) values[2];
             address = values[3] == null ? "" : values[3].toString();
             identityCard = values[4].toString();
-            phone = values[5].toString();
-            email = values[6].toString();
+            phone = values[5] == null ? "" : values[5].toString();
+            email = values[6] == null ? "" : values[6].toString();
             gender = values[7].toString();
             hocHam = values[8] == null ? "" : values[9].toString();
             hocVi = values[9] == null ? "" : values[9].toString();
