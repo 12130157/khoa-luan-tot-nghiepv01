@@ -180,7 +180,7 @@ public class Lecturer extends AbstractJdbcModel<String> {
             fullName = values[0].toString();
             facultyCode = values[1].toString();
             birthday = (Date) values[2];
-            address = values[3].toString();
+            address = values[3] == null ? "" : values[3].toString();
             identityCard = values[4].toString();
             phone = values[5].toString();
             email = values[6].toString();
