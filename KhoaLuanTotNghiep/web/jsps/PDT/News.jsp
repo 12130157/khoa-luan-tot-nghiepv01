@@ -34,7 +34,7 @@
                     <%
                         if ((n.getImgPath() != null) && !n.getImgPath().isEmpty()) {
                             %>
-                            <img src="<%= n.getImgPath() %>" alt="<%= n.getTitle() %>" />
+                            <img src="<%= "../" + n.getImgPath() %>" alt="<%= n.getTitle() %>" />
                             <%
                         }
                     %>
