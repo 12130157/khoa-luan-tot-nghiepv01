@@ -366,8 +366,8 @@ public class AccountController extends HttpServlet {
         String userName = request.getParameter("username");
         String pass = request.getParameter("password");
         String fullName = request.getParameter("fullName");
-        String status = request.getParameter("type");
-        String type = request.getParameter("status");
+        String status = request.getParameter("status");
+        String type = request.getParameter("type");
         
         int int_status = Integer.parseInt(status);
         int int_type = Integer.parseInt(type);
