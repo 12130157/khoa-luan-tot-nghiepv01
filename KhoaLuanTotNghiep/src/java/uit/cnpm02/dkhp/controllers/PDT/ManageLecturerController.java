@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,10 +22,19 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.LecturerDAO;
+import uit.cnpm02.dkhp.model.Faculty;
 import uit.cnpm02.dkhp.model.Lecturer;
+import uit.cnpm02.dkhp.model.type.HocHam;
+import uit.cnpm02.dkhp.model.type.HocVi;
+import uit.cnpm02.dkhp.service.ILecturerService;
+import uit.cnpm02.dkhp.service.IPDTService;
+import uit.cnpm02.dkhp.service.impl.LecturerServiceImpl;
+import uit.cnpm02.dkhp.service.impl.PDTServiceImpl;
 import uit.cnpm02.dkhp.utilities.Constants;
+import uit.cnpm02.dkhp.utilities.DateTimeUtil;
 import uit.cnpm02.dkhp.utilities.FileUtils;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
+import uit.cnpm02.dkhp.utilities.StringUtils;
 
 /**
  *
@@ -31,12 +42,14 @@ import uit.cnpm02.dkhp.utilities.ExecuteResult;
  */
 @WebServlet(name = "ManageLecturerController", urlPatterns = {"/ManageLecturerController"})
 public class ManageLecturerController extends HttpServlet {
-
+    private ILecturerService lecturerService = new LecturerServiceImpl();
+    private IPDTService pdtService = new PDTServiceImpl();
+    
     private LecturerDAO lecturerDao = DAOFactory.getLecturerDao();
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
     private int rowPerPage = Constants.ELEMENT_PER_PAGE_DEFAULT;
     private int numPage = 1;
     private int currentPage = 1;
+
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -58,28 +71,45 @@ public class ManageLecturerController extends HttpServlet {
             numPage = getNumberPage();
             session.setAttribute("numpage", numPage);
             String action = request.getParameter("function");
-            String datas = request.getParameter("data");
-            if (action.equalsIgnoreCase("listlecturer")) {
+            if (action.equalsIgnoreCase(ManageLecturerSupport
+                    .SEARCH.getValue())) {
+                doSearch(request, response);
+            } else if (action.equalsIgnoreCase(ManageLecturerSupport
+                    .PRE_IMPORT.getValue())) {
+                doPrepareDataForImportLecturer(session, response);
+            } else if (action.equalsIgnoreCase(ManageLecturerSupport
+                    .DELETE_ONE.getValue())) {
+                doDeleteOne(request, response);
+            } else if (action.equalsIgnoreCase(ManageLecturerSupport
+                    .DELETE_MULTI.getValue())) {
+                doDeleteMulti(request, response);
+            } else if (action.equalsIgnoreCase("listlecturer")) {
                 listLecturer(request, response);
                 String path = "./jsps/PDT/ListLecturer.jsp";
                 response.sendRedirect(path);
-            } else if (action.equalsIgnoreCase("editlecturer")) {
-                editLecturer(request, response);
-                String path = "./jsps/PDT/EditLecturer.jsp";
-                response.sendRedirect(path);
-            } else if (action.equalsIgnoreCase("import")) {
-                //Data input in format: lecturer1; lecturer2; lecturer 3 ...
-                //lecturer: maGV, hoten, ...
-                ExecuteResult result = importLecturerFromDataString(datas);
-                session.setAttribute("error", result.getMessage());
-                String path = "./jsps/PDT/ImportLecturer.jsp";
-                response.sendRedirect(path);
-            } else if (action.equalsIgnoreCase("importfromfile")) {
-                String result = importLectuererFromFile(request, response);
-                session.setAttribute("error", result);
-                String path = "./jsps/PDT/ImportLecturer.jsp";
-                response.sendRedirect(path);
-            } else if (action.equalsIgnoreCase("delete")) {
+            } else if (action.equalsIgnoreCase(ManageLecturerSupport
+                    .PRE_EDIT.getValue())) {
+                doPrepareDataForEditLecturer(request, response);
+            } else if (action.equalsIgnoreCase(ManageLecturerSupport
+                    .UPDATE.getValue())) {
+                doUpdateLecturer(request, response);
+            } else if (action.equalsIgnoreCase(ManageLecturerSupport
+                    .VALIDATE_ADD_ONE.getValue())) {
+                doValidateAddOne(out, request);
+            } else if (action.equalsIgnoreCase(ManageLecturerSupport
+                    .ADD_ONE.getValue())) {
+                doAddOne(out, request);
+            } else if (action.equalsIgnoreCase(ManageLecturerSupport
+                    .CANCEL_ADD_ONE.getValue())) {
+                doCancelOne(out, request);
+            } else if (action.equalsIgnoreCase(ManageLecturerSupport
+                    .IMPORT_FROM_FILE.getValue())) {
+                doImportFromFile(request, response);
+                
+            } else if (action.equalsIgnoreCase(ManageLecturerSupport
+                    .RETRY_IMPORT_FROM_FILE.getValue())) {
+                doRetryImportFromFile(request, response);
+            }/* else if (action.equalsIgnoreCase("delete")) {
                 ExecuteResult result = deleteLecturer(request, response);
                 session.setAttribute("error", result.getMessage());
                 if (result.isIsSucces() == true) {
@@ -87,7 +117,7 @@ public class ManageLecturerController extends HttpServlet {
                 }
                 String path = "./jsps/PDT/ListLecturer.jsp";
                 response.sendRedirect(path);
-            }
+            }*/
         } catch (Exception ex) {
             out.println("Đã xảy ra sự cố: </br>" + ex);
         } finally {
@@ -223,100 +253,8 @@ public class ManageLecturerController extends HttpServlet {
         }
     }
 
-    private void editLecturer(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String id = request.getParameter("mgv");
-        Lecturer s = lecturerDao.findById(id);
-        HttpSession session = request.getSession();
-        session.setAttribute("lecturer", s);
-    }
-
-    private ExecuteResult importLecturerFromDataString(String datas) {
-        ExecuteResult result = new ExecuteResult(true, datas);
-
-        if ((datas == null) || (datas.length() < 1)) {
-            return new ExecuteResult(false, "Vui lòng kiểm tra lại dữ liệu nhập");
-        }
-        try {
-            List<Lecturer> lecturers = new ArrayList<Lecturer>(10);
-            String[] lecturerStr = datas.split(";");
-            if (lecturerStr != null) {
-                for (int i = 0; i < lecturerStr.length; i++) {
-                    String[] lecturerDetail = lecturerStr[i].split(",");
-                    Lecturer l = new Lecturer();
-                    l.setId(lecturerDetail[0]);                        //MSSV        0
-                    l.setFullName(lecturerDetail[1]);                  //Ho Ten      1
-                    l.setFacultyCode(lecturerDetail[2]);
-                    Date startDate = dateFormat.parse(lecturerDetail[3]);
-                    l.setBirthday(startDate);                         //Ngay Sinh   2 
-                    l.setAddress(lecturerDetail[4]);
-                    l.setIdentityCard(lecturerDetail[5]);
-                    l.setPhone(lecturerDetail[6]);
-                    l.setEmail(lecturerDetail[7]);
-                    l.setGender(lecturerDetail[8]);
-                    l.setHocHam(lecturerDetail[9]);
-                    l.setHocVi(lecturerDetail[10]);
-                    l.setNote(lecturerDetail[11]);
-
-                    lecturers.add(l);
-                }
-            }
-
-            Collection<String> id_Lecturers = DAOFactory.getLecturerDao().addAll(lecturers);
-            if (id_Lecturers == null) {
-                return new ExecuteResult(false, "Thêm không thành công");
-            }
-
-            result.setMessage("Thêm thành công.");
-        } catch (Exception ex) {
-            return new ExecuteResult(false, "Lỗi: " + ex.toString());
-        }
-
-        return result;
-    }
-
-    private String importLectuererFromFile(HttpServletRequest request, HttpServletResponse response) {
-        List<Lecturer> lecturers = new ArrayList<Lecturer>();
-        try {
-            HSSFWorkbook wb = FileUtils.getWorkbook(request);
-            HSSFSheet sheet = wb.getSheetAt(0);
-            HSSFRow rowTemp;
-            HSSFCell cellTemp;
-
-            int cellType;
-            Iterator rowIter = sheet.rowIterator();
-            while (rowIter.hasNext()) {
-                rowTemp = (HSSFRow) rowIter.next();
-                if (rowTemp == null) {
-                    continue;
-                }
-                cellTemp = rowTemp.getCell(0);
-                if (cellTemp == null) {
-                    continue;
-                }
-
-                cellTemp = rowTemp.getCell(0);
-                cellType = cellTemp.getCellType();
-                //check the first cell of data must be a number
-                if (cellType != HSSFCell.CELL_TYPE_NUMERIC) {
-                    continue;
-                } else {
-                    Lecturer l = initLecturerFromHSSFRow(rowTemp);
-                    lecturers.add(l);
-                }
-            }
-
-            //Collection<String> id_Students = DAOFactory.getStudentDao().addAll(students);
-            //if (id_Students == null) {
-            //    return "Thêm không thành công";
-            //}
-            return "Thêm thành công.";
-
-        } catch (Exception ex) {
-            return "Đã có lỗi xảy ra.";
-        }
-    }
-
-    private ExecuteResult deleteLecturer(HttpServletRequest request, HttpServletResponse response) {
+    private ExecuteResult deleteLecturer(HttpServletRequest request,
+            HttpServletResponse response) {
         ExecuteResult result = new ExecuteResult(true, null);
         String data = (String) request.getParameter("data");
 
@@ -343,6 +281,296 @@ public class ManageLecturerController extends HttpServlet {
         return result;
     }
 
+    //
+    //
+    //
+    /**
+     * Search
+     * @param request
+     * @param response 
+     */
+    private void doSearch(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        String key = "*";
+        try {
+            key = request.getParameter("key");
+        } catch(Exception ex) {
+            //
+        }
+        List<Lecturer> lecturers = lecturerService.search(
+                key, request.getSession().getId());
+        
+        writeOutListLecturers(response.getWriter(), lecturers);
+        
+        
+    }
+
+    /**
+     * Write out list lecterers for ajax calling...
+     * 
+     */
+    private final int slideLimit= 15;
+    private void writeOutListLecturers(PrintWriter out,
+            List<Lecturer> lecturers) {
+        if (lecturers == null) {
+            return;
+        }
+        if (lecturers.size() > slideLimit) {
+            out.println("<div id=\"sidebar\">");
+        }
+        out.println("<table id=\"tablelistlecturer\" name=\"tablelistlecturer\" class=\"general-table\">");
+        out.println("<tr>"
+                + "<th><INPUT type=\"checkbox\" name=\"chkAll\" onclick=\"selectAll('tablelistlecturer', 0)\" /></th>"
+                + "<th> STT </th>"
+                + "<th> <span class=\"atag\" onclick=\"sort('MaGV')\" > Mã GV </span></th>"
+                + "<th> <span class=\"atag\" onclick=\"sort('HoTen')\" >  Họ tên </span> </th>"
+                + "<th> <span class=\"atag\" onclick=\"sort('MaKhoa')\" >  Khoa </span> </th>"
+                + "<th> <span class=\"atag\" onclick=\"sort('QueQuan')\" >  Địa chỉ </span> </th>"
+                + "<th> <span class=\"atag\" onclick=\"sort('NgaySinh')\" > Ngày sinh </span> </th>"
+                + "<th> <span class=\"atag\" onclick=\"sort('GioiTinh')\" >  Giới tính </span> </th>"
+                + "<th> <span class=\"atag\" onclick=\"sort('Email')\" >  Email </span> </th>"
+                + "<th> <span class=\"atag\" onclick=\"sort('HocHam')\" >  Học Hàm </span> </th>"
+                + "<th> <span class=\"atag\" onclick=\"sort('HocVi')\" >  Học Vị </span> </th>"
+                + "<th> Sửa </th>"
+                + "<th> Xóa </th>"
+                + "</tr>");
+        if (!lecturers.isEmpty()) {
+            for (int i = 0; i < lecturers.size(); i++) {
+                out.println("<tr>"
+                        + "<td><INPUT type=\"checkbox\" name=\"chk" + i + "\"/></td>"
+                        + "<td>" + (i + 1) + "</td>"
+                        + "<td>" + lecturers.get(i).getId() + "</td>"
+                        + "<td>" + lecturers.get(i).getFullName() + "</td>"
+                        + "<td>" + lecturers.get(i).getFacultyCode() + "</td>"
+                        + "<td>" + lecturers.get(i).getAddress() + "</td>"
+                        + "<td>" + DateTimeUtil.format(lecturers.get(i).getBirthday()) + "</td>"
+                        + "<td>" + lecturers.get(i).getGender() + "</td>"
+                        + "<td>" + lecturers.get(i).getEmail() + "</td>"
+                        + "<td>" + lecturers.get(i).getHocHam() + "</td>"
+                        + "<td>" + lecturers.get(i).getHocVi() + "</td>"
+                        + "<td>" + "<a href=\"../../ManageLecturerController?function=edit&magv=" + lecturers.get(i).getId() + "\">Sửa</a></td>"
+                        + "<td><span class=\"atag\" onclick=\"deleteOneLecturer('" + lecturers.get(i).getId() + "')\">Xóa</span></td>"
+                        + "</tr>");
+            }
+        }
+        out.println("</table>");
+        if (lecturers.size() > slideLimit) {
+            out.println("</div>");
+        }
+    }
+
+    private void doPrepareDataForImportLecturer(HttpSession session,
+            HttpServletResponse response) throws IOException {
+        List<Faculty> faculties = pdtService.getAllFaculty();
+        
+        if (faculties != null) {
+            session.setAttribute("faculties", faculties);
+        }
+        String path = "./jsps/PDT/ImportLecturer.jsp";
+        response.sendRedirect(path);
+    }
+
+    private void doDeleteOne(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        PrintWriter out = response.getWriter();
+        String magv = request.getParameter("magv");
+        String sessionId = request.getSession().getId();
+        ExecuteResult er = lecturerService.deleteLecturer(magv, false, sessionId);
+        
+        if (!er.isIsSucces()) {
+            out.append("error " + er.getMessage());
+        } else {
+            List<Lecturer> lecturers = lecturerService.getLecturers(sessionId);
+            if ((lecturers != null) && !lecturers.isEmpty()) {
+                writeOutListLecturers(out, lecturers);
+            }
+        }
+    }
+
+    private void doValidateAddOne(PrintWriter out, HttpServletRequest request) {
+        // Get data from request instance.
+        Lecturer l = getLecturerFromRequest(request);
+        ExecuteResult er = lecturerService.validateNewLecturer(l);
+        
+        // Write out back result
+        writeOutValidateAddOneResult(out, er);
+    }
+
+    private Lecturer getLecturerFromRequest(HttpServletRequest request) {
+        String magv = request.getParameter("magv");
+        String fullname = request.getParameter("fullname");
+        String birthDay = request.getParameter("birthDay");
+        String cmnd = request.getParameter("cmnd");
+        String address = request.getParameter("address");
+        String gender = request.getParameter("gender");
+        String phone = request.getParameter("phone");
+        String email = request.getParameter("email");
+        String faculty = request.getParameter("faculty");
+        String hocham = request.getParameter("hocham");
+        String hocvi = request.getParameter("hocvi");
+        String note = request.getParameter("note");
+        
+        SimpleDateFormat sdf = new SimpleDateFormat(
+                                        Constants.DATETIME_PARTERM_DEFAULT);
+        try {
+            int hocHamInt = Integer.parseInt(hocham);
+            int hocViInt = Integer.parseInt(hocvi);
+            hocham = HocHam.getHocHam(hocHamInt).description();
+            hocvi = HocVi.getHocVi(hocViInt).description();
+        } catch (Exception ex) {
+            //
+        }
+        
+        // Validate
+        
+        // Add
+        Date birthDayD = null;
+        try {
+            birthDayD = sdf.parse(birthDay);
+        } catch (Exception ex) {
+            Logger.getLogger(ManageLecturerController.class.getName())
+                    .log(Level.WARNING, null, ex);
+        }
+        Lecturer l = new Lecturer(magv, fullname, faculty, birthDayD, address,
+                cmnd, phone, email, gender, hocham, hocvi);
+        if (!StringUtils.isEmpty(note)) {
+            l.setNote(note);
+        }
+        
+        return l;
+    }
+
+    private void writeOutValidateAddOneResult(PrintWriter out, ExecuteResult er) {
+        if (er.isIsSucces())
+            out.println("Thông tin hợp lệ.");
+        else
+            out.append(er.getMessage());
+    }
+
+    //
+    // ADD ONE
+    //
+    private void doAddOne(PrintWriter out, HttpServletRequest request) {
+        // Get data from request instance.
+        Lecturer l = getLecturerFromRequest(request);
+        ExecuteResult er = lecturerService.addLecturer(l);
+        
+        // Write out back result
+        writeOutAddOneResult(out, er);
+    }
+
+    private void writeOutAddOneResult(PrintWriter out, ExecuteResult er) {
+        if (!er.isIsSucces()) {
+            out.println("Thêm GV không thành công: " + er.getMessage());
+        } else {
+            Lecturer l = (Lecturer) er.getData();
+            String cancelFunction = "cancelAddOne('" + l.getId() + "')";
+            out.println("Thêm GV: <b>" + l.getFullName() 
+                    + "</b> thành công "
+                    + "<span class=\"atag\" onclick=\"" + cancelFunction + "\"><b>Hủy</b></span>");
+            out.println("<table class=\"general-table\">");
+            out.println("<tr>"
+                        + "<th> Ma GV </th>"
+                        + "<th> Họ và tên </th>"
+                        + "<th> Giới tính </th>"
+                        + "<th> Quê quán </th>"
+                    + "</tr>");
+            out.println("<tr>"
+                    + "<td>" + l.getId() + "</td>"
+                    + "<td>" + l.getFullName() + "</td>"
+                    + "<td>" + l.getGender() + "</td>"
+                    + "<td>" + l.getAddress() + "</td>"
+                    + "</tr>");
+            out.println("</table>");
+        }
+    }
+
+    private void doCancelOne(PrintWriter out, HttpServletRequest request) {
+        String magv = request.getParameter("magv");
+
+        ExecuteResult er = lecturerService.deleteLecturer(
+                magv, false, request.getSession().getId());
+        writeOutCancelAddOneResult(out, er);
+    }
+
+    private void writeOutCancelAddOneResult(PrintWriter out, ExecuteResult er) {
+        if (!er.isIsSucces()) {
+            out.println("Không thể xóa GV. " + er.getMessage());
+            out.println("Vui lòng truy cập trang </b>Quản lý Giảng viên</b> để thử lại");
+        } else {
+            Lecturer l = (Lecturer) er.getData();
+            out.println("Xóa thành công giảng viên <b>" + l.getFullName() + "</b>");
+        }
+    }
+
+    //
+    // IMPORT FROM FILE
+    //
+    private void doImportFromFile(HttpServletRequest request,
+                        HttpServletResponse response) throws Exception {
+        boolean importAsPossible;
+        try {
+            importAsPossible = Boolean.parseBoolean(
+                                request.getParameter("import-as-possible"));
+        } catch (Exception ex) {
+            importAsPossible = false;
+        }
+        ExecuteResult result = importLecturerFromFile(request, importAsPossible);
+
+        HttpSession session = request.getSession();
+        session.setAttribute("import.from.file.response", true);
+        session.setAttribute("import-from-file-result", result);
+        String path = "./jsps/PDT/ImportLecturer.jsp";
+        response.sendRedirect(path);
+    }
+
+    private ExecuteResult importLecturerFromFile(
+            HttpServletRequest request, boolean importAsPossible) {
+        List<Lecturer> lecturers = new ArrayList<Lecturer>();
+
+        HSSFWorkbook wb = null;
+        try {
+            wb = FileUtils.getWorkbook(request);
+        } catch (Exception ex) {
+            Logger.getLogger(ManageLecturerController.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            return new ExecuteResult(false,
+                    "Lỗi trong quá trình import từ file: " + ex.toString());
+        }
+        HSSFSheet sheet = wb.getSheetAt(0);
+        HSSFRow rowTemp;
+        HSSFCell cellTemp;
+
+        int cellType;
+        Iterator rowIter = sheet.rowIterator();
+        while (rowIter.hasNext()) {
+            rowTemp = (HSSFRow) rowIter.next();
+            if (rowTemp == null) {
+                continue;
+            }
+            cellTemp = rowTemp.getCell(0);
+            if (cellTemp == null) {
+                continue;
+            }
+
+            cellTemp = rowTemp.getCell(0);
+            cellType = cellTemp.getCellType();
+            //check the first cell of data must be a number
+            if (cellType != HSSFCell.CELL_TYPE_NUMERIC) {
+                continue;
+            } else {
+                Lecturer l = initLecturerFromHSSFRow(rowTemp);
+                lecturers.add(l);
+            }
+        }
+
+        if (!lecturers.isEmpty()) {
+            return lecturerService.addLecturers(lecturers, importAsPossible,
+                                                request.getSession().getId());
+        }
+        return new ExecuteResult(false, "Không thể đọc thông tin.");
+    }
+    
     private Lecturer initLecturerFromHSSFRow(HSSFRow rowTemp) {
         try {
             Lecturer l = new Lecturer();
@@ -405,6 +633,129 @@ public class ManageLecturerController extends HttpServlet {
             return l;
         } catch (Exception ex) {
             return null;
+        }
+    }
+
+    private void doRetryImportFromFile(HttpServletRequest request,
+            HttpServletResponse response) {
+        try {
+            ExecuteResult er = lecturerService.addLecturers(
+                            null, true, request.getSession().getId());
+            writeOutResponseForRetryImportFromFile(response.getWriter(), er);
+        } catch (IOException ex) {
+            Logger.getLogger(ManageLecturerController.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void writeOutResponseForRetryImportFromFile(
+            PrintWriter out, ExecuteResult er) {
+        if (!er.isIsSucces()) {
+            out.println(er.getMessage());
+        } else {
+            List<Lecturer> lecturers = (List<Lecturer>) er.getData();
+            if ((lecturers == null) || lecturers.isEmpty()) {
+                out.println("Không có GV nào được thêm");
+            } else {
+                out.println("<i>Thêm thành công các GV:</i>");
+                out.println("<table class=\"general-table\" style=\"width: 450px;\">");
+                out.println("<tr><th>STT</th><th>Mã GV</th><th>Họ và tên</th><th>CMND</th></tr>");
+                for (int i = 0; i < lecturers.size(); i++) {
+                    out.println("<tr>"
+                            + "<td>" + (i+1) + "</td>"
+                            + "<td>" + lecturers.get(i).getId() + "</td>"
+                            + "<td>" + lecturers.get(i).getFullName() + "</td>"
+                            + "<td>" + lecturers.get(i).getIdentityCard() + "</td>"
+                            + "</tr>");
+                }
+                out.println("</table>");
+            }
+        }
+    }
+
+    //
+    // EDIT LECTURER
+    //
+    private void doPrepareDataForEditLecturer(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        String magv = request.getParameter("magv");
+        Lecturer s = lecturerService.getLecturer(magv);
+        
+        HttpSession session = request.getSession();
+        session.setAttribute("lecturer", s);
+        
+        List<Faculty> faculties = (List<Faculty>) session.getAttribute("faculties");
+        if ((faculties == null) || faculties.isEmpty()) {
+            faculties = pdtService.getAllFaculty();
+            session.setAttribute("faculties", faculties);
+        }
+        
+        String path = "./jsps/PDT/EditLecturer.jsp";
+        response.sendRedirect(path);
+    }
+
+    private void doUpdateLecturer(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        // Get data from request instance.
+        Lecturer s = getLecturerFromRequest(request);
+        ExecuteResult er = lecturerService
+                .updateLecturer(request.getSession().getId(), s);
+        
+        PrintWriter out = response.getWriter();
+        out.println(er.getMessage());
+    }
+
+    private void doDeleteMulti(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        PrintWriter out = response.getWriter();
+        /** Data hold list of student tobe deleted
+         in format: magv1 - magv2 - magvn**/
+        String data = request.getParameter("data");
+        if (StringUtils.isEmpty(data)) {
+            out.append("error " + "Không lấy được dữ liệu từ Client."
+                    + " Vui lòng thử lại.");
+            return;
+        }
+        
+        List<Lecturer> lecturers = new ArrayList<Lecturer>(10);
+        List<String> magv = Arrays.asList(data.split("-"));
+        
+        String sessionId = request.getSession().getId();
+        ExecuteResult er = lecturerService.deleteLecturers(
+                            magv, false, sessionId);
+        
+        if (!er.isIsSucces()) {
+            out.append("error " + er.getMessage());
+        } else {
+            lecturers = lecturerService.getLecturers(sessionId);
+            if ((lecturers != null) && !lecturers.isEmpty()) {
+                writeOutListLecturers(out, lecturers);
+            }
+        }
+    }
+    
+    //#############################################
+    public enum ManageLecturerSupport {
+        DEFAULT("default"), // List first page of class opened.
+        SEARCH("search"),
+        PRE_IMPORT("pre-import-lecturer"),
+        DELETE_ONE("delete-one"),
+        DELETE_MULTI("delete-multi"),
+        VALIDATE_ADD_ONE("validate-add-one"),
+        ADD_ONE("add-one"),
+        CANCEL_ADD_ONE("cancel-add-one"),
+        IMPORT_FROM_FILE("importfromfile"),
+        RETRY_IMPORT_FROM_FILE("retry-import-from-file"),
+        PRE_EDIT("editlecturer"),
+        UPDATE("update");
+        
+        private String description;
+        ManageLecturerSupport(String description) {
+            this.description = description;
+        }
+        
+        public String getValue() {
+            return description;
         }
     }
 }
