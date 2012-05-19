@@ -185,9 +185,9 @@ public class Lecturer extends AbstractJdbcModel<String> {
             phone = values[5] == null ? "" : values[5].toString();
             email = values[6] == null ? "" : values[6].toString();
             gender = values[7].toString();
-            hocHam = values[8] == null ? "" : values[9].toString();
+            hocHam = values[8] == null ? "" : values[8].toString();
             hocVi = values[9] == null ? "" : values[9].toString();
-            note = values[10] == null ? "" : values[9].toString();
+            note = values[10] == null ? "" : values[10].toString();
 
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
