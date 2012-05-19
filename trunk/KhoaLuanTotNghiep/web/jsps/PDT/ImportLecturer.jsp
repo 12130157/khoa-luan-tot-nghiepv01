@@ -4,160 +4,293 @@
     Author     : LocNguyen
 --%>
 
+<%@page import="uit.cnpm02.dkhp.model.type.HocVi"%>
+<%@page import="java.util.EnumSet"%>
+<%@page import="uit.cnpm02.dkhp.model.type.HocHam"%>
+<%@page import="java.util.Calendar"%>
+<%@page import="uit.cnpm02.dkhp.model.Lecturer"%>
+<%@page import="uit.cnpm02.dkhp.utilities.ExecuteResult"%>
 <%@page import="uit.cnpm02.dkhp.DAO.DAOFactory"%>
 <%@page import="uit.cnpm02.dkhp.model.Faculty"%>
 <%@page import="java.util.List"%>
 <%@include file="MenuPDT.jsp" %>
+<script src="../../javascripts/DateTimePicker.js" type="text/javascript"></script>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 
 <%
-    String listFaculties = "";
-    String listCourse = "";
-    String listClass = "";
-    List<Faculty> faculties = DAOFactory.getFacultyDao().findAll();
-    int i;
-    if ((faculties != null) && !faculties.isEmpty()) {
-        for (i = 0; i < faculties.size(); i++) {
-            if (i > 0) {
-                listFaculties += "-";
-            }
-            listFaculties += faculties.get(i).getId();
-        }
-    }
+    List<Faculty> faculties = (List<Faculty>) session.getAttribute("faculties");
     
-    String error = (String) session.getAttribute("error");
-    //if ((error != null) && !error.isEmpty()) {
-    //    session.removeAttribute("error");
-    //}
+    /**Is this page load by response when submit import student
+        from file ?**/
+    boolean isRespForImpFromFile = false;
+    try {
+        isRespForImpFromFile = (Boolean)session.getAttribute("import.from.file.response");
+    } catch (Exception ex) {
+        isRespForImpFromFile = false;
+    }
+    ExecuteResult importFromFileER = null;
+    if (isRespForImpFromFile) {
+        importFromFileER = (ExecuteResult)session.getAttribute("import-from-file-result");
+    }
 %>
 <html>
     <head>
         <link href="../../csss/menu.css" rel="stylesheet" type="text/css" media="screen">
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Quản lý sinh viên</title>
+        <title>Quản lý Giảng viên</title>
         <style media="all" type="text/css">
-            #dataTable{
-                margin-left: 10px;
-                margin-top: 20px;
-                margin-bottom: 20px;
-                width: 740px;
-                border: 3px solid #73726E;
-            }
-            #dataTable-th{
-                height: 32px;
-                font-weight: bold;
-                background-color: #175F6E;
-                text-align: center;
-            }
-            #dataTable td{
-                background: url("../../imgs/opaque_10.png") repeat scroll 0 0 transparent;
-                padding: 2px 5px 2px 5px;
-                text-align: left;
-            }
-            #formsearch{
-                margin-top: 10px;
-                margin-left: 20px;
-                padding: 5px 10px 5px 10px;
-                background: url("../../imgs/opaque_10.png") repeat scroll 0 0 transparent;
-                border: 3px solid #73726E;
-                width: 320px;
-            }
-            #red{
-                margin-left: 32px;
-                margin-top: 15px;
-                background-color: #e4e4e3;
-                width: 250px;
-                height: 32px;
-            }
-            #red:hover {
-                border: 2px solid #ff092d;
-            }
-            #sidebar {
-                height:400px;
-                overflow:auto;
-            }
-
-            #error {
-                background-color: #73726E;
-                color: #ffffff;
-                border-width: 2px;
-                border-color: #9f8d39;
-                font-size: 10px;
-                float: right;
-            }
+            /** CSS override **/
         </style>
     </head>
-    <body onload="pageLoad('dataTable', 'faculties', 'course', 'clazz');">
-        <input type="hidden" name="faculties" id="faculties" value="<%=listFaculties%>">
-        <input type="hidden" name="clazz" id="clazz" value="<%=listClass%>">
-        <input type="hidden" name="course" id="course" value="<%=listCourse%>">
-
+    <body>
+        <input type="hidden" id="is-respone-for-import-from-file" value="<%= isRespForImpFromFile %>"/>
         <!--Div Wrapper-->
         <div id="wrapper">
-            <div id="mainNav"><!--Main Navigation-->
+            <!--Main Navigation-->
+            <div id="mainNav">
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
-            <div id="content"><!--Main Contents-->
+            <!--Main Contents-->
+            <div id="content">
                 <div style="text-align: center;">
-                    <u> <h3>Trang nhập Giảng Viên</h3></u>
+                    Trang nhập Giảng Viên
                 </div>
-
                 <br>
                 <hr/><hr/><br>
-                <div id="error">
-                    <%
-                        if ((error != null) && !error.isEmpty()) {
-                    %>
-                    <%= error %>
-                    <% } %>
+                <div id="btn-hide-import-form" class="clear-right">
+                    <span onclick="hideStuff('import-lecturer-one', 'btn-hide-import-form', 'Thêm GV', 'Ẩn')"
+                          class="atag"> Ẩn 
+                    </span>
                 </div>
-
-                <p>
-                    <INPUT type="button" value="Thêm hàng" onclick="addRow('dataTable')" />
-                    <INPUT type="button" value="Xóa mục đã chọn" onclick="deleteRowT('dataTable')" />
-                    <INPUT type="submit" value="Hoàn thành" onclick="submitInsertLecturerFromTable('../../ManageLecturerController?function=import', 'dataTable')" />
-                </p>
-                <hr/><hr/>
-                <div id="sidebar">
-                    <table id="dataTable" width="450px" border="1">
-                        <tr id="dataTable-th">
-                            <td><INPUT type="checkbox" name="chkAll" onclick="selectAll('dataTable', 0)" /></td>
-                            <td align: center> STT </td>
-                            <td align="center"> Mã GV </td>
-                            <td align="center"> Họ Và Tên </td>
-                            <td align="center"> Khoa </td>
-                            <td align="center"> Ngày sinh </td>
-                            <td align="center"> Quê quán </td>
-                            <td align="center"> CMND </td>
-                            <td align="center"> Điện thoại </td>
-                            <td align="center"> Email </td>
-                            <td align="center"> Giới tính </td>
-                            <td align="center"> Học Hàm </td>
-                            <td align="center"> Học Vị </td>
-                            <td align="center"> Ghi chú</td>
-                        </tr>
-                    </table>
-
-                </div> 
+                <div id="import-lecturer-one">
+                    <b><u>Phần nhập thông tin Giảng viên</u></b></br></br>
+                    <div class="clear"></div>
+                    <%-- Persional information input range --%>
+                    <div id="lecturer-persional-info">
+                        <table id="tbl-persional-info">
+                            <tr>
+                                <%
+                                String year = "" + Calendar.getInstance().get(Calendar.YEAR);
+                                year = year.substring(2); // get 2 last number
+                                %>
+                                <td> Mã GV </td>
+                                <td> <input type="text" id="txt-magv" value="<%=year%>520" /> </td>
+                            </tr>
+                            <tr>
+                                <td> Họ và tên </td>
+                                <td> <input type="text" id="txt-fullname"/> </td>
+                            </tr>
+                            <tr>
+                                <td> Ngày sinh </td>
+                                <td>
+                                    <input type="text" id="txt-birthday" name="txt-birthday">
+                                    <img src="../../imgs/cal.gif" style="cursor: pointer;" onclick="javascript:NewCssCal('txt-birthday','YYMMMDD')" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td> Giới tính </td>
+                                <td>
+                                    <select id="txt-gender" class="input-minwidth">
+                                        <option value="Nam"> Nam </option>
+                                        <option value="Nữ"> Nữ </option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td> CMND </td>
+                                <td> <input type="text" id="txt-cmnd"/> </td>
+                            </tr>
+                            <tr>
+                                <td> Điện thoại </td>
+                                <td> <input type="text" id="txt-phone"/> </td>
+                            </tr>
+                            <tr>
+                                <td> Email </td>
+                                <td> <input type="text" id="txt-email"/> </td>
+                            </tr>
+                            <tr>
+                                <td> Quê quán </td>
+                                <td> 
+                                    <textarea id="txt-home" class="input-text-area">
+                                    </textarea> 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td> Khoa </td>
+                                <td> 
+                                    <select id="txt-faculty" class="input-minwidth" onchange="changeFaculty()">
+                                        <%
+                                        if ((faculties != null) && !faculties.isEmpty()) {
+                                            for (int i = 0; i < faculties.size(); i++) {
+                                                Faculty f = faculties.get(i);
+                                                %>
+                                                <option value="<%=f.getId()%>"> <%= f.getFacultyName()%> </option>
+                                                <%
+                                            }
+                                        }
+                                        %>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td> Học Hàm </td>
+                                <td>
+                                    <select id="txt-hocham" class="input-minwidth">
+                                        <%
+                                        // Retrieve Student status
+                                        for(HocHam st : EnumSet.allOf(HocHam.class)) {
+                                        %>
+                                        <option value="<%= st.value()%>"> <%= st.description()%> </option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td> Học vị </td>
+                                <td> 
+                                    <select id="txt-hocvi" class="input-minwidth">
+                                        <%
+                                        // Retrieve Student status
+                                        for(HocVi st : EnumSet.allOf(HocVi.class)) {
+                                        %>
+                                        <option value="<%= st.value()%>"> <%= st.description()%> </option>
+                                        <%}%>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td> Ghi chú </td>
+                                <td> 
+                                    <textarea id="txt-note" class="input-text-area">
+                                    </textarea> 
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="clear"></div>
+                    <div id="import-student-button">
+                        <input type="button" value="Kiểm tra" onclick="checkAddOneLecturer()" />
+                        <input type="button" value="Thêm GV" onclick="addLecturerFromForm()" />
+                    </div>
+                    <%--div id="error"></div--%>
+                    <div id="add-from-table-result"></div>
+                    <div class="clear"></div>
+                    <div id="add-one-result" style="padding-top: 12px;">
+                            <%-- 
+                                After submit to add one lecturer from form
+                                User expect to see result here
+                                If add successfylly, user still has a choice
+                                to cancel action...
+                            --%>
+                        </div>
+                </div>
+                
+                <div class="clear"></div>
 
                 <br />
                 <hr /><hr />
-                <form id="importFromFile" action="../../ManageLecturerController?function=importfromfile" method="post" name="importFromFile" enctype="multipart/form-data">
-                    <u>Thêm Giảng Viên Từ File</u><br/>
+                <%-- Import from File --%>
+                <div id="file-import">
+                    <div id="btn-show-import-file" class="clear-right">
+                        <span onclick="showStuff('import-lecturer-from-file', 'btn-show-import-file', 'Thêm từ file', 'Ẩn')"
+                              class="atag"> Thêm từ file 
+                        </span>
+                    </div>
+                    <div id="import-lecturer-from-file">
+                        <form id="importFromFile" 
+                              action="../../ManageLecturerController?function=importfromfile&import-as-possible=false"
+                              method="post" name="importFromFile" enctype="multipart/form-data">
+                            <u>Chọn File</u>
+                            <table id="tblFromFile">
+                                <tr><td><input type="file" name="txtPath" id="txtPath"></td></tr>
+                                <tr><td><input type="submit" value="Hoàn thành"></td></tr>
+                            </table>
+                        </form><br>
+                        <div id="import-from-file-result">
+                            <%-- Show response result --%>
+                            <%
+                            if (isRespForImpFromFile && (importFromFileER != null)) {
+                                List<Lecturer> lecturers = new ArrayList<Lecturer>();
+                                if (!importFromFileER.isIsSucces()) {
+                                    %>
+                                    <i> <%= importFromFileER.getMessage()%> </i>
+                                    <%
+                                    lecturers = (List<Lecturer>)importFromFileER.getData();
+                                    if ((lecturers != null) && !lecturers.isEmpty()) {
+                                         %>
+                                          </br>
+                                         <span class="atag" onclick="retryImportFromFile()">
+                                            <b>Thử lại</b>
+                                        </span><i> ( *Chỉ Thêm những GV hợp lệ)</i>
+                                        <table class="general-table" style="width: 450px;">
+                                            <tr><th> STT </th><th>Mã GV</th><th> Họ và tên </th><th>CMND</th></tr>
+                                        <%
+                                        for (int i = 0; i < lecturers.size(); i++) {
+                                        %>
+                                            <tr>
+                                                <td><%= (i + 1) %></td>
+                                                <td><%= lecturers.get(i).getId() %></td>
+                                                <td><%= lecturers.get(i).getFullName() %></td>
+                                                <td><%= lecturers.get(i).getIdentityCard() %></td>
+                                            </tr>
+                                        <%
+                                        }//End For loop
+                                        %>
+                                        </table>
+                                        <%
+                                    }
+                                } else {
+                                    lecturers = (List<Lecturer>)importFromFileER.getData();
+                                    if ((lecturers != null) && !lecturers.isEmpty()) {
+                                        %>
+                                        <i> Thêm thành công các SV: </i>
+                                        <table class="general-table" style="width: 450px;">
+                                            <tr><th> STT </th><th>MSSV</th><th> Họ và tên </th><th>CMND</th></tr>
+                                        <%
+                                        for (int i = 0; i < lecturers.size(); i++) {
+                                        %>
+                                            <tr>
+                                                <td><%= (i + 1) %></td>
+                                                <td><%= lecturers.get(i).getId() %></td>
+                                                <td><%= lecturers.get(i).getFullName() %></td>
+                                                <td><%--= lecturers.get(i).getIdentityNumber() --%></td>
+                                            </tr>
 
-                    <table id="tblFromFile">
-                        <tr>
-                            <td><input type="file" name="txtPath" id="txtPath"></td>
-                        </tr>
-                        <tr>
-                            <td><input type="submit" value="Hoàn thành."></td>
-                        </tr>
-                    </table>
-                </form><br>
-
+                                        <%
+                                        }//End For loop
+                                        %>
+                                        </table>
+                                        <%
+                                   } else {
+                                        %>
+                                        <i>Không có GV nào được thêm, vui lòng kiểm tra lại file</i>
+                                        <%
+                                   }
+                                } // end if
+                            } //Eend if
+                            %>
+                            <%--------------------%>
+                                
+                        </div>
+                        <%--Show file format--%>
+                        <div id="btn-show-file-format" class="clear-right">
+                            <span onclick="showStuff('file-format-view', 'btn-show-file-format', 'File format', 'Ẩn')"
+                                  class="atag"> File format 
+                            </span>
+                        </div>
+                        <div id="file-format-view">
+                            <b>
+                                Show file format here
+                                This format should be update by PĐT
+                            </b>
+                        </div>
+                    </div>
+                    
+                </div>
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
@@ -165,12 +298,191 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
+        <script language="javascript">
+            //call after page loaded
+            window.onload = doAfterPageLoaded; 
+        </script>
     </body>
 
-    <script src="../../javascripts/UtilTable.js"></script>
+    <script src="../../javascripts/UtilTable.js"> </script>
     <script src="../../javascripts/AjaxUtil.js"></script>
     <SCRIPT language="javascript">
         var http = createRequestObject();
+        window.onload = doAfterPageLoaded; 
+        function doAfterPageLoaded() {
+            var isFormStudentInfoHidden = document.getElementById("is-respone-for-import-from-file").value;
+            var hiddenValue = '';
+            try {
+                hiddenValue = document.getElementById("btn-hide-import-form").value;
+            } catch (err) {
+                //
+            }
+            //if ((isFormStudentInfoHidden == 'true') && (hiddenValue == 'Ẩn')) {
+                hideStuff('import-lecturer-one', 'btn-hide-import-form', 'Thêm GV', 'Ẩn');
+            //}
+            showStuff('import-lecturer-from-file', 'btn-show-import-file', 'Thêm từ file', 'Ẩn');
+        }
+        
+        function validateData() {
+            var msgv = "";
+            var fullName = "";
+            var cmnd = "";
+            var address = "";
+            try {
+                msgv = document.getElementById("txt-magv").value;
+                fullName = document.getElementById("txt-fullname").value;
+                birthDay = document.getElementById("txt-birthday").value;
+                cmnd = document.getElementById("txt-cmnd").value;
+                address = document.getElementById("txt-home").value;
+            } catch(err) {
+                alert("[ImportLecturer][Validate] - An error occur:" + err);
+                return;
+            }
+            var error = "";
+            if ((msgv == null) || (msgv.length == 0))
+                error = "MaGV, ";
+            if ((fullName == null) || (fullName.length == 0))
+                error += "Họ tên, ";
+            if ((birthDay == null) || (birthDay.length == 0))
+                error += "Ngày sinh, ";
+            if ((cmnd == null) || (cmnd.length == 0))
+                error += "CMND, ";
+            if ((address == null) || (address.length == 0))
+                error += "Quê quán, ";
+            if (error.length > 0) {
+                alert("Các trường sau không được để trống: " + error);
+                return false;
+            } else {
+                // Validate something else...
+                return true;
+            }
+        }
+        
+        function getInformationFromForm() {
+            // Basic information
+            var magv = null;
+            var fullName = null;
+            var birthDay = null;
+            var gender = null;
+            var cmnd = null;
+            var phone = null;
+            var email = null;
+            var address = null;
+            
+            // External information from University
+            var faculty = null;
+            var hocham = null;
+            var hocvi = null;
+            var note = null;
+            try {
+                magv = document.getElementById("txt-magv").value;
+                fullName = document.getElementById("txt-fullname").value;
+                birthDay = document.getElementById("txt-birthday").value;
+                cmnd = document.getElementById("txt-cmnd").value;
+                address = document.getElementById("txt-home").value;
+                gender = document.getElementById("txt-gender").value;
+                phone = document.getElementById("txt-phone").value;
+                email = document.getElementById("txt-email").value;
+                faculty = document.getElementById("txt-faculty").value;
+                hocham = document.getElementById("txt-hocham").value;
+                hocvi = document.getElementById("txt-hocvi").value;
+                note = document.getElementById("txt-note").value;
+            } catch(err) {
+                alert("[ImportLecturer][Validate] - An error occur:" + err);
+                return;
+            }
+            var data = "&magv=" + magv
+                        + "&fullname=" + fullName
+                        + "&birthDay=" + birthDay
+                        + "&cmnd=" + cmnd
+                        + "&gender=" + gender
+                        + "&phone=" + phone
+                        + "&email=" + email
+                        + "&address=" + address
+                        + "&faculty=" + faculty
+                        + "&hocham=" + hocham
+                        + "&hocvi=" + hocvi
+                        + "&note=" + note;
+            return data;
+        }
+        
+        function checkAddOneLecturer() {
+            if (!validateData()) {
+                return;
+            }
+            
+            // Incase validate passed: continue send data to server
+            // for special check...
+            var controller = "../../ManageLecturerController?function=validate-add-one" 
+                            + getInformationFromForm();
+            if(http){
+                http.open("GET", controller ,true);
+                http.onreadystatechange = addOneLecturerResponseHandler;
+                http.send(null);
+            } else {
+                alert("Error: http object not found");
+            }
+        }
+        
+        function addLecturerFromForm() {
+            alert("Entered Add lectuere!");
+            if (!validateData()) {
+                return;
+            }
+            
+            var controller = "../../ManageLecturerController?function=add-one" 
+                            + getInformationFromForm();
+            if(http){
+                http.open("GET", controller ,true);
+                http.onreadystatechange = addOneLecturerResponseHandler;
+                http.send(null);
+            } else {
+                alert("Error: http object not found");
+            }
+        }
+        
+        function retryImportFromFile() {
+            var controller = "../../ManageLecturerController?function=retry-import-from-file";
+            if(http){
+                http.open("GET", controller ,true);
+                http.onreadystatechange = retryImportLecturerResponseHandler;
+                http.send(null);
+            } else {
+                alert("Error: http object not found");
+            }
+        }
+        
+        function retryImportLecturerResponseHandler() {
+            if(http.readyState == 4 && http.status == 200){
+                var detail = document.getElementById("import-from-file-result");
+                detail.innerHTML = http.responseText;
+            }
+        }
+        
+        function addOneLecturerResponseHandler() {
+            if(http.readyState == 4 && http.status == 200){
+                var detail = document.getElementById("add-one-result");
+                detail.innerHTML = http.responseText;
+            }
+        }
+        
+        function cancelAddOne(magv) {
+            var controller = "../../ManageLecturerController?function=cancel-add-one" 
+                            + "&magv=" + magv;
+            if(http){
+                http.open("GET", controller ,true);
+                http.onreadystatechange = addOneLecturerResponseHandler;
+                http.send(null);
+            } else {
+                alert("Error: http object not found");
+            }
+        }
+        
+        
+        
+        //
+        // Shared be cleared.
+        //
         var facultiesArray = new Array();
         var courseArray = new Array();
         var clazzsArray = new Array();
