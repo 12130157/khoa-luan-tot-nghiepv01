@@ -182,7 +182,8 @@ public class ManageStudentController extends HttpServlet {
                 continue;
             } else {
                 Student s = initStudentFromHSSFRow(rowTemp);
-                students.add(s);
+                if (s != null)
+                    students.add(s);
             }
         }
 
