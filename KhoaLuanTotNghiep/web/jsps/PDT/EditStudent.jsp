@@ -49,7 +49,7 @@
             <!--Main Contents-->
             <div id="content">
                 <%--Page's title--%>
-                <div style="text-align: center;">
+                <div id="title">
                     <u> <h3> Trang chỉnh sửa thông tin Sinh Viên </h3></u>
                 </div>
                 <p id="error">
