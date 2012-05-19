@@ -142,7 +142,6 @@
         }
         
         function createNew() {
-            alert("Entered create new...");
             var username = document.getElementById("txtUsername").value;
             var pass = document.getElementById("txtPassword").value;
             var re_pass = document.getElementById("txtRePassword").value;
