@@ -12,142 +12,100 @@
 <%
     List<Lecturer> listLecturer = (List<Lecturer>) session.getAttribute("listlecturer");
     Integer numpage = (Integer) session.getAttribute("numpage");
-    String error = (String) session.getAttribute("error");
-    if ((error != null) && !error.isEmpty()) {
-        session.removeAttribute("error");
-    }
 %>
 <html>
     <head>
-        <link href="../../csss/menu.css" rel="stylesheet" type="text/css" media="screen">
-        <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="../../csss/menu.css" rel="stylesheet" type="text/css" media="screen" />
+        <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>Quản lý giảng viên</title>
         <style media="all" type="text/css">
-            #tablelistlecturer{
-                margin-left: 10px;
-                margin-top: 20px;
-                margin-bottom: 20px;
-                width: 95%;
-                border: 3px solid #73726E;
-            }
-            #tablelistlecturer-th{
-                height: 32px;
-                font-weight: bold;
-                background-color: #175F6E;
-                text-align: center;
-            }
-            #tablelistlecturer td{
-                background: url("../../imgs/opaque_10.png") repeat scroll 0 0 transparent;
-                padding: 2px 5px 2px 5px;
-                text-align: center;
-                width: auto;
-            }
-            #formsearch{
-                margin-top: 10px;
-                margin-left: 20px;
-                padding: 5px 10px 5px 10px;
-                background: url("../../imgs/opaque_10.png") repeat scroll 0 0 transparent;
-                border: 3px solid #73726E;
-                width: 320px;
-            }
-            #red{
-                margin-left: 32px;
-                margin-top: 15px;
-                background-color: #e4e4e3;
-                width: 250px;
-                height: 32px;
-            }
-            #red:hover {
-                border: 2px solid #ff092d;
-            }
-            #sidebar {
-                height:400px;
-                overflow:auto;
-            }
+            /* CSS definition */
         </style>
     </head>
     <body onload="">
-        <!--Div Wrapper-->
+        <%--Div Wrapper--%>
         <div id="wrapper">
-            <div id="mainNav"><!--Main Navigation-->
+            <%--Main Navigation--%>
+            <div id="mainNav">
                 <%@include file="../MainNav.jsp" %>
-            </div><!--End Navigation-->
-            <div id="content"><!--Main Contents-->
-                <p id="error">
-
-                </p>
-
+            </div><%--End Navigation--%>
+            <%--Main Contents--%>
+            <div id="content">
                 <br/>
-
-                <h1>Tìm kiếm giảng viên:</h1>
-                <form>
-                    <table>
-                        <tr>
-                        <td>
-                            <input type="text" name="txtName" id="txtName" placeholder="Nhap ten GV"/>
-                            <input type="button" onclick="searchByName()" value="Tìm"/>
-                        </td>
-                        </tr>
-                    </table>
-                </form>
-                <p align="right"><b><a href="./ImportLecturer.jsp">Tiếp nhận giảng viên</a></b></p>
+                <%-- Link import student --%>
+                <p align="right"><b><a href="../../ManageLecturerController?function=pre-import-lecturer">Tiếp nhận giảng viên</a></b></p>
                 <hr><hr>
-
-                <form id="formdown" name="formdown" action="#" method="post">
-                    Danh sách giảng viên:<br/>
-                    <div id="error">
-                        <% if ((error != null) && (!error.isEmpty())) { %>
-                            <%= error %>
-                        <% } %>
+                Danh sách giảng viên:<br/>
+                <%-- Search Form --%>
+                <div id="search-lecturer-form">
+                    <%-- BUTTON DELETE SELECT ROW --%>
+                    <div id="btn-form" class="clear-left">
+                        <input type="button" onclick="deleteLecturer('tablelistlecturer')" value="Xóa mục đã chọn" />
                     </div>
-                    <input type="button" onclick="deleteLecturer('tablelistlecturer')" value="Xóa mục đã chọn" />
-                    <table id="tablelistlecturer" name="tablelistlecturer">
-                        <tr id="tablelistlecturer-th">
-                        <td><INPUT type="checkbox" name="chkAll" onclick="selectAll('tablelistlecturer', 0)" /></td>
-                        <td> STT </td>
-                        <td> Mã GV </td>
-                        <td> Họ Tên </td>
-                        <td> Khoa </td>
-                        <td> Địa chỉ </td>
-                        <td> Ngày sinh </td>
-                        <td> Giới tính </td>
-                        <td> Email </td>
-                        <td> Học Hàm </td>
-                        <td> Học Vị </td>
-                        <td> Sửa </td>
-                        <td> Xóa </td>
+                    <%--SEARCH FORM--%>
+                    <div id="search-form" class="clear-right" style="margin-right: 12px !important;">
+                        <div id="search-lecturer" style="float: right;">
+                            <input type="text" id="txt-search" placeholder="Nhập mã hoặc tên GV" />
+                            <input type="button" value="Tìm" onclick="searchLecturer()" />
+                        </div>
+                    </div>
+                </div>
+                <div class="clear"></div>
+                <div id="list-lecturers">
+                <%-- List lecturers (Table)--%>
+                    <table id="tablelistlecturer" name="tablelistlecturer" class="general-table">
+                        <tr>
+                            <th><INPUT type="checkbox" name="chkAll" onclick="selectAll('tablelistlecturer', 0)" /></td>
+                            <th> STT </th>
+                            <th><span class="atag" onclick="sort('MaGV')" > Mã GV </span></th>
+                            <th><span class="atag" onclick="sort('HoTen')" > Họ Tên </span></th>
+                            <th><span class="atag" onclick="sort('MaKhoa')" > Khoa </span></th>
+                            <th><span class="atag" onclick="sort('QueQuan')" > Địa chỉ </span></th>
+                            <th><span class="atag" onclick="sort('NgaySinh')" > Ngày sinh </span></th>
+                            <th><span class="atag" onclick="sort('GioiTinh')" > Giới tính </span></th>
+                            <th><span class="atag" onclick="sort('Email')" > Email </span></th>
+                            <th><span class="atag" onclick="sort('HocHam')" > Học Hàm </span></th>
+                            <th><span class="atag" onclick="sort('HocVi')" > Học Vị </span></th>
+                            <th> Sửa </th>
+                            <th> Xóa </th>
                         <%--Should be sorted when click on table's header ? --%>
                         </tr>
                         <%if ((listLecturer != null) && !listLecturer.isEmpty()) {%>
                         <% for (int i = 0; i < listLecturer.size(); i++) {%>
                         <tr>
-                        <td><INPUT type="checkbox" name="chk<%= i%>"/></td>
-                        <td> <%= (i + 1)%> </td>
-                        <td> <%= listLecturer.get(i).getId()%> </td> 
-                        <td> <%= listLecturer.get(i).getFullName()%> </td>
-                        <td> <%= listLecturer.get(i).getFacultyCode() %> </td>
-                        <td> <%= listLecturer.get(i).getAddress() %> </td>
-                        <td> <%= listLecturer.get(i).getBirthday()%> </td>
-                        <td> <%= listLecturer.get(i).getGender()%> </td>
-                        <td> <%= listLecturer.get(i).getEmail() %> </td>
-                        <td> <%= listLecturer.get(i).getHocHam() %> </td>
-                        <td> <%= listLecturer.get(i).getHocVi() %> </td>
-                        <td><a href="../../ManageLecturerController?function=editlecturer&mgv=<%= listLecturer.get(i).getId()%>">Sửa</a></td>
-                        <td><a href="../../ManageLecturerController?function=delete&ajax=false&data=<%= listLecturer.get(i).getId()%>">Xóa</a></td>
+                            <td><INPUT type="checkbox" name="chk<%= i%>"/></td>
+                            <td> <%= (i + 1)%> </td>
+                            <td> <%= listLecturer.get(i).getId()%> </td> 
+                            <td> <%= listLecturer.get(i).getFullName()%> </td>
+                            <td> <%= listLecturer.get(i).getFacultyCode() %> </td>
+                            <td> <%= listLecturer.get(i).getAddress() %> </td>
+                            <td> <%= listLecturer.get(i).getBirthday()%> </td>
+                            <td> <%= listLecturer.get(i).getGender()%> </td>
+                            <td> <%= listLecturer.get(i).getEmail() %> </td>
+                            <td> <%= listLecturer.get(i).getHocHam() %> </td>
+                            <td> <%= listLecturer.get(i).getHocVi() %> </td>
+                            <td><a href="../../ManageLecturerController?function=editlecturer&magv=<%= listLecturer.get(i).getId()%>">Sửa</a></td>
+                            <td><span class="atag" onclick="deleteOneLecturer('<%= listLecturer.get(i).getId()%>')">Xóa</a></td>
                         <% }%>
                         </tr>
                         <%}%>
                     </table>
-                    <input style="position:absolute; left:650px;" type="button" value="|<<" onclick="firstPage()">
-                    <input style="position:absolute; left:680px;" type="button" value="<<" onclick="prePage()">
-                    <input style="position:absolute; left:710px;" type="button" value=">>" onclick="nextPage()">
-                    <input style="position:absolute; left:740px;" type="button" value=">>|" onclick="endPage()"><br>
-                    <input type="hidden" value="<%= numpage %>" id="numpage" />
+                </div>
+                <%--  PAGGING --%>
+                <div id="paggind">
+                    <input type="button" value="|<<" onclick="firstPage()">
+                    <input type="button" value="<<" onclick="prePage()">
+                    <input type="button" value=">>" onclick="nextPage()">
+                    <input type="button" value=">>|" onclick="endPage()"><br>
+                    <input type="hidden" value="<%= numpage%>" id="numpage" />
+                </div>
+                 <%-- Download file form --%>
+                <form id="formdown" name="formdown" action="../DownloadFile?action=test" method="post">    
                 </form>
-            </div><!--End Contents-->
-
-            <div id="footer"><!--Footer-->
+            </div><%--End Contents--%>
+            <%--Footer--%>
+            <div id="footer">
                 <%@include file="../Footer.jsp" %>
             </div><!--End footer-->
         </div>
@@ -201,37 +159,46 @@
         }
         
         function searchHandler() {
-            if(http.readyState == 4 && http.status == 200){
-                location.reload(true);
+            if((http.readyState == 4) && (http.status == 200)){
+                var detail = document.getElementById("list-lecturers");
+                detail.innerHTML = http.responseText;
             }
         }
         
-        function searchByName(){
-            searchType = 'name';
-            searchValue = document.getElementById("txtName").value;
-            submitSearch();
-        }
-        
-        /*function searchByClass(){
-            searchType = 'clazz';
-            searchValue = document.getElementById("txtclass").value;
-            submitSearch();
-        }
-        
-        function searchByCourse(){
-            searchType = "course";
-            searchValue = document.getElementById("txtCourse").value;
-            submitSearch();
-        }*/
-        
-        function submitSearch() {
-            var pagename = "../../ManageLecturerController?function=listlecturer&searchtype=" + searchType + "&searchvalue=" + searchValue + "&currentpage=" + currentpage + "&ajax=true";
+        function searchLecturer() {
+            var key = document.getElementById("txt-search").value;
+            var pagename = "../../ManageLecturerController?function=search"
+                            + "&key=" + key;
             if(http){
                 http.open("GET", pagename, true);
-                http.onreadystatechange = handleResponseDelete;
+                http.onreadystatechange = searchHandler;
                 http.send(null);
             }
         }
+        
+        function deleteOneLecturer(id) {
+            var pagename = "../../ManageLecturerController?function=delete-one&magv=" + id;
+            if(http){
+                http.open("GET", pagename, true);
+                http.onreadystatechange = handleResponseDelete
+                http.send(null);
+            }
+        }
+        
+        function handleResponseDelete(){
+            if((http.readyState == 4) && (http.status == 200)){
+                var responeResult = http.responseText;
+                if (responeResult.substring(0, 5) == "error") {
+                    var error = responeResult.substring(6, responeResult.length-1);
+                    alert("Error: " + error);
+                    return;
+                }
+                
+                var detail = document.getElementById("list-lecturers");
+                detail.innerHTML = http.responseText;
+            }
+        }
+        
 
         function deleteLecturer(tableId) {
             try {
@@ -253,9 +220,9 @@
                     }
                 }
                 data = data.replace(/\s/g,'');
-                var controller = '../../ManageLecturerController?function=delete' + '&data=' + data + "&ajax=true";
+                var controller = '../../ManageLecturerController?function=delete-multi' 
+                    + '&data=' + data + "&ajax=true";
                 if(http){
-                    alert('aaaaaaaa');
                     http.open("GET", controller, true);
                     http.onreadystatechange = handleResponseDelete;
                     http.send(null);
@@ -267,7 +234,14 @@
 
         function handleResponseDelete(){
             if((http.readyState == 4) && (http.status == 200)){
-                var detail = document.getElementById("tablelistlecturer");
+                var responeResult = http.responseText;
+                if (responeResult.substring(0, 5) == "error") {
+                    var error = responeResult.substring(6, responeResult.length-1);
+                    alert("Error: " + error);
+                    return;
+                }
+                
+                var detail = document.getElementById("list-lecturers");
                 detail.innerHTML = http.responseText;
             }
         }
