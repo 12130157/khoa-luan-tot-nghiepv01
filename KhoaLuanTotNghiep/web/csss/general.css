@@ -200,6 +200,11 @@ table.general-table td{
     overflow:auto;
 }
 
+.short_sidebar {
+    height:250px;
+    overflow:auto;
+}
+
 /*Import student page*/
 #import-student-one {
     
