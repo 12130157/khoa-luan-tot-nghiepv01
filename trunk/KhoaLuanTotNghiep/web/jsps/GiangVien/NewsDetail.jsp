@@ -20,10 +20,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Trang Chủ</title>
         <style media="all" type="text/css">
-            #frmimg{
-                margin-left: 50px;
-                border: 5px solid #98AFC7;
-            }
+            /**CSS OVERIDDEN**/
         </style>
     </head>
     <body>
