@@ -357,11 +357,9 @@
                                   class="atag"> File format 
                             </span>
                         </div>
-                        <div id="file-format-view">
-                            <b>
-                                Show file format here
-                                This format should be update by PĐT
-                            </b>
+                        <div class="clear"></div>
+                        <div id="file-format-view" class="short_sidebar">
+                            <img src="../../imgs/form_format/import_student_format_file.PNG"/>
                         </div>
                     </div>
                     
