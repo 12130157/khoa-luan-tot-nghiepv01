@@ -36,10 +36,10 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
 
     public TrainClass() {
     }
-
+    
     public TrainClass(String classCode, String year, int semester, String subjectCode, String lecturerCode,
             String classRoom, int numOfStudent, int numOfStudentReg, int studyDate, int shift,
-            Date testDate, String testRoom, String testHours, Date _startDate, Date _endDate) {
+            Date testDate, String testRoom, String testHours) {
         TrainClassID trainClassID=new TrainClassID(classCode, year, semester);
         setId(trainClassID);
         this.subjectCode = subjectCode;
@@ -55,10 +55,21 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
         this.subjectName = "";
         this.lecturerName = "";
         this.numTC = 0;
-        this.startDate=_startDate;
-        this.endDate = _endDate;
         
         this.status = TrainClassStatus.OPEN;
+    }
+
+    public TrainClass(String classCode, String year, int semester, String subjectCode, String lecturerCode,
+            String classRoom, int numOfStudent, int numOfStudentReg, int studyDate, int shift,
+            Date testDate, String testRoom, String testHours, Date startDate, Date endDate) {
+
+        this(classCode, year, semester, subjectCode, lecturerCode,
+            classRoom, numOfStudent, numOfStudentReg, studyDate, shift,
+            testDate, testRoom, testHours);
+        
+        this.startDate = startDate;
+        this.endDate = endDate;
+        
     }
 
     public Date getEndDate() {
