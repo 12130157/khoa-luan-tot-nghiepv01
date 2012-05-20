@@ -10,7 +10,6 @@
 <%@page import="uit.cnpm02.dkhp.utilities.DateTimeUtil"%>
 <%@page import="uit.cnpm02.dkhp.model.Faculty"%>
 <%@page import="uit.cnpm02.dkhp.model.Lecturer"%>
-<%@include file="MenuPDT.jsp" %>
 <script src="../../javascripts/DateTimePicker.js" type="text/javascript"></script>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
@@ -33,6 +32,8 @@
     <body onload="">
         <!--Div Wrapper-->
         <div id="wrapper">
+            <%--Menu--%>
+            <%@include file="MenuPDT.jsp"%>
             <!--Main Navigation-->
             <div id="mainNav">
                 <%@include file="../MainNav.jsp" %>

@@ -5,7 +5,6 @@
 --%>
 <%@page import="uit.cnpm02.dkhp.model.Rule"%>
 <%@page import="java.util.List"%>
-<%@include file="MenuPDT.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
     List<Rule> rules = (List<Rule>) session.getAttribute("rules");
@@ -23,7 +22,8 @@
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
-
+            <%-- Menu --%>
+            <%@include file="MenuPDT.jsp" %>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->

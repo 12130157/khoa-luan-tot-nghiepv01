@@ -6,7 +6,6 @@
 
 <%@page import="java.util.List"%>
 <%@page import="uit.cnpm02.dkhp.model.Comment"%>
-<%@include file="MenuPDT.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
@@ -39,26 +38,19 @@
                 text-align: center;
                 background-color: #5F676D;
             }
-            #title{
-                text-align: center;
-            }
-            #page{
-                text-align: center;
-            }
-            a {
-                 color: violet;
-            }
         </style>
     </head>
     <body>
-        <!--Div Wrapper-->
-        <div id="wrapper">            
+        <%--Div Wrapper--%>
+        <div id="wrapper">
+            <%--Menu--%>
+            <%@include file="MenuPDT.jsp"%>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
                 <div id="title">
-                    <u><h3>Quản lý tin ý kiến</h3></u>
+                    <u>Quản lý tin ý kiến</u>
                 </div>
                 <br><h3>Danh sách các ý kiến:</h3>
                 <br>
@@ -90,7 +82,7 @@
                       <%}
                     }%>
                     </table>
-                    <div id="page">
+                    <div id="paggind">
                          <input type="button" value="|<<" onclick="FirstPage()"/>- 
                          <input type="button" value="<<" onclick="PrePage()"/>-
                          <input type="button" value=">>" onclick="NextPage()"/>-
@@ -108,7 +100,7 @@
         </div>
         <!--End Wrapper-->
     </body>
-    <script src="../../javascripts/CommentManager.js"></script>
+    <script src="../../javascripts/CommentManager.js"> </script>
      <script  type = "text/javascript" >
          var currentpage=1;
          var http = createRequestObject();

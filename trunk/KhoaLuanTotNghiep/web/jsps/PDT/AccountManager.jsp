@@ -9,7 +9,6 @@
 <%@page import="uit.cnpm02.dkhp.DAO.DAOFactory"%>
 <%@page import="uit.cnpm02.dkhp.model.Account"%>
 <%@page import="java.util.List"%>
-<%@include file="MenuPDT.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <%
@@ -31,6 +30,7 @@
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
+            <%@include file="MenuPDT.jsp"%>
             <!--Main Navigation-->
             <div id="mainNav">
                 <%@include file="../MainNav.jsp" %>

@@ -30,6 +30,8 @@
     <body onload="">
         <!--Div Wrapper-->
         <div id="wrapper">
+            <%-- Menu --%>
+            <%@include file="MenuPDT.jsp" %>
             <!--Main Navigation-->
             <div id="mainNav">
                 <%@include file="../MainNav.jsp" %>
