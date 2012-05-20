@@ -17,7 +17,6 @@
 <%@page import="uit.cnpm02.dkhp.model.Faculty"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Date"%>
-<%@include file="MenuPDT.jsp" %>
 <script src="../../javascripts/DateTimePicker.js" type="text/javascript"></script>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
