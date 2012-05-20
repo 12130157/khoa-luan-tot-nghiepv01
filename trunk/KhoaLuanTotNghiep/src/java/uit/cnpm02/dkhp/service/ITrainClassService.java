@@ -26,6 +26,13 @@ public interface ITrainClassService {
     boolean isExisted(TrainClass obj);
     
     boolean validate(TrainClass obj);
+
+    /**
+     * Return all train class of specified lecturer.
+     * @param lecturer
+     * @return 
+     */
+    public List<TrainClass> getCurrentTrainClass(String lecturer);
     
     
 }

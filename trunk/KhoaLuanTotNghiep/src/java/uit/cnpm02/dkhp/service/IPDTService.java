@@ -27,4 +27,10 @@ public interface IPDTService {
      * @return 
      */
     List<Faculty> getAllFaculty();
+    
+    /**
+     * This for lecturer using to upload final score
+     * (exel file.)
+     */
+    void uploadScoreSheet();
 }
