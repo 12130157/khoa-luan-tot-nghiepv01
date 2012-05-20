@@ -181,6 +181,13 @@ table.general-table td{
     background-color: #5F676D;
 }
 
+table.general-table tr:hover td{
+    background-color: #fff;
+}
+
+table.general-table tr:active td{
+    background-color: #f40f0f;
+}
 
 #new-range img{
     width:120px;
