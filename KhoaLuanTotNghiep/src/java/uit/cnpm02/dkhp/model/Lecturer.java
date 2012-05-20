@@ -236,6 +236,8 @@ public class Lecturer extends AbstractJdbcModel<String> {
             result = this.getHocHam().compareTo(o2.getHocHam());
         } else if (by.equalsIgnoreCase("HocVi")) {
             result = this.getHocVi().compareTo(o2.getHocVi());
+        } else if (by.equalsIgnoreCase("QueQuan")) {
+            result = this.getAddress().compareTo(o2.getAddress());
         }
         
         return result;
