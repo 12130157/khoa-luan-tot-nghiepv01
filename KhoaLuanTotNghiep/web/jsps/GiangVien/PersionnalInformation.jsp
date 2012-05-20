@@ -1,23 +1,20 @@
 <%-- 
-    Document   : AddSubject
-    Created on : 11-11-2011, 23:45:21
+    Document   : PersionnalInformation
+    Created on : 20-05-2012, 21:37:16
     Author     : LocNguyen
 --%>
-<%@page import="uit.cnpm02.dkhp.utilities.FileInfo"%>
-<%@page import="java.util.List"%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <%
-    List<FileInfo> files = (List<FileInfo>)session.getAttribute("files");
-    String username = (String)session.getAttribute("username");
+// Java code here...
 %>
 <html>
     <head>
         <link href="../../csss/menu.css" rel="stylesheet" type="text/css" media="screen" />
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>Quản lý File</title>
+        <title>Trang cá nhân</title>
         <style media="all" type="text/css">
             /* CSS definition */
         </style>
@@ -57,7 +54,7 @@
                             <u>Chọn File</u>
                             <table id="tblFromFile">
                                 <tr><td><input type="file" name="txtPath" id="txtPath" accept="application/xls" /></td></tr>
-                                <tr><td><input type="button" value="Tải lên" onclick="submitUploadFile()" /></td></tr>
+                                <tr><td><input type="submit" value="Tải lên" /></td></tr>
                             </table>
                         </form>
                     </div>
@@ -83,19 +80,6 @@
                             %>
                         </table>
                     </div>
-                    <div class="clear"></div>
-                    <div>
-                        <span class="atag" onclick="getTrainClass('<%= username %>')">
-                            Các lớp <%= "<b> " + username + " </b>" %> đang dạy
-                        </span>
-                        <div id="btn-show-class-list">
-                            <span onclick="showStuff('list-trainclass', 'btn-show-class-list', 'Hiện', 'Ẩn')"
-                                  class="atag"> Ẩn 
-                            </span>
-                        </div>
-                        <div id="list-trainclass">
-                        </div>
-                    </div>
                     <%--Show file format--%>
                     <div class="clear"></div>
                     <br /><br />
@@ -119,7 +103,6 @@
     </body>
     <script src="../../javascripts/AjaxUtil.js"></script>
     <SCRIPT language="javascript">
-        var http = createRequestObject();
         window.onload = doAfterPageLoaded; 
         function doAfterPageLoaded() {
             try {
@@ -129,45 +112,6 @@
             }
             hideStuff('file-format-view', 'btn-show-file-format', 'File format', 'Ẩn');
             //showStuff('import-lecturer-from-file', 'btn-show-import-file', 'Thêm từ file', 'Ẩn');
-        }
-        
-        function getTrainClass(lecturerId) {
-            var controller = "../../LecturerPrivateController?function=get-train-class"
-                    + "&lecturer=" + lecturerId;
-            if(http){
-                http.open("GET", controller ,true);
-                http.onreadystatechange = getTrainClassHandler;
-                http.send(null);
-            } else {
-                alert("Error: http object not found");
-            }
-        }
-        
-        function getTrainClassHandler() {
-            if(http.readyState == 4 && http.status == 200){
-                var detail = document.getElementById("list-trainclass");
-                detail.innerHTML = http.responseText;
-            }
-        }
-        
-        function submitUploadFile() {
-            // Validate file input
-            var path = document.getElementById("txtPath").value;
-            if (path.length == 0) {
-                alert("Hãy chọn file trước khi submit.");
-                return;
-            }
-            
-            if (path.indexOf(".xls") < 0) {
-                alert("Hiện tại hệ thống chỉ hỗ trợ file .xls");
-                return;
-            }
-            
-            // If corect --> upload file
-            
-            document.forms["upload-file"].submit();
-            
-            // Else show error information
         }
     </script>
 </html>
