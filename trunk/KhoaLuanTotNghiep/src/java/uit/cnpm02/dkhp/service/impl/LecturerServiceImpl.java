@@ -1,6 +1,8 @@
 package uit.cnpm02.dkhp.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +16,7 @@ import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.service.ILecturerService;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
+import uit.cnpm02.dkhp.utilities.StringUtils;
 
 /**
  *
@@ -313,8 +316,43 @@ public class LecturerServiceImpl implements ILecturerService {
     }
 
     @Override
-    public List<Lecturer> sort(String sessionId, String by) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public List<Lecturer> sort(String sessionId, final String by) {
+        String sortType = "ASC";
+        try {
+            sortType = sortTypes.get(sessionId);
+            sortTypes.remove(sessionId);
+        } catch (Exception ex) {
+            sortType = "ASC";
+        }
+        if (StringUtils.isEmpty(sortType)) {
+            sortType = "ASC";
+        }
+        
+        if (sortType.equalsIgnoreCase("ASC")) {
+            sortTypes.put(sessionId, "DES");
+        } else {
+            sortTypes.put(sessionId, "ASC");
+        }
+
+        final String sortType_final = sortType;
+        List<Lecturer> lecturers = currentLecturers.get(sessionId);
+        if ((lecturers == null) || lecturers.isEmpty()) {
+            lecturers = getLecturers(1, sessionId);
+        }
+        
+        if ((lecturers != null) && (!lecturers.isEmpty())) {
+            Collections.sort(lecturers, new Comparator<Lecturer>() {
+            @Override
+            public int compare(Lecturer o1, Lecturer o2) {
+                if (sortType_final.equals("ASC"))
+                    return o1.compare(o2, by);
+                else
+                    return o2.compare(o1, by);
+            }
+        });
+        }
+        currentLecturers.put(sessionId, lecturers);
+        return lecturers;
     }
 
     @Override
