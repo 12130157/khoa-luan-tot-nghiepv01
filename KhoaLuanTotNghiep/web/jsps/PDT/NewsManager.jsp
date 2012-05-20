@@ -20,33 +20,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Quản lý tin tức</title>
         <style media="all" type="text/css">
-
-            #formdetail table{
-                width: 100%;
-                padding-left: 10px;
-                padding-right: 10px;
-                text-align: center;
-
-            }
-            #formdetail table th{
-                background-color:#00ff00;
-                height: 30px;
-                border-color: black;
-            }
-
-            #formdetail table td{
-                text-align: center;
-                background-color: #5F676D;
-            }
-            #title{
-                text-align: center;
-            }
-            #page{
-                text-align: center;
-            }
-            a {
-                 color: violet;
-            }
+            /**CSS Overidden**/
         </style>
     </head>
     <body>
@@ -59,14 +33,14 @@
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
                 <div id="title">
-                    <u><h3>Quản lý tin tức hệ thống</h3></u>
+                    <u>Quản lý tin tức hệ thống</u>
                 </div>
                 <br><h3>Danh sách các tin tức:</h3>
                    <a href="CreateNews.jsp">Đăng tin mới</a>
                  <hr/><hr/><br>
                 <div id="NewsList">
                 <form id="formdetail" name="formdetail">
-                    <table id="Newsdetail" name="Newsdetail" border="2" bordercolor="yellow" >
+                    <table id="Newsdetail" class="general-table" name="Newsdetail" border="2" bordercolor="yellow" >
                         <tr>
                             <th>STT</th><th>Ngày đăng</th><th >Tiêu đề</th><th>Tình trạng</th><th>Sửa</th><th>Xem</th><th>Xóa</th>
                         </tr>
@@ -95,7 +69,7 @@
                       <%}
                     }%>
                     </table>
-                    <div id="page">
+                    <div id="paggind">
                          <input type="button" value="|<<" onclick="FirstPage()"/>- 
                          <input type="button" value="<<" onclick="PrePage()"/>-
                          <input type="button" value=">>" onclick="NextPage()"/>-
