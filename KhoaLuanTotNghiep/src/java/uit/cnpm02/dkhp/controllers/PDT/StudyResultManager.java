@@ -81,6 +81,9 @@ public class StudyResultManager extends HttpServlet {
             }else if (requestAction.equals(ReportFunctionSupported.
                                                 UPDATE.getValue())) {
                 updateMark(request, response);
+            }else if (requestAction.equals(ReportFunctionSupported.
+                                                COMPLETE_UPDATE.getValue())) {
+                
             }
             
              
@@ -89,8 +92,8 @@ public class StudyResultManager extends HttpServlet {
         }
     }
 private void updateMark(HttpServletRequest request, HttpServletResponse response){
-     try{
-         String path="";
+    String path=""; 
+    try{
             HttpSession session = request.getSession();  
             String studentCode = request.getParameter("studentCode");
             String subjectCode = request.getParameter("subjectCode");
@@ -99,14 +102,16 @@ private void updateMark(HttpServletRequest request, HttpServletResponse response
             Student student = studentService.getStudent(studentCode);
             Class classes = DAOFactory.getClassDao().findById(student.getClassCode());
             Faculty faculty = DAOFactory.getFacultyDao().findById(student.getFacultyCode());
-            studyResult.setSubjectName(DAOFactory.getSubjectDao().findById(subjectCode).getSubjectName());
+            String subjectName = DAOFactory.getSubjectDao().findById(studyResult.getId().getSubjectCode()).getSubjectName();
+            studyResult.setSubjectName(subjectName);
             session.setAttribute("classes", classes);
             session.setAttribute("faculty", faculty);
             session.setAttribute("result", studyResult);
             session.setAttribute("student", student);
             path = "./jsps/PDT/UpdateMarkForStudent.jsp";
+            response.sendRedirect(path);
          }catch(Exception ex){
-           String path= "./jsps/Message.jsp";
+           path= "./jsps/Message.jsp";
             try {
                 response.sendRedirect(path);
             } catch (IOException ex1) {
@@ -238,7 +243,7 @@ public enum ReportFunctionSupported {
         UPDATE("update"),
         RELOAD("reload"),
         DETAIL("detail"),
-        DOWNLOAD_STUDENT_REPORT("download-student-report");
+        COMPLETE_UPDATE("complete_update");
         
         private String description;
         ReportFunctionSupported(String description) {

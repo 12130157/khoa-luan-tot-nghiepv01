@@ -24,7 +24,7 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
     <head>
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Kết quả học tập</title>
+        <title>Cập nhật điểm học tập</title>
         <style media="all" type="text/css">
 
             #formstudent{
@@ -84,7 +84,7 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
                 width: 99%;
             }
             #detail{
-                width: 90%;
+                width: 50%;
             }
              #detail th{
                text-align: center;
@@ -145,6 +145,10 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
                                     <%}%>
                                 </select>
                             </th>
+                        </tr>
+                        <tr>
+                            <td>Cập nhật </td>
+                            <th><input  type="button" value="Thay đổi" /></th>
                         </tr>
                     </table>
                  </form>
