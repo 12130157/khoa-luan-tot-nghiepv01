@@ -16,8 +16,12 @@
 	margin-top: -35px;
 	list-style: none outside none;
         width: 1200px;
+        
 }
 
+#menu li li{
+    background: none;
+}
 #menu ul li{
 	position: relative;
 	display: inline-block;
@@ -46,9 +50,11 @@
 }
 
 #menu li ul{
+        background: #b0b0b0;
 	position: absolute;
 	display: none;
 	width: 5cm;
+        top: 55px;
 }
 
 #menu li:hover ul{
@@ -57,7 +63,7 @@
 
 #menu ul li ul li{
 	border: 1px solid #ffffff;
-	background-color: #9f8d39;
+	/*background-color: #9f8d39;*/
 	width: 100%;
 }
 
