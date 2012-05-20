@@ -5,20 +5,22 @@
 
 /*Menu*/
 #menu{
-	margin-left: 300px;
-	margin-top: -40px;
-	background: url(../imgs/topbanner.jpg);
-	float: left;       
+	/*margin-left: 300px;
+	margin-top: -40px;*/
+	background: none;
+	/*float: left;*/
+        align: center;
 }
 
 #menu ul{
-	float: left;
-	list-style: none;
+	margin-top: -35px;
+	list-style: none outside none;
+        width: 1200px;
 }
 
 #menu ul li{
 	position: relative;
-	float: left;
+	display: inline-block;
 }
 
 #menu li a{
