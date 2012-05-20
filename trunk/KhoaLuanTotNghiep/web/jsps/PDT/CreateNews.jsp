@@ -24,23 +24,18 @@
                 width: 100%;
                 padding-left: 10px;
                 padding-right: 10px;
-                text-align: center;
 
             }
             #formdetail table th{
-                background-color:#00ff00;
                 height: 30px;
                 border-color: black;
             }
 
             #formdetail table td{
-                text-align: center;
-                background-color: #5F676D;
+                
             }
-            #title{
-                text-align: center;
-            }
-             #formdetail table textarea{
+            
+            #formdetail table textarea{
                 width: 98%;
             }
         </style>
