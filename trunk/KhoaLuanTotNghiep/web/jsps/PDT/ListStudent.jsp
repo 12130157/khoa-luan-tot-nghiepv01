@@ -137,7 +137,6 @@
         }
         
         function nextPage(){
-            alert("Page: " + currentpage + "/" + " " + numpage)
             currentpage ++;
             if(currentpage > numpage) {
                 currentpage = numpage;
