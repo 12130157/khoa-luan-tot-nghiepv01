@@ -6,7 +6,6 @@
 <%@page import="uit.cnpm02.dkhp.utilities.DateTimeUtil"%>
 <%@page import="java.util.List"%>
 <%@page import="uit.cnpm02.dkhp.model.TrainClass"%>
-<%@include file="MenuPDT.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
   TrainClass trainClass = (TrainClass) session.getAttribute("trainclass");
@@ -61,7 +60,8 @@
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
-
+            <%-- Menu --%>
+            <%@include file="MenuPDT.jsp" %>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->

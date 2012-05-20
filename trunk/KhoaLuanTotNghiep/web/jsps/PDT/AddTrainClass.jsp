@@ -9,7 +9,6 @@
 <%@page import="uit.cnpm02.dkhp.model.web.LecturerWeb"%>
 <%@page import="uit.cnpm02.dkhp.model.web.SubjectWeb"%>
 <%@page import="uit.cnpm02.dkhp.utilities.Constants"%>
-<%@include file="MenuPDT.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
   List<LecturerWeb> Lecture = (List<LecturerWeb>) session.getAttribute("lecturers");
@@ -67,7 +66,7 @@
         <script src="../../javascripts/DateTimePicker.js" type="text/javascript"></script>
         <!--Div Wrapper-->
         <div id="wrapper">
-
+            <%@include file="MenuPDT.jsp"%>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->

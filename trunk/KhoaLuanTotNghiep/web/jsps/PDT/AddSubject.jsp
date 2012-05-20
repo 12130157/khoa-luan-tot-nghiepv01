@@ -6,7 +6,6 @@
 <%@page import="uit.cnpm02.dkhp.model.Faculty"%>
 <%@page import="java.util.List"%>
 <%@page import="uit.cnpm02.dkhp.model.Subject"%>
-<%@include file="MenuPDT.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
     List<Faculty> faculities = (List<Faculty>)session.getAttribute("faculty");
@@ -26,7 +25,7 @@
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
-
+            <%@include file="MenuPDT.jsp"%>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
