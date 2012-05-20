@@ -8,7 +8,6 @@
 <%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="java.util.EnumSet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@include file="MenuPDT.jsp"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html>
     <head>
@@ -20,8 +19,10 @@
         </style>
     </head>
     <body>
-        <!--Div Wrapper-->
+        <%--Div Wrapper--%>
         <div id="wrapper">
+            <%--Menu--%>
+            <%@include file="MenuPDT.jsp"%>
             <!--Main Navigation-->
             <div id="mainNav">
                 <%@include file="../MainNav.jsp" %>

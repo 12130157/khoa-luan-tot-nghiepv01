@@ -11,7 +11,6 @@
 <%@page import="uit.cnpm02.dkhp.DAO.DAOFactory"%>
 <%@page import="uit.cnpm02.dkhp.model.Account"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@include file="MenuPDT.jsp"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <%
     String error = (String) session.getAttribute("error");
@@ -25,15 +24,14 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Tạo tài khoản.</title>
         <style media="all" type="text/css">
-            #respone-area {
-                
-            }
+            /****/
         </style>
     </head>
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
-
+            <%--Menu--%>
+            <%@include file="MenuPDT.jsp"%>
             <!--Main Navigation-->
             <div id="mainNav">
                 <%@include file="../MainNav.jsp" %>

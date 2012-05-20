@@ -7,7 +7,6 @@
 <%@page import="java.util.List"%>
 <%@page import="uit.cnpm02.dkhp.model.Student"%>
 <%@page import="uit.cnpm02.dkhp.model.TrainClass"%>
-<%@include file="MenuPDT.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <%
@@ -52,7 +51,8 @@
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
-
+            <%-- Menu --%>
+            <%@include file="MenuPDT.jsp" %>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->

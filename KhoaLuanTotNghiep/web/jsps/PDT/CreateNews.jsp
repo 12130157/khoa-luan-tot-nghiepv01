@@ -6,7 +6,6 @@
 
 <%@page import="java.util.List"%>
 <%@page import="uit.cnpm02.dkhp.model.News"%>
-<%@include file="MenuPDT.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
@@ -47,14 +46,16 @@
         </style>
     </head>
     <body>
-        <!--Div Wrapper-->
+        <%--Div Wrapper--%>
         <div id="wrapper">            
+            <%--Menu--%>
+            <%@include file="MenuPDT.jsp"%>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
                 <div id="title">
-                    <u><h3>Quản lý tin tức hệ thống</h3></u>
+                    <u>Quản lý tin tức hệ thống</u>
                 </div>
                 <br><h3>Đăng tin mới:</h3>
                  <hr/><hr/><br>
@@ -94,7 +95,7 @@
         <!--End Wrapper-->
     </body>
 
-    <script  type = "text/javascript" >
+    <script type = "text/javascript">
          function addNews(){
            var content = document.formdetail.newscontent.value;
             var title = document.formdetail.NewsTiltle.value;

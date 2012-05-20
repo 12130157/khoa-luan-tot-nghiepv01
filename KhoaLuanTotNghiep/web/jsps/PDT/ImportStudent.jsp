@@ -55,6 +55,8 @@
         <input type="hidden" id="is-respone-for-import-from-file" value="<%= isRespForImpFromFile %>"/>
         <!--Div Wrapper-->
         <div id="wrapper">
+            <%-- Menu --%>
+            <%@include file="MenuPDT.jsp" %>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->

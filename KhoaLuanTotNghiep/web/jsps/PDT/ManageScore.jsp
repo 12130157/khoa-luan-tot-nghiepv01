@@ -52,6 +52,8 @@
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
+            <%-- Menu --%>
+            <%@include file="MenuPDT.jsp" %>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->

@@ -6,7 +6,6 @@
 
 <%@page import="java.util.List"%>
 <%@page import="uit.cnpm02.dkhp.model.Comment"%>
-<%@include file="MenuPDT.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
@@ -20,15 +19,14 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Chi tiết ý kiến</title>
         <style media="all" type="text/css">
-            #frmimg{
-                margin-left: 50px;
-                border: 5px solid #98AFC7;
-            }
+            /**CSS overidden**/
         </style>
     </head>
     <body>
-        <!--Div Wrapper-->
-        <div id="wrapper">            
+        <%--Div Wrapper--%>
+        <div id="wrapper">
+            <%--Menu--%>
+            <%@include file="MenuPDT.jsp"%>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
