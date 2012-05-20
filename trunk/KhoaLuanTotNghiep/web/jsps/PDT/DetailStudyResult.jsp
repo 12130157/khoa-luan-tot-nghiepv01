@@ -184,7 +184,7 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
                             <td><%=numTCSubject%></td>
                             <td><%=studyResult.get(j).getMark()%></td>
                             <td><%=markSubject%></td>
-                            <td><a href="../../StudyResultManager?action=update&studentCode=<%=student.getId()%>&subjectCode= <%=studyResult.get(j).getId().getSubjectCode()%>">Sửa</a></td>
+                            <td><a href="../../StudyResultManager?action=update&studentCode=<%=student.getId()%>&subjectCode=<%=studyResult.get(j).getId().getSubjectCode()%>">Sửa</a></td>
                         </tr>
                         <%
                          numTC += numTCSubject;

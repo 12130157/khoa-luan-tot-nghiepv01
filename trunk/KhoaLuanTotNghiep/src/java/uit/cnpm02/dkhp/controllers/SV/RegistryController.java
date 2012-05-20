@@ -345,6 +345,10 @@ private boolean isPresubNotComplete(String subjectCode, String studentCode) thro
       List<TrainClass> trainClass=DAOFactory.getTrainClassDAO().findAllByFacultyCodeAndTime(facultyCode);
       List<String> registried=new ArrayList<String>();
       setSubjectAndLecturer(trainClass);
+      for(int i=0; i<trainClass.size(); i++){
+          if(isPresubNotComplete(trainClass.get(i).getSubjectCode(), studentCode))
+              trainClass.remove(i);
+      }
       Class classes = DAOFactory.getClassDao().findById(student.getClassCode());
       Faculty faculty =DAOFactory.getFacultyDao().findById(student.getFacultyCode());
       session.setAttribute("student", student);
@@ -431,6 +435,10 @@ private boolean isPresubNotComplete(String subjectCode, String studentCode) thro
       List<TrainClass> trainClass=DAOFactory.getTrainClassDAO().findAllByFacultyCodeAndTime(facultyCode);
       ArrayList<String> registried=new ArrayList<String>();
       setSubjectAndLecturer(trainClass);
+      for(int i=0; i<trainClass.size(); i++){
+          if(isPresubNotComplete(trainClass.get(i).getSubjectCode(), studentCode))
+              trainClass.remove(i);
+      }
       Class classes = DAOFactory.getClassDao().findById(student.getClassCode());
       Faculty faculty =DAOFactory.getFacultyDao().findById(student.getFacultyCode());
       session.setAttribute("student", student);
