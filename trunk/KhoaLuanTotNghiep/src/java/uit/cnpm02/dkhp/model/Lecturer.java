@@ -215,5 +215,30 @@ public class Lecturer extends AbstractJdbcModel<String> {
     public boolean isIdAutoIncrement() {
         return false;
     }
+
+    public int compare(Lecturer o2, String by) {
+        int result = 0;
+        if (by.equalsIgnoreCase("MaGV")) {
+            result = this.getId()
+                    .compareTo(o2.getId());
+        } else if (by.equalsIgnoreCase("HoTen")) {
+            result = this.getFullName()
+                    .compareTo(o2.getFullName());
+        } else if (by.equalsIgnoreCase("MaKhoa")) {
+            result = this.getFacultyCode().compareTo(o2.getFacultyCode());
+        } else if (by.equalsIgnoreCase("NgaySinh")) {
+            result = this.getBirthday().compareTo(o2.getBirthday());
+        } else if (by.equalsIgnoreCase("GioiTinh")) {
+            result = this.getGender().compareTo(o2.getGender());
+        } else if (by.equalsIgnoreCase("Email")) {
+            result = this.getEmail().compareTo(o2.getEmail());
+        } else if (by.equalsIgnoreCase("HocHam")) {
+            result = this.getHocHam().compareTo(o2.getHocHam());
+        } else if (by.equalsIgnoreCase("HocVi")) {
+            result = this.getHocVi().compareTo(o2.getHocVi());
+        }
+        
+        return result;
+    }
     
 }
