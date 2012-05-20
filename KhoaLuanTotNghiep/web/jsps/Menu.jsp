@@ -30,7 +30,7 @@
             </OBJECT>
         </DIV>
     </div>
-    <div id = "menu">
+    <div id = "menu" align="center">
         <ul>
             <li><a href="../HomepageController?action=view&actor=All"> Trang chủ</a></li>
             <li><a href="../ServHompage?action=view"> Giới thiệu</a></li>
