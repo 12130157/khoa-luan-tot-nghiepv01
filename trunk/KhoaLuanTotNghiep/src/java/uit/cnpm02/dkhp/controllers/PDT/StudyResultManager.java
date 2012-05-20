@@ -25,6 +25,7 @@ import uit.cnpm02.dkhp.model.Faculty;
 import uit.cnpm02.dkhp.model.Class;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.model.StudyResult;
+import uit.cnpm02.dkhp.model.StudyResultID;
 import uit.cnpm02.dkhp.service.IReporter;
 import uit.cnpm02.dkhp.service.IStudentService;
 import uit.cnpm02.dkhp.service.impl.ReporterImpl;
@@ -77,12 +78,43 @@ public class StudyResultManager extends HttpServlet {
             }else if (requestAction.equals(ReportFunctionSupported.
                                                 RELOAD.getValue())) {
             reloadData(request, response);
+            }else if (requestAction.equals(ReportFunctionSupported.
+                                                UPDATE.getValue())) {
+                updateMark(request, response);
             }
+            
              
         } finally {            
             out.close();
         }
     }
+private void updateMark(HttpServletRequest request, HttpServletResponse response){
+     try{
+         String path="";
+            HttpSession session = request.getSession();  
+            String studentCode = request.getParameter("studentCode");
+            String subjectCode = request.getParameter("subjectCode");
+            StudyResultID id = new StudyResultID(studentCode, subjectCode);
+            StudyResult studyResult = DAOFactory.getStudyResultDao().findById(id);
+            Student student = studentService.getStudent(studentCode);
+            Class classes = DAOFactory.getClassDao().findById(student.getClassCode());
+            Faculty faculty = DAOFactory.getFacultyDao().findById(student.getFacultyCode());
+            studyResult.setSubjectName(DAOFactory.getSubjectDao().findById(subjectCode).getSubjectName());
+            session.setAttribute("classes", classes);
+            session.setAttribute("faculty", faculty);
+            session.setAttribute("result", studyResult);
+            session.setAttribute("student", student);
+            path = "./jsps/PDT/UpdateMarkForStudent.jsp";
+         }catch(Exception ex){
+           String path= "./jsps/Message.jsp";
+            try {
+                response.sendRedirect(path);
+            } catch (IOException ex1) {
+                Logger.getLogger(StudyResultManager.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+       }
+}    
+    
 private void reloadData(HttpServletRequest request, HttpServletResponse response) throws IOException{
         try{
             SubjectDAO subjectDao=new SubjectDAO();
@@ -96,18 +128,18 @@ private void reloadData(HttpServletRequest request, HttpServletResponse response
             List<StudyResult> studyResult= DAOFactory.getStudyResultDao().findAllByYearAndSemester(studentCode, year, semester);
             //List<StudyResult> studyResult=studyResultDao.findAllByYearAndSemester(user, year, semester);
             setSubjectName(studyResult);
-            out.println("<tr><th width='100px'>Năm học</th><th width='70px'>Học kỳ</th><th width='100px'>Mã môn</th><th width='300px'>Tên môn học</th><th width='70px'>Số TC</th><th width='80px'>Điểm</th><th width='100px'>Nhân hệ số</th></tr>");
+            out.println("<tr><th width='100px'>Năm học</th><th width='70px'>Học kỳ</th><th width='100px'>Mã môn</th><th width='300px'>Tên môn học</th><th width='70px'>Số TC</th><th width='80px'>Điểm</th><th width='100px'>Nhân hệ số</th><th>Sửa</th></tr>");
             for (int i = 0; i < studyResult.size(); i++) {
                 int numTCSubject=subjectDao.findById(studyResult.get(i).getId().getSubjectCode()).getnumTC();
                 float markSubject=(subjectDao.findById(studyResult.get(i).getId().getSubjectCode()).getnumTC() * studyResult.get(i).getMark());
                 
-                out.println("<tr><td>" + studyResult.get(i).getYear() + "</td><td>" + studyResult.get(i).getSemester() + "</td><td>" + studyResult.get(i).getId().getSubjectCode() + "</td><td>" + studyResult.get(i).getSubjectName() + "</td><td>" + numTCSubject + "</td><td>" + studyResult.get(i).getMark() + "</td><td>" + markSubject + "</td></tr>");
-                
+                out.println("<tr><td>" + studyResult.get(i).getYear() + "</td><td>" + studyResult.get(i).getSemester() + "</td><td>" + studyResult.get(i).getId().getSubjectCode() + "</td><td>" + studyResult.get(i).getSubjectName() + "</td><td>" + numTCSubject + "</td><td>" + studyResult.get(i).getMark() + "</td><td>" + markSubject + "</td>");
+                out.println("<td><a href='../../StudyResultManager?action=update&studentCode="+studentCode+ "&subjectCode="+ studyResult.get(i).getId().getSubjectCode()+"'>Sửa</a></td></tr>");
                 numTC += numTCSubject;
                 SumMark += markSubject;
                 Average = (float) Math.round(SumMark * 100 / numTC) / 100;
         }  
-           out.println("<tr><th>Tổng kết</th><th></th><th></th><th>Trung bình: " + Average + "</th><th>" + numTC + "</th><th></th><th>" + SumMark + "</th></tr>"); 
+           out.println("<tr><th>Tổng kết</th><th></th><th></th><th>Trung bình: " + Average + "</th><th>" + numTC + "</th><th></th><th>" + SumMark + "</th><th></th></tr>"); 
          }catch(Exception ex){
            String path= "./jsps/Message.jsp";
            response.sendRedirect(path);
@@ -203,7 +235,7 @@ public enum ReportFunctionSupported {
         DEFAULT("default"), // List first page of class opened.
         SEARCH_STUDENT("search_student"),
         STUDENT_REPORT("student-report"),
-        DELETE("delete"),
+        UPDATE("update"),
         RELOAD("reload"),
         DETAIL("detail"),
         DOWNLOAD_STUDENT_REPORT("download-student-report");

@@ -101,6 +101,7 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
              #detail th{
                text-align: center;
             }
+            
         </style>
      </head>
     <body>
@@ -161,7 +162,11 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
                     <u>Chi tiết</u>
                     <table id="detail" name="detail" border="1" bordercolor="yellow" >
                      <tr>
-                            <th width="100px">Năm học</th><th width="70px">Học kỳ</th><th width="100px">Mã môn</th><th width="300px">Tên môn học</th><th width="70px">Số TC</th><th width="80px">Điểm</th><th width="100px">Nhân hệ số</th>
+                            <th width="100px">Năm học</th><th width="70px">Học kỳ</th>
+                            <th width="100px">Mã môn</th><th width="300px">Tên môn học</th>
+                            <th width="70px">Số TC</th><th width="80px">Điểm</th>
+                            <th width="100px">Nhân hệ số</th>
+                            <th width="50px">Sửa</th>
                      </tr>   
                       <%
                                  numTC = 0;
@@ -172,7 +177,14 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
                                   float markSubject=(subjectDao.findById(studyResult.get(j).getId().getSubjectCode()).getnumTC() * studyResult.get(j).getMark());
                         %>
                         <tr>
-                            <td><%=studyResult.get(j).getYear()%></td><td><%=studyResult.get(j).getSemester()%></td><td><%=studyResult.get(j).getId().getSubjectCode()%></td><td><%=studyResult.get(j).getSubjectName()%></td><td><%=numTCSubject%></td><td><%=studyResult.get(j).getMark()%></td><td><%=markSubject%></td>
+                            <td><%=studyResult.get(j).getYear()%></td>
+                            <td><%=studyResult.get(j).getSemester()%></td>
+                            <td><%=studyResult.get(j).getId().getSubjectCode()%></td>
+                            <td><%=studyResult.get(j).getSubjectName()%></td>
+                            <td><%=numTCSubject%></td>
+                            <td><%=studyResult.get(j).getMark()%></td>
+                            <td><%=markSubject%></td>
+                            <td><a href="../../StudyResultManager?action=update&studentCode=<%=student.getId()%>&subjectCode= <%=studyResult.get(j).getId().getSubjectCode()%>">Sửa</a></td>
                         </tr>
                         <%
                          numTC += numTCSubject;
@@ -189,6 +201,7 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
                             <th align="center"><%=numTC%></th>
                             <th></th>
                             <th align="center"><%=SumMark%></th>
+                            <th align="center"></th>
                         </tr>
                     </table>
                  </form>
@@ -204,6 +217,7 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
         </div>
         <!--End Wrapper-->
     </body>
+    <script src="../../javascripts/jquery-1.7.1.js"></script>
     <script src="../../javascripts/StudyResult.js"></script>
     <script  type = "text/javascript" >
         var http = createRequestObject();
@@ -221,5 +235,5 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
               ajaxfunction("../../StudyResultManager?action=reload&studentCode=" + studentCode + "&year="+year+"&semester="+semester );
              }
          }
-    </script>
+   </script>
 </html>

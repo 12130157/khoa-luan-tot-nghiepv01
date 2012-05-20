@@ -12,7 +12,6 @@ import uit.cnpm02.dkhp.access.JDBC.AbstractJdbcModel;
 
 public class Faculty extends AbstractJdbcModel<String> {
 
-    private String facultyCode;
     private String facultyName;
     private String dean;
     private int numOfStudent;
@@ -43,16 +42,7 @@ public class Faculty extends AbstractJdbcModel<String> {
         this.dean = dean;
 
     }
-
-    public String getFacultyCode() {
-        return facultyCode;
-    }
-
-    public void setFacultyCode(String facultyCode) {
-        this.facultyCode = facultyCode;
-    }
-
-    //************
+ //************
     // get parameter
     //************
 
