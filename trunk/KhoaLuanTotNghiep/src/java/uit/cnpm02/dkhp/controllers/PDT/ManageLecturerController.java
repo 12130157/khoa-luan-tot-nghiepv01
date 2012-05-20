@@ -109,15 +109,13 @@ public class ManageLecturerController extends HttpServlet {
             } else if (action.equalsIgnoreCase(ManageLecturerSupport
                     .RETRY_IMPORT_FROM_FILE.getValue())) {
                 doRetryImportFromFile(request, response);
-            }/* else if (action.equalsIgnoreCase("delete")) {
-                ExecuteResult result = deleteLecturer(request, response);
-                session.setAttribute("error", result.getMessage());
-                if (result.isIsSucces() == true) {
-                    listLecturer(request, response);
-                }
-                String path = "./jsps/PDT/ListLecturer.jsp";
-                response.sendRedirect(path);
-            }*/
+            } else if (action.equalsIgnoreCase(ManageLecturerSupport
+                    .SORT.getValue())) {
+                doSort(request, response);
+            } else if (action.equalsIgnoreCase(ManageLecturerSupport
+                    .PAGGING.getValue())) {
+                doPaggingData(request, response);
+            }
         } catch (Exception ex) {
             out.println("Đã xảy ra sự cố: </br>" + ex);
         } finally {
@@ -733,6 +731,35 @@ public class ManageLecturerController extends HttpServlet {
             }
         }
     }
+
+    private void doSort(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        String by = "MaGV";
+        try {
+            by = request.getParameter("by");
+        } catch (Exception ex) {
+            //
+        }
+        List<Lecturer> lecturers = lecturerService.sort(
+                request.getSession().getId(), by);
+        writeOutListLecturers(response.getWriter(), lecturers);
+    }
+
+    private void doPaggingData(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        try {
+            String page = request.getParameter("currentpage");
+            currentPage = Integer.parseInt(page);
+        } catch(Exception ex) {
+            currentPage = 1;
+        }
+        
+        List<Lecturer> lecturers = lecturerService
+                .getLecturers(currentPage, request.getSession().getId());
+        if ((lecturers != null) && !lecturers.isEmpty()) {
+            writeOutListLecturers(response.getWriter(), lecturers);
+        }
+    }
     
     //#############################################
     public enum ManageLecturerSupport {
@@ -747,7 +774,9 @@ public class ManageLecturerController extends HttpServlet {
         IMPORT_FROM_FILE("importfromfile"),
         RETRY_IMPORT_FROM_FILE("retry-import-from-file"),
         PRE_EDIT("editlecturer"),
-        UPDATE("update");
+        UPDATE("update"),
+        SORT("sort"),
+        PAGGING("pagging");
         
         private String description;
         ManageLecturerSupport(String description) {
