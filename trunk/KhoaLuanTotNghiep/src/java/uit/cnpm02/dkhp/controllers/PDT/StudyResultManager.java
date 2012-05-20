@@ -83,7 +83,7 @@ public class StudyResultManager extends HttpServlet {
                 updateMark(request, response);
             }else if (requestAction.equals(ReportFunctionSupported.
                                                 COMPLETE_UPDATE.getValue())) {
-                
+                completeUpdateMark(request, response);
             }
             
              
@@ -91,6 +91,20 @@ public class StudyResultManager extends HttpServlet {
             out.close();
         }
     }
+private void completeUpdateMark(HttpServletRequest request, HttpServletResponse response){
+   try {
+    String studentCode = request.getParameter("studentCode");
+    String subjectCode = request.getParameter("subjectCode");
+    float newMark =Float.parseFloat(request.getParameter("newMark"));
+    StudyResultID id = new StudyResultID(studentCode, subjectCode);
+    StudyResult studyResult = DAOFactory.getStudyResultDao().findById(id);
+    studyResult.setMark(newMark);
+    DAOFactory.getStudyResultDao().update(studyResult);
+    getStudyResultForStudent(request, response);
+    } catch (Exception ex) {
+            Logger.getLogger(StudyResultManager.class.getName()).log(Level.SEVERE, null, ex);
+    }
+}    
 private void updateMark(HttpServletRequest request, HttpServletResponse response){
     String path=""; 
     try{

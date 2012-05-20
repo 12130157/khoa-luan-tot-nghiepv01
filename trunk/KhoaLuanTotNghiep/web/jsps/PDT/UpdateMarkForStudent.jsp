@@ -121,7 +121,7 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
                 </form>
                 </div>
                <hr/><hr/>
-                 <form id="formdetail" name="formdetail">
+               <form id="formdetail" name="formdetail" action="../../StudyResultManager?action=complete_update&studentCode=<%=student.getId()%>&subjectCode=<%=result.getId().getSubjectCode()%>" method="post">
                     <u>Chi tiết môn học</u>
                     <table id="detail" name="detail" border="1" >
                         <tr>
@@ -148,7 +148,7 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
                         </tr>
                         <tr>
                             <td>Cập nhật </td>
-                            <th><input  type="button" value="Thay đổi" /></th>
+                            <th><input  type="submit" value="Thay đổi" /></th>
                         </tr>
                     </table>
                  </form>

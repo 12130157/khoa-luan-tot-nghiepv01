@@ -51,7 +51,7 @@
             }
             #student-detail {
                 float: none;
-                padding-left: 12px;
+                padding-left: 5px;
                 border-width: 1px;
                 border-color: #00ff00;
             }

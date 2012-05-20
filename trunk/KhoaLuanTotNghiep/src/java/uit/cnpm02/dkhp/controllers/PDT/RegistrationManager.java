@@ -108,13 +108,16 @@ public class RegistrationManager extends HttpServlet {
     }
       private void writeStudentReportDetail(String mssv, List<TrainClass> datas,
                                                         PrintWriter out) {
+          int sumTC=0;
         String studentName = studentService.getStudent(mssv).getFullName();
         
         out.println("Danh sách các lớp học <b>" + studentName + "</b> đã đăng ký:");
         out.println("<table id = \"student-report\" name = \"student-report\">");
 
-        out.println("<tr><th>STT</th><th>Mã lớp</th><th>Môn học</th><th>Năm học</th><th>Học kỳ</th><th>Xóa</th</tr>");
+        out.println("<tr><th>STT</th><th>Mã lớp</th><th>Môn học</th><th>Số TC</th><th>Xóa</th</tr>");
         for (int i = 0; i < datas.size(); i++) {
+            try {
+            int numTC = DAOFactory.getSubjectDao().findById(datas.get(i).getSubjectCode()).getnumTC();
             out.println("<tr>");
             out.println("<td> " + (i + 1) + " </td>");
             String classId = datas.get(i).getId().getClassCode();
@@ -122,13 +125,17 @@ public class RegistrationManager extends HttpServlet {
                     + classId
                     + "</td>");
             out.println("<td> " + datas.get(i).getSubjectName() + " </td>");
-            out.println("<td> " + datas.get(i).getId().getYear() + " </td>");
-            out.println("<td> " + datas.get(i).getId().getSemester() + " </td>");
             String method = String.format(" onclick=deleteTrainClassRegistration('%s','%s')>",
                                                       mssv, datas.get(i).getId().getClassCode());
+            out.println("<td>"+numTC+"</td>");
             out.println("<td><a href=\'#\' " + method + "Xóa </a> </td>");
             out.println("</tr>");
+            sumTC+= numTC;
+            } catch (Exception ex) {
+                Logger.getLogger(RegistrationManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
+        out.println("<tr><th></th><th>Tổng TC</th><th></th><th>"+sumTC+"</th><th></th></tr>");
         out.println("</table>");
     }
     private void writeRespond(List<Student> datas, PrintWriter out) throws Exception {
