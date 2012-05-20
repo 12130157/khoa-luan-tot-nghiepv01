@@ -15,7 +15,7 @@
 #menu ul{
 	margin-top: -35px;
 	list-style: none outside none;
-        width: 1200px;
+        width: 1000px;
         
 }
 
@@ -75,7 +75,7 @@
 #logo{
     width: 1200px;
     height: 188px;
-    margin: 0 auto;
+    margin-left: -9px;
     border: 10px solid #73726E;
     -moz-border-radius:6px 6px 0 0;
     background: url("../imgs/topbanner.jpg") repeat-x transparent;
