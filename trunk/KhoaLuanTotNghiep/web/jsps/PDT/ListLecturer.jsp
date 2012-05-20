@@ -6,7 +6,6 @@
 
 <%@page import="uit.cnpm02.dkhp.model.Lecturer"%>
 <%@page import="java.util.List"%>
-<%@include file="MenuPDT.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <%
