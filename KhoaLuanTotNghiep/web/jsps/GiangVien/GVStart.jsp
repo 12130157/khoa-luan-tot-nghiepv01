@@ -6,7 +6,6 @@
 
 <%@page import="java.util.List"%>
 <%@page import="uit.cnpm02.dkhp.model.News"%>
-<%@include file="MenuGV.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
@@ -21,7 +20,8 @@
     </head>
     <body>
         <!--Div Wrapper-->
-        <div id="wrapper">            
+        <div id="wrapper">
+            <%@include file="MenuGV.jsp"%>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
