@@ -89,12 +89,18 @@ public class MultipartMap extends HashMap<String, Object> {
         this.multipartConfigured = multipartConfigured;
 
         //for (Part part : multipartRequest.get)
+        String username = "";
+        try {
+            username = (String) multipartRequest.getSession().getAttribute("username");
+        } catch (Exception ex) {
+            //
+        }
         for (Part part : multipartRequest.getParts()) {
             String filename = getFilename(part);
             if (filename == null) {
                 processTextPart(part);
             } else if (!filename.isEmpty()) {
-                processFilePart(part, filename);
+                processFilePart(username, part, filename);
             }
         }
     }
@@ -221,7 +227,7 @@ public class MultipartMap extends HashMap<String, Object> {
     /**
      * Process given part as File part which is to be saved in temp dir with the given filename.
      */
-    private void processFilePart(Part part, String filename) throws IOException {
+    private void processFilePart(String username, Part part, String filename) throws IOException {
         // First fix stupid MSIE behaviour (it passes full client side path along filename).
         filename = filename.substring(filename.lastIndexOf('/') + 1).substring(filename.lastIndexOf('\\') + 1);
 
@@ -234,7 +240,17 @@ public class MultipartMap extends HashMap<String, Object> {
         }
 
         // Write uploaded file.
-        File file = File.createTempFile(prefix + "_", suffix, new File(location));
+        //File file = File.createTempFile(prefix + "_", suffix, new File(location));
+        String userPath = Constants.FILEUPLOAD_DIR 
+                + File.separator + (!StringUtils.isEmpty(username) ? (username + File.separator) : "");
+        File userDir = new File(userPath);
+        if (!userDir.exists() || userDir.isFile()) {
+            userDir.mkdir();
+        }
+        
+        String path = userPath
+                + filename;
+        File file = new File(path);// File.createTempFile(prefix + "_", suffix, new File(location));
         if (multipartConfigured) {
             part.write(file.getName()); // Will be written to the very same File.
         } else {
