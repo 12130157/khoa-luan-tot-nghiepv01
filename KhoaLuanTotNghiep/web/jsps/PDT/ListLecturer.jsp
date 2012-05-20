@@ -23,7 +23,7 @@
             /* CSS definition */
         </style>
     </head>
-    <body onload="">
+    <body>
         <%--Div Wrapper--%>
         <div id="wrapper">
             <%--Main Navigation--%>
@@ -107,9 +107,9 @@
             <%--Footer--%>
             <div id="footer">
                 <%@include file="../Footer.jsp" %>
-            </div><!--End footer-->
+            </div><%--End footer--%>
         </div>
-        <!--End Wrapper-->
+        <%--End Wrapper--%>
     </body>
 
     <script src="../../javascripts/UtilTable.js"></script>
@@ -118,20 +118,14 @@
         var ajax = false;
         var currentpage = 1;
         var numpage = document.getElementById("numpage").value;
-        var searchType = 'none';
-        var searchValue = 'all';
         var http = createRequestObject();
         
         function firstPage(){
-            if (currentpage == 1)
-                return;
-            ajax = true;
             currentpage = 1;
             submitSearch();
         }
         
         function prePage(){
-            ajax = true;
             currentpage--;
             if(currentpage < 1) {
                 currentpage = 1;
@@ -141,7 +135,6 @@
         }
         
         function nextPage(){
-            ajax = true;
             currentpage ++;
             if(currentpage > numpage) {
                 currentpage = numpage;
@@ -151,11 +144,18 @@
         }
         
         function endPage(){
-            ajax = true;
-            if (currentpage == numpage)
-                return;
             currentpage = numpage;
             submitSearch();
+        }
+        
+        function submitSearch() {
+            var pagename = "../../ManageLecturerController?function=pagging"
+                + "&currentpage=" + currentpage;
+            if(http){
+                http.open("GET", pagename, true);
+                http.onreadystatechange = searchHandler;
+                http.send(null);
+            }
         }
         
         function searchHandler() {
@@ -243,6 +243,15 @@
                 
                 var detail = document.getElementById("list-lecturers");
                 detail.innerHTML = http.responseText;
+            }
+        }
+    
+        function sort(sortBy) {
+            var pagename = "../../ManageLecturerController?function=sort&by=" + sortBy;
+            if(http){
+                http.open("GET", pagename, true);
+                http.onreadystatechange = searchHandler;
+                http.send(null);
             }
         }
     </script>
