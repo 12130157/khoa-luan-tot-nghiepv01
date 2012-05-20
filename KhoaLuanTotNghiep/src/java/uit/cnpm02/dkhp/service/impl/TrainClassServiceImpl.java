@@ -290,4 +290,40 @@ public class TrainClassServiceImpl implements ITrainClassService {
         }
        
     }
+
+    @Override
+    public List<TrainClass> getCurrentTrainClass(String lecturer) {
+        try {
+            List<TrainClass> results = classDAO.findByColumName("MaGV", lecturer);
+            if ((results != null) && !results.isEmpty()) {
+                for (int i = 0; i < results.size(); i++) {
+                    if (results.get(i).getStatus().getValue() 
+                            != TrainClassStatus.OPEN.getValue()) {
+                        results.remove(i);
+                        i--;
+                    }
+                }
+            }
+            
+            if ((results != null) && !results.isEmpty()) {
+            try {
+                    for (TrainClass t : results) {
+                        String subName = subjectDAO.findById(t.getSubjectCode()).getSubjectName();
+                        //String lecturerName = lectureDAO.findById(t.getLecturerCode()).getFullName();
+
+                        t.setSubjectName(subName);
+                        t.setLectturerName(lecturer);
+                    }
+                } catch (Exception ex) {
+                    Logger.getLogger(TrainClassServiceImpl.class.getName())
+                            .log(Level.SEVERE, null, ex);
+                }
+            }
+            return results;
+        } catch (Exception ex) {
+            Logger.getLogger(TrainClassServiceImpl.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
 }

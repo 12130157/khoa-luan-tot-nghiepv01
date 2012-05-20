@@ -84,5 +84,10 @@ public class PDTServiceImpl implements IPDTService {
         }
         return null;
     }
+
+    @Override
+    public void uploadScoreSheet() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
 }
