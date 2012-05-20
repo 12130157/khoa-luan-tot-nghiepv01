@@ -10,6 +10,9 @@
     "http://www.w3.org/TR/html4/loose.dtd">
 
 <html>
+    <style media="all" type="text/css">
+        
+    </style>
     <head>
         <link href="../../csss/menu.css" rel="stylesheet" type="text/css" media="screen">
 
@@ -30,7 +33,7 @@
             </OBJECT>
         </DIV>
     </div>
-    <div id = "menu">
+    <div id = "menu" align="center">
         <ul>
              <li><a href="../../HomepageController?actor=Lecturer"> Trang chủ </a></li>
              <li><a href="../HomepageController?action=view"> Thời khóa biểu </a></li>
