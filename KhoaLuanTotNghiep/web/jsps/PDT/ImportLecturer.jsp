@@ -423,7 +423,6 @@
         }
         
         function addLecturerFromForm() {
-            alert("Entered Add lectuere!");
             if (!validateData()) {
                 return;
             }
