@@ -26,3 +26,21 @@ function submit(pagename, handleResponse){
         http.send(null);
     }
 }
+
+/**
+ * stuffId: which will be showed
+ * btnId: button use to controll action
+ * btn Label: new label of button.
+ */
+function showStuff(stuffId, btnId, btnShowLabel, btnHideLabel) {
+    var btnHidden = "<span onclick=\"hideStuff('" + stuffId + "','" + btnId + "','" + btnShowLabel + "','" + btnHideLabel + "')\" class=\"atag\">"
+    + btnHideLabel + "</span>";
+    document.getElementById(btnId).innerHTML = btnHidden;
+    document.getElementById(stuffId).style.display = 'block';
+}
+function hideStuff(stuffId, btnId, btnShowLabel, btnHideLabel) {
+    var btnShow = "<span onclick=\"showStuff('" + stuffId + "','" + btnId + "','" + btnShowLabel + "','" + btnHideLabel + "')\" class=\"atag\">"
+    + btnShowLabel + "</span>";
+    document.getElementById(btnId).innerHTML = btnShow;
+    document.getElementById(stuffId).style.display = 'none';
+}
