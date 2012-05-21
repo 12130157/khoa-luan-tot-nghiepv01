@@ -168,7 +168,8 @@
                 return;
             }
             
-            var controller = "../../FileUploadController?function=validate-filename";
+            var controller = "../../FileUploadController?function=validate-filename"
+                            + "&txtPath=" + path;
             if(http){
                 http.open("GET", controller ,true);
                 http.onreadystatechange = getValidateFileNameHandler;
