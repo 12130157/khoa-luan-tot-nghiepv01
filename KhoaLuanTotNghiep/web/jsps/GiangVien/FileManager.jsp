@@ -55,11 +55,16 @@
                               action="../../FileUploadController?function=upload"
                               method="post" name="uploadfile" enctype="multipart/form-data">
                             <u>Chọn File</u>
-                            <table id="tblFromFile">
-                                <tr><td><input type="file" name="txtPath" id="txtPath" accept="application/xls" /></td></tr>
-                                <tr><td><input type="button" value="Tải lên" onclick="submitUploadFile()" /></td></tr>
-                            </table>
+                            <div class="clear"> </div>
+                            <input type="file" name="txtPath" id="txtPath" accept="application/xls" />
+                            <div class="clear"> </div>
+                            <br />
+                            <input type="button" value="Tải lên" onclick="submitUploadFile()" />
                         </form>
+                        <%-- Validate result --%>
+                        <div id="validate-filename-result">
+
+                        </div>
                     </div>
                     <%-- Files uploaded --%>
                     <div class="clear-left" style="padding-left: 25px;">
@@ -163,11 +168,30 @@
                 return;
             }
             
-            // If corect --> upload file
-            
-            document.forms["upload-file"].submit();
-            
-            // Else show error information
+            var controller = "../../FileUploadController?function=validate-filename";
+            if(http){
+                http.open("GET", controller ,true);
+                http.onreadystatechange = getValidateFileNameHandler;
+                http.send(null);
+            } else {
+                alert("Error: http object not found");
+            }
         }
+        
+        function getValidateFileNameHandler() {
+            if(http.readyState == 4 && http.status == 200){
+                var result = http.responseText;
+                alert("Receied message: " + result);
+                if (result.substring(0, 5) == "error") {
+                    var msgDialog = document.getElementById("validate-filename-result");
+                    msgDialog.innerHTML = result;
+                    return;
+                } else {
+                    alert("Enter form submit area.");
+                    document.forms["upload-file"].submit();
+                }
+            }
+        }
+        
     </script>
 </html>
