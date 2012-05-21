@@ -135,11 +135,11 @@ public class FileUploadController extends HttpServlet {
         // Lecturer upload file score must in specified format
         // The name of file must be class code
 
-        String fileName = request.getParameter("txtPath");
+        String fileName = (String) request.getParameter("txtPath");
         String lecturerId = (String) request.getSession().getAttribute("username");
         
         // C:/CAR.001.xls ==> CAR.001
-        fileName = fileName.substring(fileName.lastIndexOf(File.separator), fileName.length() - 4);
+        fileName = fileName.substring(0, fileName.length() - 4);
         List<TrainClass> trainClass = trainClassService.getCurrentTrainClass(lecturerId);
         if ((trainClass == null) || trainClass.isEmpty()) {
             out.append("error - GV hiện không dạy lớp nào.");
