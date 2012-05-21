@@ -4,7 +4,7 @@
     Author     : ngloc_it
 --%>
 
-<%@include file="MenuSV.jsp"%>
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
@@ -23,7 +23,8 @@
     </head>
     <body>
         <!--Div Wrapper-->
-        <div id="wrapper">            
+        <div id="wrapper">  
+            <%@include file="MenuSV.jsp"%>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->

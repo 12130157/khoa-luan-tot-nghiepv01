@@ -24,7 +24,7 @@
                 <%@include file="MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <%@include file="./General/News.jsp" %>
+                <%@include file="News.jsp" %>
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->

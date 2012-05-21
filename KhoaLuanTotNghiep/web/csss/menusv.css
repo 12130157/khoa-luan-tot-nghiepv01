@@ -5,44 +5,58 @@
 
 /*Menu*/
 #menusv{
-	margin-left: 300px;
-	margin-top: -40px;
-	background: url(../imgs/topbanner.jpg);
-	float: left;
+	/*margin-left: 300px;
+	margin-top: -40px;*/
+	background: none;
+	/*float: left;*/
+        align: center;
 }
 
 #menusv ul{
-	float: left;
-	list-style: none;
+	list-style: none outside none;
+        width: 100%;
+        height: 40px;
+        background: url(../imgs/menu/menu_bg.PNG) repeat-x;
 }
 
+#menusv li li{
+    background: none;
+}
 #menusv ul li{
 	position: relative;
-	float: left;
+	display: inline-block;
+        background: url(../imgs/menu/menu_space.PNG) no-repeat right center;
+        height: 100%;
 }
+
 
 #menusv li a{
 	display: block;
-	color: #ffffff;
+	color: #fff;
         /*border: 1px solid #000000;*/
         background: transparent;/* url(../imgs/headerbg.png);*/
 	font-weight: bold;
 	text-decoration: none;
         font-size: 12px;
-        height: 22px;
-	padding: .1cm 6px;
+      
+        height: 15px;
+        margin-top: 5px;
+	padding: 6px 16px 6px 1px;
+        font-family: Georgia;
+        text-transform: uppercase;
 }
 
 #menusv li a:hover{
-	color: white;
-	background-color: orange;
-        text-decoration: underline;
+	color: 	#ADD8E6;
+        text-shadow:0px 1px #000;
 }
 
 #menusv li ul{
+        background: none;
 	position: absolute;
 	display: none;
 	width: 5cm;
+        top: 40px;
 }
 
 #menusv li:hover ul{
@@ -51,16 +65,22 @@
 
 #menusv ul li ul li{
 	border: 1px solid #ffffff;
-	background-color: #9f8d39;
+	background: #dbdbdb;
 	width: 100%;
+        
+}
+
+#menusv .no-border{
+    border-right: none;
 }
 
 /*Logo*/
 #logo{
-    width: 1200px;
-    height: 188px;
-    margin: 0 auto;
+    width: 100%;
+    height: 158px;
+    margin-left: -9px;
     border: 10px solid #73726E;
+    border-bottom: none;
     -moz-border-radius:6px 6px 0 0;
     background: url("../imgs/topbanner.jpg") repeat-x transparent;
     /*background: transparent;*/
