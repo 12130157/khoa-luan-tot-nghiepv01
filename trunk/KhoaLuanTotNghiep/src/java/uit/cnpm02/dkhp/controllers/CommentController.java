@@ -155,14 +155,14 @@ public class CommentController extends HttpServlet {
         CommentDao commentDao = new CommentDao();
         int rows = commentDao.getRowsCount();
         int numpage = 0;
-        if (rows % 10 == 0) {
-            numpage = rows / 10;
+        if (rows % Constants.ELEMENT_PER_PAGE_DEFAULT == 0) {
+            numpage = rows / Constants.ELEMENT_PER_PAGE_DEFAULT;
         } else {
-            numpage = rows / 10 + 1;
+            numpage = rows / Constants.ELEMENT_PER_PAGE_DEFAULT + 1;
         }
         String path = "./jsps/PDT/CommentManager.jsp";
         try {
-            List<Comment> commnetList = commentDao.findAll(10, 1, "NgayGui", "DESC");
+            List<Comment> commnetList = commentDao.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, 1, "NgayGui", "DESC");
             session.setAttribute("commentList", commnetList);
             session.setAttribute("numpage", numpage);
             response.sendRedirect(path);

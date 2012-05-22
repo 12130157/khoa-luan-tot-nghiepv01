@@ -138,6 +138,32 @@ private boolean isNotEnoughTC(List<TrainClass> registried) throws Exception{
         result=true;
     return result;
 }
+private boolean isRegTwoClassTrainASubject(List<TrainClass> registried){
+    boolean result=false;
+    for(int i =0; i<registried.size(); i++){
+        for(int j = i+1; j < registried.size(); j++){
+         if(registried.get(i).getSubjectCode().equalsIgnoreCase(registried.get(j).getSubjectCode()))
+             result = true;
+         if(result){
+             return result;
+         }
+        }
+    }
+    return result;
+}
+private boolean isRegTwoClassInADay(List<TrainClass> registried){
+    boolean result=false;
+    for(int i =0; i<registried.size(); i++){
+        for(int j = i+1; j < registried.size(); j++){
+         if(registried.get(i).getStudyDate()== registried.get(j).getStudyDate())
+             result = true;
+         if(result){
+             return result;
+         }
+        }
+    }
+    return result;
+}
 /**
  * 
  * @param registried
@@ -260,8 +286,33 @@ private boolean isPresubNotComplete(String subjectCode, String studentCode) thro
              session.setAttribute("year", Constants.CURRENT_YEAR);
              path= "./jsps/SinhVien/PreviewRegistration.jsp";
               response.sendRedirect(path);
-         }
-         else{
+         }else if(isRegTwoClassTrainASubject(registried)){
+             session.setAttribute("error", "Không thể đăng ký 2 lớp học cùng dạy một môn học trong cùng một học kỳ. Vui lòng kiểm tra lại");
+             Student student =DAOFactory.getStudentDao().findById(studentCode);
+             Class classes = DAOFactory.getClassDao().findById(student.getClassCode());
+             Faculty faculty =DAOFactory.getFacultyDao().findById(student.getFacultyCode());
+             session.setAttribute("student", student);
+             session.setAttribute("classes", classes);
+             session.setAttribute("faculty", faculty);
+             session.setAttribute("registriedClass", registried);
+             session.setAttribute("semester", Constants.CURRENT_SEMESTER);
+             session.setAttribute("year", Constants.CURRENT_YEAR);
+             path= "./jsps/SinhVien/PreviewRegistration.jsp";
+              response.sendRedirect(path);
+         }else if(isRegTwoClassInADay(registried)){
+             session.setAttribute("error", "Không thể đăng ký học 2 lớp học được dạy cùng 1 thời điểm. Vui lòng kiểm tra lại");
+             Student student =DAOFactory.getStudentDao().findById(studentCode);
+             Class classes = DAOFactory.getClassDao().findById(student.getClassCode());
+             Faculty faculty =DAOFactory.getFacultyDao().findById(student.getFacultyCode());
+             session.setAttribute("student", student);
+             session.setAttribute("classes", classes);
+             session.setAttribute("faculty", faculty);
+             session.setAttribute("registriedClass", registried);
+             session.setAttribute("semester", Constants.CURRENT_SEMESTER);
+             session.setAttribute("year", Constants.CURRENT_YEAR);
+             path= "./jsps/SinhVien/PreviewRegistration.jsp";
+              response.sendRedirect(path);
+         }else{
              DAOFactory.getRegistrationDAO().deleteAllByByStudentCode(studentCode);
              for(int i=0; i<registried.size();i++){
                  if(checkNumOfStudentReg(registried.get(i).getId().getClassCode())){
@@ -345,7 +396,7 @@ private boolean isPresubNotComplete(String subjectCode, String studentCode) thro
       List<TrainClass> trainClass=DAOFactory.getTrainClassDAO().findAllByFacultyCodeAndTime(facultyCode);
       List<String> registried=new ArrayList<String>();
       setSubjectAndLecturer(trainClass);
-      for(int i=0; i<trainClass.size(); i++){
+      for(int i=trainClass.size()-1; i>=0; i--){
           if(isPresubNotComplete(trainClass.get(i).getSubjectCode(), studentCode))
               trainClass.remove(i);
       }
@@ -435,7 +486,7 @@ private boolean isPresubNotComplete(String subjectCode, String studentCode) thro
       List<TrainClass> trainClass=DAOFactory.getTrainClassDAO().findAllByFacultyCodeAndTime(facultyCode);
       ArrayList<String> registried=new ArrayList<String>();
       setSubjectAndLecturer(trainClass);
-      for(int i=0; i<trainClass.size(); i++){
+      for(int i=trainClass.size()-1; i>=0; i--){
           if(isPresubNotComplete(trainClass.get(i).getSubjectCode(), studentCode))
               trainClass.remove(i);
       }
