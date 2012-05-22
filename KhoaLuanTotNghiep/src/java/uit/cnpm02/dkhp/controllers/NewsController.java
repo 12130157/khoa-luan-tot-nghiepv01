@@ -150,11 +150,11 @@ public class NewsController extends HttpServlet {
         NewsDAO newsDao=new NewsDAO();
         int rows=newsDao.getRowsCount();
         int numpage=0;
-        if(rows%10==0) numpage=rows/10;
-        else numpage=rows/10+1;
+        if(rows%Constants.ELEMENT_PER_PAGE_DEFAULT==0) numpage=rows/Constants.ELEMENT_PER_PAGE_DEFAULT;
+        else numpage=rows/Constants.ELEMENT_PER_PAGE_DEFAULT+1;
         String path="./jsps/PDT/NewsManager.jsp";
         try {
-            List<News> newsList=newsDao.findAll(10, 1, "NgayTao", "DESC");
+            List<News> newsList=newsDao.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, 1, "NgayTao", "DESC");
             session.setAttribute("newsList", newsList);
             session.setAttribute("numpage", numpage);
             response.sendRedirect(path);
