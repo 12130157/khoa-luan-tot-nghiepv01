@@ -12,7 +12,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <%
-    List<Account> accounts = (List<Account>) session.getAttribute("account");
+    List<Account> accounts = (List<Account>) session.getAttribute("accountList");
     Integer numpage = (Integer) session.getAttribute("numpage");
     if (numpage == null) {
         numpage = 1;
@@ -54,7 +54,7 @@
                     
                     <%--------------Search-------------%>
                     <div id="search-area">
-                        <input type="text" name="txtSearch" id="txtSearch" />
+                        <input type="text" name="txtSearch" onKeyPress="keypressed()" id="txtSearch" />
                         <input type="button" onclick="search()" value="Tìm kiếm">
                     </div>
                     <%--
@@ -142,7 +142,13 @@
                 ajaxfunction("../../AccountController?action=Filter&curentPage="+currentpage);
             }
         }
-        
+         function keypressed()
+    { 
+       if(event.keyCode=='13')
+       {
+           search();
+       } 
+      }
         function search() {
             var key = document.getElementById("txtSearch").value;
             var pagename = "../../AccountController?action=search&key=" + key;

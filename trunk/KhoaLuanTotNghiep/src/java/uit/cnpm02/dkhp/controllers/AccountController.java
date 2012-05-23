@@ -45,9 +45,7 @@ public class AccountController extends HttpServlet {
     private ClassDAO classDao = DAOFactory.getClassDao();
     private FacultyDAO facultyDao = DAOFactory.getFacultyDao();
     private CourseDAO courseDao = DAOFactory.getCourseDao();
-    private int numpage = 0;
-
-    private List<Account> accounts = new ArrayList<Account>(10);
+    
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -65,7 +63,6 @@ public class AccountController extends HttpServlet {
         String action = request.getParameter("action");
 
         try {
-            session.setAttribute("numpage", getNumberPage());
             if (action.equalsIgnoreCase("changePass")) {
                 changePass(request, response, session);
             } else if (action.equalsIgnoreCase("Info")) {
@@ -93,6 +90,9 @@ public class AccountController extends HttpServlet {
             } else if (action.equalsIgnoreCase(AccountSupport
                                         .SORT.description())) {
                 doSortAccount(request, response);
+            }else if(action.equalsIgnoreCase(AccountSupport
+                                        .FILTER.description())){
+                filterAccount(request, response);
             }
             //
         } catch (Exception ex) {
@@ -103,6 +103,37 @@ public class AccountController extends HttpServlet {
         }
     }
 
+    
+    private void filterAccount(HttpServletRequest request, HttpServletResponse response){
+        PrintWriter out= null;
+        try {
+            out = response.getWriter();
+            int currentPage=Integer.parseInt(request.getParameter("curentPage"));
+            List<Account> result= accDao.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, currentPage, "TenDangNhap", "DESC");
+            if(!result.isEmpty()){
+                out.println("<tr><th>STT</th><th> <span class='atag' onclick='sort('TenDangNhap')'> Tên đăng nhập </span></th>");
+                out.println("<th> <span class='atag' onclick='sort('HoTen')'> Họ tên NSD </span></th>");
+                out.println("<th> <span class='atag' onclick='sort('TinhTrang')'> Tình trạng </span></th>");
+                out.println("<th> <span class='atag' onclick='sort('Loai')'> Loại tài khoản </span></th>");
+                out.println("<th>Sửa</th><th>Xóa</th></tr>");
+                for(int i =0; i< result.size(); i++){
+                    out.println("<tr><td>"+((currentPage-1)*Constants.ELEMENT_PER_PAGE_DEFAULT + 1 + i)+"</td>");
+                    out.println("<td>"+result.get(i).getUserName()+"</td>");
+                    out.println("<td>"+result.get(i).getFullName()+"</td>");
+                    out.println("<td>"+result.get(i).getStatus()+"</td>");
+                    out.println("<td>"+AccountType.getDescription(result.get(i).getType())+"</td>");
+                    out.println("<td><a href='../../AccountController?action=editaccount&username="+result.get(i).getId()+"'>Sửa</a></td>");
+                    String method = String.format(" onclick=deleteUser('%s')",result.get(i).getId());
+                    out.println("<td><span class='atag' "+method+">Xóa</span></td></tr>");
+                   
+                }
+            }
+        } catch (Exception ex) {
+         Logger.getLogger(AccountController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            out.close();
+        }
+    }
     /**
      *
      * @param response
@@ -198,26 +229,20 @@ public class AccountController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private int getNumberPage() throws Exception {
-        int rows = accDao.getRowsCount();
-
-        int rowsPerPage = Constants.ELEMENT_PER_PAGE_DEFAULT;
-        if (rows % rowsPerPage == 0) {
-            numpage = rows / rowsPerPage;
-        } else {
-            numpage = rows / rowsPerPage + 1;
-        }
-        return numpage;
-    }
-
     /////////
     private void doListAccount(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        List<Account> accs = accountService.getAccount(
-                                1, request.getSession().getId());
-
+        int numpage=1;
+        List<Account> accs = accDao.findAll();
+        int rows = accs.size();
+        if(rows%Constants.ELEMENT_PER_PAGE_DEFAULT==0)
+            numpage=rows/Constants.ELEMENT_PER_PAGE_DEFAULT;
+        else 
+            numpage=rows/Constants.ELEMENT_PER_PAGE_DEFAULT+1;
+        List<Account> result= accDao.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, 1, "TenDangNhap", "DESC");
         HttpSession session = request.getSession();
-        session.setAttribute("account", accs);
+        session.setAttribute("accountList", result);
+        session.setAttribute("numpage", numpage);
         String path = "./jsps/PDT/AccountManager.jsp";
         response.sendRedirect(path);
     }
@@ -384,6 +409,7 @@ public class AccountController extends HttpServlet {
         SEARCH("search"),
         SORT("sort"),
         DELETE("delete"),
+        FILTER("Filter"),
         PRE_EDIT_ACCOUNT("editaccount"),
         UPDATE_ACCOUNT("update-account"),
         CREATE_NEW_ACC("create-new");
