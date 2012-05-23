@@ -62,7 +62,7 @@
                     <div style="padding-bottom: 10px;
                          padding-left: 10px;
                          ">
-                        <input type = "text" placeholder = "Nhập thông tin tìm kiếm" id="search-box" />
+                        <input type = "text" onKeyPress="keypressed()" placeholder = "Nhập thông tin tìm kiếm" id="search-box"  />
                         <input type = "button" onclick = "searchSubject()" value = "Tìm">
                     </div>
                     <form method="post" action="../../ManageSubjectController?function=pre_add_subject">
@@ -175,7 +175,13 @@
                 http.send(null);
             }
         }
-        
+          function keypressed()
+    { 
+       if(event.keyCode=='13')
+       {
+           searchSubject();
+       } 
+      }
         function searchSubject() {
             var key = document.getElementById("search-box").value;
             submitSearchSubject("../../ManageSubjectController?function=search&key=" + key);
