@@ -18,7 +18,7 @@ import uit.cnpm02.dkhp.service.IFileUploadService;
 import uit.cnpm02.dkhp.service.ITrainClassService;
 import uit.cnpm02.dkhp.service.impl.FileUploadServiceImpl;
 import uit.cnpm02.dkhp.service.impl.TrainClassServiceImpl;
-import uit.cnpm02.dkhp.utilities.FileInfo;
+import uit.cnpm02.dkhp.model.FileInfo;
 import uit.cnpm02.dkhp.utilities.MultipartMap;
 import uit.cnpm02.dkhp.utilities.StringUtils;
 
