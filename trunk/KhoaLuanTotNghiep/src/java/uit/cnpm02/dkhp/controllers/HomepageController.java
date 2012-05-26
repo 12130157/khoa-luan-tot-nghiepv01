@@ -2,6 +2,7 @@ package uit.cnpm02.dkhp.controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,8 +15,18 @@ import javax.servlet.http.HttpSession;
 import uit.cnpm02.dkhp.DAO.AccountDAO;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.NewsDAO;
+import uit.cnpm02.dkhp.DAO.TaskDAO;
 import uit.cnpm02.dkhp.model.Account;
 import uit.cnpm02.dkhp.model.News;
+import uit.cnpm02.dkhp.model.Task;
+import uit.cnpm02.dkhp.model.type.AccountType;
+import uit.cnpm02.dkhp.model.type.NewsType;
+import uit.cnpm02.dkhp.model.type.TaskStatus;
+import uit.cnpm02.dkhp.service.IPDTService;
+import uit.cnpm02.dkhp.service.impl.PDTServiceImpl;
+import uit.cnpm02.dkhp.utilities.Constants;
+import uit.cnpm02.dkhp.utilities.ExecuteResult;
+import uit.cnpm02.dkhp.utilities.StringUtils;
 import uit.cnpm02.dkhp.utilities.password.PasswordProtector;
 
 /**
@@ -24,7 +35,8 @@ import uit.cnpm02.dkhp.utilities.password.PasswordProtector;
  */
 @WebServlet(name = "HomepageController", urlPatterns = {"/HomepageController"})
 public class HomepageController extends HttpServlet {
-
+    
+    private IPDTService pdtService = new PDTServiceImpl();
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
@@ -42,26 +54,39 @@ public class HomepageController extends HttpServlet {
          * return ...
          */
         PrintWriter out = response.getWriter();
-        String path="";
-        String actor=request.getParameter("actor") ;
+        String path = "./jsps/StartUp.jsp";
+        String actor = request.getParameter("actor");
 
         //updatePassword();
         
+        if (session.isNew()) {
+            session.setMaxInactiveInterval(1200);
+        }
+        
         try {
             NewsDAO newsDao = new NewsDAO();
-            List<News> news = newsDao.findAll();
+            //List<News> news = newsDao.findAll();
+            List<News> news = newsDao.findByColumName("Loai", NewsType.IMPORTANT.value());
+            news.addAll(newsDao.getRows(0, 5, 2, true));
             
             if((news != null) && (news.size() > 0)) {
                 session.setAttribute("news", news);
             }
-            if(actor.equalsIgnoreCase("All"))
-            path = "./jsps/StartUp.jsp";
-            else if(actor.equalsIgnoreCase("Student"))
+            if (actor.equalsIgnoreCase("All")) {
+                path = "./jsps/StartUp.jsp";
+            } else if (actor.equalsIgnoreCase("Student")) {
                 path = "./jsps/SinhVien/SVStart.jsp";
-            else if(actor.equalsIgnoreCase("PDT"))
+            } else if (actor.equalsIgnoreCase("PDT")) {
                 path = "./jsps/PDT/PDTStart.jsp";
-            else if(actor.equalsIgnoreCase("Lecturer"))
-                 path = "./jsps/GiangVien/GVStart.jsp";
+            } else if (actor.equalsIgnoreCase("Lecturer")) {
+                path = "./jsps/GiangVien/GVStart.jsp";
+            } else if (actor.equalsIgnoreCase("notify-task-to-student")) {
+                processTask(request, response);
+                return;
+            } else if (actor.equalsIgnoreCase("hide-task")) {
+                processHideTask(request, response);
+                return;
+            }
             response.sendRedirect(path);
         } catch (Exception ex) {
             Logger.getLogger(HomepageController.class.getName())
@@ -130,4 +155,118 @@ public class HomepageController extends HttpServlet {
         }
     }
 
+    private void processTask(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        String task = request.getParameter("taskid");
+        PrintWriter out = response.getWriter();
+        if (StringUtils.isEmpty(task)) {
+            out.println("error - : Không tìm thấy thông báo");
+            return;
+        }
+        int taskId = 0;
+        try {
+            taskId = Integer.parseInt(task);
+        } catch (Exception ex) {
+            out.println("error - : Lỗi server " + ex.toString());
+            return;
+        }
+        
+        ExecuteResult er = pdtService.processTask(taskId);
+        if (!er.isIsSucces()) {
+            out.println(er.getMessage());
+            return;
+        }
+        
+        List<Task> tasks = getRemindTask(request);
+        writeOutListTasks(out, tasks);
+    }
+
+    private List<Task> getRemindTask(HttpServletRequest request) {
+        TaskDAO taskDao = DAOFactory.getTaskDAO();
+        HttpSession session = request.getSession();
+        session.removeAttribute("tasks");
+        String username = "";
+        String generalUsername = "";
+        try {
+            username = (String) session.getAttribute("username");
+            AccountDAO accDao = DAOFactory.getAccountDao();
+            Account acc = accDao.findById(username);
+            if (acc.getType() == AccountType.STUDENT.value()) {
+                generalUsername = "student";
+            } else if (acc.getType() == AccountType.LECTUTER.value()) {
+                generalUsername = "lecuturer";
+            } else if (acc.getType() == AccountType.ADMIN.value()) {
+                generalUsername = "admin";
+            }
+        } catch (Exception ex) {
+            //
+        }
+        try {
+            List<Task> tasks = taskDao.findByColumNames(
+                    new String[] {"NguoiNhan", "TrangThai"},
+                    new Object[] {username, TaskStatus.TOBE_PROCESS.value()});
+            if (!username.equals(generalUsername))
+                tasks.addAll(taskDao.findByColumNames(
+                    new String[] {"NguoiNhan", "TrangThai"},
+                    new Object[] {generalUsername, TaskStatus.TOBE_PROCESS.value()}));
+            return tasks;
+        } catch (Exception ex) {
+            Logger.getLogger(HomepageController.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    private void writeOutListTasks(PrintWriter out, List<Task> tasks) {
+        if ((tasks != null) && !tasks.isEmpty()) {
+            return;
+        }
+        out.println("<u><b>Tin quan trọng:</b></u>");
+        out.println("<table class=\"general-table important-table\">");
+        out.println("<tr>"
+                        + "<th> STT </th><th> Nội dung </th><th> Người gửi </th><th> Ngày gửi </th>"
+                    + "</tr>");
+        for (int i = 0; i < tasks.size(); i++) {
+            Task t = tasks.get(i);
+            SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_PARTERM_DEFAULT);
+            out.println("<tr>"
+                        + "<td>" + (i + 1) + "</td>"
+                        + "<td>" + t.getContent()
+                            + "<div class=\"pop-up\">"
+                                + "<span class=\"atag\" onclick=\"accept(" + t.getId() + ")\"> Chấp nhận </span>"
+                                + "<span class=\"atag\" onclick=\"reject(" + t.getId() + ")\"> Không chấp nhận </span>"
+                            + "</div>"
+                        + "</td>"
+                        + "<td>" + t.getSender() + "</td>"
+                        + "<td>" + sdf.format(t.getCreated()) + "</td>"
+                    + "</tr>");
+        }
+        out.println("</table>");
+    }
+
+    private void processHideTask(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        String task = request.getParameter("taskid");
+        PrintWriter out = response.getWriter();
+        if (StringUtils.isEmpty(task)) {
+            out.println("error - : Không tìm thấy thông báo");
+            return;
+        }
+        int taskId = 0;
+        try {
+            taskId = Integer.parseInt(task);
+        } catch (Exception ex) {
+            out.println("error - : Lỗi server " + ex.toString());
+            return;
+        }
+        
+        ExecuteResult er = pdtService.hideTask(taskId);
+        if (!er.isIsSucces()) {
+            out.println(er.getMessage());
+            return;
+        }
+        
+        List<Task> tasks = getRemindTask(request);
+        writeOutListTasks(out, tasks);
+    }
 }
