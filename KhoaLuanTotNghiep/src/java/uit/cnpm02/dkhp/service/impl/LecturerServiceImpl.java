@@ -3,6 +3,7 @@ package uit.cnpm02.dkhp.service.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -393,6 +394,35 @@ public class LecturerServiceImpl implements ILecturerService {
                     .log(Level.SEVERE, null, ex);
         }
         return 1;
+    }
+
+    @Override
+    public ExecuteResult updateLecturer(String sessionId, String id, String name,
+                        String cmnd, String email, Date birthday, String phone) {
+        ExecuteResult er = new ExecuteResult(true, "Successful.");
+        try {
+            Lecturer persistObj = lecturerDao.findById(id);
+            if (persistObj == null) {
+                er.setIsSucces(false);
+                er.setMessage("error - Không tìm thấy GV cần update");
+            } else {
+                persistObj.setFullName(name);
+                persistObj.setIdentityCard(cmnd);
+                persistObj.setEmail(email);
+                persistObj.setBirthday(birthday);
+                persistObj.setPhone(phone);
+                
+                lecturerDao.update(persistObj);
+                er.setData(persistObj);
+            }
+            
+        } catch (Exception ex) {
+            Logger.getLogger(LecturerServiceImpl.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            er.setIsSucces(false);
+            er.setMessage("error - Đã có lỗi xảy ra: " + ex.toString());
+        }
+        return er;
     }
     
 }
