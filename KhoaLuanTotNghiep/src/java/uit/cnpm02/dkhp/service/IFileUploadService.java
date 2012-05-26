@@ -1,7 +1,7 @@
 package uit.cnpm02.dkhp.service;
 
 import java.util.List;
-import uit.cnpm02.dkhp.utilities.FileInfo;
+import uit.cnpm02.dkhp.model.FileInfo;
 
 /**
  *

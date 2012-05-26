@@ -1,7 +1,9 @@
 package uit.cnpm02.dkhp.service;
 
+import java.util.Date;
 import java.util.List;
 import uit.cnpm02.dkhp.model.Lecturer;
+import uit.cnpm02.dkhp.model.Task;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
 
 /**
@@ -34,6 +36,9 @@ public interface ILecturerService {
     public List<Lecturer> sort(String sessionId, final String by);
 
     public ExecuteResult updateLecturer(String sessionId, Lecturer l);
+    
+    public ExecuteResult updateLecturer(String sessionId, String id, String name,
+            String cmnd, String email, Date birthday, String phone);
     
     int getNumberPage();
 }

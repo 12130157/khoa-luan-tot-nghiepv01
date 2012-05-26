@@ -3,6 +3,8 @@ package uit.cnpm02.dkhp.service;
 import java.util.List;
 import uit.cnpm02.dkhp.model.Course;
 import uit.cnpm02.dkhp.model.Faculty;
+import uit.cnpm02.dkhp.model.Task;
+import uit.cnpm02.dkhp.utilities.ExecuteResult;
 
 /**
  *
@@ -33,4 +35,14 @@ public interface IPDTService {
      * (exel file.)
      */
     void uploadScoreSheet();
+    
+    public List<Task> getTasks(String username);
+
+    public ExecuteResult sendTask(Task task);
+    
+    public ExecuteResult processTask(int taskId);
+    
+    public ExecuteResult rejectTask(int taskId);
+
+    public ExecuteResult hideTask(int taskId);
 }
