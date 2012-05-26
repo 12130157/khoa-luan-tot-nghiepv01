@@ -42,7 +42,7 @@ public class BOUtils {
         if (!doLoadConfig) {
             Properties config = new Properties();
             try {
-                config.load(new FileInputStream("system.properties"));
+                config.load(new FileInputStream("config/system.properties"));
                 String listClass = config.get(ROOM_LIST).toString();
 
                 roomList = Arrays.asList(listClass.split(","));
