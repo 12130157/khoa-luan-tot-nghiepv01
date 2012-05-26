@@ -3,7 +3,7 @@
     Created on : 11-11-2011, 23:45:21
     Author     : LocNguyen
 --%>
-<%@page import="uit.cnpm02.dkhp.utilities.FileInfo"%>
+<%@page import="uit.cnpm02.dkhp.model.FileInfo"%>
 <%@page import="java.util.List"%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -109,6 +109,7 @@
                               class="atag"> File format 
                         </span>
                     </div>
+                    <div class="clear"></div>
                     <div id="file-format-view" class="short_sidebar">
                         <img src="../../imgs/form_format/import_score_format_file.PNG"/>
                     </div>
@@ -182,7 +183,6 @@
         function getValidateFileNameHandler() {
             if(http.readyState == 4 && http.status == 200){
                 var result = http.responseText;
-                alert("Receied message: " + result);
                 if (result.substring(0, 5) == "error") {
                     var msgDialog = document.getElementById("validate-filename-result");
                     msgDialog.innerHTML = result;
