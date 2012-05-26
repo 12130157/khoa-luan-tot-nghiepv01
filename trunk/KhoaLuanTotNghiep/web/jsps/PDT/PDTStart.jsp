@@ -4,15 +4,14 @@
     Author     : ngloc_it
 --%>
 
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="uit.cnpm02.dkhp.model.Task"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 <%
-    /*List<News> listNews = (List<News>) session.getAttribute("news");
+    List<Task> tasks = (List<Task>) session.getAttribute("tasks");
 
-    int newsPerPage = 5;
-    int currentPage = 1;
- */ 
 %>
 <html>
     <head>
@@ -35,30 +34,45 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <%@include file="News.jsp" %>
-                <%--
-                <div id="image">
-                    
-                </div>
-                <%
-                    if (listNews != null) {
-                        for (int i = 0; i < listNews.size(); i++) {
-                            News n = listNews.get(i);
-                            if (listNews.get(i).getType() == 1) {
-                %>
-                <div id="new-range">
-                <div id="title">
-                <a href="../../NewsController?Actor=PDT&action=detail&Id=<%=n.getId()%>"><%=n.getTitle()%></a><br>
-                </div>
-                <%=(n.getContent().length() >= 200 ? n.getContent().substring(0, 200)+"..." : n.getContent())%><br>
-                </div>
-                </div>
-                <%}
-                            }
-                        }
-                
+                <div id="important-task">
+                    <%
+                    if ((tasks != null) && !tasks.isEmpty()) {
                     %>
-                --%>
+                    <u><b>Tin quan trọng:</b></u>
+                    <table class="general-table important-table">
+                        <tr>
+                            <th> STT </th>
+                            <th> Nội dung </th>
+                            <th> Người gửi </th>
+                            <th> Ngày gửi </th>
+                        </tr>
+                        <%
+                        for (int i = 0; i < tasks.size(); i++) {
+                            Task t = tasks.get(i);
+                            SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_PARTERM_DEFAULT);
+                        %>
+                            <tr>
+                                <td> <%= (i + 1) %> </td>
+                                <td>
+                                    <%= t.getContent()%>
+                                    <div class="pop-up">
+                                        <span class="atag" onclick="accept(<%= t.getId() %>)"> Chấp nhận </span>
+                                        <span class="atag" onclick="reject(<%= t.getId() %>)"> Không chấp nhận </span>
+                                    </div>
+                                </td>
+                                <td> <%= t.getSender() %> </td>
+                                <td> <%= sdf.format(t.getCreated()) %> </td>
+                            </tr>
+                        <%
+                        }
+                        %>
+                    </table>
+                    <%
+                    }
+                    %>
+                    <div class="clear"></div>
+                </div>
+                <%@include file="News.jsp" %>
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
@@ -69,13 +83,8 @@
     </body>
 
     <script src="../javascripts/News.js"></script>
-    <script  type = "text/javascript" >
-        action="search";
-        var http = createRequestObject();
-        function search(){
-            name=document.getElementById("subname").value;
-            ajaxfunction("../servSubject?action="+action+"&name="+name);
-        }
-       
+    <script src="../../javascripts/AjaxUtil.js"></script>
+    <script src="../../javascripts/TaskUtil.js"></script>
+    <script language="javascript" >
     </script>
 </html>
