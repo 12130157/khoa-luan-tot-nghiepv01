@@ -21,7 +21,16 @@ public class DAOFactory {
     private static PreSubjectDAO preSubDao = null;
     private static StudyResultDAO studyResultDAO = null;
     private static LecturerDAO lecturerDao = null;
-    private static RegistrationTimeDAO timeDao=null;
+    private static RegistrationTimeDAO timeDao = null;
+    private static TaskDAO taskDao = null;
+    private static FileInfoDAO fileInfoDao = null;
+    
+    public static FileInfoDAO getFileInfoDao() {
+        if (fileInfoDao == null) {
+            fileInfoDao = new FileInfoDAO();
+        }
+        return fileInfoDao;
+    }
 
     public static PreSubjectDAO getPreSubDao() {
         if (preSubDao == null) {
@@ -130,10 +139,18 @@ public class DAOFactory {
         }
         return lecturerDao;
     }
+    
     public static RegistrationTimeDAO getRegistrationTimeDAO() {
         if (timeDao == null) {
             timeDao = new RegistrationTimeDAO();
         }
         return timeDao;
+    }
+    
+    public static TaskDAO getTaskDAO() {
+        if (taskDao == null) {
+            taskDao = new TaskDAO();
+        }
+        return taskDao;
     }
 }
