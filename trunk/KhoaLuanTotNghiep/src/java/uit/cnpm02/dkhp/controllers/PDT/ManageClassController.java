@@ -142,55 +142,70 @@ public class ManageClassController extends HttpServlet {
        writeFilterTrainClass(trainclasslist, out);
     }
     private void writeFilterTrainClass(List<TrainClass> trainclasslist, PrintWriter out){
-        out.println("<tr><th> STT</th><th> Lớp học </th><th> Môn học </th><th> Giảng viên </th><th> Thứ </th><th> Phòng </th><th> Đăng ký </th><th>Ngày thi</th><th>Hủy</th><th>Đóng</th></tr>");
-        if(trainclasslist == null || trainclasslist.isEmpty())
+        out.println("<tr>"
+                    + "<th> STT</th>"
+                    + "<th> Lớp học </th>"
+                    + "<th> Môn học </th>"
+                    + "<th> Giảng viên </th>"
+                    + "<th> Thứ </th>"
+                    + "<th> Phòng </th>"
+                    + "<th> Đăng ký </th>"
+                    + "<th>Ngày thi</th>"
+                    + "<th>Hủy</th>"
+                    + "<th>Đóng</th>"
+                + "</tr>");
+        if((trainclasslist == null) || trainclasslist.isEmpty()) {
             out.println("<tr>Không tìm thấy dữ liệu</tr>");
-        else{
-        for(int i=0; i < trainclasslist.size();i++){
-            StringBuffer result = new StringBuffer();
-            result.append("<tr><td>").append(i+1).append("</td>");
-            result.append("<td><a href= '../../ManageClassController?action=detail&classID=").append(trainclasslist.get(i).getId().getClassCode()).append("&year=").append(trainclasslist.get(i).getId().getYear()).append("&semester=").append(trainclasslist.get(i).getId().getSemester()).append("'>").append(trainclasslist.get(i).getId().getClassCode()).append("</a></td>");
-            result.append("<td> ").append(trainclasslist.get(i).getSubjectName()).append("</td>");
-            result.append(" <td> ").append(trainclasslist.get(i).getLectturerName()).append(" </td>");
-            result.append("<td> ").append(trainclasslist.get(i).getStudyDate()).append("</td>");
-            result.append("<td> ").append(trainclasslist.get(i).getClassRoom()).append(" </td>");
-            result.append("<td> ").append(trainclasslist.get(i).getNumOfStudentReg()).append("/").append(trainclasslist.get(i).getNumOfStudent()).append(" </td>");
-            if(trainclasslist.get(i).getTestDate() == null) 
-            result.append("<td>Chưa có</td>");
-            else
-            result.append("<td>").append(trainclasslist.get(i).getTestDate()).append("</td>");
-            result.append("<td><a href='../../ManageClassController?action=cancel&classID=").append(trainclasslist.get(i).getId().getClassCode()).append("'>Hủy</a></td>");
-            result.append("<td><a href='../../ManageClassController?action=close&classID=").append(trainclasslist.get(i).getId().getClassCode()).append("'>Đóng</a></td>");
-            result.append("</tr>");
-            out.println(result.toString());
-        }
+        } else {
+            for (int i = 0; i < trainclasslist.size(); i++) {
+                StringBuffer result = new StringBuffer();
+                result.append("<tr><td>").append(i + 1).append("</td>");
+                result.append("<td><a href= '../../ManageClassController?action=detail&classID=").append(trainclasslist.get(i).getId().getClassCode()).append("&year=").append(trainclasslist.get(i).getId().getYear()).append("&semester=").append(trainclasslist.get(i).getId().getSemester()).append("'>").append(trainclasslist.get(i).getId().getClassCode()).append("</a></td>");
+                result.append("<td> ").append(trainclasslist.get(i).getSubjectName()).append("</td>");
+                result.append(" <td> ").append(trainclasslist.get(i).getLectturerName()).append(" </td>");
+                result.append("<td> ").append(trainclasslist.get(i).getStudyDate()).append("</td>");
+                result.append("<td> ").append(trainclasslist.get(i).getClassRoom()).append(" </td>");
+                result.append("<td> ").append(trainclasslist.get(i).getNumOfStudentReg()).append("/").append(trainclasslist.get(i).getNumOfStudent()).append(" </td>");
+                if (trainclasslist.get(i).getTestDate() == null) {
+                    result.append("<td>Chưa có</td>");
+                } else {
+                    result.append("<td>").append(trainclasslist.get(i).getTestDate()).append("</td>");
+                }
+                result.append("<td><a href='../../ManageClassController?action=cancel&classID=").append(trainclasslist.get(i).getId().getClassCode()).append("'>Hủy</a></td>");
+                result.append("<td><a href='../../ManageClassController?action=close&classID=").append(trainclasslist.get(i).getId().getClassCode()).append("'>Đóng</a></td>");
+                result.append("</tr>");
+                out.println(result.toString());
+            }
         }
     }
-    private void preUpdateTrainClass(HttpServletRequest request, HttpServletResponse response) throws IOException{
+    private void preUpdateTrainClass(HttpServletRequest request,
+                        HttpServletResponse response) throws IOException{
        String path="";
-        try{
-        HttpSession session = request.getSession();
-        String ClassCode = (String)request.getParameter("classId"); 
-        String year =(String) request.getParameter("year");
-        int semester = Integer.parseInt((String) request.getParameter("semester")); 
-        TrainClassID classID = new TrainClassID(ClassCode, year, semester);
-        TrainClass trainClass = trainClassService.getClassInfomation(classID);
-        ArrayList<Lecturer> lecturers = (ArrayList<Lecturer>) lectureDAO.findByColumName("MaKhoa", subjectDAO.findById(classDAO.findById(classID).getSubjectCode()).getFacultyCode());
-          if ((lecturers != null) && (!lecturers.isEmpty())) {
+        try {
+            HttpSession session = request.getSession();
+            String ClassCode = (String) request.getParameter("classId");
+            String year = (String) request.getParameter("year");
+            int semester = Integer.parseInt((String) request.getParameter("semester"));
+            TrainClassID classID = new TrainClassID(ClassCode, year, semester);
+            TrainClass trainClass = trainClassService.getClassInfomation(classID);
+            ArrayList<Lecturer> lecturers = (ArrayList<Lecturer>) lectureDAO
+                    .findByColumName("MaKhoa",
+                            subjectDAO.findById(classDAO.findById(classID).getSubjectCode()).getFacultyCode());
+            if ((lecturers != null) && (!lecturers.isEmpty())) {
                 ArrayList<LecturerWeb> lws = new ArrayList<LecturerWeb>(10);
-                
+
                 for (Lecturer l : lecturers) {
                     LecturerWeb lw = new LecturerWeb(l.getId(), l.getFullName());
                     lws.add(lw);
                 }
                 session.setAttribute("lecturers", lws);
             }
-        session.setAttribute("trainclass", trainClass);
-        path = "./jsps/PDT/UpdateTrainClass.jsp";
-        }catch(Exception ex){
-           path= "./jsps/Message.jsp";
-       }
-         response.sendRedirect(path);
+            session.setAttribute("trainclass", trainClass);
+            path = "./jsps/PDT/UpdateTrainClass.jsp";
+        } catch (Exception ex) {
+            path = "./jsps/Message.jsp";
+        }
+        response.sendRedirect(path);
     }
     /**
      * this function to update train class
