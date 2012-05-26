@@ -12,7 +12,7 @@
 <html>
     <head>
         <link href="../csss/menu.css" rel="stylesheet" type="text/css" media="screen">
-
+        <link href="../csss/general.css" rel="stylesheet" type="text/css" media="screen">
     </head>
     <body>
     <MARQUEE onmouseover="this.stop();" onmouseout="this.start();" HEIGHT=25 BGCOLOR=transparent BEHAVIOR=scroll SCROLLAMOUNT="4">
@@ -29,6 +29,7 @@
                 </embed>
             </OBJECT>
         </DIV>
+        <%--<span id="digitalclock" class="clock"></span>--%>
     </div>
     <div id = "menu" align="center">
         <ul>
@@ -42,6 +43,8 @@
             <li><a href="Login.jsp">Đăng nhập</a></li>
             <li><a href="jspLienHe.jsp" class="no-border">Liên Hệ</a></li>
          </ul>
-    </div>       
+    </div>
+    
 </body>
+<script src="../javascripts/clock.js"></script>
 </html>
