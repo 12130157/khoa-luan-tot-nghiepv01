@@ -2,6 +2,8 @@ package uit.cnpm02.dkhp.controllers.GV;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,11 +12,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import uit.cnpm02.dkhp.model.Lecturer;
+import uit.cnpm02.dkhp.model.Task;
 import uit.cnpm02.dkhp.model.TrainClass;
+import uit.cnpm02.dkhp.model.type.TaskStatus;
+import uit.cnpm02.dkhp.model.type.TaskType;
 import uit.cnpm02.dkhp.service.ILecturerService;
+import uit.cnpm02.dkhp.service.IPDTService;
 import uit.cnpm02.dkhp.service.ITrainClassService;
 import uit.cnpm02.dkhp.service.impl.LecturerServiceImpl;
+import uit.cnpm02.dkhp.service.impl.PDTServiceImpl;
 import uit.cnpm02.dkhp.service.impl.TrainClassServiceImpl;
+import uit.cnpm02.dkhp.utilities.Constants;
+import uit.cnpm02.dkhp.utilities.ExecuteResult;
 
 /**
  *
@@ -24,6 +33,9 @@ import uit.cnpm02.dkhp.service.impl.TrainClassServiceImpl;
 public class LecturerPrivateController extends HttpServlet {
     private ILecturerService lecturereService = new LecturerServiceImpl();
     private ITrainClassService trainClassSeervice = new TrainClassServiceImpl();
+    private IPDTService pdtService = new PDTServiceImpl();
+    
+    private static SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_PARTERM_DEFAULT);
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -42,12 +54,21 @@ public class LecturerPrivateController extends HttpServlet {
         
         try {
             String action = request.getParameter("function");
-            if (action.equalsIgnoreCase(LecturerPrivateSupport
+            /*if (action.equalsIgnoreCase(LecturerPrivateSupport
                     .DEFAULT.getValue())) {
+                doDefaultAction(request, response);
+            }*/if (action.equalsIgnoreCase(LecturerPrivateSupport
+                    .LOAD_PERSIONAL_INFO.getValue())) {
                 doDefaultAction(request, response);
             } else if (action.equalsIgnoreCase(LecturerPrivateSupport
                     .GET_TRAIN_CLASS.getValue())) {
                 doLoadTrainClassForLecturer(request, response);
+            } else if (action.equalsIgnoreCase(LecturerPrivateSupport
+                    .UPDATE.getValue())) {
+                doUpdateInformaton(request, response);
+            } else if (action.equalsIgnoreCase(LecturerPrivateSupport
+                    .SEND_REQUEST.getValue())) {
+                doSendRequest(request, response);
             }
         } catch (Exception ex) {
             out.println("Đã xảy ra sự cố: </br>" + ex);
@@ -96,16 +117,23 @@ public class LecturerPrivateController extends HttpServlet {
             HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession();
         String username = (String) session.getAttribute("username");
-        String path = "./jsps/GiangVien/PersionalInformation.jsp";
+        String path = "./jsps/GiangVien/PersionnalInformation.jsp";
         Lecturer lecturer = lecturereService.getLecturer(username);
         if (lecturer == null) {
             path = "../../Login.jsp";
         } else {
-            List<TrainClass> includeTrainClass =
+            session.setAttribute("lecturer", lecturer);
+            
+            /*List<Task> tasks = pdtService.getTasks(username);
+            if ((tasks != null) && !tasks.isEmpty()) {
+                session.setAttribute("tasks", tasks);
+            }*/
+            /*List<TrainClass> includeTrainClass =
                     trainClassSeervice.getCurrentTrainClass(username);
             if (trainClassSeervice != null)
                 session.setAttribute("trainclass", includeTrainClass);
             session.setAttribute("lecturer", lecturer);
+             */
         }
         
         response.sendRedirect(path);
@@ -150,10 +178,117 @@ public class LecturerPrivateController extends HttpServlet {
             out.println("</table>");
         }
     }
+
+    /**
+     * Update lecturer's information.
+     * @param request
+     * @param response 
+     */
+    private void doUpdateInformaton(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        String lecturerId = (String) request.getParameter("lecturer");
+        String fullname = (String) request.getParameter("fullname");
+        String cmnd = (String) request.getParameter("cmnd");
+        String email = (String) request.getParameter("email");
+        String birthday = (String) request.getParameter("birthday");
+        String phone = (String) request.getParameter("phone");
+        
+        PrintWriter out = response.getWriter();
+        Date birth = null;
+        try {
+            
+            birth = sdf.parse(birthday);
+        } catch (Exception ex) {
+            out.append("error - Lỗi parse ngày sinh: " + ex.toString());
+            return;
+        }
+        
+        ExecuteResult er = lecturereService.updateLecturer(
+                request.getSession().getId(), lecturerId,
+                    fullname, cmnd, email, birth, phone);
+        if (!er.isIsSucces()) {
+            out.println(er.getMessage());
+        } else {
+            Lecturer l = (Lecturer) er.getData();
+            writeOutLecturerInformation(out, l);
+        }
+    }
+
+    private void writeOutLecturerInformation(PrintWriter out, Lecturer l) {
+        out.println("<table style=\"width: 600px;\">");
+        out.println("<tr class=\"odd-row\">"
+                        + "<td> Mã GV </td>"
+                        + "<td>"
+                            + "<input type=\"text\" readonly=\"readonly\" id=\"txt-lecturer-id\" value=" + l.getId() + " />"
+                        + "</td>"
+                        + "<td> Quên quán </td>"
+                        + "<td>" + l.getAddress() + "</td>"
+                    + "</tr>");
+        
+        out.println("<tr class=\"even-row\">"
+                        + "<td> Họ và tên </td>"
+                        + "<td>" + l.getFullName() + "</td>"
+                        + "<td> Khoa </td>"
+                        + "<td>" + l.getFacultyCode() + "</td>"
+                        + "</tr>"
+                        + "<tr class=\"odd-row\">"
+                        + "<td> Ngày sinh </td>"
+                        + "<td>" + sdf.format(l.getBirthday()) + "</td>"
+                        + "<td> CMND </td>"
+                        + "<td>" + l.getIdentityCard() + "</td>"
+                        + "</tr>");
+        out.println("<tr class=\"even-row\">"
+                        + "<td> ĐT liên lạc </td>"
+                        + "<td>" + l.getPhone() + "</td>"
+                        + "<td> Học Hàm </td>"
+                        + "<td>" + l.getHocHam() + "</td>"
+                    + "</tr>"
+                    + "<tr class=\"odd-row\">"
+                        + "<td> Email </td>"
+                        + "<td>" + l.getEmail() + "</td>"
+                        + "<td> Học Vị </td>"
+                        + "<td>" + l.getHocVi() + "</td>"
+                    + "</tr>");
+        out.println("</table>");
+    }
+
+    /**
+     * Sen request to PDT
+     * @param request
+     * @param response
+     * @throws IOException d requ
+     */
+    private void doSendRequest(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        PrintWriter out = response.getWriter();
+        
+        String trainClass = (String) request.getParameter("trainclass");
+        String dayoff = (String) request.getParameter("dayoff");
+        String dayon = (String) request.getParameter("dayon");
+        String shift = (String) request.getParameter("shift");
+        
+        String sender = (String) request.getSession().getAttribute("username");
+        
+        String content = "GV " + sender + " TB nghi lop " + trainClass
+                + " ca " + shift + " , ngay " + dayoff
+                + " day bu vao ngay " + dayon;
+        Task task = new Task(sender, "admin", content, new Date(),
+                TaskStatus.TOBE_PROCESS, TaskType.GV_TB_NGHI_DAY);
+        ExecuteResult er = pdtService.sendTask(task);
+        
+        if (!er.isIsSucces()) {
+            out.println("Lỗi: " + er.getMessage());
+        } else {
+            out.println("Yêu cầu được gửi thành công");
+        }
+    }
 //#############################################
     public enum LecturerPrivateSupport {
         DEFAULT("default"),
-        GET_TRAIN_CLASS("get-train-class");
+        GET_TRAIN_CLASS("get-train-class"),
+        LOAD_PERSIONAL_INFO("load-persional-infor"),
+        UPDATE("update"),
+        SEND_REQUEST("send-request");
         
         
         private String description;
