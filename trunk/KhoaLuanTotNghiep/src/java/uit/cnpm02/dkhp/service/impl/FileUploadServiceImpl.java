@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 import uit.cnpm02.dkhp.service.IFileUploadService;
 import uit.cnpm02.dkhp.utilities.Constants;
-import uit.cnpm02.dkhp.utilities.FileInfo;
+import uit.cnpm02.dkhp.model.FileInfo;
 
 /**
  *
@@ -47,7 +47,7 @@ public class FileUploadServiceImpl implements IFileUploadService {
         fi.setFileName(file.getName());
         fi.setAuthor(author);
         fi.setCategory(category);
-        fi.setLastModified(new Date(file.lastModified()));
+        fi.setCreatedTime(new Date(file.lastModified()));
         
         return fi;
     }
