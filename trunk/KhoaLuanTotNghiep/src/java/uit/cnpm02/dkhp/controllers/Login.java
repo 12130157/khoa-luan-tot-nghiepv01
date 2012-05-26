@@ -6,6 +6,7 @@ package uit.cnpm02.dkhp.controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -15,9 +16,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import uit.cnpm02.dkhp.DAO.AccountDAO;
+import uit.cnpm02.dkhp.DAO.DAOFactory;
+import uit.cnpm02.dkhp.DAO.TaskDAO;
 import uit.cnpm02.dkhp.bo.AccountBO;
 import uit.cnpm02.dkhp.model.Account;
+import uit.cnpm02.dkhp.model.Task;
 import uit.cnpm02.dkhp.model.type.AccountType;
+import uit.cnpm02.dkhp.model.type.TaskStatus;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.password.PasswordProtector;
 
@@ -96,10 +101,13 @@ public class Login extends HttpServlet {
                 //accDao.update(acc);
                 
                 if (acc.getType() == AccountType.ADMIN.value()) {
+                    getRemindTask(request, response);
                     path = "./jsps/PDT/PDTStart.jsp";
                 } else if (acc.getType() == AccountType.STUDENT.value()) {
+                    getRemindTask(request, response);
                     path = "./jsps/SinhVien/SVStart.jsp";
                 } else if (acc.getType() == AccountType.LECTUTER.value()) {
+                    getRemindTask(request, response);
                     path = "./jsps/GiangVien/GVStart.jsp";
                 }
             }
@@ -162,4 +170,42 @@ public class Login extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private void getRemindTask(HttpServletRequest request,
+            HttpServletResponse response) {
+        TaskDAO taskDao = DAOFactory.getTaskDAO();
+        HttpSession session = request.getSession();
+        session.removeAttribute("tasks");
+        String username = "";
+        String generalUsername = "";
+        try {
+            username = (String) session.getAttribute("username");
+            Account acc = accDao.findById(username);
+            if (acc.getType() == AccountType.STUDENT.value()) {
+                generalUsername = "student";
+            } else if (acc.getType() == AccountType.LECTUTER.value()) {
+                generalUsername = "lecuturer";
+            } else if (acc.getType() == AccountType.ADMIN.value()) {
+                generalUsername = "admin";
+            }
+        } catch (Exception ex) {
+            //
+        }
+        try {
+            List<Task> tasks = taskDao.findByColumNames(
+                    new String[] {"NguoiNhan", "TrangThai"},
+                    new Object[] {username, TaskStatus.TOBE_PROCESS.value()});
+            if (!username.equals(generalUsername))
+                tasks.addAll(taskDao.findByColumNames(
+                    new String[] {"NguoiNhan", "TrangThai"},
+                    new Object[] {generalUsername, TaskStatus.TOBE_PROCESS.value()}));
+            
+            if ((tasks != null) && !tasks.isEmpty()) {
+                session.setAttribute("tasks", tasks);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(HomepageController.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+    }
 }
