@@ -21,10 +21,6 @@
             #page{
                 text-align: center;
             }
-            #sidebar {
-                height:450px;
-                overflow:auto;
-            }
             a {
                 color: violet;
             }
@@ -33,7 +29,7 @@
     <%
         int numpage;
         try {
-            numpage = (Integer) session.getAttribute("numpage_sub");
+            numpage = (Integer) session.getAttribute("numpage");
         } catch (Exception ex) {
             numpage = 1;
         }
@@ -82,15 +78,16 @@
                             <%}
                         %>
                     </div>
-                    <div id="sidebar">
-                    <table id = "tablelistsubject" class="general-table" name = "tablelistsubject">
+                     <table id = "tablelistsubject" class="general-table" name = "tablelistsubject">
                         <tr>
                         <th> STT </th>
                         <th><a href="#" onclick="sort('MaMH', '')"> Mã MH </a></th>
                         <th><a href="#" onclick="sort('TenMH', '')"> Tên Môn học </a></th>
+                        <th><a href="#" onclick="sort('MaKhoa', '')"> Khoa </a></th>
                         <th><a href="#" onclick="sort('SoTC', '')"> Số TC </a></th>
                         <th><a href="#" onclick="sort('SoTCLT', '')"> Số TCLT </a></th>
                         <th><a href="#" onclick="sort('SoTCTH', '')"> Số TCTH </a></th>
+                        <th><a href="#" onclick="sort('Loai', '')"> Loại </a></th>
                         <th> Sửa </th>
                         <th> Xóa </th>
                         <%--Should be sorted when click on table's header--%>
@@ -101,11 +98,17 @@
                         <td> <%= (i + 1)%> </td>
                         <td> <%= subjects.get(i).getId()%> </td> 
                         <td> <%= subjects.get(i).getSubjectName()%> </td>
+                        <td> <%= subjects.get(i).getFacultyCode()%> </td>
                         <td> <%= subjects.get(i).getnumTC()%> </td>
                         <td> <%= subjects.get(i).getnumTCLT()%> </td>
                         <td> <%= subjects.get(i).getnumTCTH()%> </td>
+                        <%if(subjects.get(i).getType()==0){%>
+                        <td> Bắt buộc </td>
+                        <%}else{%>
+                        <td> Tự chọn</td>
+                        <%}%>
                         <td><a href = "../../ManageSubjectController?function=edit_subject&ajx=false&subject_code=<%= subjects.get(i).getId()%>">Sửa</a></td>
-                        <td><a href = "../../ManageSubjectController?function=delete_single_subject&ajax=false&currentpage=1&subject_code=<%= subjects.get(i).getId()%>">Xóa</a></td>
+                        <td><a href = "../../ManageSubjectController?function=delete&subject_code=<%= subjects.get(i).getId()%>">Xóa</a></td>
                         <% }%>
                         </tr>
                         <%}%>
@@ -164,7 +167,7 @@
         }
         function sendRequest(){
             if(http){
-                submitSearchSubject("../../ManageSubjectController?function=list_subject&ajax=true&currentpage=" + currentpage);
+                submitSearchSubject("../../ManageSubjectController?function=Filter&curentPage="+currentpage);
             }
         }
         

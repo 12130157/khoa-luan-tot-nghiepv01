@@ -83,7 +83,7 @@ public class PreSubjectController extends HttpServlet {
     private void loadDefault(HttpSession session, HttpServletResponse response) {
         try {
             List<PreSubject> preSubs = getAll(session.getId());
-            List<Subject> subjects = subjectService.getAll("");
+            List<Subject> subjects = subjectService.getAll();
 
             if ((preSubs != null) && !preSubs.isEmpty()) {
                 session.setAttribute("list_pre_sub", preSubs);

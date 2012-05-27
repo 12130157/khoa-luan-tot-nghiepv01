@@ -22,7 +22,7 @@ public class Constants {
     public static int STUDENT_STATUS_reservations = 1;
     //...
     /**Define number row tobe showed on a page**/
-    public static int ELEMENT_PER_PAGE_DEFAULT = 20;
+    public static int ELEMENT_PER_PAGE_DEFAULT = 10;
     public static int CURRENT_SEMESTER = 2;
     public static String CURRENT_YEAR = "2011-2012";
     public static List<String> ROOM_LISS = Arrays.asList(new String[]{"101","102","103"});

@@ -37,11 +37,19 @@ public class SubjectServiceImpl implements ISubjectService {
     }
 
     @Override
-    public List<Subject> getAll(String facultyId) throws Exception{
+    public List<Subject> getAll() throws Exception{
         // TODO: fillter by faculty code.
         return subjectDao.findAll();
     }
-
+    @Override
+    public List<Subject> findAll(int recordPerPage, int currentPage, String orderBy, String order) {
+        try {
+            return subjectDao.findAll(recordPerPage, currentPage, orderBy, order);
+        } catch (Exception ex) {
+            Logger.getLogger(SubjectServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
     @Override
     public Subject addSubject(Subject sub) throws Exception {
         // validate subject
