@@ -41,7 +41,7 @@ public class ManageSubjectController extends HttpServlet {
     private ISubjectService subjectService = new SubjectServiceImpl();
     //private IPreSubject preSubService = new PreSubjectImpl();
     private IFacultyService facultyService = new FacultyServiceImpl();
-    private int currentPage = 1;
+  
     public ManageSubjectController() {
         super();
     }
@@ -83,11 +83,11 @@ public class ManageSubjectController extends HttpServlet {
     }// </editor-fold>
 
     /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException 
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -110,33 +110,20 @@ public class ManageSubjectController extends HttpServlet {
                 return;
             }
 
-            boolean pageAlreadySet = true;
-            int numpage = -1;
-            try {
-                numpage = ((Integer) session.getAttribute("numpage_sub")).intValue();
-            } catch (Exception ex) {
-                pageAlreadySet = false;
-            }
-            if (!pageAlreadySet || (numpage < 0)) {
-                int numPage = subjectService.getNumberPage();
-                session.setAttribute("numpage_sub", numPage);
-            }
-
-            if (action.equals(SubjectManageFunction.LIST_SUBJECT.value())) {
+           if (action.equals(SubjectManageFunction.LIST_SUBJECT.value())) {
                 listSubject(request, response);
-                path = "./jsps/PDT/SubjectManager.jsp";
-            } else if (action.equals(SubjectManageFunction.SEARCH.value())) {
+           } else if (action.equals(SubjectManageFunction.SEARCH.value())) {
                 String key = request.getParameter("key");
                 List<Subject> subject = searchSubject(session.getId(),key);
                 if ((subject != null) && !subject.isEmpty()) {
-                    writeOutListSubject(out, subject);
+                    writeOutListSubject(out, subject,1);
                 }
                 return;
             } else if (action.equals(SubjectManageFunction.SORT.value())) {
                 String by = request.getParameter("by");
                 String type = request.getParameter("type");
                 List<Subject> subjects = sort(session.getId(), by, type);
-                writeOutListSubject(out, subjects);
+                writeOutListSubject(out, subjects,1);
                 return;
             } else if (action.equals(SubjectManageFunction.PRE_ADD_SUBJECT.value())) {
                 preDataForAddSubject(session);
@@ -147,7 +134,7 @@ public class ManageSubjectController extends HttpServlet {
                 ExecuteResult er = addSubject(request);
                 writeResponeAddSubject(er, out);
                 return;
-            } else if (action.equals(SubjectManageFunction.DELETE_SINGLE.value())) {
+            } else if (action.equals(SubjectManageFunction.DELETE.value())) {
                 String subId = request.getParameter("subject_code");
                 ExecuteResult er = deleteSingle(session.getId(), subId);
                 writeResponeDeleteSubject(er, out);
@@ -155,6 +142,14 @@ public class ManageSubjectController extends HttpServlet {
                 editSubject(request, response);
                 path = "./jsps/PDT/EditSubject.jsp";
                 response.sendRedirect(path);
+                return;
+            }
+           else if (action.equals(SubjectManageFunction.FILTER.value())) {
+               int currentPage=Integer.parseInt(request.getParameter("curentPage"));
+               List<Subject> subject = filterSubjectList(currentPage);
+               if ((subject != null) && !subject.isEmpty()) {
+                    writeOutListSubject(out, subject, currentPage);
+                }
                 return;
             }
 
@@ -171,7 +166,10 @@ public class ManageSubjectController extends HttpServlet {
         }
 
     }
-
+private List<Subject> filterSubjectList(int currentPage){
+     List<Subject> subjects= subjectService.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, currentPage, "MaMH", "ASC");
+     return  subjects;
+}
     /**
      * Get list student, send it to client.
      * @param req
@@ -180,22 +178,25 @@ public class ManageSubjectController extends HttpServlet {
      */
     private void listSubject(HttpServletRequest req
             , HttpServletResponse resp) throws Exception {
-
+       String path="";
+        int numpage = 1;
         try {
-            currentPage = Integer.parseInt(req.getParameter("currentpage"));
-        } catch (Exception ex) {
-            currentPage = 1;
-        }
-
-        List<Subject> subjects = subjectService
-                .findSubjects(req.getSession().getId(), currentPage);
-        
-            HttpSession session = req.getSession();
+        List<Subject> listSubjects = subjectService.getAll();
+        int rows = listSubjects.size();
+        if(rows%Constants.ELEMENT_PER_PAGE_DEFAULT==0)
+            numpage=rows/Constants.ELEMENT_PER_PAGE_DEFAULT;
+        else 
+            numpage=rows/Constants.ELEMENT_PER_PAGE_DEFAULT+1;
+        List<Subject> subjects= subjectService.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, 1, "MaMH", "ASC");
+        HttpSession session = req.getSession();
             session.setAttribute("list_subject", subjects);
-        /*} else if ((subjects != null) && (!subjects.isEmpty())) {
-            PrintWriter out = resp.getWriter();
-            writeOutListSubject(out, subjects);
-        }*/
+            path = "./jsps/PDT/SubjectManager.jsp";
+            session.setAttribute("numpage", numpage);
+       } catch (Exception ex) {
+            path= "./jsps/Message.jsp";
+        }
+        resp.sendRedirect(path);
+      
     }
     
     private List<Subject> searchSubject(String sessionId, String key) {
@@ -219,8 +220,8 @@ public class ManageSubjectController extends HttpServlet {
         }
     }
         
-    private void writeOutListSubject(PrintWriter out, List<Subject> subjects) {
-        try {
+    private void writeOutListSubject(PrintWriter out, List<Subject> subjects, int currentPage) {
+       try {
             // Search(by, type)
             String method = "sort('%s','%s')";
             String tblHeader = "<tr>"
@@ -230,25 +231,34 @@ public class ManageSubjectController extends HttpServlet {
                     + "<th> <a href='#' onclick=\""
                         + String.format(method, "TenMH", "ASC") +"\"> Tên Môn học </a></th>"
                     + "<th> <a href='#' onclick=\""
+                        + String.format(method, "MaKhoa", "ASC") +"\"> Khoa </a></th>"
+                    + "<th> <a href='#' onclick=\""
                         + String.format(method, "SoTC", "ASC") +"\"> Số TC </a></th>"
                     + "<th> <a href='#' onclick=\""
                         + String.format(method, "SoTCLT", "ASC") +"\"> Số TCLT </a></th>"
                     + "<th> <a href='#' onclick=\""
                         + String.format(method, "SoTCTH", "ASC") +"\"> Số TCTH </a></th>"
+                    + "<th> <a href='#' onclick=\""
+                        + String.format(method, "Loai", "ASC") +"\"> Loai </a></th>"
                     + "<th> Sửa </th>"
                     + "<th> Xóa </th>"
                     + "</tr>";
             out.println(tblHeader);
             for (int i = 0; i < subjects.size(); i++) {
+                String type="Bắt buộc";
+                if(subjects.get(i).getType()==1)
+                    type="Tự chọn";
                 String currentLine = "<tr>"
-                        + "<td>" + ((currentPage - 1) * Constants.ELEMENT_PER_PAGE_DEFAULT + i + 1) + "</td>"
+                        + "<td>" +  ((currentPage-1)*Constants.ELEMENT_PER_PAGE_DEFAULT + 1 + i) + "</td>"
                         + "<td>" + subjects.get(i).getId() + "</td> "
                         + "<td>" + subjects.get(i).getSubjectName() + "</td>"
+                        + "<td>" + subjects.get(i).getFacultyCode() + "</td>"
                         + "<td>" + subjects.get(i).getnumTC() + "</td>"
                         + "<td>" + subjects.get(i).getnumTCLT() + "</td>"
                         + "<td>" + subjects.get(i).getnumTCTH() + "</td>"
+                        + "<td>" + type + "</td>"
                         + "<td><a href = \"../../ManageSubjectController?function=edit_subject&subject_code=" + subjects.get(i).getId() + "\">Sửa</a></td>"
-                        + "<td><a href = \"../../ManageSubjectController?function=delete_single_subject&ajax=false&currentpage=" + currentPage + "&subject_code=" + subjects.get(i).getId() + "\">Xóa</a></td>"
+                        + "<td><a href = \"../../ManageSubjectController?function=delete&subject_code=" + subjects.get(i).getId() + "\">Xóa</a></td>"
                         + "</tr>";
                 out.println(currentLine);
             }
@@ -557,24 +567,22 @@ public class ManageSubjectController extends HttpServlet {
     }
 
     private void writeResponeDeleteSubject(ExecuteResult er, PrintWriter out) {
-        if (!er.isIsSucces()) {
-            out.println("Lỗi: " + er.getMessage());
-        } else {
-            List<Subject> subjects = (List<Subject>) er.getData();
+            List<Subject> subjects= subjectService.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, 1, "MaMH", "DESC");
             if ((subjects != null) && !subjects.isEmpty()) {
-                writeOutListSubject(out, subjects);
+                writeOutListSubject(out, subjects,1);
             }
-        }
+        
     }
 
     public enum SubjectManageFunction {
         LIST_SUBJECT("list_subject"),
-        DELETE_SINGLE("delete_single_subject"),
+        DELETE("delete"),
         PRE_ADD_SUBJECT("pre_add_subject"),
         ADD_SUBJECT("add_subject"),
         SEARCH("search"),
         SORT("sort"),
         EDIT_SUBJECT("edit_subject"),
+        FILTER("Filter"),
         DELETE_SUBJECT("delete_subject");
 
         private String function;
