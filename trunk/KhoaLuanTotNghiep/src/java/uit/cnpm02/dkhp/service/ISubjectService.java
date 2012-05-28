@@ -13,7 +13,7 @@ public interface ISubjectService {
     Subject addSubject(Subject sub) throws Exception;
     ExecuteResult updateSubject(Subject sub);
     boolean deleteSubject(String sessionId, String subId) throws Exception;
-    
+    boolean deleteSubjectByID(String subId) throws Exception;
     List<Subject> sort(String sessionId, final String by, final String type);
     List<Subject> findByFaculty(String facultyCode);
     List<Subject> findSubjects(String sessionId, int currentPage);
@@ -25,4 +25,5 @@ public interface ISubjectService {
     public List<Subject> getCurrentSubjects(String sessionId);
 
     public List<Subject> findAll(int recordPerPage, int currentPage, String orderBy, String order);
+    public List<Subject> findAll(int recordPerPage, int currentPage , String whereColumn, String whereValue, String orderBy, String order);
 }

@@ -34,5 +34,6 @@ public interface IAccountService {
     public ExecuteResult update(Account account, String sessionId);
 
     public ExecuteResult createNew(Account account, String sessionId);
+    public boolean deleteAccountByID(String Id);
     
 }

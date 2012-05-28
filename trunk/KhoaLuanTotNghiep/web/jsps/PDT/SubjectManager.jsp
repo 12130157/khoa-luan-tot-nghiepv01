@@ -10,7 +10,7 @@
     <head>
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Quản lý tài khoản</title>
+        <title>Quản lý môn học</title>
         <style media="all" type="text/css">
             #title{
                 background-color: #2f4e3d;
@@ -81,13 +81,13 @@
                      <table id = "tablelistsubject" class="general-table" name = "tablelistsubject">
                         <tr>
                         <th> STT </th>
-                        <th><a href="#" onclick="sort('MaMH', '')"> Mã MH </a></th>
-                        <th><a href="#" onclick="sort('TenMH', '')"> Tên Môn học </a></th>
-                        <th><a href="#" onclick="sort('MaKhoa', '')"> Khoa </a></th>
-                        <th><a href="#" onclick="sort('SoTC', '')"> Số TC </a></th>
-                        <th><a href="#" onclick="sort('SoTCLT', '')"> Số TCLT </a></th>
-                        <th><a href="#" onclick="sort('SoTCTH', '')"> Số TCTH </a></th>
-                        <th><a href="#" onclick="sort('Loai', '')"> Loại </a></th>
+                        <th>Mã MH </th>
+                        <th> Tên Môn học </th>
+                        <th> Khoa </th>
+                        <th> Số TC </th>
+                        <th> Số TCLT </th>
+                        <th> Số TCTH</th>
+                        <th>Loại </th>
                         <th> Sửa </th>
                         <th> Xóa </th>
                         <%--Should be sorted when click on table's header--%>
@@ -108,7 +108,7 @@
                         <td> Tự chọn</td>
                         <%}%>
                         <td><a href = "../../ManageSubjectController?function=edit_subject&ajx=false&subject_code=<%= subjects.get(i).getId()%>">Sửa</a></td>
-                        <td><a href = "../../ManageSubjectController?function=delete&subject_code=<%= subjects.get(i).getId()%>">Xóa</a></td>
+                        <td> <span class="atag" onclick="deleteSub('<%= subjects.get(i).getId() %>')">Xóa</span> </td>
                         <% }%>
                         </tr>
                         <%}%>
@@ -167,7 +167,8 @@
         }
         function sendRequest(){
             if(http){
-                submitSearchSubject("../../ManageSubjectController?function=Filter&curentPage="+currentpage);
+                var key = document.getElementById("search-box").value;
+                submitSearchSubject("../../ManageSubjectController?function=Filter&curentPage="+currentpage + "&key=" + key);
             }
         }
         
@@ -186,6 +187,7 @@
        } 
       }
         function searchSubject() {
+            currentpage = 1;
             var key = document.getElementById("search-box").value;
             submitSearchSubject("../../ManageSubjectController?function=search&key=" + key);
         }
@@ -196,14 +198,10 @@
                 detail.innerHTML=http.responseText;
             }
         }
-        
-        function sort(by, type) {
-            if (sortType == "ASC")
-                sortType = "DES";
-            else 
-                sortType = "ASC";
-            submitSearchSubject("../../ManageSubjectController?function=sort&by="
-                + by + "&type=" + sortType);
+        function deleteSub(subId){
+            var key = document.getElementById("search-box").value;
+            submitSearchSubject("../../ManageSubjectController?function=delete&subject_code=" + subId +"&curentPage="+currentpage + "&key=" + key);
         }
+        
     </script>
 </html>

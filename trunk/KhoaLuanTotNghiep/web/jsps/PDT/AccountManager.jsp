@@ -67,10 +67,10 @@
                         <table id="accountdetail" name="accountdetail" class="general-table">
                             <tr>
                                 <th> STT </th>
-                                <th> <span class="atag" onclick="sort('TenDangNhap')"> Tên đăng nhập </span></th>
-                                <th> <span class="atag" onclick="sort('HoTen')"> Họ tên NSD </span></th>
-                                <th> <span class="atag" onclick="sort('TinhTrang')"> Tình trạng </span></th>
-                                <th> <span class="atag" onclick="sort('Loai')"> Loại tài khoản </span></th>
+                                <th>  Tên đăng nhập </th>
+                                <th>  Họ tên NSD </th>
+                                <th>  Tình trạng </th>
+                                <th>  Loại tài khoản </th>
                                 <th> Sửa </th>
                                 <th> Xóa </th>
                             </tr>
@@ -139,7 +139,8 @@
         }
         function sendRequest(){
             if(http){
-                ajaxfunction("../../AccountController?action=Filter&curentPage="+currentpage);
+                var key = document.getElementById("txtSearch").value;
+                ajaxfunction("../../AccountController?action=Filter&curentPage="+currentpage + "&key=" + key);
             }
         }
          function keypressed()
@@ -150,6 +151,7 @@
        } 
       }
         function search() {
+            currentpage = 1;
             var key = document.getElementById("txtSearch").value;
             var pagename = "../../AccountController?action=search&key=" + key;
             if(http){
@@ -205,7 +207,8 @@
         }
         
         function deleteUser(username) {
-            var pagename = "../../AccountController?action=delete&user=" + username;
+            var key = document.getElementById("txtSearch").value;
+            var pagename = "../../AccountController?action=delete&user=" + username + "&key=" + key +"&curentPage="+currentpage;
             if(http){
                 http.open("GET", pagename, true);
                 http.onreadystatechange = searchHandler;

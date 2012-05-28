@@ -507,7 +507,6 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
         }
         return results;
     }
-    
     @Override
     public List<T> findAll(int recordPerPage, int currentPage, String whereStrColumn, String whereValue, String orderBy, String order) throws Exception {
         checkModelWellDefined();
