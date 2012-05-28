@@ -136,8 +136,10 @@ public class ManageSubjectController extends HttpServlet {
                 return;
             } else if (action.equals(SubjectManageFunction.DELETE.value())) {
                 String subId = request.getParameter("subject_code");
-                ExecuteResult er = deleteSingle(session.getId(), subId);
-                writeResponeDeleteSubject(er, out);
+                int currentPage=Integer.parseInt(request.getParameter("curentPage"));
+                String key = request.getParameter("key");
+                deleteSubjectBy(out, session.getId(), key, subId, currentPage);
+                return;
             } else if (action.equals(SubjectManageFunction.EDIT_SUBJECT.value())) {
                 editSubject(request, response);
                 path = "./jsps/PDT/EditSubject.jsp";
@@ -146,11 +148,9 @@ public class ManageSubjectController extends HttpServlet {
             }
            else if (action.equals(SubjectManageFunction.FILTER.value())) {
                int currentPage=Integer.parseInt(request.getParameter("curentPage"));
-               List<Subject> subject = filterSubjectList(currentPage);
-               if ((subject != null) && !subject.isEmpty()) {
-                    writeOutListSubject(out, subject, currentPage);
-                }
-                return;
+               String key = request.getParameter("key");
+               filterSubjectList(out, session.getId(),currentPage, key);
+               return;
             }
 
 
@@ -166,11 +166,70 @@ public class ManageSubjectController extends HttpServlet {
         }
 
     }
-private List<Subject> filterSubjectList(int currentPage){
-     List<Subject> subjects= subjectService.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, currentPage, "MaMH", "ASC");
-     return  subjects;
+private void deleteSubjectBy(PrintWriter out, String sessionId, String key, String subId, int currentPage){
+    List<Subject> result = new ArrayList<Subject>(Constants.ELEMENT_PER_PAGE_DEFAULT);  
+    int numpage=0;
+    try {
+         if(subjectService.deleteSubjectByID(subId)){
+               if(key.isEmpty())
+                 result = subjectService.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, currentPage, "MaMH", "ASC");
+               else{
+                   List<Subject> listSubject = subjectService.search(sessionId, key);
+                   if(listSubject.size() %Constants.ELEMENT_PER_PAGE_DEFAULT==0)
+                   numpage= listSubject.size() /Constants.ELEMENT_PER_PAGE_DEFAULT;
+                   else 
+                   numpage=listSubject.size() /Constants.ELEMENT_PER_PAGE_DEFAULT+1;
+                   if(currentPage>numpage)
+                    currentPage=numpage;
+                   if(listSubject.size()<= Constants.ELEMENT_PER_PAGE_DEFAULT)
+                   result = listSubject;
+                   else{
+                   int beginIndex=(currentPage-1)*Constants.ELEMENT_PER_PAGE_DEFAULT;
+                   int endIndex = (currentPage-1)*Constants.ELEMENT_PER_PAGE_DEFAULT + Constants.ELEMENT_PER_PAGE_DEFAULT;
+                    for(int i=0; i < listSubject.size(); i++){
+                    if(i>= beginIndex && i < endIndex )
+                   result.add(listSubject.get(i));
+            }
+          }
+               }
+             }
+        } catch (Exception ex) {
+            result = null;
+        }
+        if ((result != null) && !result.isEmpty()) {
+                    writeOutListSubject(out, result, currentPage);
+                }
+}   
+private void filterSubjectList(PrintWriter out ,String sessionId, int currentPage, String key){
+    int numpage=0;
+    List<Subject> result = new ArrayList<Subject>(Constants.ELEMENT_PER_PAGE_DEFAULT);
+    if(key.isEmpty())
+     result= subjectService.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, currentPage, "MaMH", "ASC");
+    else{
+        List<Subject> listSubject = subjectService.search(sessionId, key);
+        if(listSubject.size() %Constants.ELEMENT_PER_PAGE_DEFAULT==0)
+            numpage= listSubject.size() /Constants.ELEMENT_PER_PAGE_DEFAULT;
+            else 
+            numpage=listSubject.size() /Constants.ELEMENT_PER_PAGE_DEFAULT+1;
+            if(currentPage>numpage)
+                currentPage=numpage;
+        if(listSubject.size()<= Constants.ELEMENT_PER_PAGE_DEFAULT)
+        result = listSubject;
+        else{
+            int beginIndex=(currentPage-1)*Constants.ELEMENT_PER_PAGE_DEFAULT;
+            int endIndex = (currentPage-1)*Constants.ELEMENT_PER_PAGE_DEFAULT + Constants.ELEMENT_PER_PAGE_DEFAULT;
+            for(int i=0; i < listSubject.size(); i++){
+                if(i>= beginIndex && i < endIndex )
+               result.add(listSubject.get(i));
+            }
+          }
+    } 
+    if ((result != null) && !result.isEmpty()) {
+                    writeOutListSubject(out, result, currentPage);
+                }
+     
 }
-    /**
+   /**
      * Get list student, send it to client.
      * @param req
      * @param resp
@@ -179,14 +238,8 @@ private List<Subject> filterSubjectList(int currentPage){
     private void listSubject(HttpServletRequest req
             , HttpServletResponse resp) throws Exception {
        String path="";
-        int numpage = 1;
+        int numpage = subjectService.getNumberPage();
         try {
-        List<Subject> listSubjects = subjectService.getAll();
-        int rows = listSubjects.size();
-        if(rows%Constants.ELEMENT_PER_PAGE_DEFAULT==0)
-            numpage=rows/Constants.ELEMENT_PER_PAGE_DEFAULT;
-        else 
-            numpage=rows/Constants.ELEMENT_PER_PAGE_DEFAULT+1;
         List<Subject> subjects= subjectService.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, 1, "MaMH", "ASC");
         HttpSession session = req.getSession();
             session.setAttribute("list_subject", subjects);
@@ -200,7 +253,16 @@ private List<Subject> filterSubjectList(int currentPage){
     }
     
     private List<Subject> searchSubject(String sessionId, String key) {
-        return subjectService.search(sessionId, key);
+        List<Subject> listSubject = subjectService.search(sessionId, key);
+        List<Subject> result = new ArrayList<Subject>(Constants.ELEMENT_PER_PAGE_DEFAULT);
+        if(listSubject.size()> Constants.ELEMENT_PER_PAGE_DEFAULT){
+            for(int i=0; i < Constants.ELEMENT_PER_PAGE_DEFAULT; i++){
+               result.add(listSubject.get(i));
+            }
+            return result;
+        }else
+        return listSubject;
+        
     }
     
     private List<Subject> sort(String sessionId, String by, String type) {
@@ -223,23 +285,15 @@ private List<Subject> filterSubjectList(int currentPage){
     private void writeOutListSubject(PrintWriter out, List<Subject> subjects, int currentPage) {
        try {
             // Search(by, type)
-            String method = "sort('%s','%s')";
-            String tblHeader = "<tr>"
+             String tblHeader = "<tr>"
                     + "<th> STT </th>"
-                    + "<th> <a href='#' onclick=\""
-                        + String.format(method, "MaMH", "ASC") +"\"> Mã MH </a></th>"
-                    + "<th> <a href='#' onclick=\""
-                        + String.format(method, "TenMH", "ASC") +"\"> Tên Môn học </a></th>"
-                    + "<th> <a href='#' onclick=\""
-                        + String.format(method, "MaKhoa", "ASC") +"\"> Khoa </a></th>"
-                    + "<th> <a href='#' onclick=\""
-                        + String.format(method, "SoTC", "ASC") +"\"> Số TC </a></th>"
-                    + "<th> <a href='#' onclick=\""
-                        + String.format(method, "SoTCLT", "ASC") +"\"> Số TCLT </a></th>"
-                    + "<th> <a href='#' onclick=\""
-                        + String.format(method, "SoTCTH", "ASC") +"\"> Số TCTH </a></th>"
-                    + "<th> <a href='#' onclick=\""
-                        + String.format(method, "Loai", "ASC") +"\"> Loai </a></th>"
+                    + "<th>  Mã MH </th>"
+                    + "<th> Tên Môn học</th>"
+                    + "<th>  Khoa </th>"
+                    + "<th> Số TC </th>"
+                    + "<th> Số TCLT </th>"
+                    + "<th>  Số TCTH </th>"
+                    + "<th>  Loai </th>"
                     + "<th> Sửa </th>"
                     + "<th> Xóa </th>"
                     + "</tr>";
@@ -248,6 +302,7 @@ private List<Subject> filterSubjectList(int currentPage){
                 String type="Bắt buộc";
                 if(subjects.get(i).getType()==1)
                     type="Tự chọn";
+                String method = String.format(" onclick=deleteSub('%s')",subjects.get(i).getId());
                 String currentLine = "<tr>"
                         + "<td>" +  ((currentPage-1)*Constants.ELEMENT_PER_PAGE_DEFAULT + 1 + i) + "</td>"
                         + "<td>" + subjects.get(i).getId() + "</td> "
@@ -258,7 +313,7 @@ private List<Subject> filterSubjectList(int currentPage){
                         + "<td>" + subjects.get(i).getnumTCTH() + "</td>"
                         + "<td>" + type + "</td>"
                         + "<td><a href = \"../../ManageSubjectController?function=edit_subject&subject_code=" + subjects.get(i).getId() + "\">Sửa</a></td>"
-                        + "<td><a href = \"../../ManageSubjectController?function=delete&subject_code=" + subjects.get(i).getId() + "\">Xóa</a></td>"
+                        + "<td><span class='atag' "+method+">Xóa</span></td></tr>"
                         + "</tr>";
                 out.println(currentLine);
             }

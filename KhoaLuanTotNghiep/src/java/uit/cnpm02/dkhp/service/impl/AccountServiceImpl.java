@@ -226,4 +226,15 @@ public class AccountServiceImpl implements IAccountService {
         
         return result;
     }
+
+    @Override
+    public boolean deleteAccountByID(String Id) {
+        try{
+        Account acc = accountDao.findById(Id);
+        accountDao.delete(acc);
+        return true;
+        }catch(Exception e){
+            return false;
+        }   
+    }
 }

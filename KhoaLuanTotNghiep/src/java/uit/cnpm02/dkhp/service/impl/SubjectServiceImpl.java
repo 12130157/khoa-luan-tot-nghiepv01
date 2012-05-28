@@ -293,4 +293,25 @@ public class SubjectServiceImpl implements ISubjectService {
             return null;
         }
     }
+
+    @Override
+    public List<Subject> findAll(int recordPerPage, int currentPage , String whereColumn, String whereValue, String orderBy, String order) {
+         try {
+            return subjectDao.findAll(recordPerPage, currentPage, whereColumn, whereValue, orderBy, order);
+        } catch (Exception ex) {
+            Logger.getLogger(SubjectServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
+    @Override
+    public boolean deleteSubjectByID(String subId) throws Exception {
+        try{
+        Subject sub = subjectDao.findById(subId);
+        subjectDao.delete(sub);
+        return true;
+        }catch(Exception e){
+            return false;
+        }          
+    }
 }
