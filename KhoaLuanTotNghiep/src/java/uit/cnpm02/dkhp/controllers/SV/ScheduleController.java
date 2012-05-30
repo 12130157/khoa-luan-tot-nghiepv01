@@ -64,7 +64,7 @@ private void getScheduleForAjax(HttpServletRequest request, HttpServletResponse 
 }
 private void getScheduleForAll(HttpServletRequest request, HttpServletResponse response) throws Exception{
              PrintWriter out = response.getWriter();
-             List<TrainClass> monday=trainClassDao.findAllByStudyDate(Constants.MONDAY);
+            List<TrainClass> monday=trainClassDao.findAllByStudyDate(Constants.MONDAY);
             setSubjectAndLecturer(monday);
             List<TrainClass> tuesday=trainClassDao.findAllByStudyDate(Constants.TUESDAY);
             setSubjectAndLecturer(tuesday);
