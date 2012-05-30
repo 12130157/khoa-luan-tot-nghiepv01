@@ -189,16 +189,18 @@ private void deleteSubjectBy(PrintWriter out, String sessionId, String key, Stri
                     for(int i=0; i < listSubject.size(); i++){
                     if(i>= beginIndex && i < endIndex )
                    result.add(listSubject.get(i));
-            }
-          }
-               }
+                         }
+                       }
+                    }
              }
         } catch (Exception ex) {
             result = null;
         }
         if ((result != null) && !result.isEmpty()) {
                     writeOutListSubject(out, result, currentPage);
-                }
+        }else {
+            out.println("Không thể xóa môn học vì môn học đang được sử dụng");
+        }
 }   
 private void filterSubjectList(PrintWriter out ,String sessionId, int currentPage, String key){
     int numpage=0;
