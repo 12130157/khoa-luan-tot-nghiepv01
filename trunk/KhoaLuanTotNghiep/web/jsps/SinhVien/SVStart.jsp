@@ -4,16 +4,13 @@
     Author     : ngloc_it
 --%>
 
-
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="uit.cnpm02.dkhp.model.Task"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 <%
-/*    List<News> listNews = (List<News>) session.getAttribute("news");
-
-    int newsPerPage = 5;
-    int currentPage = 1;
- */ 
+    List<Task> tasks = (List<Task>) session.getAttribute("tasks");
 %>
 <html>
     <head>
@@ -29,21 +26,39 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <%@include file="News.jsp" %>
-           <%--
-                <%
-                    if (listNews != null) {
-                        for (int i = 0; i < listNews.size(); i++) {
-                            News n = listNews.get(i);
-                            if (listNews.get(i).getType() == 1) {
-                %>
-                <a href="../../NewsController?Actor=Student&action=detail&Id=<%=n.getId()%>"><%=n.getTitle()%></a><br>
-                <%=(n.getContent().length() >= 200 ? n.getContent().substring(0, 200)+"..." : n.getContent())%><br>
-                <%}
-                            }
-                        }
+                <div id="important-task">
+                    <%
+                    if ((tasks != null) && !tasks.isEmpty()) {
                     %>
-           --%>
+                    <u><b>Tin quan trọng:</b></u>
+                    <table class="general-table">
+                        <tr>
+                            <th> STT </th>
+                            <th> Nội dung </th>
+                            <th> Người gửi </th>
+                            <th> Ngày gửi </th>
+                        </tr>
+                        <%
+                        for (int i = 0; i < tasks.size(); i++) {
+                            Task t = tasks.get(i);
+                            SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_PARTERM_DEFAULT);
+                        %>
+                            <tr>
+                                <td> <%= (i + 1) %> </td>
+                                <td> <%= t.getContent() %> </td>
+                                <td> <%= t.getSender() %> </td>
+                                <td> <%= sdf.format(t.getCreated()) %> </td>
+                            </tr>
+                        <%
+                        }
+                        %>
+                    </table>
+                    <div class="clear"></div>
+                    <%
+                    }
+                    %>
+                </div>
+                <%@include file="News.jsp" %>
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
