@@ -74,14 +74,14 @@ Integer semester=(Integer) session.getAttribute("semester");
                 <h2 align="center"><u>Thời khóa biểu học kỳ <%=semester%> năm học <%=year%> </u></h2>
                 <br><hr/><hr/>
                 <b>Chọn khoa</b>
-                <select>
-                    <option value="0">Tất cả </option>
+                <select id="faculty" name="faculty" onchange="reloadData()">
+                    <option value="All">Tất cả </option>
                     <%for(int i=0; i<facultyList.size();i++){%>
-                    <option value="<%=facultyList.get(i).getId()%>"><%=facultyList.get(i).getId()%></option>
+                    <option value="<%=facultyList.get(i).getId()%>"><%=facultyList.get(i).getFacultyName()%></option>
                     <%}%>
                 </select>
                 <b>Chọn ngày</b>
-                <select>
+                <select id="date" name="date" onchange="reloadData()">
                     <option value="0">Tất cả</option>
                     <option value="2">Thứ 2</option>
                     <option value="3">Thứ 3</option>
@@ -228,16 +228,16 @@ Integer semester=(Integer) session.getAttribute("semester");
         </div>
         <!--End Wrapper-->
     </body>
-     <script src="../../javascripts/jquery-1.7.1.js"></script>
      <script src="../../javascripts/Schedule.js"></script>
      <script type = "text/javascript">
         var http = createRequestObject();
-        var type="view";
-        
-      function SendRequest(){
-          if(http){
-            ajaxfunction("../../ScheduleController?action=Ajax&type="+type);
-         }
-       }
+         var date=0;
+        var faculty=0;
+      function reloadData(){
+          date = document.getElementById("date").value;
+          faculty = document.getElementById("faculty").value;
+         ajaxfunction("../../ManageSchedule?action=reload&faculty=" + faculty +"&date=" + date);
+      }  
+      
      </script>
    </html>
