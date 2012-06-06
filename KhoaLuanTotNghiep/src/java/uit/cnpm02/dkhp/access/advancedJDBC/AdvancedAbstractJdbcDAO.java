@@ -757,7 +757,7 @@ public abstract class AdvancedAbstractJdbcDAO<T extends IAdvancedJdbcModel<ID>, 
         }
         String[] idNames = t.getIdColumnName();
         Object[] idValues = new Object[idNames.length];
-        String whereStatement = columnName + " = ?";
+        String whereStatement = " " + columnName + " like '%" + values.toString() + "%'";
         
         Connection con = null;
         PreparedStatement statement = null;
@@ -770,7 +770,7 @@ public abstract class AdvancedAbstractJdbcDAO<T extends IAdvancedJdbcModel<ID>, 
 
             con = getConnection();
             statement = con.prepareStatement(strQuery);
-            statement.setObject(1, values);
+            //statement.setObject(1, values);
 
             rs = statement.executeQuery();
             while (rs.next()) {

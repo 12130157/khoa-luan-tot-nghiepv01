@@ -11,6 +11,14 @@ import uit.cnpm02.dkhp.utilities.ExecuteResult;
  */
 public interface ITrainClassService {
     
+    List<TrainClass> getAllClassOpenByYearAndSemester(String year, int semester);
+    
+    List<TrainClass> getAllClassOpen();
+    
+    List<TrainClass> getAllClassClose();
+    
+    List<TrainClass> getAllClassCancel();
+   
     List<TrainClass> getTrainClass(String year, int semester);
     
     List<TrainClass> getTrainClass();

@@ -29,7 +29,7 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
      * There are 3 status for each TrainClass
      *  + Opened (1)
      *  + Canceled (2)
-     *  + Closed (2)
+     *  + Closed (0)
      **/
     private TrainClassStatus status;
     private int numTC;

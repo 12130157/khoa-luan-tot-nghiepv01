@@ -128,7 +128,8 @@ public class ManageClassController extends HttpServlet {
                 trainClassList.get(i).setLectturerName(lectureDAO.findById(trainClassList.get(i).getLecturerCode()).getFullName());
             }
             PrintWriter out = response.getWriter();
-            writeFilterTrainClass(trainClassList, out);
+            List<TrainClass> result = getClassListByPage(trainClassList, 1);
+            writeFilterTrainClass(result, out);
         
        } catch (Exception ex) {
             Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
@@ -137,9 +138,10 @@ public class ManageClassController extends HttpServlet {
     private void filterTrainClass(HttpServletRequest request, HttpServletResponse response) throws IOException{
        String year = request.getParameter("year");
        int semester = Integer.parseInt(request.getParameter("semester")); 
-       List<TrainClass> trainclasslist = trainClassService.getTrainClass(year, semester);
+       List<TrainClass> trainclasslist = trainClassService.getAllClassOpenByYearAndSemester(year, semester);
+       List<TrainClass> trainClazzs = getClassListByPage(trainclasslist, 1);
        PrintWriter out = response.getWriter();
-       writeFilterTrainClass(trainclasslist, out);
+       writeFilterTrainClass(trainClazzs, out);
     }
     private void writeFilterTrainClass(List<TrainClass> trainclasslist, PrintWriter out){
         out.println("<tr>"
@@ -287,7 +289,9 @@ public class ManageClassController extends HttpServlet {
             currentPage = 1;
         }*/
         
-        List<TrainClass> trainClazzs = trainClassService.getTrainClass(Constants.CURRENT_YEAR, Constants.CURRENT_SEMESTER);
+       // List<TrainClass> trainClazzs = trainClassService.getTrainClass(Constants.CURRENT_YEAR, Constants.CURRENT_SEMESTER);
+        List<TrainClass> classList = getAllClassOpen();
+        List<TrainClass> trainClazzs = getClassListByPage(classList, 1);
         List<String> yearList=getYear(trainClazzs);
         //
         // TODO: Should accept only TrainClass of current semeter.
@@ -296,6 +300,7 @@ public class ManageClassController extends HttpServlet {
             HttpSession session = request.getSession();
             session.setAttribute("train-clazzs", trainClazzs);
             session.setAttribute("yearList", yearList);
+            session.setAttribute("numpage", classList.size());
         }
         
         String path = "./jsps/PDT/TrainClassManager.jsp";
@@ -303,6 +308,71 @@ public class ManageClassController extends HttpServlet {
         
         return;
     }
+    private List<TrainClass> getClassListByPage(List<TrainClass> classList, int currentPage){
+       int numpage =0;
+       List<TrainClass> result = new ArrayList<TrainClass>(Constants.ELEMENT_PER_PAGE_DEFAULT);
+       if(classList.size() %Constants.ELEMENT_PER_PAGE_DEFAULT==0)
+        numpage= classList.size() /Constants.ELEMENT_PER_PAGE_DEFAULT;
+       else 
+        numpage=classList.size() /Constants.ELEMENT_PER_PAGE_DEFAULT+1;
+       if(currentPage > numpage)
+          currentPage = numpage;
+       if(classList.size()<= Constants.ELEMENT_PER_PAGE_DEFAULT)
+         result = classList;
+       else{
+            int beginIndex=(currentPage-1)*Constants.ELEMENT_PER_PAGE_DEFAULT;
+            int endIndex = (currentPage-1)*Constants.ELEMENT_PER_PAGE_DEFAULT + Constants.ELEMENT_PER_PAGE_DEFAULT;
+            for(int i=0; i < classList.size(); i++){
+                if(i>= beginIndex && i < endIndex )
+                result.add(classList.get(i));
+             }
+         }
+       return result;
+    }
+    /**
+     * Get all class is opening
+     * @return 
+     */
+    private List<TrainClass> getAllClassOpen(){
+         List<TrainClass> trainClazzs = trainClassService.getAllClassOpen();
+        try {
+            setSubjectAndLecturer(trainClazzs);
+        } catch (Exception ex) {
+            Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+         return trainClazzs;
+    }
+    /**
+     * Get all class is closing
+     * @return 
+     */
+    private List<TrainClass> getAllClassClose(){
+         List<TrainClass> trainClazzs = trainClassService.getAllClassClose();
+        try {
+            setSubjectAndLecturer(trainClazzs);
+        } catch (Exception ex) {
+            Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+         return trainClazzs;
+    }
+    /**
+     * Get all class is canceling
+     * @return 
+     */
+    private List<TrainClass> getAllClassCancel(){
+         List<TrainClass> trainClazzs = trainClassService.getAllClassCancel();
+        try {
+            setSubjectAndLecturer(trainClazzs);
+        } catch (Exception ex) {
+            Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+         return trainClazzs;
+    }
+    /**
+     * 
+     * @param trainClassList
+     * @return 
+     */
     private List<String> getYear(List<TrainClass> trainClassList){
         ArrayList<String> yearList=new ArrayList<String>();
         for(int i=0; i<trainClassList.size();i++){
@@ -481,7 +551,25 @@ public class ManageClassController extends HttpServlet {
             Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+    /**
+     * 
+     * @param trainClass
+     * @throws Exception 
+     */
+    private void setSubjectAndLecturer(List<TrainClass> trainClass) throws Exception{
+    SubjectDAO subjectDao=new SubjectDAO();
+    LecturerDAO lecturerDao=new LecturerDAO();
+    for(int i=0;i<trainClass.size();i++){
+        trainClass.get(i).setSubjectName(subjectDao.findById(trainClass.get(i).getSubjectCode()).getSubjectName());
+        trainClass.get(i).setLectturerName(lecturerDao.findById(trainClass.get(i).getLecturerCode()).getFullName());
+        trainClass.get(i).setNumTC(subjectDao.findById(trainClass.get(i).getSubjectCode()).getnumTC() );
+    }
+}
+   /**
+     * 
+     * @param result
+     * @param out 
+     */ 
    private void writeRespondCreateNewTrainClass(ExecuteResult result, PrintWriter out) {
         out.println(result.getMessage());
         if (result.isIsSucces() && (result.getData() == null)) {
