@@ -11,7 +11,7 @@
     <head>
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Quản lý tài khoản</title>
+        <title>Quản lý lớp học</title>
         <style media="all" type="text/css">
 
             #table-list-train-class{
@@ -77,7 +77,7 @@
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
                 <div id="title">
-                    <u><h3>Danh sách lớp học</h3></u>
+                    <u><h3>Danh sách các lớp học đang mở</h3></u>
                 </div>
                 <hr/><hr/><br>
 
@@ -87,7 +87,7 @@
                     <div style="padding-bottom: 10px;
                          padding-left: 10px;
                          ">
-                        <input type = "text" id="searchValue" placeholder = "Nhập thông tin tìm kiếm" />
+                        <input type = "text" id="searchValue" onKeyPress="keypressed()" placeholder = "Nhập thông tin tìm kiếm" />
                         <input type = "button" onclick = "search()" value = "Tìm">
                     </div>
                                       
@@ -169,10 +169,11 @@
     <script src="../../javascripts/AjaxUtil.js"></script>
     <script  type = "text/javascript" >
         var http = createRequestObject();
-        /*var currentpage = 1;
+        var currentpage = 1;
         var http = createRequestObject();
         var numpage = document.getElementById("numpage").value;
-        function firstPage(){
+        var key = document.getElementById("searchValue").value;
+       /* function firstPage(){
             currentpage = 1;
             sendRequest();
         }
@@ -194,10 +195,10 @@
         }
         function sendRequest(){
             if(http){
-                submitSearchSubject("../../ManageSubjectController?function=list_subject&ajax=true&currentpage=" + currentpage);
+                submitSearchSubject("../../ManageClassController?action=Filter&currentpage=" + currentpage + "&key=" + key);
             }
-        }
-        */
+        }*/
+        
        function reloadResult(){
            
              year=document.getElementById("year").value;
@@ -217,11 +218,15 @@
                 detail.innerHTML=http.responseText;
             }
         }
+         function keypressed()
+        { 
+         if(event.keyCode=='13')
+          {
+           search();
+          } 
+         }
         function search(){
            value= document.getElementById("searchValue").value;
-           if(value.length == 0 )
-               alert("Chưa nhập từ khóa tìm kiếm");
-           else
            searchByInputValue();
         }
         function searchByInputValue(){
