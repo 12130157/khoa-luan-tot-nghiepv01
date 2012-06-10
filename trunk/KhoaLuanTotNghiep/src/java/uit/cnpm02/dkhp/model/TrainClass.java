@@ -33,6 +33,7 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
      **/
     private TrainClassStatus status;
     private int numTC;
+    private int updateScore;
 
     public TrainClass() {
     }
@@ -57,6 +58,15 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
         this.numTC = 0;
         
         this.status = TrainClassStatus.OPEN;
+        updateScore=0;
+    }
+
+    public int getUpdateScore() {
+        return updateScore;
+    }
+
+    public void setUpdateScore(int updateScore) {
+        this.updateScore = updateScore;
     }
 
     public TrainClass(String classCode, String year, int semester, String subjectCode, String lecturerCode,
@@ -166,8 +176,8 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
     public String getSubjectName(){
         return this.subjectName;
     }
-     public void setLectturerName(String lectturerNam){
-         this.lecturerName = lectturerNam;
+     public void setLectturerName(String lectturerName){
+         this.lecturerName = lectturerName;
     }
     public String getLectturerName(){
         return this.lecturerName;
@@ -239,7 +249,8 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
                     "PhongThi",
                     "TrangThai",
                     "NgayBatDau",
-                    "NgayKetThuc"
+                    "NgayKetThuc",
+                    "CapNhatDiem"
               };
     }
 
@@ -258,7 +269,8 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
                     testRoom,
                     (status == null ? null : status.getValue()),
                     startDate,
-                    endDate
+                    endDate,
+                    updateScore
                 };
     }
 
@@ -277,15 +289,14 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
             testRoom = values[9] == null ? "" : values[9].toString();
 
             int statusValue = Integer.parseInt(values[10].toString());
-            if (statusValue == TrainClassStatus.CANCEL.getValue()) {
-                this.status = TrainClassStatus.CANCEL;
-            } else if (statusValue == TrainClassStatus.CLOSE.getValue()) {
+            if (statusValue == TrainClassStatus.CLOSE.getValue()) {
                 this.status = TrainClassStatus.CLOSE;
             } else if (statusValue == TrainClassStatus.OPEN.getValue()) {
                 this.status = TrainClassStatus.OPEN;
             }
             startDate = (Date) (values[11] == null ? null : values[11]);
             endDate = (Date) (values[12] == null ? null : values[12]);
+            updateScore = Integer.parseInt(values[13].toString());
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
