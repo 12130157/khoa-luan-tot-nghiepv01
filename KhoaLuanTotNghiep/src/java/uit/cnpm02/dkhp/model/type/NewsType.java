@@ -9,8 +9,9 @@ import java.util.Map;
  * @author LocNguyen
  */
 public enum NewsType {
-    NORMAL(0),
-    IMPORTANT(1);
+    OPEN(0),
+    IMPORTANT(1),
+    CLOSED(2);
     
     //..
     private int value;
