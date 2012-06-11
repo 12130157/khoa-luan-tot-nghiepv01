@@ -24,6 +24,7 @@ public class DAOFactory {
     private static RegistrationTimeDAO timeDao = null;
     private static TaskDAO taskDao = null;
     private static FileInfoDAO fileInfoDao = null;
+    private static DetailTrainDAO detailTrainfoDao = null;
     
     public static FileInfoDAO getFileInfoDao() {
         if (fileInfoDao == null) {
@@ -32,6 +33,13 @@ public class DAOFactory {
         return fileInfoDao;
     }
 
+    public static DetailTrainDAO getDetainTrainDAO() {
+        if (detailTrainfoDao == null) {
+            detailTrainfoDao = new DetailTrainDAO();
+        }
+        return detailTrainfoDao;
+    }
+    
     public static PreSubjectDAO getPreSubDao() {
         if (preSubDao == null) {
             preSubDao = new PreSubjectDAO();

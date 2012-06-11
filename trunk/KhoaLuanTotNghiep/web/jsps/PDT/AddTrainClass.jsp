@@ -3,6 +3,7 @@
     Created on : 11-11-2011, 23:45:21
     Author     : LocNguyen
 --%>
+<%@page import="uit.cnpm02.dkhp.model.Faculty"%>
 <%@page import="java.util.Date"%>
 <%@page import="uit.cnpm02.dkhp.utilities.DateTimeUtil"%>
 <%@page import="java.util.List"%>
@@ -13,6 +14,7 @@
 <%
   List<LecturerWeb> Lecture = (List<LecturerWeb>) session.getAttribute("lecturers");
   List<SubjectWeb> Subject = (List<SubjectWeb>) session.getAttribute("subjects");
+  List<Faculty> faculty = (List<Faculty>) session.getAttribute("faculty");
   List<String> roomList = Constants.ROOM_LISS;
 %>
 <html>
@@ -79,6 +81,17 @@
 
                 <form id="addclassform" method="post">
                    <table id="table_mh">
+                        <tr>
+                        <td> Khoa: </td>
+                        <td>
+                            <select id="faculty" name="faculty" onchange="ChangeClassList()">
+                                <%for(int i=0; i<faculty.size();i++){%>
+                                <option value="<%=faculty.get(i).getId()%>"><%=faculty.get(i).getFacultyName()%></option>
+                                <%}
+                                %>
+                            </select>
+                        </td>
+                        </tr>
                         <tr>
                         <td> Mã lớp: </td>
                         <td> <input type="text" id="classcode" name="classcode"/> </td>
@@ -266,8 +279,19 @@
          }
 
          function ChangeClassCode(){
-                  var classcode = document.getElementById("subject").value;
-                  document.getElementById("classcode").value = classcode;
+                  var subjectCode = document.getElementById("subject").value;
+                  document.getElementById("classcode").value = subjectCode;
+             if(http){
+                    http.open("GET", "../../ManageClassController?action=FilterLecturerBySubject&subjetCode="+subjectCode, true);
+                    http.onreadystatechange = filterLecturer;
+                    http.send(null);
+                 }
+         }
+          function filterLecturer() {
+             if(http.readyState == 4 && http.status == 200){
+                 var detail=document.getElementById("lecturer");
+                 detail.innerHTML=http.responseText;
+             }
          }
          function checknumber(evt){
            var e = event || evt; // for trans-browser compatibility
@@ -278,6 +302,20 @@
 
 	return true;
         }
+        function ChangeClassList(){
+           var facultyCode = document.getElementById("faculty").value; 
+           if(http){
+                    http.open("GET", "../../ManageClassController?action=FilterClassByFaculty&facultyCode="+facultyCode, true);
+                    http.onreadystatechange = filterSubjectName;
+                    http.send(null);
+                 }
+        }
+        function filterSubjectName() {
+             if(http.readyState == 4 && http.status == 200){
+                 var detail=document.getElementById("subject");
+                 detail.innerHTML=http.responseText;
+             }
+         }
     </script>
     
 </html>

@@ -11,14 +11,18 @@ import uit.cnpm02.dkhp.utilities.ExecuteResult;
  */
 public interface ITrainClassService {
     
+    List<TrainClass> SearchOpenClassByColumName(String columnName, String values);
+    
+    List<TrainClass> SearchCloseClassByColumName(String columnName, String values);
+    
     List<TrainClass> getAllClassOpenByYearAndSemester(String year, int semester);
+    
+    List<TrainClass> getAllClassCloseByYearAndSemester(String year, int semester);
     
     List<TrainClass> getAllClassOpen();
     
     List<TrainClass> getAllClassClose();
     
-    List<TrainClass> getAllClassCancel();
-   
     List<TrainClass> getTrainClass(String year, int semester);
     
     List<TrainClass> getTrainClass();

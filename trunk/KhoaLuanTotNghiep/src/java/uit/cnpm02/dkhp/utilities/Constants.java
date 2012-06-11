@@ -25,8 +25,7 @@ public class Constants {
     public static int ELEMENT_PER_PAGE_DEFAULT = 10;
     public static int OPEN_CLASS_STATUS = 1;
     public static int CLOSE_CLASS_STATUS = 0;
-    public static int CANCEL_CLASS_STATUS = 2;
-    public static int CURRENT_SEMESTER = 2;
+   public static int CURRENT_SEMESTER = 2;
     public static String CURRENT_YEAR = "2011-2012";
     public static List<String> ROOM_LISS = Arrays.asList(new String[]{"101","102","103"});
     static {

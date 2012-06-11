@@ -298,9 +298,7 @@ public class ReportController extends HttpServlet {
                 classInProcess ++;
             } else if (t.getStatus() == TrainClassStatus.CLOSE) {
                 classClosed ++;
-            } else if (t.getStatus() == TrainClassStatus.CANCEL) {
-                classCanceled ++;
-            }
+            } 
         }
         
         String[][] map = new String[][] {

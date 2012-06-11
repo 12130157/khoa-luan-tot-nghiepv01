@@ -53,22 +53,8 @@ int numTC=0;
                 width: 200px;
                 text-align: left;
             }
-            #formdetail table{
-                width: 100%;
-            }
-            #formdetail table th{
-                background-color:#175F6E;
-                height: 30px;
-                border-color: black;
-            }
-
-            #formdetail table td{
-                text-align: center;
-                background-color: #474C52;
-                border-color: #7D8103;
-            }
-            a{
-                color: #66ffff;
+           a{
+                color: #0000ff;
             }
             
             #info{
@@ -76,12 +62,6 @@ int numTC=0;
             }
             #formdetail{
                 width: 99%;
-            }
-            #detail{
-                width: 99%;
-            }
-             #detail th{
-               text-align: center;
             }
             #left{
                 float: left;
@@ -122,7 +102,7 @@ int numTC=0;
                <hr/><hr/>
                  <form id="formdetail" name="formdetail">
                     <u>Chi tiết</u>
-                    <table id="detail" name="detail" border="1" bordercolor="yellow" >
+                    <table id="detail" name="detail" class="general-table" >
                      <tr>
                          <th width="10px">STT</th><th width="70px">Mã lớp</th><th width="200px">Môn học</th>
                          <th width="200px">Giảng viên</th><th width="10px">Thứ</th>
