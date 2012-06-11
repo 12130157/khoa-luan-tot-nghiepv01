@@ -86,7 +86,7 @@ public class AccountController extends HttpServlet {
                 doCreateNew(request, response);
             } else if (action.equalsIgnoreCase(AccountSupport
                     .SEARCH.description())) {
-                doSsearch(request, response);
+                doSearch(request, response);
             } else if (action.equalsIgnoreCase(AccountSupport
                                         .SORT.description())) {
                 doSortAccount(request, response);
@@ -294,7 +294,7 @@ public class AccountController extends HttpServlet {
         }
      }
 
-    private void doSsearch(HttpServletRequest request,
+    private void doSearch(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         List<Account> result = new ArrayList<Account>(Constants.ELEMENT_PER_PAGE_DEFAULT);
         String key = request.getParameter("key");

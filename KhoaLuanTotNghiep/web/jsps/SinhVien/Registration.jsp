@@ -53,36 +53,14 @@ List<String> registried=(List<String>) session.getAttribute("registried");
                 width: 200px;
                 text-align: left;
             }
-            #formdetail table{
-                width: 100%;
-            }
-            #formdetail table th{
-                background-color:#175F6E;
-                height: 30px;
-                border-color: black;
-            }
-
-            #formdetail table td{
-                text-align: center;
-                background-color: #474C52;
-                border-color: #7D8103;
-            }
-
-                
             #info{
                 width: 100%;
             }
             #formdetail{
                 width: 99%;
             }
-            #detail{
-                width: 99%;
-            }
-             #detail th{
-               text-align: center;
-            }
-        </style>
-        </style>
+         </style>
+        
     </head>
     <body>
         <!--Div Wrapper-->
@@ -113,7 +91,7 @@ List<String> registried=(List<String>) session.getAttribute("registried");
                <hr/><hr/>
                <form id="formdetail" name="formdetail" action="../../RegistryController?action=registry" method="post">
                     <u>Chi tiết</u>
-                    <table id="detail" name="detail" border="1" bordercolor="yellow" >
+                    <table id="detail" name="detail" class="general-table" >
                      <tr>
                          <th width="10px">STT</th><th width="70px">Mã lớp</th><th width="200px">Môn học</th>
                          <th width="10px">TC</th><th width="200px">Giảng viên</th><th width="10px">Thứ</th>

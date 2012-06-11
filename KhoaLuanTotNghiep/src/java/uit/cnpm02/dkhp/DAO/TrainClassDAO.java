@@ -33,7 +33,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        String selectQuery = "Select * from " + t.getTableName() + " where NgayHoc= ? and TrangThai = 1 and HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
+        String selectQuery = "Select * from " + t.getTableName() + " where NgayHoc= ? and TrangThai = "+Constants.OPEN_CLASS_STATUS+" and HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
         try {
             con = getConnection();
             statement = con.prepareStatement(selectQuery);
@@ -69,7 +69,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        String selectQuery = "Select * from KhoaLuanTotNghiep.MonHoc, " + t.getTableName() + " where KhoaLuanTotNghiep.MonHoc.MaMH=KhoaLuanTotNghiep.LopHoc.MaMH and NgayHoc= ? and MaKhoa in ( ?,'ENG','MAT','XH') and TrangThai= 1 and HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
+        String selectQuery = "Select * from KhoaLuanTotNghiep.MonHoc, " + t.getTableName() + " where KhoaLuanTotNghiep.MonHoc.MaMH=KhoaLuanTotNghiep.LopHoc.MaMH and NgayHoc= ? and MaKhoa in ( ?,'ENG','MAT','XH') and TrangThai= "+Constants.OPEN_CLASS_STATUS+" and HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
         try {
             con = getConnection();
             statement = con.prepareStatement(selectQuery);
@@ -106,7 +106,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        String selectQuery = "Select * from KhoaLuanTotNghiep.MonHoc, " + t.getTableName() + " where KhoaLuanTotNghiep.MonHoc.MaMH=KhoaLuanTotNghiep.LopHoc.MaMH and NgayHoc= ? and MaKhoa = ? and TrangThai =1 and HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
+        String selectQuery = "Select * from KhoaLuanTotNghiep.MonHoc, " + t.getTableName() + " where KhoaLuanTotNghiep.MonHoc.MaMH=KhoaLuanTotNghiep.LopHoc.MaMH and NgayHoc= ? and MaKhoa = ? and TrangThai = "+Constants.OPEN_CLASS_STATUS+" and HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
         try {
             con = getConnection();
             statement = con.prepareStatement(selectQuery);
@@ -143,7 +143,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        String selectQuery = "Select * from KhoaLuanTotNghiep.MonHoc, " + t.getTableName() + " where KhoaLuanTotNghiep.MonHoc.MaMH=KhoaLuanTotNghiep.LopHoc.MaMH and MaKhoa in ( ?,'ENG','MAT','XH')and TrangThai =1 and TrangThai = 1 and HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
+        String selectQuery = "Select * from KhoaLuanTotNghiep.MonHoc, " + t.getTableName() + " where KhoaLuanTotNghiep.MonHoc.MaMH=KhoaLuanTotNghiep.LopHoc.MaMH and MaKhoa in ( ?,'ENG','MAT','XH') and TrangThai = "+Constants.OPEN_CLASS_STATUS+" and HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
         try {
             con = getConnection();
             statement = con.prepareStatement(selectQuery);
@@ -389,4 +389,117 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         }
         return results;
     }
+    public List<TrainClass> findOpenClassByFaculty(String FacultyCode) throws Exception {
+        checkModelWellDefined();
+        TrainClass t = new TrainClass();
+        if (t == null) {
+            throw new Exception("Cannot initialize the " + TrainClass.class.getName()
+                    + " class");
+        }
+        ArrayList<TrainClass> results = new ArrayList<TrainClass>();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        String[] idNames = t.getIdColumnName();
+        Object[] idValues = new Object[idNames.length];
+        String selectQuery = "Select * from KhoaLuanTotNghiep.MonHoc, " + t.getTableName() + " where KhoaLuanTotNghiep.MonHoc.MaMH=KhoaLuanTotNghiep.LopHoc.MaMH and MaKhoa = ? and TrangThai = " + Constants.OPEN_CLASS_STATUS;
+        try {
+            con = getConnection();
+            statement = con.prepareStatement(selectQuery);
+            statement.setObject(1, FacultyCode);
+            rs = statement.executeQuery();
+
+            while (rs.next()) {
+               // String classCode = rs.getString("MaLopHoc");
+               //TODO: Improve (Ham findById se mo mot Connection moi --> Not Good)
+                // Nen tao ham findById moi, truyen Connection vao
+                // Hoac Tao cau query moi + dung Connection vua tao o tren de find
+               // TrainClass trainClass = findBy
+                //
+               // results.add(trainClass);
+               Object[] obj = new Object[t.getColumnNames().length];
+               for (int j = 0; j < obj.length; j++) {
+                    obj[j] = rs.getObject(t.getColumnNames()[j]);
+                }
+               TrainClass ti = new TrainClass();
+               TrainClassID id = createID();
+                for (int k = 0; k < idNames.length; k ++) {
+                    idValues[k] = rs.getObject(idNames[k]);
+                } 
+                id.setIDValues(idValues);
+
+                ti.setId(id);
+                ti.setColumnValues(obj);
+                results.add(ti);
+            }
+            setSubjectAndLecturer(results);
+        } catch (SQLException ex) {
+            throw new Exception(ex);
+        } finally {
+            close(rs, statement);
+            close(con);
+        }
+        return results;
+    }
+    public List<TrainClass> findCloseClassByFaculty(String FacultyCode) throws Exception {
+        checkModelWellDefined();
+        TrainClass t = new TrainClass();
+        if (t == null) {
+            throw new Exception("Cannot initialize the " + TrainClass.class.getName()
+                    + " class");
+        }
+        ArrayList<TrainClass> results = new ArrayList<TrainClass>();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        String[] idNames = t.getIdColumnName();
+        Object[] idValues = new Object[idNames.length];
+        String selectQuery = "Select * from KhoaLuanTotNghiep.MonHoc, " + t.getTableName() + " where KhoaLuanTotNghiep.MonHoc.MaMH=KhoaLuanTotNghiep.LopHoc.MaMH and MaKhoa = ? and TrangThai = " + Constants.CLOSE_CLASS_STATUS;
+        try {
+            con = getConnection();
+            statement = con.prepareStatement(selectQuery);
+            statement.setObject(1, FacultyCode);
+            rs = statement.executeQuery();
+
+            while (rs.next()) {
+               // String classCode = rs.getString("MaLopHoc");
+               //TODO: Improve (Ham findById se mo mot Connection moi --> Not Good)
+                // Nen tao ham findById moi, truyen Connection vao
+                // Hoac Tao cau query moi + dung Connection vua tao o tren de find
+               // TrainClass trainClass = findBy
+                //
+               // results.add(trainClass);
+               Object[] obj = new Object[t.getColumnNames().length];
+               for (int j = 0; j < obj.length; j++) {
+                    obj[j] = rs.getObject(t.getColumnNames()[j]);
+                }
+               TrainClass ti = new TrainClass();
+               TrainClassID id = createID();
+                for (int k = 0; k < idNames.length; k ++) {
+                    idValues[k] = rs.getObject(idNames[k]);
+                } 
+                id.setIDValues(idValues);
+
+                ti.setId(id);
+                ti.setColumnValues(obj);
+                results.add(ti);
+            }
+            setSubjectAndLecturer(results);
+        } catch (SQLException ex) {
+            throw new Exception(ex);
+        } finally {
+            close(rs, statement);
+            close(con);
+        }
+        return results;
+    }
+    private void setSubjectAndLecturer(List<TrainClass> trainClass) throws Exception{
+    SubjectDAO subjectDao=new SubjectDAO();
+    LecturerDAO lecturerDao=new LecturerDAO();
+    for(int i=0;i<trainClass.size();i++){
+        trainClass.get(i).setSubjectName(subjectDao.findById(trainClass.get(i).getSubjectCode()).getSubjectName());
+        trainClass.get(i).setLectturerName(lecturerDao.findById(trainClass.get(i).getLecturerCode()).getFullName());
+        trainClass.get(i).setNumTC(subjectDao.findById(trainClass.get(i).getSubjectCode()).getnumTC() );
+    }
+}
 }

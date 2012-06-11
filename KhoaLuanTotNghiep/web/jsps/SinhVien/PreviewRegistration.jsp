@@ -67,7 +67,7 @@ int numTC=0;
                 border-color: #7D8103;
             }
             a{
-                color: #66ffff;
+                color: #0000ff;
             }
             
             #info{
@@ -89,7 +89,7 @@ int numTC=0;
                 text-align: center;
             }
             h1{
-                 color: #66ffff;
+                 color: #0000ff;
             }
         </style>
         </style>

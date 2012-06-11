@@ -7,8 +7,7 @@ package uit.cnpm02.dkhp.service;
 public enum TrainClassStatus {
     ALL(0, "All"),
     OPEN(1, "Opened"), //
-    CANCEL(2, "Canceled"),
-    CLOSE(3, "Closed");
+    CLOSE(0, "Closed");
     
     private int value;
     private String description;

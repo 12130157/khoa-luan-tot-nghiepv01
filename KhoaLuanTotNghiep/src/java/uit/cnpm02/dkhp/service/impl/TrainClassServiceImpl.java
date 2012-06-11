@@ -350,18 +350,7 @@ public class TrainClassServiceImpl implements ITrainClassService {
         }
     }
 
-    @Override
-    public List<TrainClass> getAllClassCancel() {
-       try {
-            List<TrainClass> result = classDAO.findByOther(classStatus, String.valueOf(Constants.CANCEL_CLASS_STATUS));
-            return result;
-        } catch (Exception ex) {
-            Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
-    }
-
-    @Override
+   @Override
     public List<TrainClass> getAllClassOpenByYearAndSemester(String year, int semester) {
         List<TrainClass> results = new ArrayList<TrainClass>(10);
         try {
@@ -413,4 +402,150 @@ public class TrainClassServiceImpl implements ITrainClassService {
         }
         return results;
     }
+    @Override
+    public List<TrainClass> getAllClassCloseByYearAndSemester(String year, int semester) {
+        List<TrainClass> results = new ArrayList<TrainClass>(10);
+        try {
+           try {
+                List<String> columnName = new ArrayList<String>(10);
+                List<Object> values = new ArrayList<Object>(10);
+
+                if ((year != null)
+                        && !year.isEmpty()
+                        && !year.equalsIgnoreCase("all")) {
+                    columnName.add("NamHoc");
+                    values.add(year);
+                }
+                if (semester > 0) {
+                    columnName.add("HocKy");
+                    values.add(semester);
+                }
+                columnName.add(classStatus);
+                values.add(Constants.CLOSE_CLASS_STATUS);
+                String[] strColumnNames = (String[]) columnName.toArray(
+                        new String[columnName.size()]);
+
+                if ((strColumnNames == null) || (strColumnNames.length <= 0)) {
+                    results = getAllClassOpen();
+                } else {
+                    results = classDAO.findByColumNames(
+                            strColumnNames, values.toArray());
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(
+                        ReporterImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            // Update External Information
+            if ((results != null) && !results.isEmpty()) {
+                try {
+                    for (TrainClass t : results) {
+                        String subName = subjectDAO.findById(t.getSubjectCode()).getSubjectName();
+                        String lecturerName = lectureDAO.findById(t.getLecturerCode()).getFullName();
+
+                        t.setSubjectName(subName);
+                        t.setLectturerName(lecturerName);
+                    }
+                } catch (Exception ex) {
+                    Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return results;
+    }
+
+    @Override
+    public List<TrainClass> SearchOpenClassByColumName(String columnName, String value) {
+       List<TrainClass> results = new ArrayList<TrainClass>(10);
+        try {
+           try {
+                List<String> columnNames = new ArrayList<String>(10);
+                List<Object> values = new ArrayList<Object>(10);
+
+                if (columnName != null) {
+                    columnNames.add(columnName);
+                    values.add(value);
+                }
+                columnNames.add(classStatus);
+                values.add(Constants.OPEN_CLASS_STATUS);
+                String[] strColumnNames = (String[]) columnNames.toArray(
+                        new String[columnNames.size()]);
+
+                if ((strColumnNames == null) || (strColumnNames.length <= 0)) {
+                    results = getAllClassOpen();
+                } else {
+                    results = classDAO.searchByColumNames(
+                            strColumnNames, values.toArray());
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(
+                        ReporterImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            // Update External Information
+            if ((results != null) && !results.isEmpty()) {
+                try {
+                    for (TrainClass t : results) {
+                        String subName = subjectDAO.findById(t.getSubjectCode()).getSubjectName();
+                        String lecturerName = lectureDAO.findById(t.getLecturerCode()).getFullName();
+
+                        t.setSubjectName(subName);
+                        t.setLectturerName(lecturerName);
+                    }
+                } catch (Exception ex) {
+                    Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return results;
+    }
+    @Override
+    public List<TrainClass> SearchCloseClassByColumName(String columnName, String value) {
+       List<TrainClass> results = new ArrayList<TrainClass>(10);
+        try {
+           try {
+                List<String> columnNames = new ArrayList<String>(10);
+                List<Object> values = new ArrayList<Object>(10);
+
+                if (columnName != null) {
+                    columnNames.add(columnName);
+                    values.add(value);
+                }
+                columnNames.add(classStatus);
+                values.add(Constants.CLOSE_CLASS_STATUS);
+                String[] strColumnNames = (String[]) columnNames.toArray(
+                        new String[columnNames.size()]);
+
+                if ((strColumnNames == null) || (strColumnNames.length <= 0)) {
+                    results = getAllClassOpen();
+                } else {
+                    results = classDAO.searchByColumNames(
+                            strColumnNames, values.toArray());
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(
+                        ReporterImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            // Update External Information
+            if ((results != null) && !results.isEmpty()) {
+                try {
+                    for (TrainClass t : results) {
+                        String subName = subjectDAO.findById(t.getSubjectCode()).getSubjectName();
+                        String lecturerName = lectureDAO.findById(t.getLecturerCode()).getFullName();
+
+                        t.setSubjectName(subName);
+                        t.setLectturerName(lecturerName);
+                    }
+                } catch (Exception ex) {
+                    Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return results;
+    }
+
 }

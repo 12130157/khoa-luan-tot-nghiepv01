@@ -155,7 +155,8 @@ private boolean isRegTwoClassInADay(List<TrainClass> registried){
     boolean result=false;
     for(int i =0; i<registried.size(); i++){
         for(int j = i+1; j < registried.size(); j++){
-         if(registried.get(i).getStudyDate()== registried.get(j).getStudyDate())
+         if(registried.get(i).getStudyDate()== registried.get(j).getStudyDate()
+                 &&registried.get(i).getShift()== registried.get(j).getShift())
              result = true;
          if(result){
              return result;
