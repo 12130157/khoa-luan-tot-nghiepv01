@@ -188,7 +188,6 @@
                     msgDialog.innerHTML = result;
                     return;
                 } else {
-                    alert("Enter form submit area.");
                     document.forms["upload-file"].submit();
                 }
             }
