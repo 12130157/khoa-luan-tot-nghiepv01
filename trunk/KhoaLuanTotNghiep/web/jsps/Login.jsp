@@ -14,25 +14,89 @@
         <title>Đăng Nhập</title>
 
         <style media="all" type="text/css">
-            table{
-                margin-left: 200px;
-                margin-top: 10px;
-                margin-bottom: 120px;
-                padding-top: 10px;
-                padding-left: 25px;
-                padding-right: 25px;
-                padding-bottom: 120px;
-                border: 3px solid #5F676D;
-                background: url("../imgs/opaque_10.png") repeat scroll 0 0 transparent;
-                width: 340px;
-                height: 350px;
-            }
-            #login-submit{
-                background-color: #ff3edf;
-                width: 75px;
-                border: 2px solid #175F6E;
-            }
-           </style>
+            .pop_login {
+            background: none repeat scroll 0 0 #FFFFFF;
+            margin: 0 auto;
+            width: 475px;
+        }
+        .pop_login_top_around {
+            float: left;
+            height: 47px;
+        }
+        .pop_login_content {
+            background: url("../imgs/login/ico_tit_lg.jpg") repeat-x scroll left top transparent;
+            float: left;
+            height: 37px;
+            padding-top: 10px;
+            width: 451px;
+        }
+
+        .pop_login_content p.tit {
+            background: url("../imgs/login/icon_dn.jpg") no-repeat scroll left top transparent;
+            border-radius: 5px 5px 5px 5px;
+            color: #ECB000;
+            font-size: 18px;
+            padding-left: 30px;
+            text-shadow: none;
+        }
+        .pop_login_middle {
+            border-bottom: 1px solid #CCCCCC;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            border-left: 1px solid #CCCCCC;
+            border-right: 1px solid #CCCCCC;
+            overflow: hidden;
+            padding: 20px 10px;
+        }
+        .pop_login_middle_input {
+            border: 1px solid #999999;
+            border-radius: 5px 5px 5px 5px;
+            height: 25px;
+            margin-bottom: 20px;
+            padding: 8px;
+        }
+        .pop_login_middle_input input {
+            border: medium none;
+            color: #CCCCCC;
+            display: block;
+            float: left;
+            font-size: 14px;
+            height: 20px;
+            width: 380px;
+        }
+        .pop_login_middle_input img {
+            display: block;
+            float: left;
+            margin: 3px 10px 0 0;
+        }
+        .bnt_dn_popup {
+            display: block;
+            float: left;
+            margin: 0 auto 5px;
+            width: 460px;
+        }
+        .bnt_dn_popup a, .bnt_dn_popup a:visited {
+            background: url("../imgs/login/bnt_dn.jpg") no-repeat scroll left top transparent;
+            display: block;
+            font-size: 22px;
+            height: 43px;
+            line-height: 40px;
+            margin: 0 auto;
+            text-align: center;
+            text-transform: uppercase;
+            width: 274px;
+        }
+        .bnt_dn_popup a:hover {
+            background: url("../imgs/login/bnt_dn.jpg") no-repeat scroll left bottom transparent;
+            display: block;
+            font-size: 22px;
+            height: 43px;
+            line-height: 40px;
+            text-align: center;
+            text-transform: uppercase;
+            width: 274px;
+        }
+       </style>
     </head>
     <body>
         <%--Div Wrapper--%>
@@ -44,6 +108,77 @@
                 <%@include file="MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
+                <form name="myform" id="myform" method="post" action="../Login?function=login">
+                    <div class="pop_login">
+                       <div class="pop_login_top">
+                         <div class="pop_login_top_around"><img src="http://yeuthethao.com/dudoan/img/login/left_icon_lg.jpg"></div>
+                         <div class="pop_login_content">
+                           <p class="tit">Đăng nhập</p>
+                         </div>
+                         <div class="pop_login_top_around"><img src="http://yeuthethao.com/dudoan/img/login/right_icon_lg.jpg"></div>
+                         <div class="clears"></div>
+                       </div>
+                       <div class="pop_login_middle">
+                         <div class="pop_login_middle_input">
+                           <img src="../imgs/login/icon_user.jpg">
+                           <input type="text"
+                                  name="txtUsername"
+                                  id="txtUsername"
+                                  maxlength="20"
+                                  value="Tên truy cập"
+                                  onfocus="if(this.value=='Tên truy cập')
+                                      { this.style.color='#000';this.value='';}"
+                                  onblur="if(this.value=='')
+                                      { this.style.color='#ccc';this.value='Tên truy cập';}"
+                                  onkeypress="keypressed()"
+                                      style="color: rgb(204, 204, 204); ">
+                         </div>  
+                         <div class="pop_login_middle_input">
+                           <img src="../imgs/login/icon_pass.jpg">
+                           <input id="fauxPassword"
+                                  name="fauxPassword"
+                                  type="text"
+                                  value="Mật khẩu"
+                                  onfocus="onFocusHandler_p(this)">
+                           <input id="txtPassword"
+                                  style="display:none;"
+                                  name="txtPassword"
+                                  type="password"
+                                  maxlength="20"
+                                  value=""
+                                  onblur="onBlurHandler_p(this);"
+                                  onkeypress="keypressed()">		 
+                         </div> 
+                         <div class="clear"></div>
+                         <div class="bnt_dn_popup">
+                             <a href="javascript: void(0)" onclick="Login()">
+                                 Đăng nhập</a>
+                         </div>
+                         
+                         <%--
+                         <div class="forget_ct">
+                             <a href="img///forgotpass" class="nyroModal">Quên mật khẩu</a> | 
+                             <a href="img///register">Đăng kí</a>
+                         </div>
+                         --%>
+                         <%
+                        String error = (String) session.getAttribute("error");
+                            if (error != null) {
+                                session.removeAttribute("error");
+                        %>
+                            <p style="padding-top: 5px; background-color: #0f0; text-align: center;">
+                                <%=error%>
+                            </p>
+                        <%
+                         }
+                        %>
+                       </div>
+                       
+                     </div>
+                    </table>
+                </form>
+                     <br /><br />
+                <%--
                 <form name="myform" id="myform" method="post" action="../Login?function=login">
                     <table>
                         <tr>
@@ -84,6 +219,7 @@
                         
                     </table>
                 </form>
+                --%>
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
@@ -94,17 +230,16 @@
       </body>
     
     <script type = "text/javascript">
-   function keypressed()
-   { 
-   if(event.keyCode=='13')
-   {
-       Login();
-   } 
-  }
-    function Login(){
+        function keypressed() { 
+            if(event.keyCode=='13') {
+                Login();
+            } 
+        }
+        
+        function Login(){
             var txtUsername = document.myform.txtUsername.value;
             var txtPassword = document.myform.txtPassword.value;
-            if(txtUsername.length==0){
+            if((txtUsername.length == 0) || (txtUsername == "Tên truy cập")){
                 alert("Bạn chưa nhập tên người dùng");
                 txtUsername.focus();
             }else if(txtPassword.length==0){
@@ -113,6 +248,19 @@
             }
             else{
                 document.forms["myform"].submit();
+            }
+        }
+        
+        function onFocusHandler_p(obj) {
+            obj.style.display = 'none';
+            document.getElementById("txtPassword").style.display = 'block';
+            document.getElementById("txtPassword").focus();
+        }
+        function onBlurHandler_p(obj) {
+            var pass = document.getElementById("txtPassword").value;
+            if ((pass == null) || (pass.length == 0)) {
+                obj.style.display = 'none';
+                document.getElementById("fauxPassword").style.display = 'block';
             }
         }
     </script>
