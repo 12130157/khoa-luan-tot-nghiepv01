@@ -246,13 +246,10 @@ public class DownloadController extends HttpServlet {
             HSSFCellStyle style3 = hwb.createCellStyle();
 
             HSSFFont font = hwb.createFont();
-            font.setFontName(HSSFFont.FONT_ARIAL);
-            font.setFontHeightInPoints((short) 20);
-            font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-            font.setColor(HSSFColor.RED.index);
+            initialFont(font, HSSFFont.FONT_ARIAL, 20,
+                    HSSFFont.BOLDWEIGHT_BOLD, HSSFColor.RED.index);
             style2.setFont(font);
 
-            boolean done = false;
             int nrow = 1, i = 0;
 
             String[] infoStudent = {"Họ Và Tên: " + student.getFullName(),
@@ -262,30 +259,18 @@ public class DownloadController extends HttpServlet {
                 "Số tín chỉ đã tích lũy: " + numTC,
                 "Điểm trung bình: " + averageMark};
             HSSFRow row1 = null;
-            HSSFCell cell1 = null;
-
-
-
             row1 = sheet.createRow((short) +(nrow++));
-            cell1 = row1.createCell((short) +4);
-            cell1.setCellStyle(style2);
-            cell1.setCellType(HSSFCell.CELL_TYPE_STRING);
-            cell1.setCellValue("BẢNG ĐIỂM SINH VIÊN");
+            createCell(row1, 4, style2, HSSFCell.CELL_TYPE_STRING, "BẢNG ĐIỂM SINH VIÊN");
 
             row1 = sheet.createRow((short) +(nrow++));
             row1 = sheet.createRow((short) +(nrow++));
             HSSFFont font1 = hwb.createFont();
-            font1.setFontName(HSSFFont.FONT_ARIAL);
-            font1.setFontHeightInPoints((short) 12);
-            font1.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-            font1.setColor(HSSFColor.BLUE.index);
+            initialFont(font1, HSSFFont.FONT_ARIAL, 12,
+                    HSSFFont.BOLDWEIGHT_BOLD, HSSFColor.BLUE.index);
             style.setFont(font1);
             for (i = 0; i < infoStudent.length; i++) {
                 row1 = sheet.createRow((short) +(nrow++));
-                cell1 = row1.createCell((short) +0);
-                cell1.setCellStyle(style);
-                cell1.setCellType(HSSFCell.CELL_TYPE_STRING);
-                cell1.setCellValue(infoStudent[i]);
+                createCell(row1, 0, style, HSSFCell.CELL_TYPE_STRING, infoStudent[i]);
             }
 
             row1 = sheet.createRow((short) +(nrow++));
@@ -295,16 +280,11 @@ public class DownloadController extends HttpServlet {
             String[] title = {"Năm học", "Học kỳ", "Mã môn học", "Tên môn học", "Số tín chỉ", "Điểm"};
             row1 = sheet.createRow((short) +(nrow++));
             HSSFFont font2 = hwb.createFont();
-            font2.setFontName(HSSFFont.FONT_ARIAL);
-            font2.setFontHeightInPoints((short) 12);
-            font2.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-            font2.setColor(HSSFColor.GREEN.index);
+            initialFont(font2, HSSFFont.FONT_ARIAL, 12,
+                    HSSFFont.BOLDWEIGHT_BOLD, HSSFColor.RED.index);
             style1.setFont(font2);
             for (i = 0; i < title.length; i++) {
-                cell1 = row1.createCell((short) +(i + 1));
-                cell1.setCellStyle(style1);
-                cell1.setCellType(HSSFCell.CELL_TYPE_STRING);
-                cell1.setCellValue(title[i]);
+                createCell(row1, (i+1), style1, HSSFCell.CELL_TYPE_STRING, title[i]);
             }
             String year;
             int semester;
@@ -330,12 +310,8 @@ public class DownloadController extends HttpServlet {
                     Integer.toString(subTC),
                     Float.toString(mark)};
 
-                HSSFCell cell = null;
                 for (int j = 0; j < info.length; j++) {
-                    cell = row.createCell((short) +(j + 1));
-                    cell.setCellStyle(style3);
-                    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-                    cell.setCellValue(info[j]);
+                    createCell(row, (j+1), style3, HSSFCell.CELL_TYPE_STRING, info[j]);
                     sheet.autoSizeColumn(j + 1);
                 }
             }
