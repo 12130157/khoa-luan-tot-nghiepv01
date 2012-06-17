@@ -135,7 +135,7 @@
                             <%}else {%>
                             <td><%=openedClazzs.get(i).getTestDate()%></td>
                             <%}%>
-                            <td><a href="../../ManageClassController?action=cancel&classID=<%= openedClazzs.get(i).getId().getClassCode()%>">Hủy</a></td>
+                            <td><a href="../../ManageClassController?action=Cancel&classID=<%= openedClazzs.get(i).getId().getClassCode()%>&semester=<%=openedClazzs.get(i).getId().getSemester()%>&year=<%=openedClazzs.get(i).getId().getYear()%>">Hủy</a></td>
                             <%if(openedClazzs.get(i).getUpdateScore()==1){%>
                             <td><span class="atag" onclick="closeClass('<%=openedClazzs.get(i).getId().getClassCode()%>',<%=openedClazzs.get(i).getId().getSemester()%>,'<%=openedClazzs.get(i).getId().getYear()%>')">Đóng</span></td>
                             <% }else{%>

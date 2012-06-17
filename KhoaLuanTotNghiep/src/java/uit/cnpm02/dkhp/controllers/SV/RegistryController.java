@@ -77,7 +77,10 @@ public class RegistryController extends HttpServlet {
     String path="";
      try{
      String classCode= request.getParameter("classCode");
-     List<Registration> registration=DAOFactory.getRegistrationDAO().findAllByClassCode(classCode);
+     int semester=Integer.parseInt(request.getParameter("semester"));
+     String year= request.getParameter("year");
+     TrainClassID id = new TrainClassID(classCode, year, semester);
+     List<Registration> registration=DAOFactory.getRegistrationDAO().findAllByClassCode(id);
      List<Student> studentList= new ArrayList<Student>();
      for(int i=0; i<registration.size(); i++){
          Student student =DAOFactory.getStudentDao().findById(registration.get(i).getId().getStudentCode());

@@ -102,7 +102,7 @@ List<String> registried=(List<String>) session.getAttribute("registried");
                      <%for(int i=0; i<trainClass.size();i++){%>
                      <tr>
                          <td><%=i+1%></td>
-                         <td><a href="../../RegistryController?action=detail&classCode=<%=trainClass.get(i).getId().getClassCode()%>"><%=trainClass.get(i).getId().getClassCode()%></a></td>
+                         <td><a href="../../RegistryController?action=detail&classCode=<%=trainClass.get(i).getId().getClassCode()%>&semester=<%=trainClass.get(i).getId().getSemester()%>&year=<%=trainClass.get(i).getId().getYear()%>"><%=trainClass.get(i).getId().getClassCode()%></a></td>
                          <td><%=trainClass.get(i).getSubjectName()%></td>
                          <td><%=trainClass.get(i).getNumTC()%></td><td><%=trainClass.get(i).getLectturerName()%></td>
                          <td><%=trainClass.get(i).getStudyDate()%></td>

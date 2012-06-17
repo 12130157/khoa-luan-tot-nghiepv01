@@ -114,7 +114,7 @@ int numTC=0;
                       %>
                      <tr>
                          <td><%=i+1%></td>
-                         <td><a href="../../RegistryController?action=detail&classCode=<%=registried.get(i).getId().getClassCode()%>"><%=registried.get(i).getId().getClassCode()%></a></td>
+                         <td><a href="../../RegistryController?action=detail&classCode=<%=registried.get(i).getId().getClassCode()%> &semester=<%=registried.get(i).getId().getSemester()%>&year=<%=registried.get(i).getId().getYear()%>"><%=registried.get(i).getId().getClassCode()%></a></td>
                          <td><%=registried.get(i).getSubjectName()%></td>
                          <td><%=registried.get(i).getLectturerName()%></td>
                          <td><%=registried.get(i).getStudyDate()%></td>

@@ -1444,5 +1444,6 @@ public abstract class AdvancedAbstractJdbcDAO<T extends IAdvancedJdbcModel<ID>, 
             close(rs, statement);
             close(con);
         }
-    }  
+    }
+    
 }
