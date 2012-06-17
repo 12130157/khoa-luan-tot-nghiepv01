@@ -11,7 +11,8 @@ import java.util.Map;
  */
 public enum TaskType implements Serializable {
     GV_TB_NGHI_DAY(0),
-    UNKNOWN(1);
+    UNKNOWN(1),
+    REQUEST_LECTURER_SENT_SCORE(2);
     
     //..
     private int value;
