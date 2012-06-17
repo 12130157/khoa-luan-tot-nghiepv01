@@ -23,6 +23,8 @@ import uit.cnpm02.dkhp.DAO.TrainClassDAO;
 import uit.cnpm02.dkhp.model.DetailTrain;
 import uit.cnpm02.dkhp.model.Faculty;
 import uit.cnpm02.dkhp.model.Lecturer;
+import uit.cnpm02.dkhp.model.Registration;
+import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.model.Subject;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.model.TrainClassID;
@@ -124,10 +126,51 @@ public class ManageClassController extends HttpServlet {
                reloadSubjectFollowFaculty(request, response);
             }else if(requestAction.equalsIgnoreCase(ClassFunctionSupported.FILTER_LECTURER_BY_SUBJECT.getValue())){
                reloadLecturerBySubject(request, response);
+            }else if(requestAction.equalsIgnoreCase(ClassFunctionSupported.CANCEL.getValue())){
+               cancelTrainClass(request, response);
             }
             
         } finally {
             out.close();
+        }
+    }
+    private void cancelTrainClass(HttpServletRequest request, HttpServletResponse response){
+        String path="";
+        try {
+            String classCode = request.getParameter("classID");
+            int semester=Integer.parseInt(request.getParameter("semester"));
+            String year= request.getParameter("year");
+            TrainClassID id = new TrainClassID(classCode, year, semester);
+            List<Registration> registration= DAOFactory.getRegistrationDAO().findAllByClassCode(id);
+            List<Student> studentList= new ArrayList<Student>();
+            for(int i=0; i<registration.size(); i++){
+                 Student student =DAOFactory.getStudentDao().findById(registration.get(i).getId().getStudentCode());
+                 studentList.add(student);
+             }
+             List<String> columnNames = new ArrayList<String>(3);
+             List<Object> values = new ArrayList<Object>(3);
+             columnNames.add("MaMH");
+             columnNames.add("NamHoc");
+             columnNames.add("NamHoc");
+             values.add(classDAO.findById(id).getSubjectCode());
+             values.add(semester);
+             values.add(year);
+             String[] strColumnNames = (String[]) columnNames.toArray(
+                        new String[columnNames.size()]);
+             List<TrainClass> sameClass = classDAO.findByColumNames(strColumnNames, values.toArray());
+             setSubjectAndLecturer(sameClass);
+             TrainClass trainClass = classDAO.findById(id);
+             trainClass.setSubjectName(subjectDAO.findById(trainClass.getSubjectCode()).getSubjectName());
+             trainClass.setLectturerName(lectureDAO.findById(trainClass.getLecturerCode()).getFullName());
+             HttpSession session = request.getSession();
+             session.setAttribute("trainclass", trainClass);
+             session.setAttribute("studentList", studentList);
+             session.setAttribute("classList", sameClass);
+             path = "./jsps/PDT/CancelTrainClass.jsp";
+             response.sendRedirect(path);
+             
+        } catch (Exception ex) {
+            Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     private void reloadLecturerBySubject(HttpServletRequest request, HttpServletResponse response){
@@ -988,6 +1031,7 @@ public class ManageClassController extends HttpServlet {
         DELETE("delete"),   // Remove class
         DETAIL("detail"),   // view detail class
         PREUPDATE("pre_update"), // prepare update class
+        CANCEL("Cancel"), // Cancel train class
         FILTER_BY_YAS("filterByYAS"),
         FILTER_BY_FACULTY("filterByFaculty"),
         FILTER_PAGE_BY_INPUT("FilterPageByInput"),

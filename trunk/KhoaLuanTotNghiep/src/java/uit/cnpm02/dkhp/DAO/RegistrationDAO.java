@@ -13,6 +13,7 @@ import uit.cnpm02.dkhp.model.Registration;
 import uit.cnpm02.dkhp.access.advancedJDBC.AdvancedAbstractJdbcDAO;
 import uit.cnpm02.dkhp.model.RegistrationID;
 import java.util.List;
+import uit.cnpm02.dkhp.model.TrainClassID;
 import uit.cnpm02.dkhp.utilities.Constants;
 
 /**
@@ -79,7 +80,7 @@ public class RegistrationDAO extends AdvancedAbstractJdbcDAO<Registration, Regis
            close(con);
         }
     }
-   public List<Registration> findAllByClassCode(String classCode) throws Exception {
+   public List<Registration> findAllByClassCode(TrainClassID classID) throws Exception {
         checkModelWellDefined();
         Registration t = new Registration();
         if (t == null) {
@@ -90,16 +91,18 @@ public class RegistrationDAO extends AdvancedAbstractJdbcDAO<Registration, Regis
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        String selectQuery = "Select * from "+t.getTableName()+" where MaLopHoc= ? and HocKy="+Constants.CURRENT_SEMESTER+" and NamHoc='"+Constants.CURRENT_YEAR+"'";
+        String selectQuery = "Select * from "+t.getTableName()+" where MaLopHoc= ? and HocKy= ? and NamHoc =?";
         try {
             con = getConnection();
             statement = con.prepareStatement(selectQuery);
-            statement.setObject(1, classCode);
+            statement.setObject(1, classID.getClassCode());
+            statement.setObject(2, classID.getSemester());
+            statement.setObject(3, classID.getYear());
             rs = statement.executeQuery();
 
             while (rs.next()) {
                 String mssv=rs.getString("MSSV");
-                RegistrationID registrationID=new RegistrationID(mssv, classCode, Constants.CURRENT_SEMESTER, Constants.CURRENT_YEAR);
+                RegistrationID registrationID=new RegistrationID(mssv, classID.getClassCode(), classID.getSemester(),  classID.getYear());
                 Registration registration=findById(registrationID);
                 results.add(registration);
             }
