@@ -41,6 +41,10 @@
             #detailclass th td{
                 text-align: left;
             }
+            #message{
+                text-align: left;
+                width: 100%;
+             }
         </style>
     </head>
     <%
@@ -62,6 +66,9 @@
                     <u><h3>Hủy lớp học <%=trainClass.getId().getClassCode()%></h3></u>
                 </div>
                 <hr/><hr/><br>
+                <div id="message">
+                    
+                </div><br><hr/><br>
                 <u>Chi tiết lơp học:</u>
                 <table id="detailclass">
                     <tr>
@@ -85,19 +92,42 @@
                 </table>
 
                 <%--Form add new Train subject--%>
+                <%if(studentList.size()>0 && sameClass.size()>0){%>
+                <u>Danh sách sinh viên đăng  ký lớp học: <%=studentList.size()%></u>
                 <div id = "list-train-class">
                     <form id="trainclaslist">
                     <table id = "table-list-train-class" name = "table-list-train-class" class="general-table">
                         <tr>
-                        
+                            <th>STT</th>
+                            <th>MSSV</th>
+                            <th>Họ Tên</th>
+                            <th>Lớp</th>
+                            <th>Lớp tương tự</th>
+                            <th>Chuyển</th>
                         </tr>
-                        
+                        <%for (int i = 0; i<studentList.size(); i++ ){%>
+                        <tr>
+                            <td><%=(i+1)%></td>
+                            <td><%=studentList.get(i).getId()%></td>
+                            <td><%=studentList.get(i).getFullName()%></td>
+                            <td><%=studentList.get(i).getClassCode()%></td>
+                            <td>
+                                <select id="desClass" name="desClass">
+                                   <%for(int j =0; j<sameClass.size(); j++){%>
+                                      <option value=""><%=sameClass.get(i).getId().getClassCode()%></option>
+                                   <%}%>
+                                    
+                               </select>
+                            </td>
+                            <td><input type="button" value="  Chuyển  " /></td>
+                       </tr>
+                        <%}%>
                         
                     </table>
                     
                     </form>
                 </div>
-                   
+                   <%}%>
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
@@ -106,12 +136,25 @@
         </div>
         <!--End Wrapper-->
     </body>
+    <script src="../../javascripts/AjaxUtil.js"></script>
     <script  type = "text/javascript" >
+        var http = createRequestObject();
         function autoCancelClass(classCode, classSemester, classYear){
-         alert(classCode);
-         alert(classSemester);
-         alert(classYear);
+         if(http){
+                    http.open("GET", "../../ManageClassController?action=autoCancel&classCode="+ classCode + "&classSemester="+ classSemester + "&classYear="+ classYear  ,true);
+                    http.onreadystatechange = cancelResponeHandler;
+                    http.send(null);
+         }
       }  
+      function cancelResponeHandler() {
+            if(http.readyState == 4 && http.status == 200){
+                var detail=document.getElementById("message");
+                detail.innerHTML=http.responseText;
+            }
+        }
+      function moveEachStudent(studnetCode, sourceClass, desClass, classSemester, classYear){
+          
+      }
         
     </script>
 </html>

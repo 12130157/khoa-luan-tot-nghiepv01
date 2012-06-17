@@ -18,6 +18,7 @@ import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.DetailTrainDAO;
 import uit.cnpm02.dkhp.DAO.FacultyDAO;
 import uit.cnpm02.dkhp.DAO.LecturerDAO;
+import uit.cnpm02.dkhp.DAO.RegistrationDAO;
 import uit.cnpm02.dkhp.DAO.SubjectDAO;
 import uit.cnpm02.dkhp.DAO.TrainClassDAO;
 import uit.cnpm02.dkhp.model.DetailTrain;
@@ -53,6 +54,7 @@ public class ManageClassController extends HttpServlet {
     private SubjectDAO subjectDAO = DAOFactory.getSubjectDao();
     private LecturerDAO lectureDAO = DAOFactory.getLecturerDao();
     private FacultyDAO facultyDAO= DAOFactory.getFacultyDao();
+    private RegistrationDAO regDAO = DAOFactory.getRegistrationDAO();
     
     private ITrainClassService trainClassService = new TrainClassServiceImpl();
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
@@ -128,11 +130,83 @@ public class ManageClassController extends HttpServlet {
                reloadLecturerBySubject(request, response);
             }else if(requestAction.equalsIgnoreCase(ClassFunctionSupported.CANCEL.getValue())){
                cancelTrainClass(request, response);
+            }else if(requestAction.equalsIgnoreCase(ClassFunctionSupported.AUTOCANCEL.getValue())){
+               autoCancelClass(request, response);
             }
-            
         } finally {
             out.close();
         }
+    }
+    private void autoCancelClass(HttpServletRequest request, HttpServletResponse response){
+        PrintWriter out = null;
+        try {
+            out = response.getWriter();
+            String classCode = request.getParameter("classCode");
+            int semester=Integer.parseInt(request.getParameter("classSemester"));
+            String year= request.getParameter("classYear");
+            TrainClassID id = new TrainClassID(classCode, year, semester);
+            TrainClass trainclass = classDAO.findById(id);
+            if(trainclass == null){
+                out.println("Lớp đã được hủy.");
+            }else{
+                trainclass.setSubjectName(subjectDAO.findById(trainclass.getSubjectCode()).getSubjectName());
+                trainclass.setLectturerName(lectureDAO.findById(trainclass.getLecturerCode()).getFullName());
+                List<Registration> registration= DAOFactory.getRegistrationDAO().findAllByClassCode(id);
+                if(registration == null || registration.isEmpty()){
+                    //classDAO.delete(trainclass);
+                    out.println("Hủy lớp thành công (Lớp không có sinh viên nào đăng ký)");
+                }else{
+                    List<TrainClass> sameClass = getSameClassAsSubject(id);
+                    if(sameClass == null || sameClass.isEmpty()){
+                        for(int i =0; i< registration.size(); i++){
+                           // regDAO.delete(registration.get(i));
+                        }
+                        //classDAO.delete(trainclass);
+                        out.println("Lớp có "+registration.size() + " sinh viên đăng ký.");
+                        out.println("<br>");
+                        out.println("Không có lớp học khác dạy môn học "+trainclass.getSubjectName()+".");
+                        out.println("<br>");
+                        out.println("Đã hủy đăng ký của "+registration.size()+ " sinh viên.");
+                        out.println("<br>");
+                        out.println("Đã hủy lớp thành công.");
+                    }else{
+                        out.println("Chưa làm xong.");
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            out.close();
+        }
+    }
+    private List<TrainClass> getSameClassAsSubject(TrainClassID id){
+        try {
+            List<TrainClass> sameClass;
+            List<String> columnNames = new ArrayList<String>(3);
+            List<Object> values = new ArrayList<Object>(3);
+            columnNames.add("MaMH");
+            columnNames.add("HocKy");
+            columnNames.add("NamHoc");
+            columnNames.add("TrangThai");
+            values.add(classDAO.findById(id).getSubjectCode());
+            values.add(id.getSemester());
+            values.add(id.getYear());
+            values.add(Constants.OPEN_CLASS_STATUS);
+            String[] strColumnNames = (String[]) columnNames.toArray(
+                       new String[columnNames.size()]);
+            sameClass = classDAO.findByColumNames(strColumnNames, values.toArray());
+            for(int i =0; i<sameClass.size(); i++){
+                if(sameClass.get(i).getId().getClassCode().equalsIgnoreCase(id.getClassCode()))
+                    sameClass.remove(i);
+            }
+            setSubjectAndLecturer(sameClass); 
+            return sameClass;
+        } catch (Exception ex) {
+            Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+        
     }
     private void cancelTrainClass(HttpServletRequest request, HttpServletResponse response){
         String path="";
@@ -147,18 +221,7 @@ public class ManageClassController extends HttpServlet {
                  Student student =DAOFactory.getStudentDao().findById(registration.get(i).getId().getStudentCode());
                  studentList.add(student);
              }
-             List<String> columnNames = new ArrayList<String>(3);
-             List<Object> values = new ArrayList<Object>(3);
-             columnNames.add("MaMH");
-             columnNames.add("NamHoc");
-             columnNames.add("NamHoc");
-             values.add(classDAO.findById(id).getSubjectCode());
-             values.add(semester);
-             values.add(year);
-             String[] strColumnNames = (String[]) columnNames.toArray(
-                        new String[columnNames.size()]);
-             List<TrainClass> sameClass = classDAO.findByColumNames(strColumnNames, values.toArray());
-             setSubjectAndLecturer(sameClass);
+             List<TrainClass> sameClass = getSameClassAsSubject(id);
              TrainClass trainClass = classDAO.findById(id);
              trainClass.setSubjectName(subjectDAO.findById(trainClass.getSubjectCode()).getSubjectName());
              trainClass.setLectturerName(lectureDAO.findById(trainClass.getLecturerCode()).getFullName());
@@ -614,7 +677,7 @@ public class ManageClassController extends HttpServlet {
                 } else {
                     result.append("<td>").append(trainclasslist.get(i).getTestDate()).append("</td>");
                 }
-                result.append("<td><a href='../../ManageClassController?action=cancel&classID=").append(trainclasslist.get(i).getId().getClassCode()).append("'>Hủy</a></td>");
+                result.append("<td><a href='../../ManageClassController?action=cancel&classID=").append(trainclasslist.get(i).getId().getClassCode()).append("&semester=").append(trainclasslist.get(i).getId().getSemester()).append("&year=").append(trainclasslist.get(i).getId().getYear()).append("'>Hủy</a></td>");
                 if(trainclasslist.get(i).getUpdateScore()==1){
                    String method = String.format(" onclick=closeClass('%s','%s','%s')",trainclasslist.get(i).getId().getClassCode(), trainclasslist.get(i).getId().getSemester(), trainclasslist.get(i).getId().getYear());
                     result.append("<td><span class='atag'" +method+ ">Đóng</span></td>");
@@ -1043,6 +1106,7 @@ public class ManageClassController extends HttpServlet {
         FILTER_SUBJECT_BY_FACULTY("FilterClassByFaculty"),
         FILTER_LECTURER_BY_SUBJECT("FilterLecturerBySubject"),
         SEARCH("search"),
+        AUTOCANCEL("autoCancel"),
         UPDATE("update");   // Update
         
         private String description;
