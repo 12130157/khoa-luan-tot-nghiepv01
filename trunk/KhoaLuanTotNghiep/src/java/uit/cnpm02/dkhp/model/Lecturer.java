@@ -242,5 +242,26 @@ public class Lecturer extends AbstractJdbcModel<String> {
         
         return result;
     }
-    
+
+    @Override
+    public boolean equals(Object obj) {
+        if ((obj == null) && (this == null)) {
+            return true;
+        }
+        
+        if (! (obj instanceof Lecturer)) {
+            return false;
+        }
+        
+        Lecturer other = (Lecturer) obj;
+        return this.getId().equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + (this.lecturerCode != null ? this.lecturerCode.hashCode() : 0);
+        hash = 71 * hash + (this.identityCard != null ? this.identityCard.hashCode() : 0);
+        return hash;
+    }
 }
