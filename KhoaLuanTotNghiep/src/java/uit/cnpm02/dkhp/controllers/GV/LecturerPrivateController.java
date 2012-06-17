@@ -162,17 +162,23 @@ public class LecturerPrivateController extends HttpServlet {
         if ((trainClasses == null) || trainClasses.isEmpty()) {
             out.println("Không tìm thấy lớp nào");
         } else {
-            out.println("<table class=\"general-table\" style=\"width: 600px;\">");
+            out.println("<table class=\"general-table\" style=\"width: 615px;\">");
             out.println("<tr>"
-                        + "<th>STT</th>"
-                        + "<th>Mã Lớp</th>"
-                        + "<th>Môn học</th>"
+                    + "<th>STT</th>"
+                    + "<th>Mã Lớp</th>"
+                    + "<th>Môn học</th>"
+                    + "<th>Download</th>"
                     + "</tr>");
             for (int i = 0; i < trainClasses.size(); i++) {
+                String key = trainClasses.get(i).getId().getClassCode() + ";"
+                        + trainClasses.get(i).getId().getYear() + ";"
+                        + trainClasses.get(i).getId().getSemester();
                 out.println("<tr>"
-                            + "<td>" + (i + 1) + "</td>"
-                            + "<td>" + trainClasses.get(i).getId().getClassCode() + "</td>"
-                            + "<td>" + trainClasses.get(i).getSubjectName() + "</td>"
+                        + "<td>" + (i + 1) + "</td>"
+                        + "<td>" + trainClasses.get(i).getId().getClassCode() + "</td>"
+                        + "<td>" + trainClasses.get(i).getSubjectName() + "</td>"
+                        + "<td><a href=\"../../DownloadController?action=download-empty-file-score&key="
+                        + key + "\"><img src=\"../../imgs/download.png\" alt=\"Download\" title=\"Tải bảng điểm\" /></a></td>"
                         + "</tr>");
             }
             out.println("</table>");
@@ -288,7 +294,7 @@ public class LecturerPrivateController extends HttpServlet {
         GET_TRAIN_CLASS("get-train-class"),
         LOAD_PERSIONAL_INFO("load-persional-infor"),
         UPDATE("update"),
-        SEND_REQUEST("send-request");
+        SEND_REQUEST("send-request");        
         
         
         private String description;
