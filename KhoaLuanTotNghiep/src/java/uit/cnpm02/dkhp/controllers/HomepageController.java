@@ -67,7 +67,7 @@ public class HomepageController extends HttpServlet {
             NewsDAO newsDao = new NewsDAO();
             //List<News> news = newsDao.findAll();
             List<News> news = newsDao.findByColumName("Loai", NewsType.IMPORTANT.value());
-            news.addAll(newsDao.getRows(0, 5, 2, true));
+            news.addAll(newsDao.findByColumName("Loai", NewsType.OPEN.value()));
             
             if((news != null) && (news.size() > 0)) {
                 session.setAttribute("news", news);
