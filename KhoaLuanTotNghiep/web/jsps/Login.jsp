@@ -85,6 +85,7 @@
             text-align: center;
             text-transform: uppercase;
             width: 274px;
+            text-decoration: none;
         }
         .bnt_dn_popup a:hover {
             background: url("../imgs/login/bnt_dn.jpg") no-repeat scroll left bottom transparent;
@@ -111,11 +112,11 @@
                 <form name="myform" id="myform" method="post" action="../Login?function=login">
                     <div class="pop_login">
                        <div class="pop_login_top">
-                         <div class="pop_login_top_around"><img src="http://yeuthethao.com/dudoan/img/login/left_icon_lg.jpg"></div>
+                         <div class="pop_login_top_around"><img src="../imgs/login/left_icon_lg.jpg"></div>
                          <div class="pop_login_content">
                            <p class="tit">Đăng nhập</p>
                          </div>
-                         <div class="pop_login_top_around"><img src="http://yeuthethao.com/dudoan/img/login/right_icon_lg.jpg"></div>
+                         <div class="pop_login_top_around"><img src="../imgs/login/right_icon_lg.jpg"></div>
                          <div class="clears"></div>
                        </div>
                        <div class="pop_login_middle">
