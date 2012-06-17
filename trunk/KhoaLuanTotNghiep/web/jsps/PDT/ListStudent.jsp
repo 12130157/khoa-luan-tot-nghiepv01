@@ -80,7 +80,7 @@
                             <%if ((listStudent != null) && !listStudent.isEmpty()) {%>
                             <% for (int i = 0; i < listStudent.size(); i++) {%>
                             <tr>
-                            <td><INPUT type="checkbox" name="chk<%= i%>"/></td>
+                            <td><INPUT type="checkbox" value="aaaa" name="chk<%= i%>"/></td>
                             <td> <%= (i + 1)%> </td>
                             <td> <%= listStudent.get(i).getId()%> </td> 
                             <td> <%= listStudent.get(i).getFullName()%> </td>
@@ -207,6 +207,8 @@
                     var row = table.rows[i];
                     var chkbox = row.cells[0].childNodes[0];
                     if(null != chkbox && true == chkbox.checked) {
+                        alert("Row 1 value: " + chkbox.value);
+                        return;
                         if (selectOne == false) {
                             selectOne = true;
                         } else {
