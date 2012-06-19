@@ -8,8 +8,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,7 +31,7 @@ public class BOUtils {
     private static List<String> roomList = new ArrayList(10);
     private static int currentSemeter = -1;
     private static String currentYear = "";
-
+    private static Properties config = null;
     
     
     public BOUtils() {
@@ -40,7 +44,7 @@ public class BOUtils {
     
     private static void loadConfig() {
         if (!doLoadConfig) {
-            Properties config = new Properties();
+            config = new Properties();
             try {
                 config.load(new FileInputStream("config/system.properties"));
                 String listClass = config.get(ROOM_LIST).toString();
@@ -57,6 +61,20 @@ public class BOUtils {
         }
         
     }
+    
+    public static void reLoadConfig() {
+        doLoadConfig = false;
+        loadConfig();
+    }
+    
+    public static void setConfig(Properties prop) {
+        BOUtils.config = prop;
+    }
+    
+    public static Properties getConfig() {
+        return config;
+    }
+    
     public static List<String> getListRoom(List<String> defaultValue) {
         loadConfig();
         return roomList.isEmpty() ? defaultValue : roomList;
