@@ -114,12 +114,14 @@
                             <td>
                                 <select id="desClass" name="desClass">
                                    <%for(int j =0; j<sameClass.size(); j++){%>
-                                      <option value=""><%=sameClass.get(i).getId().getClassCode()%></option>
+                                      <option value="<%=sameClass.get(j).getId().getClassCode()%>"><%=sameClass.get(j).getId().getClassCode()%></option>
                                    <%}%>
                                     
                                </select>
                             </td>
-                            <td><input type="button" value="  Chuyển  " /></td>
+                            <td><input type="button" value="  Chuyển  " onclick="moveEachStudent('<%=studentList.get(i).getId()%>','<%=trainClass.getId().getClassCode()%>','', '<%=trainClass.getId().getSemester()%>','<%=trainClass.getId().getYear()%>')" /></td>
+                            
+                                
                        </tr>
                         <%}%>
                         
@@ -152,9 +154,9 @@
                 detail.innerHTML=http.responseText;
             }
         }
+       
       function moveEachStudent(studnetCode, sourceClass, desClass, classSemester, classYear){
-          
-      }
+       }
         
     </script>
 </html>

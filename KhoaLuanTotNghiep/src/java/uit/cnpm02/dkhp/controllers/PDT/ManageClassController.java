@@ -137,6 +137,38 @@ public class ManageClassController extends HttpServlet {
             out.close();
         }
     }
+    private void moveAllStudentToSameClass(TrainClass trainclass, List<Registration> registration, List<TrainClass> sameClass ){
+        for(int j =0; j<sameClass.size();j++){
+            int k =0;
+            int l=0;
+            if(registration!= null && !registration.isEmpty()){
+             l = registration.size()-1;  
+            int numAllow = sameClass.get(j).getNumOfStudent()-sameClass.get(j).getNumOfStudentReg();
+            if(numAllow > 0){
+                while(l > 0 && k < numAllow){
+                    try {
+                        Registration temp = registration.get(l);
+                        regDAO.delete(temp);
+                        temp.getId().setClassCode(sameClass.get(j).getId().getClassCode()) ;
+                        regDAO.add(temp);
+                        registration.remove(l);
+                        k++;
+                        l--;
+                    } catch (Exception ex) {
+                        Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        }else{
+                try {
+                    classDAO.delete(trainclass);
+                    break;
+                } catch (Exception ex) {
+                    Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+       }    
+    }
     private void autoCancelClass(HttpServletRequest request, HttpServletResponse response){
         PrintWriter out = null;
         try {
@@ -170,7 +202,8 @@ public class ManageClassController extends HttpServlet {
                         out.println("<br>");
                         out.println("Đã hủy lớp thành công.");
                     }else{
-                        out.println("Chưa làm xong.");
+                        //moveAllStudentToSameClass(trainclass, registration, sameClass);
+                        out.println("Đang làm.");
                     }
                 }
             }
