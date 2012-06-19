@@ -630,19 +630,26 @@ public class ManageScoreController extends HttpServlet {
         
         /**Ma giang vien**/
         String lecturerId = (String) request.getParameter("lecturer_id");
-        /**Ma lop hoc**/
-        String trainClassId = (String) request.getParameter("trainclass");
+        /**- In format: trainclassID;year;semeter**/
+        String key = (String) request.getParameter("trainclass");
         
         if (StringUtils.isEmpty(lecturerId)
-                || StringUtils.isEmpty(trainClassId)) {
+                || StringUtils.isEmpty(key)) {
+            out.println("Không tìm thấy GV hay lớp tương ứng.");
+            return;
+        }
+        String[] values = key.replace(" ", "").split(";");
+        TrainClassID id = null;
+        
+        try {
+            id = new TrainClassID(values[0], values[1],
+                Integer.parseInt(values[2]));
+        } catch (Exception ex) {
             out.println("Không tìm thấy GV hay lớp tương ứng.");
             return;
         }
         
         TrainClassDAO tcDao = DAOFactory.getTrainClassDAO();
-        TrainClassID id = new TrainClassID(trainClassId,
-                Constants.CURRENT_YEAR,
-                Constants.CURRENT_SEMESTER);
         TrainClass tc = null;
         try {
             tc = tcDao.findById(id);
@@ -659,7 +666,7 @@ public class ManageScoreController extends HttpServlet {
         Task task = new Task();
         task.setReciever(lecturerId);
         task.setSender("admin");
-        task.setContent("Gui bang diem lop " + trainClassId);
+        task.setContent("Gui bang diem lop " + values[0]);
         task.setStatus(TaskStatus.TOBE_PROCESS);
         task.setTaskType(TaskType.REQUEST_LECTURER_SENT_SCORE);
         task.setCreated(new Date());
