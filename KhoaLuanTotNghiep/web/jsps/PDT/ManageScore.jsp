@@ -121,7 +121,8 @@
                 
                 <div class="clear"></div>
                 <%-- Request lecturer re-send score --%>
-                <div id="btn-request-lecturer-resend">
+                <br />
+                <div id="btn-request-lecturer-resend" class="div-title">
                     <span class="atag"
                           onclick="showFormRequestLecturerResendScore('form-request-lecturer-resend',
                               'btn-request-lecturer-resend',
@@ -130,11 +131,12 @@
                         <u><b>YC GV gui lai bang diem</b></u>
                     </span>
                 </div>
-                <div id="form-request-lecturer-resend" style="display: none;">
+                <div id="form-request-lecturer-resend" style="display: none;" class="div-range">
                     <div id="list-request-lecturer-resend-info">
                         <%-- Dynamic data --%>
                     </div>
                     <%-- Ket qua gui yeu cau --%>
+                    <br />
                     <div id="send-request-result">
                     </div>
                     <input type="button" onclick="sendRequest()" value="Gửi yêu cầu"/>
@@ -286,7 +288,6 @@
                 var lecturerId = document.getElementById("list-lecturer").value;
                 var trainClassId = document.getElementById("list-class-of-lecturer").value;
                 
-                alert("Enter SendRequest, " + lecturerId + ", trainclass: " + trainClassId);
                 var controller = "../../ManageScoreController?function=submit-resend-score&lecturer_id="
                             + lecturerId
                             + "&trainclass=" + trainClassId;
