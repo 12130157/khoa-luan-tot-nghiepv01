@@ -54,6 +54,14 @@
             #btn-submit-score:hover{
                 background: #22de33;
             }
+            #import-from-file-result {
+                font-size: 11px;
+                max-height: 500px;
+            }
+            #import-manual-result {
+                font-size: 11px;
+                max-height: 500px;
+            }
         </style>
     </head>
     <body>
@@ -93,22 +101,22 @@
                 <div id="btn-submit-score">
                     <span class="atag" onclick="doImportScoreFromFile('tbl-file-from-lecturer')" >Submit</span>
                 </div>
-                
                 <%-- Result --%>
                 <div class="clear"></div>
-                <div id="import-result">
-                    KQua: Tcông --> Show bảng điểm
-                    Thất bại: --> Show chi tiết lỗi.
+                <br />
+                <div id="import-from-file-result">
+                    
                 </div>
                 
+                <div class="clear"></div>
                 <%-- Manual input --%>
                 <div id="btn-manual-input">
                     <span class="atag"
                           onclick="showFormInputManual('form-manul-input',
                               'btn-manual-input',
-                              '<u><b>Nhap thu cong</b></u>',
-                              '<u><b>Nhap thu cong</b></u>')">
-                        <u><b>Nhap thu cong</b></u>
+                              '<u><b>Nhập thủ công</b></u>',
+                              '<u><b>Nhập thủ công</b></u>')">
+                        <u><b>Nhập thủ công</b></u>
                     </span>
                 </div>
                 <div id="form-manul-input" style="display: none;">
@@ -117,8 +125,12 @@
                     </select>
                     <div id="manual-input-main">
                     </div>
+                    <%-- Result --%>
+                    <div class="clear"></div>
+                    <div id="import-manual-result">
+
+                    </div>
                 </div>
-                
                 <div class="clear"></div>
                 <%-- Request lecturer re-send score --%>
                 <br />
@@ -126,9 +138,9 @@
                     <span class="atag"
                           onclick="showFormRequestLecturerResendScore('form-request-lecturer-resend',
                               'btn-request-lecturer-resend',
-                              '<u><b>YC GV gui lai bang diem</b></u>',
-                              '<u><b>YC GV gui lai bang diem</b></u>')">
-                        <u><b>YC GV gui lai bang diem</b></u>
+                              '<u><b>Yêu cầu GV gửi bảng điểm</b></u>',
+                              '<u><b>Yêu cầu GV gửi bảng điểm</b></u>')">
+                        <u><b>Yêu cầu GV gửi bảng điểm</b></u>
                     </span>
                 </div>
                 <div id="form-request-lecturer-resend" style="display: none;" class="div-range">
@@ -213,7 +225,34 @@
             }
             
             function submitManul() {
-                alert("Tobe implemented...");
+                // Step 1: Retrieve data from form
+                var table = document.getElementById('list-student-result');
+                var rowCount = table.rows.length;
+                if (rowCount <= 1) {
+                    alert("Error, number row of table < 1");
+                    return;
+                }
+                // Key: trainclassID; year; semeter
+                var key = document.getElementById("lst-trainclass").value;
+                var data = key;
+                for(var i = 1; i < rowCount; i++) {
+                    var cells = table.rows[i].cells;
+                    var studentId = cells[1].innerHTML; // is id of score text box
+                    var txtScore = document.getElementById(studentId);
+                    var score = txtScore.value;
+                    data += ";" + studentId + "," + score;
+                }
+                
+                // Step 2: Send request
+                var controller = "../../ManageScoreController?function=import-manual"
+                    + "&data=" + data;
+                if(http){
+                    http.open("GET", controller ,true);
+                    http.onreadystatechange = importScoreManualHandler;
+                    http.send(null);
+                } else {
+                    alert("Error: http object not found");
+                }
             }
             
             //
@@ -357,11 +396,6 @@
                     return;
                 }
                 var data = "";
-                /*var chkbox = document.getElementById('chbox-list' + 0);
-                if (chkbox.checked) {
-                    data += chkbox.value;
-                }*/
-                
                 for(var i = 0; i < rowCount; i++) {
                     chkbox = document.getElementById('chbox-list' + i)
                     if (chkbox.checked) {
@@ -376,7 +410,7 @@
                     + "&data=" + data;
                 if(http){
                     http.open("GET", controller ,true);
-                    http.onreadystatechange = importScoreHandler;
+                    http.onreadystatechange = importScoreFromFileHandler;
                     http.send(null);
                 } else {
                     alert("Error: http object not found");
@@ -384,35 +418,16 @@
                 // Step 3: handle respone
             }
             
-            function importScoreHandler() {
+            function importScoreFromFileHandler() {
                 if(http.readyState == 4 && http.status == 200){
-                    var detail = document.getElementById("import-result");
+                    var detail = document.getElementById("import-from-file-result");
                     detail.innerHTML = http.responseText;
                 }
             }
-        
-            //==> Shared be remove
-            function submitInsertScoreFromFile(pagename){
-                var clazz = document.getElementById("select_class").value;
-                var course = document.getElementById("select_course").value;
-                var year = document.getElementById("select_year").value;
-                var datas = "&clazz=" + clazz;
-                datas += "&course=" + course;
-                datas += "&year=" + year;
-                var controller = pagename + datas;
-            
-                if(http){
-                    http.open("GET", controller ,true);
-                    http.onreadystatechange = handleResponse;
-                    http.send(null);
-                
-                }
-            }
-        
-            function handleResponse() {
+            function importScoreManualHandler() {
                 if(http.readyState == 4 && http.status == 200){
-                    var detail=document.getElementById("import-result");
-                    detail.innerHTML=http.responseText;
+                    var detail = document.getElementById("import-manual-result");
+                    detail.innerHTML = http.responseText;
                 }
             }
         </script>
