@@ -109,4 +109,32 @@ public class StudyResult extends AdvancedAbstractJdbcModel<StudyResultID>{
     public Object[] getIdColumnValues() {
         return getId().getIDValues();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if ((obj == null) && (this != null)) {
+            return false;
+        }
+        
+        if (!(obj instanceof StudyResult)) {
+            return false;
+        }
+        
+        StudyResult other = (StudyResult) obj;
+        StudyResultID id1 = this.getId();
+        StudyResultID id2 = other.getId();
+        return id1.getStudentCode().equals(id2.getStudentCode())
+                && id1.getSubjectCode().equals(id2.getSubjectCode());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.year != null ? this.year.hashCode() : 0);
+        hash = 97 * hash + this.semester;
+        hash = 97 * hash + Float.floatToIntBits(this.mark);
+        hash = 97 * hash + (this.SubjectName != null ? this.SubjectName.hashCode() : 0);
+        return hash;
+    }
+
 }
