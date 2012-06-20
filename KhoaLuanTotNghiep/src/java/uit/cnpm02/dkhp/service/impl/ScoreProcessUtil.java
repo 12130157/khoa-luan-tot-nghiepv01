@@ -47,6 +47,57 @@ public class ScoreProcessUtil {
         studentDao = DAOFactory.getStudentDao();
     }
     
+    public ImportScoreResult importScore(List<StudyResult> studyResults) {
+        ImportScoreResult isr = new ImportScoreResult();
+        try {
+            List<Student> addedS = new ArrayList<Student>(10);
+            List<Student> updatedS = new ArrayList<Student>(10);
+            //List<Student> errorS = new ArrayList<Student>(10);
+            List<Student> inogedS = new ArrayList<Student>(10);
+
+            List<StudyResult> processedList = new ArrayList<StudyResult>(10);
+            for (StudyResult sr : studyResults) {
+                StudyResult temp = srDao.findById(sr.getId());
+                if (temp != null) {
+                    processedList.add(temp);
+                    Student s = getStudent(sr);
+                    if (temp.getMark() < sr.getMark()) {
+                        srDao.update(sr);
+                        updatedS.add(s);
+                    } else {
+                        inogedS.add(s);
+                    }
+                }
+            }
+            if (!processedList.isEmpty()) {
+                studyResults.removeAll(processedList);
+            }
+
+            if (!studyResults.isEmpty()) {
+                srDao.addAll(studyResults);
+                for (StudyResult sr : studyResults) {
+                    Student s = getStudent(sr);
+                    if (s != null) {
+                        addedS.add(s);
+                    }
+                }
+            }
+            
+            if (!updatedS.isEmpty()) {
+                isr.setUpdated(updatedS);
+            }
+            if (!addedS.isEmpty()) {
+                isr.setAdded(addedS);
+            }
+            if (!inogedS.isEmpty()) {
+                isr.setInoged(inogedS);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ScoreProcessUtil.class.getName()).log(Level.SEVERE, null, ex);
+            return new ImportScoreResult("Lỗi server: " + ex.toString());
+        }
+        return isr;
+    }
     
     /**
      * Import score
@@ -72,8 +123,8 @@ public class ScoreProcessUtil {
             // Step 2: Validate & load data
             List<StudyResult> results = loadData(file, clazz);
             // Step 3: Update
-            
-            List<Student> addedS = new ArrayList<Student>(10);
+            isr = importScore(results);
+            /*List<Student> addedS = new ArrayList<Student>(10);
             List<Student> updatedS = new ArrayList<Student>(10);
             //List<Student> errorS = new ArrayList<Student>(10);
             List<Student> inogedS = new ArrayList<Student>(10);
@@ -104,10 +155,14 @@ public class ScoreProcessUtil {
                         addedS.add(s);
                     }
                 }
-            }
+            }*/
             
             // Step 4: Turn on flag indicate the class all ready update score
             // O: not updated yet - other: updated
+            
+            //
+            // set flag only all studyresult filled TODO:
+            //
             clazz.setUpdateScore(1);
             classDao.update(clazz);
             
