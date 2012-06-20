@@ -102,6 +102,8 @@ public class ManageScoreController extends HttpServlet {
                 loadOpenTrainClass(request, response);
             } else if (action.equals("initial-manul-input-form")) {
                 initialManualInputForm(request, response);
+            } else if (action.equals("import-manual")) {
+                importScoreFromForm(request, response);
             } else if (action.equals("import-score-from-file")) {//
                 ExecuteResult result = new ExecuteResult(false, null);
                 result = importScoreFromFile(request, response);
@@ -469,34 +471,34 @@ public class ManageScoreController extends HttpServlet {
     private void writeOutImportScore(PrintWriter out, String trainClass,
             ImportScoreResult result) {
         // Write out message
-        out.println("Ket qua nhap diem cho lop: " + trainClass);
+        out.println("<br /><b><u>Ket qua nhap diem cho lop: " + trainClass + "</u></b>");
         if (!StringUtils.isEmpty(result.getMsg())) {
             out.println(" - " + result.getMsg());
         }
         List<Student> students = result.getAdded();
         // Added result
         if (students != null) {
-            out.println("- SV duoc them diem: (" + students.size() + "):");
+            out.println("<br /><b>- SV duoc them diem: (" + students.size() + "):</b>");
             for (int i = 0; i < students.size(); i++) {
-                out.println("\t" + (i +1) + " - " + students.get(i).getFullName());
+                out.println("<br /> \t" + (i +1) + " - " + students.get(i).getFullName());
             }
         }
         
         // Updated result
         students = result.getUpdated();
         if (students != null) {
-            out.println("- SV duoc cap nhat lai diem: (" + students.size() + "):");
+            out.println("<br /><b>- SV duoc cap nhat lai diem: (" + students.size() + "):</b>");
             for (int i = 0; i < students.size(); i++) {
-                out.println("\t" + (i +1) + " - " + students.get(i).getFullName());
+                out.println("<br /> \t" + (i +1) + " - " + students.get(i).getFullName());
             }
         }
         // Inoged result
          students = result.getInoged();
         if (students != null) {
-            out.println("- SV khong duoc cap nhat lai diem"
-                    + " (do diem hien tai > diem moi): (" + students.size() + "):");
+            out.println("<br /> <b>- SV khong duoc cap nhat lai diem"
+                    + " (do diem hien tai > diem moi): (" + students.size() + "):</b>");
             for (int i = 0; i < students.size(); i++) {
-                out.println("\t" + (i +1) + " - " + students.get(i).getFullName());
+                out.println("<br /> \t" + (i +1) + " - " + students.get(i).getFullName());
             }
         }
     }
@@ -734,7 +736,7 @@ public class ManageScoreController extends HttpServlet {
         String key = (String) request.getParameter("key");
         
         if (StringUtils.isEmpty(key)) {
-            out.println("Khong tim thay thong tin");
+            out.println("Không tìm thấy thông tin");
             return;
         }
         // IDS format: trainclassID;semeter;year
@@ -742,7 +744,7 @@ public class ManageScoreController extends HttpServlet {
         String trainClassId = ids[0];
         String year = ids[1];
         int semeter = Integer.parseInt(ids[2]);
-        TrainClassID tcID = new TrainClassID(trainClassId, year, semeter); 
+        //TrainClassID tcID = new TrainClassID(trainClassId, year, semeter); 
         
         RegistrationDAO regDao = DAOFactory.getRegistrationDAO();
         List<Registration> regs = new ArrayList<Registration>(50);
@@ -764,7 +766,7 @@ public class ManageScoreController extends HttpServlet {
         }
         
         if ((regs == null) || regs.isEmpty()) {
-            out.println("Khong tim thay thong tin");
+            out.println("Không tìm thấy thông tin");
             return;
         }
         
@@ -775,14 +777,14 @@ public class ManageScoreController extends HttpServlet {
             List<Registration> regs, TrainClass tc) {
         StudentDAO studentDao = DAOFactory.getStudentDao();
         StudyResultDAO studyResultDao = DAOFactory.getStudyResultDao();
-        out.println("<input type=\"checkbox\"/> Chi hien SV chua co diem");
+        out.println("<input type=\"checkbox\"/> Ẩn SV đã có điểm");
         out.println();
-        out.print("<table class=\"general-table\" style=\"width:500px;\">");
+        out.print("<table id=\"list-student-result\" class=\"general-table\" style=\"width:500px;\">");
         out.print("<tr>"
                     + "<th>STT</th>"
                     + "<th>MSSV</th>"
-                    + "<th>Ho va ten</th>"
-                    + "<th>Diem</th>"
+                    + "<th>Họ và tên</th>"
+                    + "<th>Điểm</th>"
                 + "</tr>");
         
         for (int i = 0; i < regs.size(); i++) {
@@ -802,7 +804,7 @@ public class ManageScoreController extends HttpServlet {
             } catch (Exception ex) {
                 Logger.getLogger(ManageScoreController.class.getName())
                         .log(Level.SEVERE, null, ex);
-                out.println("Loi server: " + ex.toString());
+                out.println("Lỗi server: " + ex.toString());
                 return;
             }
             out.print("<tr>"
@@ -814,7 +816,73 @@ public class ManageScoreController extends HttpServlet {
                 + "</tr>");
         }
         out.print("</table>");
-        out.print("<input type=\"button\" value=\"Hoan Thanh\" onclick=\"submitManul()\"/>");
+        out.print("<input type=\"button\" value=\"Hoàn thành\" onclick=\"submitManul()\"/>");
+    }
+
+    //
+    // Manual import
+    // List studyResult give in data string (data)
+    // data = key;data
+    // key: trainclassId;year;semeter
+    // data: studentId,score
+    //
+    private void importScoreFromForm(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        String data = (String) request.getParameter("data");
+        
+        PrintWriter out = response.getWriter();
+        if (StringUtils.isEmpty(data)) {
+            out.println("Da co loi xay ra, vui long thu lai sau.");
+            return;
+        }
+        
+        String datas[] = data.replace(" ", "").split(";");
+        String trainClassId = datas[0];
+        String year = datas[1];
+        String semeter = datas[2];
+        
+        TrainClassID id = new TrainClassID(trainClassId,
+                year, Integer.parseInt(semeter));
+        TrainClassDAO tcDao = DAOFactory.getTrainClassDAO();
+        TrainClass tc = null;
+        try {
+            tc = tcDao.findById(id);
+        } catch (Exception ex) {
+            Logger.getLogger(ManageScoreController.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+        if (tc == null) {
+            return;
+        }
+        
+        List<StudyResult> studyResults;
+        try {
+            studyResults = parstData(datas, 3, datas.length,
+                tc.getSubjectCode(), id);
+        } catch (Exception ex) {
+            out.println("Da co loi xay ra trong qua trinh nhap diem."
+                    + "Vui long kiem tra lai du lieu nhap vao.");
+            return;
+        }
+        ImportScoreResult importResult = scoreUtil.importScore(studyResults);
+        
+        writeOutImportScore(out, trainClassId, importResult);
+    }
+
+    private List<StudyResult> parstData(String[] datas,
+                    int start, int end, String subjectID, TrainClassID tcId) {
+        List<StudyResult> results = new ArrayList<StudyResult>(10);
+        for (int i = start; i < end; i++) {
+            String values[] = datas[i].split(",");
+            StudyResult sr = new StudyResult();
+            sr.setId(new StudyResultID(values[0], subjectID));
+            sr.setMark(Float.parseFloat(values[1]));
+            sr.setSemester(tcId.getSemester());
+            sr.setYear(tcId.getYear());
+            
+            results.add(sr);
+        }
+        return results;
     }
     
 }
