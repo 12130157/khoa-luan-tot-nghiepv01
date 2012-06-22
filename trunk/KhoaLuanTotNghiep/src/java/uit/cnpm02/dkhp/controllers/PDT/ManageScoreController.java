@@ -436,9 +436,7 @@ public class ManageScoreController extends HttpServlet {
             //
             String key = tc.getId().getClassCode();
             out.println("<br /><a href=\"../../DownloadController?action=class-list-student&key="
-                    + key + "\">Tải file</a>");
-            //out.println("<br /><span class=\"atag\" onclick=\"dowloadFile('"
-            //        + tc.getId().getClassCode() + "')\" > Tải file </span>");
+                    + key + "\"><img src=\"../../imgs/download.png\" title=\"download\"/>Download</a>");
         }
                 
     }
