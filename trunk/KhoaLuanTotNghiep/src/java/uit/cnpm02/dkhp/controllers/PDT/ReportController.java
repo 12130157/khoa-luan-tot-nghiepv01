@@ -145,10 +145,6 @@ public class ReportController extends HttpServlet {
                 }
                 return;
             } else if (requestAction.equals(ReportFunctionSupported.
-                                                DOWNLOAD_STUDENT_REPORT.getValue())) {
-                //downloadStudentReport(response);
-                //return;
-            } else if (requestAction.equals(ReportFunctionSupported.
                                                 CLASS_DETAIL.getValue())) {
                 String classId = request.getParameter("classid");
                 updateClassDetailReport(classId, session);
@@ -211,7 +207,7 @@ public class ReportController extends HttpServlet {
      * @param out output stream
      */
     private void writeRespond(List<Student> datas, PrintWriter out) {
-        out.println("<table id = \"list-student\" name = \"list-student\">");
+        out.println("<table class=\"general-table\" style=\"width: 350px;\">");
         out.println("<tr>"
                 + "<th> STT </th>"
                 + "<th width = 200px> Họ và tên </th>"
@@ -221,9 +217,9 @@ public class ReportController extends HttpServlet {
             out.println("<td> " + (i + 1) + " </td>");
             String method = String.format(" onclick=getDetailStudentReport('%s')>",
                                                         datas.get(i).getId());
-            out.println("<td> <a href=\'#\'" + method
+            out.println("<td> <span class=\"atag\"" + method
                     + datas.get(i).getFullName()
-                    + "</a> </td>");
+                    + "</span> </td>");
             out.println("</tr>");// <a hreft > abc </a>
         }
         out.println("</table>");
@@ -236,13 +232,12 @@ public class ReportController extends HttpServlet {
     private void writeStudentReportDetail(String mssv, List<TrainClass> datas,
                                                         PrintWriter out) {
         String studentName = studentService.getStudent(mssv).getFullName();
-        
         out.println("Danh sách các lớp học <b>" + studentName + "</b> đã đăng ký:");
-        out.println("<table id = \"student-report\" name = \"student-report\">");
+        out.println("<table class=\"general-table\" style=\"width: 550px;\">");
 
         out.println("<tr>"
                 + "<th> STT </th>"
-                + "<th> <a href='#'"
+                + "<th> <span class=\"atag\""
                     + " onclick=\"sortTrainClass('MaLopHoc', '" + sortType + "')\">"
                     + " Mã lớp </a></th>"
                 + "<th> <a href='#'"
@@ -269,8 +264,9 @@ public class ReportController extends HttpServlet {
             out.println("</tr>");// <a hreft > abc </a>
         }
         out.println("</table>");
-        out.println("<a href='../../ReportController?action=download-student-report'>Tai file excel</a>");
-        //<a href="../DownloadFile?action=studentresult&mssv=<%=student.getCode()%>"> Tải file</a>
+        out.println("<a href=\"../../DownloadController?action=download-student-trainclass-report&mssv="
+                    + mssv + "\" class=\"atag\" style=\"margin-left: 80%;\">"
+                + "<img src=\"../../imgs/download.png\" title=\"download\"/>Download</a>");
     }
 
     private List<TrainClass> getTrainClassByYearAndSemeter(
@@ -318,7 +314,7 @@ public class ReportController extends HttpServlet {
         out.println("</table>");
         out.println("<a href='#'>Tai file excel</a>");
     }
-
+    
     private void downloadStudentReport(HttpServletResponse resp, String sessionId) {
         List<TrainClass> trainClasses = reportService
                                   .getTrainClassRegistered(sessionId, mssv, true);
