@@ -315,3 +315,66 @@ tr:hover .pop-up {
 .div-range {
     
 }
+/**seperate range*/
+.range {
+/*	position: relative; */
+	float: left;
+	margin: 0px 0 10px -1%;
+	width: 100%;
+        border-color: #669;
+        border-style: solid;
+        border-width: 0 1px;
+}
+.range h3 {
+	padding: 3px;
+	margin: 0;
+}
+.range h3 {
+    background: url(../imgs/header_bg.gif);
+    background-position: top left;
+    background-repeat: repeat-x;
+    background-color: #ADD8E6;
+    color: white;
+    font-size: 110%;
+}
+.range li {
+    list-style-image: url(/eclipse.org-common/themes/Phoenix/images/arrow.gif);
+    border-style: dashed;
+    border-color: #669;
+    border-width: 0 0 1px 0;
+}
+.range ul {
+	margin: 0px 20px;
+
+}
+.range li {
+	margin: 5px 5px;
+	padding: 2px 5px 6px 0px;
+}
+
+/* NEWS rules */
+.range3col {
+	border-width: 0 1px;
+	float: left;
+	/* margin: 10px 3% 10px 0;  */
+	margin: 10px 3% 10px 1%;
+	width: 97%;
+}
+.range3col h3 {
+	padding: 3px;
+	margin: 0;
+}
+.range3col h4 {
+	margin: 3px;
+}
+.range3col ul {
+	margin: 0px 20px;
+}
+.range3col li {
+	margin: 5px 5px;
+	padding: 2px 5px 6px 0px;
+}
+
+.download-btn {
+    background: url("../imgs/download.png");
+}
