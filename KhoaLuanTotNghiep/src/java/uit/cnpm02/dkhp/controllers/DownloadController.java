@@ -26,21 +26,26 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.util.StringUtil;
 import uit.cnpm02.dkhp.DAO.ClassDAO;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.FacultyDAO;
 import uit.cnpm02.dkhp.DAO.RegistrationDAO;
 import uit.cnpm02.dkhp.DAO.StudentDAO;
 import uit.cnpm02.dkhp.DAO.SubjectDAO;
+import uit.cnpm02.dkhp.DAO.TrainClassDAO;
 import uit.cnpm02.dkhp.model.Faculty;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.model.Class;
+import uit.cnpm02.dkhp.model.RegistrationID;
 import uit.cnpm02.dkhp.model.StudyResult;
+import uit.cnpm02.dkhp.model.Subject;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.model.TrainClassID;
 import uit.cnpm02.dkhp.service.IFileUploadService;
 import uit.cnpm02.dkhp.service.impl.FileUploadServiceImpl;
 import uit.cnpm02.dkhp.utilities.Constants;
+import uit.cnpm02.dkhp.utilities.StringUtils;
 
 /**
  *
@@ -70,6 +75,8 @@ public class DownloadController extends HttpServlet {
                 downloadScoreFileExample(request, response);
             } else if (action.equalsIgnoreCase("download-empty-file-score")) {
                 downloadEmptyScoreFile(request, response);
+            } else if (action.equalsIgnoreCase("download-student-trainclass-report")) {
+                downloadStudentTrainClassReport(request, response);
             }
         } finally {
         }
@@ -568,4 +575,119 @@ public class DownloadController extends HttpServlet {
         style.setBorderRight((short)right);
         style.setBorderTop((short)top);
     }
+
+    /**
+     * Download file include informtaion about student registration.
+     * @param request
+     * @param response 
+     */
+    
+    private void downloadStudentTrainClassReport(HttpServletRequest req,
+            HttpServletResponse resp) {
+        String mssv = req.getParameter("mssv");
+        /*if (StringUtils.isEmpty(mssv)) {
+            
+        }*/
+
+        try {
+            StudentDAO studentDao = DAOFactory.getStudentDao();
+            Student student = studentDao.findById(mssv);
+            RegistrationDAO regDao = DAOFactory.getRegistrationDAO();
+            List<Registration> regs = regDao.findByColumName(
+                    "MSSV", mssv);
+            
+            HSSFWorkbook hwb = new HSSFWorkbook();
+            HSSFSheet sheet = hwb.createSheet(mssv +"");
+            HSSFCellStyle style = hwb.createCellStyle();
+            HSSFFont font = hwb.createFont();
+            HSSFRow row = null;
+            int currentRow = 1;
+            
+            // Main table header
+            String[] title = {
+                "STT", "Mã lớp", "Tên MH", "Học kỳ", "Năm học"};
+            // Inital columns width
+            int[] widths = {45*32, 120*32, 225*32, 80*32, 150*32};
+            for (int i = 0; i < title.length; i++) {
+                sheet.setColumnWidth(i, widths[i]);
+            }
+            
+            // File header
+            initialFont(font, HSSFFont.FONT_ARIAL, 18,
+                    HSSFFont.BOLDWEIGHT_BOLD, HSSFColor.RED.index);
+            style.setFont(font);
+            row = sheet.createRow((short) +(currentRow++));
+            row = sheet.createRow((short) +(currentRow++));
+            initialFont(font, HSSFFont.FONT_ARIAL, 12,
+                    HSSFFont.BOLDWEIGHT_BOLD, HSSFColor.BLUE.index);
+            style.setFont(font);
+            String[] classInfo = {"MSSV: " + mssv,
+                                        "Họ và tên: " + student.getFullName()};
+            for (int i = 0; i < classInfo.length; i++) {
+                row = sheet.createRow((short) +(currentRow++));
+                createCell(row, 2, style, HSSFCell.CELL_TYPE_STRING, classInfo[i]);
+            }
+
+            // Some empty row
+            row = sheet.createRow((short) +(currentRow++));
+            row = sheet.createRow((short) +(currentRow++));
+            row = sheet.createRow((short) +(currentRow++));
+            
+            // Table's header
+            HSSFCellStyle headeStyle = hwb.createCellStyle();
+            HSSFCellStyle thinBorderStyle = hwb.createCellStyle();
+            row = sheet.createRow((short) +(currentRow++));
+            initialFont(font, HSSFFont.FONT_ARIAL, 12,
+                    HSSFFont.BOLDWEIGHT_BOLD, HSSFColor.BLACK.index);
+            headeStyle.setFont(font);
+            setBorder(headeStyle, CellStyle.BORDER_THICK,
+                                    CellStyle.BORDER_THIN,
+                                    CellStyle.BORDER_HAIR,
+                                    CellStyle.BORDER_MEDIUM);
+            setBorder(thinBorderStyle, CellStyle.BORDER_THIN,
+                                    CellStyle.BORDER_THIN,
+                                    CellStyle.BORDER_THIN,
+                                    CellStyle.BORDER_THIN);
+
+            for (int i = 0; i < title.length; i++) {
+                createCell(row, i, headeStyle, HSSFCell.CELL_TYPE_STRING, title[i]);
+            }
+            // Initial table body
+            TrainClassDAO tcDao = DAOFactory.getTrainClassDAO();
+            SubjectDAO subDao = DAOFactory.getSubjectDao();
+            for (int i = 0; i < regs.size(); i++) {
+                RegistrationID regId = regs.get(i).getId();
+                TrainClassID tcId = new TrainClassID(regId.getClassCode(),
+                        regId.getYear(), regId.getSemester());
+                TrainClass tc = tcDao.findById(tcId);
+                
+                Subject sub = subDao.findById(tc.getSubjectCode());
+                String[] datas = new String[5];
+                datas[0] = (i+1) +"";// STT
+                datas[1] = regId.getClassCode();//Ma lop
+                datas[2] = sub.getSubjectName(); //Ten mon hoc
+                datas[3] = tcId.getSemester() +""; // Hoc ky
+                datas[4] = tcId.getYear(); // Nam hoc
+
+                row = sheet.createRow((short) +(currentRow++));
+                for (int j = 0; j < datas.length; j++) {
+                    createCell(row, j, thinBorderStyle, HSSFCell.CELL_TYPE_STRING, datas[j]);
+                }
+            }
+            
+            // Inital file for download...
+            FileOutputStream fileOut =
+                    new FileOutputStream(mssv +"" + ".xls");
+            hwb.write(fileOut);
+            fileOut.close();
+            downloadFile(mssv +"" + ".xls", resp);
+        } catch (Exception ex) {
+            //String path = "./jsps/Message.jsp";
+            //resp.sendRedirect(path);
+        }
+    }
+    
+    
+    
+    
 }
