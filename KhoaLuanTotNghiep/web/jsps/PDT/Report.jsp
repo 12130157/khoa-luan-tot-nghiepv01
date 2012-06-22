@@ -13,71 +13,18 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Report</title>
         <style media="all" type="text/css">
-
-            table {
-                /*width: 100%;*/
-                padding-left: 10px;
-                padding-right: 10px;
-                text-align: center;
-
-            }
-            table th {
-                background-color:#00ff00;
-                height: 30px;
-                border-color: black;
-            }
-
-            table td {
-                text-align: center;
-                background-color: #5F676D;
-            }
-            
-            #report-range {
-                /*width: 100%;*/
-                float: left;
-                padding-left: 10px;
-                padding-right: 10px;
-                padding-bottom: 25px;
-                text-align: center;
-
-            }
-            
-            #list-student {
-                float: left;
+            #result-bound {
                 
-                height:250px;
-                overflow:auto;
             }
-            #student-detail {
-                float: none;
-                padding-left: 12px;
-                border-width: 1px;
-                border-color: #00ff00;
+            #open-class {
+                
             }
-            #report-range td {
-                text-align: left;
+            #closed-class {
+                
             }
-            
-            #title{
-                background-color: #2f4e3d;
-                text-align: center;
-                padding-top: 12px;
-                padding-bottom: 10px;
+            #cancel-class {
+                
             }
-            #page{
-                text-align: center;
-            }
-            #sidebar {
-                height:250px;
-                overflow:auto;
-            }
-            a {
-                color: violet;
-            }
-            #createLabel{
-                padding-right: 15px;
-            }
-            
         </style>
     </head>
     
@@ -90,101 +37,128 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
+                
                 <div id="title">
-                    THỐNG KÊ THEO SINH VIÊN
-                </div>
-                <div id="search">
-                    <table>
-                        <tr>
-                            <td>
-                                <b>Thông tin tìm kiếm sinh viên </b>
-                                <input id="search-student" type="text" value="" onKeyPress="keypressed()"/>
-                            </td>
-                            <td>
-                                <input type="button" onclick="SendRequestFindStudent()" value="Tìm"/>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <div>
-                    <div id="list-student">
-                        <table>
-                            <tr>
-                                <td>
-
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div id="student-detail">
-                        <table>
-                            <tr>
-                                <td>
-
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
+                    THỐNG KÊ ĐKHP
                 </div>
                 <div class="clear"></div>
-                <hr/><hr/><br>
-
-                <%--Form add new Train subject--%>
-                           
-                <div id = "report-range">
-                    THỐNG KÊ THEO LỚP HỌC
-                    <table>
-                        <tr>
-                            <th>
-                                <b>Năm học: </b>
-                                <select id="year" name="year" onchange="">
-                                <option value="*"> All </option>
-                                <%
-                                int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-                                if (currentYear <= 2007)
-                                    currentYear = 2050;
-                                int delta = currentYear - 2007;
-                                for(int i = 0; i < delta; i++){
-                                    String year = Integer.toString(2007 + i) +
-                                            "-" + Integer.toString(2007 + i + 1);
-                                %>
-                                <option value="<%= year %>"><%= year %></option>
-                                <%}
-                                %>
-                                </select>
-                            </th>
-                            <th>
-                                <b>Học Kỳ: </b>
-                                <select id="semeter" name="semeter" onchange="">
-                                    <option value="*"> All </option>
-                                    <option value="1"> 1 </option>
-                                    <option value="2"> 2 </option>
-                                </select>
-                            </th>
-                            <th>
-                                <input type="button" value="Tìm" onclick="getTrainClassReport()" />
-                            </th>
-                        </tr>
-                    </table>
+                <div id="form-search">
+                    Nam hoc 
+                    <select id="select-year">
+                        <option>All</option>
+                        <option>2007-2008</option>
+                        <option>2008-2009</option>
+                        <option>2009-2010</option>
+                    </select>
                     
-                    <div id="trainclass-report">
-                        <table>
-                            <tr>
-                                <td>Tổng số lớp đã tạo: </td>
-                                <td>120</td>
-                            </tr>
-                            <tr>
-                                <td>Tổng số lớp hủy do không đủ điều kiện: </td>
-                                <td>100</td>
-                            </tr>
-                            <tr>
-                                <td>Tổng số lớp chưa kết thúc: </td>
-                                <td>20</td>
-                            </tr>
-                        </table>
+                    Hoc ki 
+                    <select id="select-semeter">
+                        <option>All</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                    </select>
+                </div>
+                <%-- Root panel --%>
+                <div id="result-bound">
+                    <%-- Root panel --%>
+                    <div class="range">
+                        <h3><span id="btn-open-class" class="atag">
+                            Các lớp đang mở
+                            </span></h3>
+                        <div id="tbl-open-class" style="display: none;">
+                            <table>
+                                <tr>
+                                    <td>Ma lop</td>
+                                    <td>Mon hoc</td>
+                                    <td>Khoa</td>
+                                    <td>SLSV</td>
+                                </tr>
+                                <tr>
+                                    <td>SE.c212</td>
+                                    <td>Tu tuong HCM</td>
+                                    <td>CNPM</td>
+                                    <td>120</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <%-- Root panel --%>
+                    <div class="range">
+                        <h3><span id="btn-close-class" class="atag">
+                            Các lớp đã đóng
+                        </span></h3>
+                        <div id="tbl-close-class" style="display: none;">
+                            <table>
+                                <tr>
+                                    <td>AAAAAAAAAAAAAAA</td>
+                                    <td>SAAAAAAAAAAAAdA</td>
+                                </tr>
+                                <tr>
+                                    <td>AAAAAAAAAAAAAAA</td>
+                                    <td>AAAAAAAAAAAAAAA</td>
+                                </tr>
+                                <tr>
+                                    <td>AAAAAAAAAAAAAAA</td>
+                                    <td>AAAAAAAAAAAAAAA</td>
+                                </tr>
+                                <tr>
+                                    <td>AAAAAAAAAAAAAAA</td>
+                                    <td>AAAAAAAAAAAAAAA</td>
+                                </tr>
+                                <tr>
+                                    <td>AAAAAAAAAAAAAAA</td>
+                                    <td>AAAAAAAAAAAAAAA</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <%-- Root panel --%>
+                    <div class="range">
+                        <h3><span id="btn-cancel-class" class="atag">
+                            Các lớp đã hủy
+                        </span></h3>
+                        <div id="tbl-cancel-class" style="display: none;">
+                            <table>
+                                <tr>
+                                <th> AAAAAAAAAAAAAAA </th>
+                                <th> SAAAAAAAAAAAAA </th>
+                                </tr>
+                                <tr>
+                                <td> AAAAAAAAAAAAAAA </td>
+                                <td>AAAAAAAAAAAAAAA </td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                 </div>
-                
+                <br /><br />
+                <%-- Thogn ke theo SV --%>
+                <div class="range">
+                    <h3><span id="btn-student-report" class="atag" >Thống kê SV</span></h3>
+                    <div id="form-student-report">
+                        <div id="search" style="clear: both; margin-top: 10px;">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <b>Tìm kiếm</b>
+                                        <input id="search-student" type="text" placeholder="Nhập tên SV" value="" onKeyPress="keypressed()"/>
+                                    </td>
+                                    <td>
+                                        <input type="button" onclick="SendRequestFindStudent()" value="Tìm"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    
+                        <div id="list-student" style="float: left;">
+                        </div>
+                        <div id="student-detail" style="float: left; margin-top: -25px; padding-left: 16px;">
+                        </div>
+                    </div>
+                <div class="clear"></div>
+                <br /><br />
+                </div>
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
@@ -194,28 +168,73 @@
         <!--End Wrapper-->
     </body>
     <script src="../../javascripts/AjaxUtil.js"></script>
+    <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
     <script  type = "text/javascript" >
 
         var http = createRequestObject();
+        var loadOpenClass = false;
+        var loadCloseClass = false;
+        var loadCancelClass = false;
+
+        $("#btn-open-class").click(function () {
+            $('#tbl-open-class').slideToggle(500);
+            if (!loadOpenClass) {
+                doLoadOpenTrainClassList();
+                loadOpenClass == true;
+            }
+        });
+        
+        $("#btn-close-class").click(function () {
+            $('#tbl-close-class').slideToggle(500);
+            if (!loadCloseClass) {
+                doLoadClosedTrainClassList();
+                loadCloseClass == true;
+            }
+        });
+        
+        $("#btn-cancel-class").click(function () {
+            $('#tbl-cancel-class').slideToggle(500);
+            if (!loadCancelClass) {
+                doLoadCancelTrainClassList();
+                loadCancelClass == true;
+            }
+        });
+        
+        $("#btn-student-report").click(function () {
+            $('#form-student-report').slideToggle(500);
+        });
+        
+        function doLoadOpenTrainClassList() {
+            //alert("To be implemetn...");
+        }
+        
+        function doLoadClosedTrainClassList() {
+            // to be implement...
+        }
+        
+        function doLoadCancelTrainClassList() {
+            // to be implement...
+        }
+        
+        //
         //
         // Search Student
         //
-         function keypressed()
-    { 
-       if(event.keyCode=='13')
-       {
-           SendRequestFindStudent();
-       } 
-      }
+        function keypressed() { 
+            if(event.keyCode=='13') {
+                SendRequestFindStudent();
+            }
+        }
+        
         function SendRequestFindStudent(){
             var search = document.getElementById("search-student").value;
-             if (http) {
+            if (http) {
                 http.open("GET", "../../ReportController?action=search_student&value="
                     + search, true);
                 http.onreadystatechange = handleResponseFindStudent;
                 http.send(null);
-              }
             }
+        }
         
          function handleResponseFindStudent() {
              if(http.readyState == 4 && http.status == 200){
@@ -275,7 +294,6 @@
                  detail.innerHTML=http.responseText;
              }
          }
-         
          
     </script>
 </html>
