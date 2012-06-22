@@ -83,7 +83,11 @@
                                 <td> <%= i + 1%> </td>
                                 <td> <%= acc.getUserName()%> </td>
                                 <td> <%= acc.getFullName()%> </td>
-                                <td> <%= acc.getStatus()%> </td>
+                                <%if(acc.getStatus()==0){%>
+                                <td> Bình thường </td>
+                                <%}else{%>
+                                <td> Đang khóa </td>
+                                <%}%>
                                 <td> <%= AccountType.getDescription(acc.getType())%> </td>
                                 <td> <a href="../../AccountController?action=editaccount&username=<%= acc.getId()%>">Sửa</a> </td>
                                 <td> <span class="atag" onclick="deleteUser('<%= acc.getId() %>')">Xóa</span> </td>

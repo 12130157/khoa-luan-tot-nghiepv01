@@ -118,12 +118,12 @@
                             <tr class="even-row">
                                 <td> CMND </td>
                                 <td> 
-                                    <input type="text" id="txt-cmnd"
+                                    <input type="text" id="txt-cmnd" onkeypress="return checknumber(event)"
                                            value="<%= lecturer.getIdentityCard() %>" />
                                 </td>
                                 <td> ĐT liên lạc </td>
                                 <td> 
-                                    <input type="text" id="txt-phone"
+                                    <input type="text" id="txt-phone" onkeypress="return checknumber(event)"
                                        value="<%= lecturer.getPhone() %>" />
                                 </td>
                             </tr>
@@ -344,6 +344,15 @@
                 var detail = document.getElementById("list-trainclass");
                 detail.innerHTML = http.responseText;
             }
+        }
+        function checknumber(evt){
+           var e = event || evt; // for trans-browser compatibility
+	var charCode = e.which || e.keyCode;
+
+	if (charCode > 31 && (charCode < 48 || charCode > 57))
+		return false;
+
+	return true;
         }
     </script>
     </body>
