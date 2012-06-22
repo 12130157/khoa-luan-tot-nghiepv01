@@ -87,10 +87,10 @@
                         <th ></th>
                         <td></td>
                         <th></th>
-                        <td><input type="button" value="  Xóa tự động  " onclick="autoCancelClass('<%=trainClass.getId().getClassCode()%>',<%=trainClass.getId().getSemester()%>,'<%=trainClass.getId().getYear()%>')" /></td>
+                        <td><input type="button" value="  Hủy lớp  " onclick="autoCancelClass('<%=trainClass.getId().getClassCode()%>',<%=trainClass.getId().getSemester()%>,'<%=trainClass.getId().getYear()%>')" /></td>
                     </tr>
                 </table>
-
+               <br><hr>  
                 <%--Form add new Train subject--%>
                 <%if(studentList.size()>0 && sameClass.size()>0){%>
                 <u>Danh sách sinh viên đăng  ký lớp học: <%=studentList.size()%></u>
@@ -131,7 +131,7 @@
                 </div>
                    <%}%>
             </div><!--End Contents-->
-
+             
             <div id="footer"><!--Footer-->
                 <%@include file="../Footer.jsp" %>
             </div><!--End footer-->
