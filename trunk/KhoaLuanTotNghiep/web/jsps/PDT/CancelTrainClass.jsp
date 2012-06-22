@@ -96,13 +96,13 @@
                 <u>Danh sách sinh viên đăng  ký lớp học: <%=studentList.size()%></u>
                 <div id = "list-train-class">
                     <form id="trainclaslist">
-                    <table id = "table-list-train-class" name = "table-list-train-class" class="general-table">
+                    <table id ="table-list-train-class" name = "table-list-train-class" class="general-table">
                         <tr>
                             <th>STT</th>
                             <th>MSSV</th>
                             <th>Họ Tên</th>
                             <th>Lớp</th>
-                            <th>Lớp tương tự</th>
+                            <th>Lớp cùng môn</th>
                             <th>Chuyển</th>
                         </tr>
                         <%for (int i = 0; i<studentList.size(); i++ ){%>
@@ -112,14 +112,14 @@
                             <td><%=studentList.get(i).getFullName()%></td>
                             <td><%=studentList.get(i).getClassCode()%></td>
                             <td>
-                                <select id="desClass" name="desClass">
+                                <select id="<%=i%>">
                                    <%for(int j =0; j<sameClass.size(); j++){%>
                                       <option value="<%=sameClass.get(j).getId().getClassCode()%>"><%=sameClass.get(j).getId().getClassCode()%></option>
                                    <%}%>
                                     
                                </select>
                             </td>
-                            <td><input type="button" value="  Chuyển  " onclick="moveEachStudent('<%=studentList.get(i).getId()%>','<%=trainClass.getId().getClassCode()%>','', '<%=trainClass.getId().getSemester()%>','<%=trainClass.getId().getYear()%>')" /></td>
+                            <td><input type="button" value="  Chuyển  " onclick="moveEachStudent('<%=studentList.get(i).getId()%>','<%=trainClass.getId().getClassCode()%>','<%=i%>', '<%=trainClass.getId().getSemester()%>','<%=trainClass.getId().getYear()%>')" /></td>
                             
                                 
                        </tr>
@@ -155,8 +155,19 @@
             }
         }
        
-      function moveEachStudent(studnetCode, sourceClass, desClass, classSemester, classYear){
+      function moveEachStudent(studenttCode, sourceClass, id, classSemester, classYear){
+          var desClass = document.getElementById(id).value;
+          if(http){
+                    http.open("GET", "../../ManageClassController?action=moveStudent&studentCode="+ studenttCode + "&sourceClass="+ sourceClass + "&desClass="+ desClass + "&semester="+ classSemester + "&year="+ classYear  ,true);
+                    http.onreadystatechange = moveResponeHandler;
+                    http.send(null);
+         }
        }
-        
+      function moveResponeHandler() {
+            if(http.readyState == 4 && http.status == 200){
+                var detail=document.getElementById("table-list-train-class");
+                detail.innerHTML=http.responseText;
+            }
+        }  
     </script>
 </html>

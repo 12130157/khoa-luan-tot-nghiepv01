@@ -25,6 +25,7 @@ import uit.cnpm02.dkhp.model.DetailTrain;
 import uit.cnpm02.dkhp.model.Faculty;
 import uit.cnpm02.dkhp.model.Lecturer;
 import uit.cnpm02.dkhp.model.Registration;
+import uit.cnpm02.dkhp.model.RegistrationID;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.model.Subject;
 import uit.cnpm02.dkhp.model.TrainClass;
@@ -132,9 +133,71 @@ public class ManageClassController extends HttpServlet {
                cancelTrainClass(request, response);
             }else if(requestAction.equalsIgnoreCase(ClassFunctionSupported.AUTOCANCEL.getValue())){
                autoCancelClass(request, response);
+            }else if(requestAction.equalsIgnoreCase(ClassFunctionSupported.MOVESTUDENT.getValue())){
+               manualMoveStudent(request, response);
             }
         } finally {
             out.close();
+        }
+    }
+    private void manualMoveStudent(HttpServletRequest request, HttpServletResponse response){
+        PrintWriter out = null;
+        try {
+            out=response.getWriter();
+            //move student
+            String studentCode = request.getParameter("studentCode");
+            String sourceClass = request.getParameter("sourceClass");
+            String desClass = request.getParameter("desClass");
+            String classYear = request.getParameter("year");
+            int semester = Integer.parseInt(request.getParameter("semester"));
+            moveOneStudentToSameClass(studentCode, sourceClass, desClass, semester, classYear);
+            // get student list registry
+            TrainClassID id = new TrainClassID(sourceClass, classYear, semester);
+            List<Registration> registration= DAOFactory.getRegistrationDAO().findAllByClassCode(id);
+            List<Student> studentList= new ArrayList<Student>();
+            for(int i=0; i<registration.size(); i++){
+                 Student student =DAOFactory.getStudentDao().findById(registration.get(i).getId().getStudentCode());
+                 studentList.add(student);
+             }
+            //print respone
+            List<TrainClass> sameClass = getSameClassAsSubject(id);
+            out.println("<tr>"
+                    + "<th> STT</th>"
+                    + "<th> MSSV </th>"
+                    + "<th> Họ tên </th>"
+                    + "<th> Lớp </th>"
+                    + "<th> Lớp cùng môn </th>"
+                    + "<th> Chuyển </th>"
+                    + "</tr>");
+            if(studentList!= null && !studentList.isEmpty()&& sameClass!= null & !sameClass.isEmpty()){
+                for(int i =0; i<studentList.size(); i++){
+                    out.println("<tr><td>"+(i+1)+"</td>");
+                    out.println("<td>"+studentList.get(i).getId()+"</td>");
+                    out.println("<td>"+studentList.get(i).getFullName()+"</td>");
+                    out.println("<td>"+studentList.get(i).getClassCode()+"</td>");
+                    out.println("<td><select id="+i+">");
+                    for(int j =0; j<sameClass.size(); j++){
+                        out.println("<option value='"+sameClass.get(j).getId().getClassCode()+"'>"+sameClass.get(j).getId().getClassCode()+"</option>");
+                    }
+                    out.println("</select></td>");
+                    out.println("<td><input type='button' value='  Chuyển  ' onclick=\"moveEachStudent('"+studentList.get(i).getId()+"','"+sourceClass+"','"+i+"','"+semester+"','"+classYear+"')\"/></td>");        
+                    out.println("</tr>");
+                           
+                }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    private void moveOneStudentToSameClass(String studentCode, String sourceClass, String desClass, int semester, String year){
+        try {
+            RegistrationID currentRegID= new RegistrationID(studentCode, sourceClass, semester, year);
+                Registration currentReg = regDAO.findById(currentRegID);
+                regDAO.delete(currentReg);
+                currentReg.getId().setClassCode(desClass);
+                regDAO.add(currentReg);
+        } catch (Exception ex) {
+            Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     private void moveAllStudentToSameClass(TrainClass trainclass, List<Registration> registration, List<TrainClass> sameClass ){
@@ -162,12 +225,28 @@ public class ManageClassController extends HttpServlet {
         }else{
                 try {
                     classDAO.delete(trainclass);
-                    break;
+                    return;
                 } catch (Exception ex) {
                     Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-       }    
+       } 
+        int desClass=0;
+       while(registration != null && !registration.isEmpty()){
+            try {
+                int moveReg =registration.size()-1;
+                Registration temp = registration.get(moveReg);
+                regDAO.delete(temp);
+                temp.getId().setClassCode(sameClass.get(desClass).getId().getClassCode()) ;
+                regDAO.add(temp);
+                registration.remove(moveReg);
+                desClass++;
+                if(desClass >= sameClass.size()-1)
+                    desClass=0;
+            } catch (Exception ex) {
+                Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+      }
     }
     private void autoCancelClass(HttpServletRequest request, HttpServletResponse response){
         PrintWriter out = null;
@@ -184,16 +263,17 @@ public class ManageClassController extends HttpServlet {
                 trainclass.setSubjectName(subjectDAO.findById(trainclass.getSubjectCode()).getSubjectName());
                 trainclass.setLectturerName(lectureDAO.findById(trainclass.getLecturerCode()).getFullName());
                 List<Registration> registration= DAOFactory.getRegistrationDAO().findAllByClassCode(id);
+                int numReg= registration.size();
                 if(registration == null || registration.isEmpty()){
-                    //classDAO.delete(trainclass);
+                    classDAO.delete(trainclass);
                     out.println("Hủy lớp thành công (Lớp không có sinh viên nào đăng ký)");
                 }else{
                     List<TrainClass> sameClass = getSameClassAsSubject(id);
                     if(sameClass == null || sameClass.isEmpty()){
                         for(int i =0; i< registration.size(); i++){
-                           // regDAO.delete(registration.get(i));
+                            regDAO.delete(registration.get(i));
                         }
-                        //classDAO.delete(trainclass);
+                        classDAO.delete(trainclass);
                         out.println("Lớp có "+registration.size() + " sinh viên đăng ký.");
                         out.println("<br>");
                         out.println("Không có lớp học khác dạy môn học "+trainclass.getSubjectName()+".");
@@ -202,8 +282,14 @@ public class ManageClassController extends HttpServlet {
                         out.println("<br>");
                         out.println("Đã hủy lớp thành công.");
                     }else{
-                        //moveAllStudentToSameClass(trainclass, registration, sameClass);
-                        out.println("Đang làm.");
+                        moveAllStudentToSameClass(trainclass, registration, sameClass);
+                        out.println("Lớp có "+ numReg + " sinh viên đăng ký.");
+                        out.println("<br>");
+                        out.println("Hiện có "+sameClass.size()+" lớp học khác dạy môn học "+trainclass.getSubjectName()+".");
+                        out.println("<br>");
+                        out.println("Đã chuyển đăng ký của "+ numReg + " sinh viên qua các lớp khác.");
+                        out.println("<br>");
+                        out.println("Đã hủy lớp thành công.");
                     }
                 }
             }
@@ -1140,6 +1226,7 @@ public class ManageClassController extends HttpServlet {
         FILTER_LECTURER_BY_SUBJECT("FilterLecturerBySubject"),
         SEARCH("search"),
         AUTOCANCEL("autoCancel"),
+        MOVESTUDENT("moveStudent"),
         UPDATE("update");   // Update
         
         private String description;
