@@ -80,78 +80,61 @@
                 </div>
                 <%--List file--%>
                 <br />
-                <div id="list-file">
+                <div id="list-file" class="range">
                     <%-- File from Lecturer --%>
-                    <h4>Bảng điểm GV đã gửi 
-                    <span class="atag" onclick="getFileFromLecturer()">(Refresh)</span></h4>
-                    <div id="file-from-lecturer" class="list-file-tobe-process">
-                        <div id="file-from-lecturer-sub">
+                    <h3><span id="btn-list-file" class="atag">Bảng điểm GV đã gửi</span></h3> 
+                    <div id="file-from-lecturer" style="padding-top: 25px; display: none;">
+                        <div  class="list-file-tobe-process">
                             <table id="tbl-file-from-lecturer">
-                                
                             </table>
                         </div>
-                    </div>
-                    <%-- TrainClass detail information --%>
-                    <div id="train-class-detail" >
+                        <%-- TrainClass detail information --%>
+                        <div id="train-class-detail" >
+                        </div>
+                    
+                        <%-- Result --%>
+                        <div class="clear"> <br /> </div>
+                        <div id="btn-submit-score">
+                            <span class="atag" onclick="doImportScoreFromFile('tbl-file-from-lecturer')" >Submit</span>
+                        </div>
+                        <%-- Result --%>
+                        <div class="clear"></div>
+                        <br />
+                        <div id="import-from-file-result">
+                        </div>
                     </div>
                 </div>
 
-                <%-- Result --%>
-                <div class="clear"> <br /> </div>
-                <div id="btn-submit-score">
-                    <span class="atag" onclick="doImportScoreFromFile('tbl-file-from-lecturer')" >Submit</span>
-                </div>
-                <%-- Result --%>
-                <div class="clear"></div>
-                <br />
-                <div id="import-from-file-result">
-                    
-                </div>
-                
                 <div class="clear"></div>
                 <%-- Manual input --%>
-                <div id="btn-manual-input">
-                    <span class="atag"
-                          onclick="showFormInputManual('form-manul-input',
-                              'btn-manual-input',
-                              '<u><b>Nhập thủ công</b></u>',
-                              '<u><b>Nhập thủ công</b></u>')">
-                        <u><b>Nhập thủ công</b></u>
-                    </span>
-                </div>
-                <div id="form-manul-input" style="display: none;">
-                    Chon lop:
-                    <select id="lst-trainclass" onchange="trainclassChanged(this.value)" >
-                    </select>
-                    <div id="manual-input-main">
-                    </div>
-                    <%-- Result --%>
-                    <div class="clear"></div>
-                    <div id="import-manual-result">
-
+                <div class="range">
+                    <h3><span id="btn-manual-input" class="atag">Nhập thủ công</span></h3> 
+                    <div id="form-manual-input" style="display: none;">
+                    Chọn lớp:
+                        <select id="lst-trainclass" onchange="trainclassChanged(this.value)" >
+                        </select>
+                        <div id="manual-input-main">
+                        </div>
+                        <%-- Result --%>
+                        <div class="clear"></div>
+                        <div id="import-manual-result">
+                        </div>
                     </div>
                 </div>
-                <div class="clear"></div>
                 <%-- Request lecturer re-send score --%>
                 <br />
-                <div id="btn-request-lecturer-resend" class="div-title">
-                    <span class="atag"
-                          onclick="showFormRequestLecturerResendScore('form-request-lecturer-resend',
-                              'btn-request-lecturer-resend',
-                              '<u><b>Yêu cầu GV gửi bảng điểm</b></u>',
-                              '<u><b>Yêu cầu GV gửi bảng điểm</b></u>')">
-                        <u><b>Yêu cầu GV gửi bảng điểm</b></u>
-                    </span>
-                </div>
-                <div id="form-request-lecturer-resend" style="display: none;" class="div-range">
-                    <div id="list-request-lecturer-resend-info">
-                        <%-- Dynamic data --%>
+                <div class="range">
+                    <h3><span id="btn-request-lecturer-resend" class="atag">Yêu cầu GV gửi bảng điểm</span></h3> 
+                    <div id="form-request-lecturer-resend" style="display: none;" class="div-range">
+                        <div id="list-request-lecturer-resend-info">
+                         <%-- Dynamic data --%>
+                        </div>
+                        <%-- Ket qua gui yeu cau --%>
+                        <br />
+                        <div id="send-request-result">
+                        </div>
+                        <input type="button" onclick="sendRequest()" value="Gửi yêu cầu"/>
                     </div>
-                    <%-- Ket qua gui yeu cau --%>
-                    <br />
-                    <div id="send-request-result">
-                    </div>
-                    <input type="button" onclick="sendRequest()" value="Gửi yêu cầu"/>
                 </div>
                 <br />
             </div><!--End Contents-->
@@ -163,27 +146,50 @@
         </div>
         <!--End Wrapper-->
         <script src="../../javascripts/AjaxUtil.js"> </script>
+        <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
         <script  type = "text/javascript" >
             var http = createRequestObject();
             
             var loadLecturerList = false;
             var loadClassList = false;
+            var loadFileFromLecturer = false;
             
             //
             // Manual input process...
             //
-            function showFormInputManual(stuffId, btnId, btnShowLabel, btnHideLabel) {
-                var btnHidden = "<span onclick=\"hideFormInputManual('" + stuffId + "','" + btnId + "','" + btnShowLabel + "','" + btnHideLabel + "')\" class=\"atag\">"
-                                + btnHideLabel + "</span>";
-                document.getElementById(btnId).innerHTML = btnHidden;
-                document.getElementById(stuffId).style.display = 'block';
-                
+            $("#btn-list-file").click(function () {
+                $('#file-from-lecturer').slideToggle(500);
+                if (!loadFileFromLecturer) {
+                    getFileFromLecturer();
+                    loadFileFromLecturer = true;
+                }
+            });
+            
+            function getFileFromLecturer() {
+                var controller = "../../ManageScoreController?function=get-files";
+                if(http){
+                    http.open("GET", controller ,true);
+                    http.onreadystatechange = getFileHandler;
+                    http.send(null);
+                } else {
+                    alert("Error: http object not found");
+                }
+            }
+            
+            function getFileHandler() {
+                if(http.readyState == 4 && http.status == 200){
+                    var detail = document.getElementById("tbl-file-from-lecturer");
+                    detail.innerHTML = http.responseText;
+                }
+            }
+            ////////////////////////
+            $("#btn-manual-input").click(function () {
+                $('#form-manual-input').slideToggle(500);
                 if (!loadClassList) {
                     doLoadOpenTrainClassList();
                     loadClassList = true;
                 }
-            }
-            
+            });
             function doLoadOpenTrainClassList() {
                 // Load Open train class
                 var controller = "../../ManageScoreController?function=load-trainclass";
@@ -202,7 +208,34 @@
                     detail.innerHTML = http.responseText;
                 }
             }
+            ////////////////////////
+            $("#btn-request-lecturer-resend").click(function () {
+                $('#form-request-lecturer-resend').slideToggle(500);
+                if (!loadLecturerList) {
+                    doLoadLecturerList();
+                    loadLecturerList = true;
+                }
+            });
+            function doLoadLecturerList() {
+                // Load lecturer, just the man, who has open train class
+                var controller = "../../ManageScoreController?function=load-lecturer-list";
+                if(http){
+                    http.open("GET", controller ,true);
+                    http.onreadystatechange = loadLecturerListHandler;
+                    http.send(null);
+                } else {
+                    alert("Error: http object not found");
+                }
+            }
             
+            function loadLecturerListHandler() {
+                if(http.readyState == 4 && http.status == 200){
+                    var detail = document.getElementById("list-request-lecturer-resend-info");
+                    detail.innerHTML = http.responseText;
+                }
+            }
+
+            ////////////////////////////
             // key: classid-year-semeter
             function trainclassChanged(key) {
                 // Initial manual input form
@@ -258,50 +291,7 @@
             //
             // Request lecturer send score file.
             //
-            function hideFormInputManual(stuffId, btnId, btnShowLabel, btnHideLabel) {
-                var btnShow = "<span onclick=\"showFormInputManual('" + stuffId + "','" + btnId + "','" + btnShowLabel + "','" + btnHideLabel + "')\" class=\"atag\">"
-                    + btnShowLabel + "</span>";
-                document.getElementById(btnId).innerHTML = btnShow;
-                document.getElementById(stuffId).style.display = 'none';
-            }
             
-            function showFormRequestLecturerResendScore(stuffId, btnId, btnShowLabel, btnHideLabel) {
-                var btnHidden = "<span onclick=\"hideFormRequestLecturerResendScore('" + stuffId + "','" + btnId + "','" + btnShowLabel + "','" + btnHideLabel + "')\" class=\"atag\">"
-                                + btnHideLabel + "</span>";
-                document.getElementById(btnId).innerHTML = btnHidden;
-                document.getElementById(stuffId).style.display = 'block';
-                
-                if (!loadLecturerList) {
-                    doLoadLecturerList();
-                    loadLecturerList = true;
-                }
-            }
-            
-            function hideFormRequestLecturerResendScore(stuffId, btnId, btnShowLabel, btnHideLabel) {
-                var btnShow = "<span onclick=\"showFormRequestLecturerResendScore('" + stuffId + "','" + btnId + "','" + btnShowLabel + "','" + btnHideLabel + "')\" class=\"atag\">"
-                    + btnShowLabel + "</span>";
-                document.getElementById(btnId).innerHTML = btnShow;
-                document.getElementById(stuffId).style.display = 'none';
-            }
-            
-            function doLoadLecturerList() {
-                // Load lecturer, just the man, who has open train class
-                var controller = "../../ManageScoreController?function=load-lecturer-list";
-                if(http){
-                    http.open("GET", controller ,true);
-                    http.onreadystatechange = loadLecturerListHandler;
-                    http.send(null);
-                } else {
-                    alert("Error: http object not found");
-                }
-            }
-            
-            function loadLecturerListHandler() {
-                if(http.readyState == 4 && http.status == 200){
-                    var detail = document.getElementById("list-request-lecturer-resend-info");
-                    detail.innerHTML = http.responseText;
-                }
-            }
             
             function selectLecturer(){
                 var lecturerId = document.getElementById('list-lecturer').value;
@@ -350,23 +340,7 @@
                 alert("Entered Download file. Shall be implemented soon.");
             }
             
-            function getFileFromLecturer() {
-                var controller = "../../ManageScoreController?function=get-files";
-                if(http){
-                    http.open("GET", controller ,true);
-                    http.onreadystatechange = getFileHandler;
-                    http.send(null);
-                } else {
-                    alert("Error: http object not found");
-                }
-            }
             
-            function getFileHandler() {
-                if(http.readyState == 4 && http.status == 200){
-                    var detail = document.getElementById("tbl-file-from-lecturer");
-                    detail.innerHTML = http.responseText;
-                }
-            }
             
             function getClassDetail(trainclassId) {
                 var controller = "../../ManageScoreController?function=get-trainclass-detail"
