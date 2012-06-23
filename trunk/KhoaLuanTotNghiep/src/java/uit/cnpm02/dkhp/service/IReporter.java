@@ -24,6 +24,8 @@ public interface IReporter {
      * @return 
      */
     TrainClass getTrainClass(String classId);
+    
+    TrainClass getTrainClass(String classId, String year, int semeter);
     /**
      * 
      * @param ti

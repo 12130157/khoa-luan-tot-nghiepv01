@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
+import uit.cnpm02.dkhp.DAO.LecturerDAO;
 import uit.cnpm02.dkhp.DAO.RegistrationDAO;
 import uit.cnpm02.dkhp.DAO.StudentDAO;
 import uit.cnpm02.dkhp.DAO.SubjectDAO;
@@ -207,11 +208,50 @@ public class ReporterImpl implements IReporter {
         String year = Constants.CURRENT_YEAR;
         int semeter = Constants.CURRENT_SEMESTER;
         TrainClassID id = new TrainClassID(classId, year, semeter);
+        LecturerDAO lecturerDao = DAOFactory.getLecturerDao();
         try {
             TrainClass t = classDao.findById(id);
             if (t != null) {
                 t.setSubjectName(subjectDao.findById(
                         t.getSubjectCode()).getSubjectName());
+                String lecturer = t.getLecturerCode();
+                try {
+                    lecturer = lecturerDao.findById(t.getLecturerCode()).getFullName();
+                } catch (Exception ex) {
+                    
+                }
+                t.setLectturerName(lecturer);
+            }
+            return t;
+        } catch (Exception ex) {
+            Logger.getLogger(ReporterImpl.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    /**
+     * 
+     * @param classId
+     * @param year
+     * @param semeter
+     * @return 
+     */
+    public TrainClass getTrainClass(String classId, String year, int semeter) {
+        TrainClassID id = new TrainClassID(classId, year, semeter);
+        LecturerDAO lecturerDao = DAOFactory.getLecturerDao();
+        try {
+            TrainClass t = classDao.findById(id);
+            if (t != null) {
+                t.setSubjectName(subjectDao.findById(
+                        t.getSubjectCode()).getSubjectName());
+                String lecturer = t.getLecturerCode();
+                try {
+                    lecturer = lecturerDao.findById(t.getLecturerCode()).getFullName();
+                } catch (Exception ex) {
+                    
+                }
+                t.setLectturerName(lecturer);
             }
             return t;
         } catch (Exception ex) {
