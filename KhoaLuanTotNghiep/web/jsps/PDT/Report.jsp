@@ -43,16 +43,24 @@
                 </div>
                 <div class="clear"></div>
                 <div id="form-search">
-                    Nam hoc 
-                    <select id="select-year">
-                        <option>All</option>
-                        <option>2007-2008</option>
-                        <option>2008-2009</option>
-                        <option>2009-2010</option>
+                    Năm học 
+                    <select id="select-year" class="input-minwidth" onchange="reloadTrainClass()">
+                        <option> All </option>
+                        <%
+                        int year = Calendar.getInstance().get(Calendar.YEAR);
+                        int start = 2007;
+                        int numberYear = year - start;
+                        for (int i = numberYear; i > 0; i--) {
+                            String description = (start + i - 1) + " - " + (start + i);
+                            String value = description.replace(" ", "");
+                            %>
+                            <option value="<%= value%>"> <%= description %> </option>
+                            <%
+                        }
+                        %>
                     </select>
-                    
-                    Hoc ki 
-                    <select id="select-semeter">
+                    Hoc kỳ 
+                    <select id="select-semeter" onchange="reloadTrainClass()">
                         <option>All</option>
                         <option>1</option>
                         <option>2</option>
@@ -67,68 +75,25 @@
                             Các lớp đang mở
                             </span></h3>
                         <div id="tbl-open-class" style="display: none;">
-                            <table>
-                                <tr>
-                                    <td>Ma lop</td>
-                                    <td>Mon hoc</td>
-                                    <td>Khoa</td>
-                                    <td>SLSV</td>
-                                </tr>
-                                <tr>
-                                    <td>SE.c212</td>
-                                    <td>Tu tuong HCM</td>
-                                    <td>CNPM</td>
-                                    <td>120</td>
-                                </tr>
-                            </table>
+                            <%----%>
                         </div>
                     </div>
-                    <%-- Root panel --%>
+                    <%-- Root panel - Closed class --%>
                     <div class="range">
                         <h3><span id="btn-close-class" class="atag">
                             Các lớp đã đóng
                         </span></h3>
                         <div id="tbl-close-class" style="display: none;">
-                            <table>
-                                <tr>
-                                    <td>AAAAAAAAAAAAAAA</td>
-                                    <td>SAAAAAAAAAAAAdA</td>
-                                </tr>
-                                <tr>
-                                    <td>AAAAAAAAAAAAAAA</td>
-                                    <td>AAAAAAAAAAAAAAA</td>
-                                </tr>
-                                <tr>
-                                    <td>AAAAAAAAAAAAAAA</td>
-                                    <td>AAAAAAAAAAAAAAA</td>
-                                </tr>
-                                <tr>
-                                    <td>AAAAAAAAAAAAAAA</td>
-                                    <td>AAAAAAAAAAAAAAA</td>
-                                </tr>
-                                <tr>
-                                    <td>AAAAAAAAAAAAAAA</td>
-                                    <td>AAAAAAAAAAAAAAA</td>
-                                </tr>
-                            </table>
+                            a<%----%>
                         </div>
                     </div>
-                    <%-- Root panel --%>
+                    <%-- Root panel - Canceled class --%>
                     <div class="range">
                         <h3><span id="btn-cancel-class" class="atag">
                             Các lớp đã hủy
                         </span></h3>
                         <div id="tbl-cancel-class" style="display: none;">
-                            <table>
-                                <tr>
-                                <th> AAAAAAAAAAAAAAA </th>
-                                <th> SAAAAAAAAAAAAA </th>
-                                </tr>
-                                <tr>
-                                <td> AAAAAAAAAAAAAAA </td>
-                                <td>AAAAAAAAAAAAAAA </td>
-                                </tr>
-                            </table>
+                            <%----%>
                         </div>
                     </div>
                 </div>
@@ -180,7 +145,7 @@
             $('#tbl-open-class').slideToggle(500);
             if (!loadOpenClass) {
                 doLoadOpenTrainClassList();
-                loadOpenClass == true;
+                loadOpenClass = true;
             }
         });
         
@@ -188,7 +153,7 @@
             $('#tbl-close-class').slideToggle(500);
             if (!loadCloseClass) {
                 doLoadClosedTrainClassList();
-                loadCloseClass == true;
+                loadCloseClass = true;
             }
         });
         
@@ -196,26 +161,79 @@
             $('#tbl-cancel-class').slideToggle(500);
             if (!loadCancelClass) {
                 doLoadCancelTrainClassList();
-                loadCancelClass == true;
+                loadCancelClass = true;
             }
         });
         
         $("#btn-student-report").click(function () {
             $('#form-student-report').slideToggle(500);
         });
-        
+
+        // ++LOAD OPEN TRAINCLASS
         function doLoadOpenTrainClassList() {
-            //alert("To be implemetn...");
+            var year = document.getElementById("select-year").value;
+            var semeter = document.getElementById("select-semeter").value;
+            var status = "Opened";
+            if (http) {
+                http.open("GET", "../../ReportController?action=trainclass-report&year="
+                    + year + "&semeter=" + semeter + "&status=" + status, true);
+                http.onreadystatechange = loadOpenTrainClassHandler;
+                http.send(null);
+            }
         }
         
+        function loadOpenTrainClassHandler() {
+            if(http.readyState == 4 && http.status == 200){
+                var detail=document.getElementById("tbl-open-class");
+                detail.innerHTML=http.responseText;
+            }
+        }
+        // LOAD CLOSED TRAINCLASS ++
         function doLoadClosedTrainClassList() {
-            // to be implement...
+            var year = document.getElementById("select-year").value;
+            var semeter = document.getElementById("select-semeter").value;
+            var status = "Closed";
+            if (http) {
+                http.open("GET", "../../ReportController?action=trainclass-report&year="
+                    + year + "&semeter=" + semeter + "&status=" + status, true);
+                http.onreadystatechange = loadCloseTrainClassHandler;
+                http.send(null);
+            }
         }
         
+        function loadCloseTrainClassHandler() {
+            if(http.readyState == 4 && http.status == 200){
+                var detail=document.getElementById("tbl-close-class");
+                detail.innerHTML=http.responseText;
+            }
+        }
+        // LOAD CLOSED TRAINCLASS --
+        
+        // LOAD CANCEL TRAINCLASS ++
         function doLoadCancelTrainClassList() {
-            // to be implement...
+            var year = document.getElementById("select-year").value;
+            var semeter = document.getElementById("select-semeter").value;
+            var status = "Canceled";
+            if (http) {
+                http.open("GET", "../../ReportController?action=trainclass-report&year="
+                    + year + "&semeter=" + semeter + "&status=" + status, true);
+                http.onreadystatechange = loadCancelTrainClassHandler;
+                http.send(null);
+            }
         }
         
+        function loadCancelTrainClassHandler() {
+            if(http.readyState == 4 && http.status == 200){
+                var detail=document.getElementById("tbl-cancel-class");
+                detail.innerHTML=http.responseText;
+            }
+        }
+        // LOAD CANCELED TRAINCLASS --
+        function reloadTrainClass() {
+            doLoadCancelTrainClassList();
+            doLoadClosedTrainClassList();
+            doLoadOpenTrainClassList();
+        }
         //
         //
         // Search Student
