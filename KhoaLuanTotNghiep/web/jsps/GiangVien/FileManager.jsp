@@ -33,87 +33,81 @@
             <%--Main Contents--%>
             <div id="content">
                 <br /><br />
-                <div id="upload-score">
-                    <i><u>Giảng viên vui lòng nộp bảng điểm về cho PĐT theo đúng định dạng file</u></i>
-                    <ul>
-                        <li><i> (*) Chỉ chấp nhận file dạng .xls</i></li>
-                        <li><i> (*) Tên file trùng với mã lớp</i></li>
-                    </ul>
-                    <br />
-                    <div class="clear"></div>
-                    <%--
-                    <div id="" class="clear-left">
-                        Chọn lớp:
-                        <select>
-                            <option> Tobe retrieve data </option>
-                        </select>
-                    </div>
-                    --%>
-                    <div class="clear"></div>
-                    <div class="clear-left">
-                        <form id="upload-file" 
-                              action="../../FileUploadController?function=upload"
-                              method="post" name="uploadfile" enctype="multipart/form-data">
-                            <u>Chọn File</u>
-                            <div class="clear"> </div>
-                            <input type="file" name="txtPath" id="txtPath" accept="application/xls" />
-                            <div class="clear"> </div>
-                            <br />
-                            <input type="button" value="Tải lên" onclick="submitUploadFile()" />
-                        </form>
-                        <%-- Validate result --%>
-                        <div id="validate-filename-result">
-
+                <div class="range">
+                    <h3><span id="btn-show-form-upload" class="atag">
+                            Gửi bảng điểm
+                    </span></h3>
+                    <div id="upload-score">
+                        <i><u>Giảng viên vui lòng nộp bảng điểm về cho PĐT theo đúng định dạng file</u></i>
+                        <ul>
+                            <li><i> (*) Chỉ chấp nhận file dạng .xls</i></li>
+                            <li><i> (*) Tên file trùng với mã lớp</i></li>
+                        </ul>
+                        <br />
+                        <div class="clear"></div>
+                    
+                        <div class="clear"></div>
+                        <div class="clear-left">
+                            <form id="upload-file" 
+                                  action="../../FileUploadController?function=upload"
+                                  method="post" name="uploadfile" enctype="multipart/form-data">
+                                <u>Chọn File</u>
+                                <div class="clear"> </div>
+                                <input type="file" name="txtPath" id="txtPath" accept="application/xls" />
+                                <div class="clear"> </div>
+                                <br />
+                                <input type="button" value="Tải lên" onclick="submitUploadFile()" />
+                            </form>
+                            <%-- Validate result --%>
+                            <div id="validate-filename-result">
+                            </div>
                         </div>
-                    </div>
-                    <%-- Files uploaded --%>
-                    <div class="clear-left" style="padding-left: 25px;">
-                        <u>Files đã uploaded:</u>
-                        <table class="general-table" style="width: 350px;">
-                            <tr>
-                                <th> STT </th>
-                                <th> Tên file </th>
-                            </tr>
-                            <%
-                            if ((files != null) && !files.isEmpty()) {
-                                for (int i = 0; i < files.size(); i++) {
-                            %>
+                        <%-- Files uploaded --%>
+                        <div class="clear-left" style="padding-left: 25px;">
+                            <u>Files đã uploaded:</u>
+                            <table class="general-table" style="width: 350px;">
                                 <tr>
-                                    <td> <%= (i+1)%> </td>
-                                    <td> <%= files.get(i).getFileName() %> </td>
+                                    <th> STT </th>
+                                    <th> Tên file </th>
                                 </tr>
-                            <%
+                                <%
+                                    if ((files != null) && !files.isEmpty()) {
+                                        for (int i = 0; i < files.size(); i++) {
+                                %>
+                                    <tr>
+                                        <td> <%= (i+1)%> </td>
+                                        <td> <%= files.get(i).getFileName() %> </td>
+                                    </tr>
+                                <%
+                                    }
                                 }
-                            }
-                            %>
-                        </table>
-                    </div>
-                    <div class="clear"></div>
-                    <div>
-                        <span class="atag" onclick="getTrainClass('<%= username %>')">
-                            Các lớp <%= "<b> " + username + " </b>" %> đang dạy
-                        </span>
-                        <div id="btn-show-class-list">
-                            <span onclick="showStuff('list-trainclass', 'btn-show-class-list', 'Hiện', 'Ẩn')"
-                                  class="atag"> Ẩn 
-                            </span>
+                                %>
+                            </table>
                         </div>
-                        <div id="list-trainclass">
-                        </div>
-                    </div>
-                    <%--Show file format--%>
-                    <div class="clear"></div>
-                    <br /><br />
-                    <div id="btn-show-file-format" class="clear-right">
-                        <span onclick="showStuff('file-format-view', 'btn-show-file-format', 'File format', 'Ẩn')"
-                              class="atag"> File format 
-                        </span>
-                    </div>
-                    <div class="clear"></div>
-                    <div id="file-format-view" class="short_sidebar">
-                        <img src="../../imgs/form_format/import_score_format_file.PNG"/>
                     </div>
                 </div>
+                <div class="clear"></div>
+                <input type="hidden" id="username-value" value="<%= username %>" />
+                <%-- Show list trainclass of lecturer --%>
+                <div class="range">
+                        <h3><span id="btn-show-class-list" class="atag">
+                            Các lớp <%= "<b> " + username + " </b>" %> đang dạy
+                        </span></h3>
+                        <div id="list-trainclass" style="display: none;">
+                        </div>
+                    </div>
+                <%--Show file format--%>
+                <div class="clear"></div>
+                <div class="range">
+                        <h3><span id="btn-show-file-format" class="atag">
+                            File format
+                        </span></h3>
+                        <div id="file-format-view" class="short_sidebar" style="display: none;">
+                            <img src="../../imgs/form_format/import_score_format_file.PNG"/>
+                        </div>
+                    </div>
+                <div class="clear"></div>
+                <br />
             </div><%--End Contents--%>
             <%--Footer--%>
             <div id="footer">
@@ -124,18 +118,29 @@
     
     </body>
     <script src="../../javascripts/AjaxUtil.js"></script>
+    <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
     <SCRIPT language="javascript">
         var http = createRequestObject();
-        window.onload = doAfterPageLoaded; 
-        function doAfterPageLoaded() {
-            try {
-                hiddenValue = document.getElementById("btn-hide-import-form").value;
-            } catch (err) {
-                //
+        var loadTrainClassOfLecturer = false;
+        
+        // Slide toggle form list trainclass
+        $("#btn-show-class-list").click(function () {
+            $('#list-trainclass').slideToggle(500);
+            if (!loadTrainClassOfLecturer) {
+                var lecturerId = document.getElementById("username-value").value;
+                getTrainClass(lecturerId);
+                loadTrainClassOfLecturer = true;
             }
-            hideStuff('file-format-view', 'btn-show-file-format', 'File format', 'Ẩn');
-            //showStuff('import-lecturer-from-file', 'btn-show-import-file', 'Thêm từ file', 'Ẩn');
-        }
+        });
+        // Slide toggle form file format
+        $("#btn-show-file-format").click(function () {
+            $('#file-format-view').slideToggle(500);
+        });
+        
+         // Slide toggle form File upload
+        $("#btn-show-form-upload").click(function () {
+            $('#upload-score').slideToggle(500);
+        });
         
         function getTrainClass(lecturerId) {
             var controller = "../../LecturerPrivateController?function=get-train-class"
