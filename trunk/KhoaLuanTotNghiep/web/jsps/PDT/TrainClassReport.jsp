@@ -12,6 +12,9 @@
 <%
   TrainClass trainClass = (TrainClass) session.getAttribute("trainclass");
   List<Student> students = (List<Student>) session.getAttribute("students");
+  String key = trainClass.getId().getClassCode() + ";"
+          + trainClass.getId().getYear() + ";"
+          + trainClass.getId().getSemester();
 %>
 <html>
    <head>
@@ -19,30 +22,6 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Chi tiết lớp học</title>
         <style media="all" type="text/css">
-
-            #title{
-                background-color: #2f4e3d;
-                text-align: center;
-                padding-top: 12px;
-                padding-bottom: 10px;
-            }
-            table {
-                /*width: 100%;*/
-                padding-left: 10px;
-                padding-right: 10px;
-                text-align: center;
-
-            }
-            table th {
-                background-color:#00ff00;
-                height: 30px;
-                border-color: black;
-            }
-
-            table td {
-                text-align: center;
-                background-color: #5F676D;
-            }
             #list-student {
                 
             }
@@ -53,55 +32,87 @@
         <div id="wrapper">
             <%-- Menu --%>
             <%@include file="MenuPDT.jsp" %>
-            <div id="mainNav"><!--Main Navigation-->
+            <!--Main Navigation-->
+            <div id="mainNav">
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
-            <div id="content"><!--Main Contents-->
-
-                <hr/><hr/>
+            <!--Main Contents-->
+            <div id="content">
                 <div id="title">
-                    <u><h3><b>Chi tiết lớp học: <%= trainClass.getId().getClassCode()%></b></h3></u>
-                    <u> <%=trainClass.getSubjectName()%></u>
+                    Chi tiết lớp học:<b> <%= trainClass.getId().getClassCode()%>
+                    <u> (<%=trainClass.getSubjectName()%>)</u></b>
                 </div>
-                <hr/><hr/><br>
-
-                <div id="list-student">
-                    <table>
-                        <tr>
+                <br />
+                <div class="range">
+                    <h3><span id="btn-trainclass-detail" class="atag">
+                        Chi tiết lớp
+                        </span></h3>
+                    <div id="trainclass-detail" style="display: none;">
+                        <ul>
+                            <li><u>- Mã lớp học:</u> <b> <%= trainClass.getId().getClassCode() %> </b></li>
+                            <li><u>- Học kỳ, năm học: </u> <b> <%= trainClass.getId().getSemester() +"/"%><%= trainClass.getId().getYear()%> </b></li>
+                            <li><u>- Môn học:</u> <b> <%= trainClass.getSubjectName() %> (<%= " "+ trainClass.getSubjectCode() %>) </b></li>
+                            <li><u>- Giảng viên:</u> <b> <%= trainClass.getLectturerName() + " (" %> <%= trainClass.getLecturerCode()%>) </b></li>
+                            <li><u>- SLSV đăng ký:</u> <b> <%= trainClass.getNumOfStudentReg() %> </b></li>
+                            <li><u>- SLSV tối đa:</u> <b> <%= trainClass.getNumOfStudent() %> </b></li>
+                        </ul>
+                    </div>
+                </div>
+                <%-- List student --%>
+                <div class="range">
+                    <h3><span id="btn-list-student" class="atag">
+                        Danh sách SV
+                    </span></h3>
+                    <div id="list-student" style="display: none;">
+                        <table class="general-table" style="width: 600px;">
+                            <tr>
                             <th>STT</th>
                             <th>MSSV</th>
                             <th>Họ Tên</th>
                             <th>Lớp</th>
-                        </tr>
-                        <%
-                            for (int i = 0; i < students.size(); i++) {
-                        %>
-                            <tr>
-                                <td> <%= (i + 1)%> </td>
-                                <td> <%= students.get(i).getId()%> </td>
-                                <td> <%= students.get(i).getFullName() %> </td>
-                                <td> <%= students.get(i).getClassCode() %> </td>
                             </tr>
-                        <%
-                            }
-                        %>
-                    </table>
-                    <div>
-                        <input type="button" value=" Back " onclick="" />
-                        <a href="#"> Tải file </a>
+                            <%
+                                for (int i = 0; i < students.size(); i++) {
+                            %>
+                            <tr>
+                            <td> <%= (i + 1)%> </td>
+                            <td> <%= students.get(i).getId()%> </td>
+                            <td> <%= students.get(i).getFullName()%> </td>
+                            <td> <%= students.get(i).getClassCode()%> </td>
+                            </tr>
+                            <%
+                                }
+                            %>
+                        </table>
+                        <div>
+                            <%--<input type="button" value=" Back " onclick="" />--%>
+                            <a href="../../DownloadController?action=download-list-student-in-trainclass&key=<%= key%>"
+                               class="atag" style="margin-left: 500px;">
+                                <img src="../../imgs/download.png" title="download"/>Download
+                            </a>
+                        </div>
                     </div>
                 </div>
-                <form id="list-student" action="../../ReportController?action=list-student&classId=<%=trainClass.getId().getClassCode()%>" method="post" >
-                  
-
-                </form>
+                
             </div><!--End Contents-->
 
-            <div id="footer"><!--Footer-->
+            <!--Footer-->
+            <div id="footer">
                 <%@include file="../Footer.jsp" %>
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
     </body>
+    <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
+    <script  type = "text/javascript" >
+
+        $("#btn-trainclass-detail").click(function () {
+            $('#trainclass-detail').slideToggle(500);
+        });
+        
+        $("#btn-list-student").click(function () {
+            $('#list-student').slideToggle(500);
+        });
+    </script>
    
 </html>
