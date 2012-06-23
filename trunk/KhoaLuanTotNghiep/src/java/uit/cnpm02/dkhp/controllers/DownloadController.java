@@ -26,7 +26,6 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.util.StringUtil;
 import uit.cnpm02.dkhp.DAO.ClassDAO;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.FacultyDAO;
@@ -43,9 +42,12 @@ import uit.cnpm02.dkhp.model.Subject;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.model.TrainClassID;
 import uit.cnpm02.dkhp.service.IFileUploadService;
+import uit.cnpm02.dkhp.service.IReporter;
+import uit.cnpm02.dkhp.service.IStudentService;
 import uit.cnpm02.dkhp.service.impl.FileUploadServiceImpl;
+import uit.cnpm02.dkhp.service.impl.ReporterImpl;
+import uit.cnpm02.dkhp.service.impl.StudentServiceImpl;
 import uit.cnpm02.dkhp.utilities.Constants;
-import uit.cnpm02.dkhp.utilities.StringUtils;
 
 /**
  *
@@ -54,6 +56,17 @@ import uit.cnpm02.dkhp.utilities.StringUtils;
 @WebServlet(name = "DownloadController", urlPatterns = {"/DownloadController"})
 public class DownloadController extends HttpServlet {
     private IFileUploadService fuService = new FileUploadServiceImpl();
+    
+    private HSSFCellStyle style = null; //Normal style (No border)
+    private HSSFCellStyle styleTLBR = null; //(Top Left Bottom Right border)
+    private HSSFCellStyle styleTL = null; // (Top left border)
+    private HSSFCellStyle styleTR = null; //
+    private HSSFCellStyle styleL = null; //
+    private HSSFCellStyle styleR = null; //
+    private HSSFCellStyle styleB = null; //
+    private HSSFCellStyle styleBL = null; //
+    private HSSFCellStyle styleBR = null; //
+    
     /** 
      * 
      * @param request
@@ -76,7 +89,12 @@ public class DownloadController extends HttpServlet {
             } else if (action.equalsIgnoreCase("download-empty-file-score")) {
                 downloadEmptyScoreFile(request, response);
             } else if (action.equalsIgnoreCase("download-student-trainclass-report")) {
+                // Download file incoude all trainclass registered by
+                // specified student.
                 downloadStudentTrainClassReport(request, response);
+            } else if (action.equalsIgnoreCase("download-list-student-in-trainclass")) {
+                // Download file include list student in specified trainclass
+                downloadListStudentInTrainClass(request, response);
             }
         } finally {
         }
@@ -686,8 +704,115 @@ public class DownloadController extends HttpServlet {
             //resp.sendRedirect(path);
         }
     }
-    
-    
-    
+
+    /**
+     * Input: Train class id: classid, year, semeter
+     * Output: XSL file include list student in specified
+     * TrainClass
+     * @param req
+     * @param resp 
+     */
+    private void downloadListStudentInTrainClass(HttpServletRequest req,
+            HttpServletResponse resp) {
+        String keys = req.getParameter("key");
+        // Value: classID, year, semeter
+        String[] values = keys.replace(" ", "").split(";");
+        String classId = values[0];
+        String year = values[1];
+        int semeter = Integer.parseInt(values[2]);
+        // if keys not validate
+        try {
+            
+            HSSFWorkbook hwb = new HSSFWorkbook();
+            HSSFSheet sheet = hwb.createSheet(classId);
+            style = hwb.createCellStyle();
+            HSSFFont font = hwb.createFont();
+            HSSFRow row = null;
+            int currentRow = 1;
+            
+            // Main table header
+            String[] title = {
+                "STT", "MSSV", "Họ và tên"};
+            // Inital columns width
+            int[] widths = {45*32, 125*32, 175*32};
+            for (int i = 0; i < title.length; i++) {
+                sheet.setColumnWidth(i, widths[i]);
+            }
+            
+            // File header
+            
+            initialFont(font, HSSFFont.FONT_ARIAL, 18,
+                    HSSFFont.BOLDWEIGHT_BOLD, HSSFColor.RED.index);
+            style.setFont(font);
+            row = sheet.createRow((short) +(currentRow++));
+            createCell(row, 3, style, HSSFCell.CELL_TYPE_STRING, "Danh sách SV lớp: " + classId);
+            row = sheet.createRow((short) +(currentRow++));
+            createCell(row, 3, style, HSSFCell.CELL_TYPE_STRING, "Học kỳ " + semeter
+                    + " năm học " + year);
+            row = sheet.createRow((short) +(currentRow++));
+            //row = sheet.createRow((short) +(currentRow++));
+            initialFont(font, HSSFFont.FONT_ARIAL, 12,
+                    HSSFFont.BOLDWEIGHT_BOLD, HSSFColor.BLUE.index);
+            style.setFont(font);
+            String[] classInfo = {"Mã môn học: " + classId,
+                                        "Năm học: " + year};
+            for (int i = 0; i < classInfo.length; i++) {
+                row = sheet.createRow((short) +(currentRow++));
+                createCell(row, 4, style, HSSFCell.CELL_TYPE_STRING, classInfo[i]);
+            }
+
+            // Some empty row
+            row = sheet.createRow((short) +(currentRow++));
+            row = sheet.createRow((short) +(currentRow++));
+            row = sheet.createRow((short) +(currentRow++));
+            
+            // Table's header
+            HSSFCellStyle headeStyle = hwb.createCellStyle();
+            HSSFCellStyle thinBorderStyle = hwb.createCellStyle();
+            row = sheet.createRow((short) +(currentRow++));
+            initialFont(font, HSSFFont.FONT_ARIAL, 12,
+                    HSSFFont.BOLDWEIGHT_BOLD, HSSFColor.BLACK.index);
+            headeStyle.setFont(font);
+            setBorder(headeStyle, CellStyle.BORDER_THICK,
+                                    CellStyle.BORDER_THIN,
+                                    CellStyle.BORDER_HAIR,
+                                    CellStyle.BORDER_MEDIUM);
+            setBorder(thinBorderStyle, CellStyle.BORDER_THIN,
+                                    CellStyle.BORDER_THIN,
+                                    CellStyle.BORDER_THIN,
+                                    CellStyle.BORDER_THIN);
+
+            for (int i = 0; i < title.length; i++) {
+                createCell(row, i, headeStyle, HSSFCell.CELL_TYPE_STRING, title[i]);
+            }
+            
+            IStudentService reportService = new StudentServiceImpl();
+            List<Student> students = reportService
+                .getStudent(classId, year, semeter);
+            if (students != null) {
+                // Initial table body
+                String datas[] = new String[3];
+                for (int i = 0; i < students.size(); i++) {
+                    datas[0] = (i + 1) +"";
+                    datas[1] = students.get(i).getId();
+                    datas[2] = students.get(i).getFullName();
+                    row = sheet.createRow((short) +(currentRow++));
+                    for (int j = 0; j < datas.length; j++) {
+                        createCell(row, j, thinBorderStyle, HSSFCell.CELL_TYPE_STRING, datas[j]);
+                    }
+                }
+            }
+            
+            // Inital file for download...
+            FileOutputStream fileOut =
+                    new FileOutputStream("DSSV-" + classId + ".xls");
+            hwb.write(fileOut);
+            fileOut.close();
+            downloadFile("DSSV-" + classId + ".xls", resp);
+        } catch (Exception ex) {
+            //String path = "./jsps/Message.jsp";
+            //resp.sendRedirect(path);
+        }
+    }
     
 }
