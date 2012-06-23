@@ -38,176 +38,171 @@
             <div id="content">
                 
                 <%-- Thong tin ca nhan --%>
-                <u><b>Thông tin cá nhân:</b></u>
-                <div id="persional-information">
-                    <%
-                    if (lecturer != null) {
-                    %>
-                    <%--
-                        MaGV            MaKhoa
-                        HoTen           QueQuan
-                        NgaySinh        CMND
-                        DienThoai       HocHam
-                        Email           HocVi
-                    --%>
-                    
-                        <table style="width: 600px;">
-                            <tr class="odd-row">
-                                <td> Mã GV </td>
-                                <td>
-                                    <input type="text" readonly="readonly" id="txt-lecturer-id" value="<%= lecturer.getId() %>" />
-                                </td>
-                                <td> Quên quán </td>
-                                <td> <%= lecturer.getAddress() %> </td>
-                            </tr>
-                            <tr class="even-row">
-                                <td> Họ và tên </td>
-                                <td> <%= lecturer.getFullName() %> </td>
-                                <td> Khoa </td>
-                                <td> <%= lecturer.getFacultyCode() %> </td>
-                            </tr>
-                            <tr class="odd-row">
-                                <td> Ngày sinh </td>
-                                <td> <%= sdf.format(lecturer.getBirthday()) %> </td>
-                                <td> CMND </td>
-                                <td> <%= lecturer.getIdentityCard() %> </td>
-                            </tr>
-                            <tr class="even-row">
-                                <td> ĐT liên lạc </td>
-                                <td> <%= lecturer.getPhone() %> </td>
-                                <td> Học Hàm </td>
-                                <td> <%= lecturer.getHocHam() %> </td>
-                            </tr>
-                            <tr class="odd-row">
-                                <td> Email </td>
-                                <td> <%= lecturer.getEmail() %> </td>
-                                <td> Học Vị </td>
-                                <td> <%= lecturer.getHocVi() %> </td>
-                            </tr>
-                        </table>
-                    <%
-                    }
-                    %>
+                <div class="range">
+                    <h3><span id="btn-persional-information" class="atag">
+                        Thông tin cá nhân
+                    </span></h3>
+                    <div id="persional-information">
+                        <%
+                        if (lecturer != null) {
+                        %>
+                        <%--
+                            MaGV            MaKhoa
+                            HoTen           QueQuan
+                            NgaySinh        CMND
+                            DienThoai       HocHam
+                            Email           HocVi
+                        --%>
+
+                            <table style="width: 600px;">
+                                <tr class="odd-row">
+                                    <td> Mã GV </td>
+                                    <td>
+                                        <input type="text" readonly="readonly" id="txt-lecturer-id" value="<%= lecturer.getId() %>" />
+                                    </td>
+                                    <td> Quên quán </td>
+                                    <td> <%= lecturer.getAddress() %> </td>
+                                </tr>
+                                <tr class="even-row">
+                                    <td> Họ và tên </td>
+                                    <td> <%= lecturer.getFullName() %> </td>
+                                    <td> Khoa </td>
+                                    <td> <%= lecturer.getFacultyCode() %> </td>
+                                </tr>
+                                <tr class="odd-row">
+                                    <td> Ngày sinh </td>
+                                    <td> <%= sdf.format(lecturer.getBirthday()) %> </td>
+                                    <td> CMND </td>
+                                    <td> <%= lecturer.getIdentityCard() %> </td>
+                                </tr>
+                                <tr class="even-row">
+                                    <td> ĐT liên lạc </td>
+                                    <td> <%= lecturer.getPhone() %> </td>
+                                    <td> Học Hàm </td>
+                                    <td> <%= lecturer.getHocHam() %> </td>
+                                </tr>
+                                <tr class="odd-row">
+                                    <td> Email </td>
+                                    <td> <%= lecturer.getEmail() %> </td>
+                                    <td> Học Vị </td>
+                                    <td> <%= lecturer.getHocVi() %> </td>
+                                </tr>
+                            </table>
+                        <%
+                        }
+                        %>
+                    </div>
                 </div>
+                
                 <%-- PHan cap nhat thong tin ca nhan --%>
                 <br />
-                <div id="btn-change-information">
-                <span class="atag" onclick="showStuff('update-information', 'btn-change-information', '<u><b>Cập nhật thông tin</b></u>', '<u><b>Cập nhật thông tin</b></u>')">
-                    <u><b>Cập nhật thông tin</b></u>
-                </span>
+                <div class="range">
+                    <h3><span id="btn-change-information" class="atag">
+                        Cập nhật thông tin
+                    </span></h3>
+                    <div id="update-information" style="display: none;">
+                        <%
+                        if (lecturer != null) {
+                        %>
+                            <table style="width: 600px;">
+                                <tr class="odd-row">
+                                    <td> Họ và tên </td>
+                                    <td> 
+                                        <input type="text" id="txt-fullname"
+                                               value="<%= lecturer.getFullName() %>" />
+                                    </td>
+                                    <td> Ngày sinh </td>
+                                    <td> 
+                                        <input type="text" id="txt-birthday" name="txt-birthday"
+                                               value="<%= sdf.format(lecturer.getBirthday()) %> " />
+                                        <img src="../../imgs/cal.gif" style="cursor: pointer;"
+                                             onclick="javascript:NewCssCal('txt-birthday','YYMMMDD')" />
+                                    </td>
+                                </tr>
+                                <tr class="even-row">
+                                    <td> CMND </td>
+                                    <td> 
+                                        <input type="text" id="txt-cmnd"
+                                               value="<%= lecturer.getIdentityCard() %>" />
+                                    </td>
+                                    <td> ĐT liên lạc </td>
+                                    <td> 
+                                        <input type="text" id="txt-phone"
+                                           value="<%= lecturer.getPhone() %>" />
+                                    </td>
+                                </tr>
+                                <tr class="odd-row">
+                                    <td> Email </td>
+                                    <td>
+                                        <input type="text" id="txt-email"
+                                           value="<%= lecturer.getEmail() %>" />
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                            <br/>
+                            <input type="button" onclick="update()" value="Cập nhật"/>
+                        <%
+                        }
+                        %>
                     </div>
-                <div id="update-information" style="display: none;">
-                    <%
-                    if (lecturer != null) {
-                    %>
-                        <table style="width: 600px;">
-                            <tr class="odd-row">
-                                <td> Họ và tên </td>
-                                <td> 
-                                    <input type="text" id="txt-fullname"
-                                           value="<%= lecturer.getFullName() %>" />
-                                </td>
-                                <td> Ngày sinh </td>
-                                <td> 
-                                    <input type="text" id="txt-birthday" name="txt-birthday"
-                                           value="<%= sdf.format(lecturer.getBirthday()) %> " />
-                                    <img src="../../imgs/cal.gif" style="cursor: pointer;"
-                                         onclick="javascript:NewCssCal('txt-birthday','YYMMMDD')" />
-                                </td>
-                            </tr>
-                            <tr class="even-row">
-                                <td> CMND </td>
-                                <td> 
-                                    <input type="text" id="txt-cmnd" onkeypress="return checknumber(event)"
-                                           value="<%= lecturer.getIdentityCard() %>" />
-                                </td>
-                                <td> ĐT liên lạc </td>
-                                <td> 
-                                    <input type="text" id="txt-phone" onkeypress="return checknumber(event)"
-                                       value="<%= lecturer.getPhone() %>" />
-                                </td>
-                            </tr>
-                            <tr class="odd-row">
-                                <td> Email </td>
-                                <td>
-                                    <input type="text" id="txt-email"
-                                       value="<%= lecturer.getEmail() %>" />
-                                </td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </table>
-                        <br/>
-                        <input type="button" onclick="update()" value="Cập nhật"/>
-                    <%
-                    }
-                    %>
                 </div>
+                
+                
                 <%-- Cac lop hien dang day --%>
                 <br />
                 <div class="clear"></div>
-                <div>
-                    <span class="atag" onclick="getTrainClass('<%= lecturer.getId() %>')">
-                        <u><b>Các lớp đang dạy</b></u>
-                    </span>
-                    <div id="btn-show-class-list">
-                        <span onclick="showStuff('list-trainclass', 'btn-show-class-list', 'Hiện', 'Ẩn')"
-                              class="atag"> Ẩn 
-                        </span>
+                <div class="range">
+                    <h3><span id="btn-show-class-list" class="atag">
+                        Các lớp đang dạy
+                    </span></h3>
+                    <div id="list-trainclass" style="display: none;">
                     </div>
-                    <div id="list-trainclass">
-                    </div>
-                    <%--    <div id="popup-parent">
-                            click me please! 
-                            <div class="pop-up">
-                                Well, it work...
-                            </div>
-                        </div>
-                    --%>
                 </div>
                 
                 <%-- Thong bao nghi day --%>
                 <br />
-                <div id="btn-show-send-notify">
-                    <span onclick="showStuff('delay-schedule', 'btn-show-send-notify', '<b><u>Thông báo nghỉ dạy</u></b>', '<b><u>Thông báo nghỉ dạy</u></b>')"
-                          class="atag"> <b><u>Thông báo nghỉ dạy</u></b> 
-                    </span>
-                </div>
-                <div id="delay-schedule" style="display: none;">
-                    <i>(*) GV nhập mã lớp, ngày, ca nghỉ và ngày dạy bù dự kiến.</i>
-                    <table style="width: 600px;">
-                        <tr class="odd-row">
-                            <td> Lớp </td>
-                            <td> 
-                                <input type="text" id="txt-class" />
-                            </td>
-                            <td> Ngày nghỉ </td>
-                            <td> 
-                                <input type="text" id="txt-dayoff" name="txt-dayoff" />
-                                <img src="../../imgs/cal.gif" style="cursor: pointer;"
-                                     onclick="javascript:NewCssCal('txt-dayoff','YYMMMDD')" />
-                            </td>
-                        </tr>
-                        <tr class="even-row">
-                            <td> Ca </td>
-                            <td> 
-                                <select id="txt-shift" class="input-minwidth">
-                                    <option value="Sang"> Sáng </option>
-                                    <option value="Chieu"> Chiều </option>
-                                </select>
-                            </td>
-                            <td> Ngày dạy bù </td>
-                            <td> 
-                                <input type="text" id="txt-dayon" name="txt-dayon" />
-                                <img src="../../imgs/cal.gif" style="cursor: pointer;"
-                                     onclick="javascript:NewCssCal('txt-dayon','YYMMMDD')" />
-                            </td>
-                        </tr>
-                    </table>
-                    <div id="send-request-result">
-                       
+                <div class="range">
+                    <h3><span id="btn-show-send-notify" class="atag">
+                        Thông báo nghỉ dạy
+                        </span></h3>
+                    <div id="delay-schedule" style="display: none;">
+                        <i>(*) GV nhập mã lớp, ngày, ca nghỉ và ngày dạy bù dự kiến.</i>
+                        <table style="width: 600px;">
+                            <tr class="odd-row">
+                                <td> Lớp </td>
+                                <td> 
+                                    <input type="text" id="txt-class" />
+                                </td>
+                                <td> Ngày nghỉ </td>
+                                <td> 
+                                    <input type="text" id="txt-dayoff" name="txt-dayoff" />
+                                    <img src="../../imgs/cal.gif" style="cursor: pointer;"
+                                         onclick="javascript:NewCssCal('txt-dayoff','YYMMMDD')" />
+                                </td>
+                            </tr>
+                            <tr class="even-row">
+                                <td> Ca </td>
+                                <td> 
+                                    <select id="txt-shift" class="input-minwidth">
+                                        <option value="Sang"> Sáng </option>
+                                        <option value="Chieu"> Chiều </option>
+                                    </select>
+                                </td>
+                                <td> Ngày dạy bù </td>
+                                <td> 
+                                    <input type="text" id="txt-dayon" name="txt-dayon" />
+                                    <img src="../../imgs/cal.gif" style="cursor: pointer;"
+                                         onclick="javascript:NewCssCal('txt-dayon','YYMMMDD')" />
+                                </td>
+                            </tr>
+                        </table>
+                        <div id="send-request-result">
+                            <%-- Show result after send request... --%>
+                        </div>
+                        <input type="button" onclick="sendRequest()" value="Gửi yêu cầu"/>
                     </div>
-                    <input type="button" onclick="sendRequest()" value="Gửi yêu cầu"/>
                 </div>
                 <br /><br />
                 
@@ -224,17 +219,28 @@
     <script src="../../javascripts/jquery-1.7.1.js"></script>
     <SCRIPT language="javascript">
         var http = createRequestObject();
-        window.onload = doAfterPageLoaded; 
-
-    function doAfterPageLoaded() {
-            try {
-                hiddenValue = document.getElementById("btn-hide-import-form").value;
-            } catch (err) {
-                //
+        var loadTrainClassOfLecturer = false;
+        
+        $("#btn-show-send-notify").click(function () {
+            $('#delay-schedule').slideToggle(500);
+        });
+        
+        $("#btn-show-class-list").click(function () {
+            $('#list-trainclass').slideToggle(500);
+            if (!loadTrainClassOfLecturer) {
+                var lecturerId = document.getElementById("txt-lecturer-id").value;
+                getTrainClass(lecturerId);
+                loadTrainClassOfLecturer = true;
             }
-            hideStuff('file-format-view', 'btn-show-file-format', 'File format', 'Ẩn');
-            //showStuff('import-lecturer-from-file', 'btn-show-import-file', 'Thêm từ file', 'Ẩn');
-        }
+        });
+        
+        $("#btn-change-information").click(function () {
+            $('#update-information').slideToggle(500);
+        });
+        
+        $("#btn-persional-information").click(function () {
+            $('#persional-information').slideToggle(500);
+        });
         
         ////////////////////////
         //     SEND REQUEST   //
@@ -346,13 +352,13 @@
             }
         }
         function checknumber(evt){
-           var e = event || evt; // for trans-browser compatibility
-	var charCode = e.which || e.keyCode;
+            var e = event || evt; // for trans-browser compatibility
+            var charCode = e.which || e.keyCode;
 
-	if (charCode > 31 && (charCode < 48 || charCode > 57))
-		return false;
+            if (charCode > 31 && (charCode < 48 || charCode > 57))
+                return false;
 
-	return true;
+            return true;
         }
     </script>
     </body>
