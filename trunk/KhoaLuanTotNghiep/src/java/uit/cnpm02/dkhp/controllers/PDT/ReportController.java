@@ -2,6 +2,7 @@ package uit.cnpm02.dkhp.controllers.PDT;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,6 +12,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import uit.cnpm02.dkhp.DAO.DAOFactory;
+import uit.cnpm02.dkhp.DAO.LecturerDAO;
+import uit.cnpm02.dkhp.DAO.SubjectDAO;
+import uit.cnpm02.dkhp.DAO.TrainClassDAO;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.service.IReporter;
@@ -151,7 +156,10 @@ public class ReportController extends HttpServlet {
                 String path = "./jsps/PDT/TrainClassReport.jsp";
                 response.sendRedirect(path);
                 return;
-            }
+            } else if (requestAction.equals("trainclass-report")) {
+                fillTrainClassReport(request, response);
+                return;
+            }//
         } catch(Exception ex) {
             Logger.getLogger(ReportController.class.getName()).
                                                 log(Level.SEVERE, null, ex);
@@ -229,6 +237,12 @@ public class ReportController extends HttpServlet {
         return reportService.getTrainClassRegistered(sessionId, mssv, true);
     }
     
+    /**
+     * Write out list trainclass student registered.
+     * @param mssv student id
+     * @param datas
+     * @param out 
+     */
     private void writeStudentReportDetail(String mssv, List<TrainClass> datas,
                                                         PrintWriter out) {
         String studentName = studentService.getStudent(mssv).getFullName();
@@ -350,6 +364,80 @@ public class ReportController extends HttpServlet {
         
         session.setAttribute("trainclass", clazz);
         session.setAttribute("students", students);
+    }
+
+    private void fillTrainClassReport(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        PrintWriter out = response.getWriter();
+        String yearStr = request.getParameter("year");
+        String semeterStr = request.getParameter("semeter");
+        String status = request.getParameter("status");
+        List<String> columnName = new ArrayList<String>(3);
+        List<Object> values = new ArrayList<Object>(3);
+        if (!yearStr.equalsIgnoreCase("All")) {
+            columnName.add("NamHoc");
+            values.add(yearStr);
+            //columnNames[0] = "NamHoc";
+            //values[0] = yearStr;
+        }
+        if (!semeterStr.equalsIgnoreCase("All")) {
+            columnName.add("HocKy");
+            values.add(Integer.parseInt(semeterStr));
+        }
+        columnName.add("TrangThai");
+        
+        TrainClassStatus st = TrainClassStatus.getTrainClassStatus(status);
+        if (st != null) {
+            values.add(st.getValue());
+        } else {
+            values.add(st.ALL.getValue());
+        }
+            
+        TrainClassDAO tcDao = DAOFactory.getTrainClassDAO();
+        List<TrainClass> tcs = new ArrayList<TrainClass>(10);
+        try {
+            tcs = tcDao.findByColumNames(
+                    columnName.toArray(new String[columnName.size()]),
+                    values.toArray());
+        } catch (Exception ex) {
+            Logger.getLogger(ReportController.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            out.println("Error load data.");
+            return;
+        }
+        
+        writeOutTrainClassReport(out, tcs);
+    }
+    
+    private void writeOutTrainClassReport(PrintWriter out, List<TrainClass> tcs) {
+        if (tcs.size() <= 0) {
+            out.println("Không có thông tin.");
+            return;
+        }
+        SubjectDAO subDao = DAOFactory.getSubjectDao();
+        LecturerDAO lecturerDao = DAOFactory.getLecturerDao();
+        out.print("<table class=\"general-table\" style=\"width: 660px; margin-top: 1px;\">");
+        out.print("<tr><th>STT</th><th>Ma lop</th><th>Ten MH</th><th>SLSV</th></tr>");
+        for (int i = 0; i < tcs.size(); i++) {
+            TrainClass tc = tcs.get(i);
+            String subjectName = tc.getSubjectCode();
+            try {
+                subjectName = subDao.findById(tc.getSubjectCode()).getSubjectName();
+            } catch(Exception ex) {
+            }
+            String lecturerName = tc.getLecturerCode();
+            try {
+                lecturerName = lecturerDao.findById(tc.getLecturerCode()).getFullName();
+            } catch(Exception ex) {
+            }
+            out.print("<tr>");
+            out.print("<td>" + (i + 1) + "</td>");
+            out.print("<td>" + tc.getId().getClassCode() + "</td>");
+            out.print("<td>" + subjectName + "</td>");
+            out.print("<td>" + lecturerName + "</td>");
+            out.print("</tr>");
+        }
+        out.print("</table>");
     }
 
      /**
