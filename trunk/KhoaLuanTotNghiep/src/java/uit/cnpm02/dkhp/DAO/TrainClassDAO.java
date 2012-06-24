@@ -33,7 +33,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        String selectQuery = "Select * from " + t.getTableName() + " where NgayHoc= ? and TrangThai = "+Constants.OPEN_CLASS_STATUS+" and HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
+        String selectQuery = "Select * from " + t.getTableName() + " where NgayHoc= ? and TrangThai = " + Constants.OPEN_CLASS_STATUS + " and HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
         try {
             con = getConnection();
             statement = con.prepareStatement(selectQuery);
@@ -58,6 +58,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         }
         return results;
     }
+
     public List<TrainClass> findAllByStudyDateAndFaculty(int studyDate, String FacultyCode) throws Exception {
         checkModelWellDefined();
         TrainClass t = new TrainClass();
@@ -69,7 +70,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        String selectQuery = "Select * from KhoaLuanTotNghiep.MonHoc, " + t.getTableName() + " where KhoaLuanTotNghiep.MonHoc.MaMH=KhoaLuanTotNghiep.LopHoc.MaMH and NgayHoc= ? and MaKhoa in ( ?,'ENG','MAT','XH') and TrangThai= "+Constants.OPEN_CLASS_STATUS+" and HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
+        String selectQuery = "Select * from KhoaLuanTotNghiep.MonHoc, " + t.getTableName() + " where KhoaLuanTotNghiep.MonHoc.MaMH=KhoaLuanTotNghiep.LopHoc.MaMH and NgayHoc= ? and MaKhoa in ( ?,'ENG','MAT','XH') and TrangThai= " + Constants.OPEN_CLASS_STATUS + " and HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
         try {
             con = getConnection();
             statement = con.prepareStatement(selectQuery);
@@ -95,7 +96,8 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         }
         return results;
     }
-     public List<TrainClass> findAllByStudyDateAndOnlyFaculty(int studyDate, String FacultyCode) throws Exception {
+
+    public List<TrainClass> findAllByStudyDateAndOnlyFaculty(int studyDate, String FacultyCode) throws Exception {
         checkModelWellDefined();
         TrainClass t = new TrainClass();
         if (t == null) {
@@ -106,7 +108,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        String selectQuery = "Select * from KhoaLuanTotNghiep.MonHoc, " + t.getTableName() + " where KhoaLuanTotNghiep.MonHoc.MaMH=KhoaLuanTotNghiep.LopHoc.MaMH and NgayHoc= ? and MaKhoa = ? and TrangThai = "+Constants.OPEN_CLASS_STATUS+" and HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
+        String selectQuery = "Select * from KhoaLuanTotNghiep.MonHoc, " + t.getTableName() + " where KhoaLuanTotNghiep.MonHoc.MaMH=KhoaLuanTotNghiep.LopHoc.MaMH and NgayHoc= ? and MaKhoa = ? and TrangThai = " + Constants.OPEN_CLASS_STATUS + " and HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
         try {
             con = getConnection();
             statement = con.prepareStatement(selectQuery);
@@ -132,7 +134,8 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         }
         return results;
     }
-     public List<TrainClass> findAllByStudyDateAndLecturerCode(int studyDate, String lecturerCode) throws Exception {
+
+    public List<TrainClass> findAllByStudyDateAndLecturerCode(int studyDate, String lecturerCode) throws Exception {
         checkModelWellDefined();
         TrainClass t = new TrainClass();
         if (t == null) {
@@ -143,7 +146,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        String selectQuery = "Select * from KhoaLuanTotNghiep.MonHoc, " + t.getTableName() + " where KhoaLuanTotNghiep.MonHoc.MaMH=KhoaLuanTotNghiep.LopHoc.MaMH and NgayHoc= ? and MaGV = ? and TrangThai = "+Constants.OPEN_CLASS_STATUS+" and HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
+        String selectQuery = "Select * from KhoaLuanTotNghiep.MonHoc, " + t.getTableName() + " where KhoaLuanTotNghiep.MonHoc.MaMH=KhoaLuanTotNghiep.LopHoc.MaMH and NgayHoc= ? and MaGV = ? and TrangThai = " + Constants.OPEN_CLASS_STATUS + " and HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
         try {
             con = getConnection();
             statement = con.prepareStatement(selectQuery);
@@ -169,6 +172,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         }
         return results;
     }
+
     public List<TrainClass> findAllByFacultyCodeAndTime(String facultyCode) throws Exception {
         checkModelWellDefined();
         TrainClass t = new TrainClass();
@@ -180,7 +184,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        String selectQuery = "Select * from KhoaLuanTotNghiep.MonHoc, " + t.getTableName() + " where KhoaLuanTotNghiep.MonHoc.MaMH=KhoaLuanTotNghiep.LopHoc.MaMH and MaKhoa in ( ?,'ENG','MAT','XH') and TrangThai = "+Constants.OPEN_CLASS_STATUS+" and HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
+        String selectQuery = "Select * from KhoaLuanTotNghiep.MonHoc, " + t.getTableName() + " where KhoaLuanTotNghiep.MonHoc.MaMH=KhoaLuanTotNghiep.LopHoc.MaMH and MaKhoa in ( ?,'ENG','MAT','XH') and TrangThai = " + Constants.OPEN_CLASS_STATUS + " and HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
         try {
             con = getConnection();
             statement = con.prepareStatement(selectQuery);
@@ -226,7 +230,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
             while (rs.next()) {
                 String classCode = rs.getString("MaLopHoc");
                 TrainClassID trainclassID = new TrainClassID(classCode, Constants.CURRENT_YEAR, Constants.CURRENT_SEMESTER);
-                
+
                 //TODO: Improve (Ham findById se mo mot Connection moi --> Not Good)
                 // Nen tao ham findById moi, truyen Connection vao
                 // Hoac Tao cau query moi + dung Connection vua tao o tren de find
@@ -242,7 +246,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         }
         return results;
     }
-    
+
     /**
      * Check if a class already existed, A Semeter of an year,
      * There is only on class opened at A DATE, specified SHIFT, ROOM, and LECTURER
@@ -257,7 +261,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
      */
     public TrainClass findUnique(int semeter, String year, String lectureId, int date, int shift, String room) throws Exception {
         checkModelWellDefined();
-        
+
         TrainClass clazz = new TrainClass();
         String sqlQuery = "Select * from "
                 + clazz.getTableName()
@@ -267,7 +271,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
                 + " NgayHoc = ? And"
                 + " CaHoc = ? And"
                 + " PhongHoc= ?";
-        
+
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -290,7 +294,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
                 TrainClassID ID = new TrainClassID();
                 String idNames[] = ID.getIDNames();
                 Object[] idValues = new Object[idNames.length];
-                for (int k = 0; k < idNames.length; k ++) {
+                for (int k = 0; k < idNames.length; k++) {
                     idValues[k] = rs.getObject(idNames[k]);
                 }
                 ID.setIDValues(idValues);
@@ -319,12 +323,12 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
      */
     public List<TrainClass> findByStatus(int status) throws Exception {
         checkModelWellDefined();
-        
+
         TrainClass t = new TrainClass();
         String sqlQuery = "Select * from "
                 + t.getTableName()
                 + " where TrangThai = ?";
-        
+
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -351,7 +355,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
                 + " CaHoc = ? And"
                 + " NgayHoc = ? And"
                 + " TrangThai = ?";
-        
+
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -362,7 +366,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
             statement.setInt(2, shift);
             statement.setInt(3, date);
             statement.setInt(4, status);
-            
+
             rs = statement.executeQuery();
             return getDataFromResultSet(rs);
         } catch (SQLException ex) {
@@ -382,7 +386,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
                 + " CaHoc = ? And"
                 + " NgayHoc = ? And"
                 + " TrangThai = ?";
-        
+
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -393,7 +397,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
             statement.setInt(2, shift);
             statement.setInt(3, date);
             statement.setInt(4, status);
-            
+
             rs = statement.executeQuery();
             return getDataFromResultSet(rs);
         } catch (SQLException ex) {
@@ -403,7 +407,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
             close(con);
         }
     }
-    
+
     private List<TrainClass> getDataFromResultSet(ResultSet rs) throws SQLException {
         List<TrainClass> results = new ArrayList<TrainClass>(10);
         while (rs.next()) {
@@ -426,6 +430,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         }
         return results;
     }
+
     public List<TrainClass> findOpenClassByFaculty(String FacultyCode) throws Exception {
         checkModelWellDefined();
         TrainClass t = new TrainClass();
@@ -447,22 +452,22 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
             rs = statement.executeQuery();
 
             while (rs.next()) {
-               // String classCode = rs.getString("MaLopHoc");
-               //TODO: Improve (Ham findById se mo mot Connection moi --> Not Good)
+                // String classCode = rs.getString("MaLopHoc");
+                //TODO: Improve (Ham findById se mo mot Connection moi --> Not Good)
                 // Nen tao ham findById moi, truyen Connection vao
                 // Hoac Tao cau query moi + dung Connection vua tao o tren de find
-               // TrainClass trainClass = findBy
+                // TrainClass trainClass = findBy
                 //
-               // results.add(trainClass);
-               Object[] obj = new Object[t.getColumnNames().length];
-               for (int j = 0; j < obj.length; j++) {
+                // results.add(trainClass);
+                Object[] obj = new Object[t.getColumnNames().length];
+                for (int j = 0; j < obj.length; j++) {
                     obj[j] = rs.getObject(t.getColumnNames()[j]);
                 }
-               TrainClass ti = new TrainClass();
-               TrainClassID id = createID();
-                for (int k = 0; k < idNames.length; k ++) {
+                TrainClass ti = new TrainClass();
+                TrainClassID id = createID();
+                for (int k = 0; k < idNames.length; k++) {
                     idValues[k] = rs.getObject(idNames[k]);
-                } 
+                }
                 id.setIDValues(idValues);
 
                 ti.setId(id);
@@ -478,6 +483,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         }
         return results;
     }
+
     public List<TrainClass> findCloseClassByFaculty(String FacultyCode) throws Exception {
         checkModelWellDefined();
         TrainClass t = new TrainClass();
@@ -499,22 +505,22 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
             rs = statement.executeQuery();
 
             while (rs.next()) {
-               // String classCode = rs.getString("MaLopHoc");
-               //TODO: Improve (Ham findById se mo mot Connection moi --> Not Good)
+                // String classCode = rs.getString("MaLopHoc");
+                //TODO: Improve (Ham findById se mo mot Connection moi --> Not Good)
                 // Nen tao ham findById moi, truyen Connection vao
                 // Hoac Tao cau query moi + dung Connection vua tao o tren de find
-               // TrainClass trainClass = findBy
+                // TrainClass trainClass = findBy
                 //
-               // results.add(trainClass);
-               Object[] obj = new Object[t.getColumnNames().length];
-               for (int j = 0; j < obj.length; j++) {
+                // results.add(trainClass);
+                Object[] obj = new Object[t.getColumnNames().length];
+                for (int j = 0; j < obj.length; j++) {
                     obj[j] = rs.getObject(t.getColumnNames()[j]);
                 }
-               TrainClass ti = new TrainClass();
-               TrainClassID id = createID();
-                for (int k = 0; k < idNames.length; k ++) {
+                TrainClass ti = new TrainClass();
+                TrainClassID id = createID();
+                for (int k = 0; k < idNames.length; k++) {
                     idValues[k] = rs.getObject(idNames[k]);
-                } 
+                }
                 id.setIDValues(idValues);
 
                 ti.setId(id);
@@ -530,13 +536,14 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         }
         return results;
     }
-    private void setSubjectAndLecturer(List<TrainClass> trainClass) throws Exception{
-    SubjectDAO subjectDao=new SubjectDAO();
-    LecturerDAO lecturerDao=new LecturerDAO();
-    for(int i=0;i<trainClass.size();i++){
-        trainClass.get(i).setSubjectName(subjectDao.findById(trainClass.get(i).getSubjectCode()).getSubjectName());
-        trainClass.get(i).setLectturerName(lecturerDao.findById(trainClass.get(i).getLecturerCode()).getFullName());
-        trainClass.get(i).setNumTC(subjectDao.findById(trainClass.get(i).getSubjectCode()).getnumTC() );
+
+    private void setSubjectAndLecturer(List<TrainClass> trainClass) throws Exception {
+        SubjectDAO subjectDao = new SubjectDAO();
+        LecturerDAO lecturerDao = new LecturerDAO();
+        for (int i = 0; i < trainClass.size(); i++) {
+            trainClass.get(i).setSubjectName(subjectDao.findById(trainClass.get(i).getSubjectCode()).getSubjectName());
+            trainClass.get(i).setLectturerName(lecturerDao.findById(trainClass.get(i).getLecturerCode()).getFullName());
+            trainClass.get(i).setNumTC(subjectDao.findById(trainClass.get(i).getSubjectCode()).getnumTC());
+        }
     }
-}
 }
