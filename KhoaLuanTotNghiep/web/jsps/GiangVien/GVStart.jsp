@@ -33,7 +33,7 @@
             <div id="content"><!--Main Contents-->
                 <div id="important-task">
                     <%
-                    if ((tasks != null) && !tasks.isEmpty()) {
+                        if ((tasks != null) && !tasks.isEmpty()) {
                     %>
                     <u><b>Tin quan trọng:</b></u>
                     <table class="general-table important-table">
@@ -44,31 +44,31 @@
                             <th> Ngày gửi </th>
                         </tr>
                         <%
-                        for (int i = 0; i < tasks.size(); i++) {
-                            Task t = tasks.get(i);
-                            SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_PARTERM_DEFAULT);
+                            for (int i = 0; i < tasks.size(); i++) {
+                                Task t = tasks.get(i);
+                                SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_PARTERM_DEFAULT);
                         %>
-                            <tr>
-                                <td> <%= (i + 1) %> </td>
-                                <td>
-                                    <%= t.getContent() %>
-                                    <div class="pop-up">
-                                        <span class="atag" onclick="hideTask(<%= t.getId() %>)"> Ẩn </span>
-                                    </div>
-                                </td>
-                                <td> <%= t.getSender() %> </td>
-                                <td> <%= sdf.format(t.getCreated()) %> </td>
-                            </tr>
+                        <tr>
+                            <td> <%= (i + 1)%> </td>
+                            <td>
+                                <%= t.getContent()%>
+                                <div class="pop-up">
+                                    <span class="atag" onclick="hideTask(<%= t.getId()%>)"> Ẩn </span>
+                                </div>
+                            </td>
+                            <td> <%= t.getSender()%> </td>
+                            <td> <%= sdf.format(t.getCreated())%> </td>
+                        </tr>
                         <%
-                        }
+                            }
                         %>
                     </table>
                     <div class="clear"></div>
                     <%
-                    }
+                        }
                     %>
                 </div>
-                 <%@include file="News.jsp" %>
+                <%@include file="News.jsp" %>
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
