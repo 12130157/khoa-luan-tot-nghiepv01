@@ -50,259 +50,265 @@
             <!--Main Contents-->
             <div id="content">
                 <%--Page's title--%>
-                <div id="title">
-                    <u> <h3> Trang chỉnh sửa thông tin Sinh Viên </h3></u>
+                <div id="main-title">
+                    Trang chỉnh sửa thông tin Sinh Viên
                 </div>
+                <br /><br /><br />
                 <p id="error">
 
                 </p>
 
                 <div id="import-student-one">
-                    <b><u>Phần nhập thông tin SV</u></b></br></br>
                     <div class="clear"></div>
                     <%-- Persional information input range --%>
-                    <div id="student-persional-info">
-                        <u>Thông tin căn bản</u>
-                        <table id="tbl-persional-info">
-                            <tr>
-                                <td> MSSV </td>
-                                <td> <input type="text" id="txt-mssv" readonly="readonly" onfocus="this.blur();" value="<%= student.getId() %>" /> </td>
-                            </tr>
-                            <tr>
-                                <td> Họ và tên </td>
-                                <td> <input type="text" id="txt-fullname" value="<%= student.getFullName() %>" /> </td>
-                            </tr>
-                            <tr>
-                                <td> Ngày sinh </td>
-                                <td>
-                                    <input type="text" id="txt-birthday" name="txt-birthday" value="<%= DateTimeUtil.format(student.getBirthday()) %>">
-                                    <img src="../../imgs/cal.gif" style="cursor: pointer;" onclick="javascript:NewCssCal('txt-birthday','YYMMMDD')" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> Giới tính </td>
-                                <td>
-                                    <select id="txt-gender" class="input-minwidth">
-                                        <%
-                                        String[] genders = new String[] {"Nam", "Nữ"};
-                                        for (int i = 0; i < 2; i++) {
-                                        %>
-                                            <option value="<%= genders[i]%>"
-                                                    <%
-                                                    if (student.getGender().equalsIgnoreCase(genders[i])) {
-                                                    %>
-                                                    selected="selected"
-                                                    <%
-                                                    }
-                                                    %>
-                                            >
-                                                <%= genders[i]%>
-                                            </option>
-                                        <%
-                                        }
-                                        %>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> CMND </td>
-                                <td> <input type="text" id="txt-cmnd" value="<%= student.getIdentityNumber() %>" /> </td>
-                            </tr>
-                            <tr>
-                                <td> Điện thoại </td>
-                                <td> <input type="tel" id="txt-phone" value="<%= student.getPhone() %>" /> </td>
-                            </tr>
-                            <tr>
-                                <td> Email </td>
-                                <td> <input type="emal" id="txt-email" value="<%= student.getEmail() %>"/> </td>
-                            </tr>
-                            <tr>
-                                <td> Quê quán </td>
-                                <td> 
-                                    <textarea id="txt-home" class="input-text-area">
-                                        <%= student.getHomeAddr() %>
-                                    </textarea> 
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> ĐC thường trú </td>
-                                <td> 
-                                    <textarea id="txt-address" class="input-text-area">
-                                        <%= student.getAddress() %>
-                                    </textarea> 
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    <%--Externam information at university--%>
-                    <div id="student-university-info">
-                        <u>Thông tin bổ sung</u>
-                        <table id="tbl-university-info">
-                            <tr>
-                                <td> Khoa </td>
-                                <td>
-                                    <select id="txt-faculty" class="input-minwidth" onchange="changeFaculty()">
-                                        <%
-                                        if ((faculties != null) && !faculties.isEmpty()) {
-                                            for (int i = 0; i < faculties.size(); i++) {
-                                                Faculty f = faculties.get(i);
-                                                %>
-                                                <option value="<%=f.getId()%>"
+                    <div class="range" style="float: left; width: 45%;">
+                        <h3>Thông tin căn bản</h3>
+                        <div id="student-persional-info">
+                            <table id="tbl-persional-info">
+                                <tr>
+                                    <td> MSSV </td>
+                                    <td> <input type="text" id="txt-mssv" readonly="readonly" onfocus="this.blur();" value="<%= student.getId() %>" /> </td>
+                                </tr>
+                                <tr>
+                                    <td> Họ và tên </td>
+                                    <td> <input type="text" id="txt-fullname" value="<%= student.getFullName() %>" /> </td>
+                                </tr>
+                                <tr>
+                                    <td> Ngày sinh </td>
+                                    <td>
+                                        <input type="text" id="txt-birthday" name="txt-birthday" value="<%= DateTimeUtil.format(student.getBirthday()) %>">
+                                        <img src="../../imgs/cal.gif" style="cursor: pointer;" onclick="javascript:NewCssCal('txt-birthday','YYMMMDD')" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td> Giới tính </td>
+                                    <td>
+                                        <select id="txt-gender" class="input-minwidth">
+                                            <%
+                                            String[] genders = new String[] {"Nam", "Nữ"};
+                                            for (int i = 0; i < 2; i++) {
+                                            %>
+                                                <option value="<%= genders[i]%>"
                                                         <%
-                                                        if (student.getFacultyCode().equalsIgnoreCase(f.getId())) {
+                                                        if (student.getGender().equalsIgnoreCase(genders[i])) {
                                                         %>
                                                         selected="selected"
                                                         <%
                                                         }
                                                         %>
-                                                        >
-                                                    <%= f.getFacultyName()%>
-                                                </option>
-                                                <%
-                                            }
-                                        }
-                                        %>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> Lớp </td>
-                                <td>
-                                    <select id="txt-class" class="input-minwidth">
-                                        <%
-                                        if ((clazzes != null) && !clazzes.isEmpty()) {
-                                            for (int i = 0; i < clazzes.size(); i++) {
-                                                uit.cnpm02.dkhp.model.Class clazz = clazzes.get(i);
-                                                %>
-                                                <option value="<%=clazz.getId()%>"
-                                                        <%
-                                                        if (student.getClassCode().equalsIgnoreCase(clazz.getId())) {
-                                                        %>selected="selected"<%
-                                                        }
-                                                        %>
-                                                        >
-                                                    <%= clazz.getClassName()%>
-                                                </option>
-                                                <%
-                                            }
-                                        }
-                                        %>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> Khóa </td>
-                                <td>
-                                    <select id="txt-course" class="input-minwidth">
-                                        <%
-                                        if ((courses != null) && !courses.isEmpty()) {
-                                            for (int i = 0; i < courses.size(); i++) {
-                                                Course c = courses.get(i);
-                                                %>
-                                                <option value="<%=c.getId()%>"
-                                                        <%
-                                                        if (student.getCourseCode().equalsIgnoreCase(c.getId())) {
-                                                        %>selected="selected"<%
-                                                        }
-                                                        %>
-                                                        >
-                                                    <%= c.getYearIn() + " - " + c.getYearOut() %>
-                                                </option>
-                                                <%
-                                            }
-                                        }
-                                        %>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> Tình trạng </td>
-                                <td>
-                                    <select id="txt-status" class="input-minwidth">
-                                        <%
-                                        // Retrieve Student status
-                                        for(StudentStatus st : EnumSet.allOf(StudentStatus.class)) {
-                                        %>
-                                        <option value="<%= st.value()%>"
-                                                <%
-                                                if (student.getStatus().equalsIgnoreCase(st.description())) {
-                                                %>selected="selected"<%
-                                                }
-                                                %>
                                                 >
-                                            <%= st.description()%>
-                                        </option>
-                                        <%}%>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> Bậc học </td>
-                                <td>
-                                    <select id="txt-study-level" class="input-minwidth">
-                                        <%
-                                        // Retrieve study level (Bậc học)
-                                        for(StudyLevel sl : EnumSet.allOf(StudyLevel.class)) {
-                                        %>
-                                        <option value="<%= sl.value()%>"
-                                                <%
-                                                if (student.getStudyLevel().equalsIgnoreCase(sl.description())) {
-                                                %>selected="selected"<%
+                                                    <%= genders[i]%>
+                                                </option>
+                                            <%
+                                            }
+                                            %>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td> CMND </td>
+                                    <td> <input type="text" id="txt-cmnd" value="<%= student.getIdentityNumber() %>" /> </td>
+                                </tr>
+                                <tr>
+                                    <td> Điện thoại </td>
+                                    <td> <input type="tel" id="txt-phone" value="<%= student.getPhone() %>" /> </td>
+                                </tr>
+                                <tr>
+                                    <td> Email </td>
+                                    <td> <input type="emal" id="txt-email" value="<%= student.getEmail() %>"/> </td>
+                                </tr>
+                                <tr>
+                                    <td> Quê quán </td>
+                                    <td> 
+                                        <textarea id="txt-home" class="input-text-area">
+                                            <%= student.getHomeAddr() %>
+                                        </textarea> 
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td> ĐC thường trú </td>
+                                    <td> 
+                                        <textarea id="txt-address" class="input-text-area">
+                                            <%= student.getAddress() %>
+                                        </textarea> 
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <%--Externam information at university--%>
+                    <div class="range" style="float: left; width: 45%; margin-left: 30px;">
+                        <h3>Thông tin bổ sung</h3>
+                        <div id="student-university-info">
+                            <table id="tbl-university-info">
+                                <tr>
+                                    <td> Khoa </td>
+                                    <td>
+                                        <select id="txt-faculty" class="input-minwidth" onchange="changeFaculty()">
+                                            <%
+                                            if ((faculties != null) && !faculties.isEmpty()) {
+                                                for (int i = 0; i < faculties.size(); i++) {
+                                                    Faculty f = faculties.get(i);
+                                                    %>
+                                                    <option value="<%=f.getId()%>"
+                                                            <%
+                                                            if (student.getFacultyCode().equalsIgnoreCase(f.getId())) {
+                                                            %>
+                                                            selected="selected"
+                                                            <%
+                                                            }
+                                                            %>
+                                                            >
+                                                        <%= f.getFacultyName()%>
+                                                    </option>
+                                                    <%
                                                 }
-                                                %>
-                                                >
-                                            <%= sl.description()%>
-                                        </option>
-                                        <%}%>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> Ngày nhập học </td>
-                                <td>
-                                    <%--
-                                    SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_PARTERM_DEFAULT);
-                                    Date today = Calendar.getInstance().getTime();
-                                    String aaa = sdf.format(today);
-                                    String d = sdf.format(new Date());
-                                    --%>
-                                    <input type="text" id="txt-date-enter" name="txt-date-enter" value="<%= DateTimeUtil.format(student.getDateStart()) %>"/>
-                                    <img src="../../imgs/cal.gif" style="cursor: pointer;" onclick="javascript:NewCssCal('txt-date-enter','YYMMMDD')" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> Loại hình học </td>
-                                <td>
-                                    <select id="txt-study-type" class="input-minwidth">
-                                        <%
-                                        // Retrieve study type.
-                                        for(StudyType st : EnumSet.allOf(StudyType.class)) {
-                                        %>
-                                        <option value="<%= st.value()%>"
-                                                <%
-                                                if (student.getStudyType().equalsIgnoreCase(st.description())) {
-                                                %>selected="selected"<%
+                                            }
+                                            %>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td> Lớp </td>
+                                    <td>
+                                        <select id="txt-class" class="input-minwidth">
+                                            <%
+                                            if ((clazzes != null) && !clazzes.isEmpty()) {
+                                                for (int i = 0; i < clazzes.size(); i++) {
+                                                    uit.cnpm02.dkhp.model.Class clazz = clazzes.get(i);
+                                                    %>
+                                                    <option value="<%=clazz.getId()%>"
+                                                            <%
+                                                            if (student.getClassCode().equalsIgnoreCase(clazz.getId())) {
+                                                            %>selected="selected"<%
+                                                            }
+                                                            %>
+                                                            >
+                                                        <%= clazz.getClassName()%>
+                                                    </option>
+                                                    <%
                                                 }
-                                                %>
-                                                >
-                                            <%= st.description()%>
-                                        </option>
-                                        <%}%>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> Ghi chú </td>
-                                <td> <input type="text" id="txt-note" value="<%= student.getNote() %>"/> </td>
-                            </tr>
-                        </table>
+                                            }
+                                            %>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td> Khóa </td>
+                                    <td>
+                                        <select id="txt-course" class="input-minwidth">
+                                            <%
+                                            if ((courses != null) && !courses.isEmpty()) {
+                                                for (int i = 0; i < courses.size(); i++) {
+                                                    Course c = courses.get(i);
+                                                    %>
+                                                    <option value="<%=c.getId()%>"
+                                                            <%
+                                                            if (student.getCourseCode().equalsIgnoreCase(c.getId())) {
+                                                            %>selected="selected"<%
+                                                            }
+                                                            %>
+                                                            >
+                                                        <%= c.getYearIn() + " - " + c.getYearOut() %>
+                                                    </option>
+                                                    <%
+                                                }
+                                            }
+                                            %>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td> Tình trạng </td>
+                                    <td>
+                                        <select id="txt-status" class="input-minwidth">
+                                            <%
+                                            // Retrieve Student status
+                                            for(StudentStatus st : EnumSet.allOf(StudentStatus.class)) {
+                                            %>
+                                            <option value="<%= st.value()%>"
+                                                    <%
+                                                    if (student.getStatus().equalsIgnoreCase(st.description())) {
+                                                    %>selected="selected"<%
+                                                    }
+                                                    %>
+                                                    >
+                                                <%= st.description()%>
+                                            </option>
+                                            <%}%>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td> Bậc học </td>
+                                    <td>
+                                        <select id="txt-study-level" class="input-minwidth">
+                                            <%
+                                            // Retrieve study level (Bậc học)
+                                            for(StudyLevel sl : EnumSet.allOf(StudyLevel.class)) {
+                                            %>
+                                            <option value="<%= sl.value()%>"
+                                                    <%
+                                                    if (student.getStudyLevel().equalsIgnoreCase(sl.description())) {
+                                                    %>selected="selected"<%
+                                                    }
+                                                    %>
+                                                    >
+                                                <%= sl.description()%>
+                                            </option>
+                                            <%}%>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td> Ngày nhập học </td>
+                                    <td>
+                                        <%--
+                                        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_PARTERM_DEFAULT);
+                                        Date today = Calendar.getInstance().getTime();
+                                        String aaa = sdf.format(today);
+                                        String d = sdf.format(new Date());
+                                        --%>
+                                        <input type="text" id="txt-date-enter" name="txt-date-enter" value="<%= DateTimeUtil.format(student.getDateStart()) %>"/>
+                                        <img src="../../imgs/cal.gif" style="cursor: pointer;" onclick="javascript:NewCssCal('txt-date-enter','YYMMMDD')" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td> Loại hình học </td>
+                                    <td>
+                                        <select id="txt-study-type" class="input-minwidth">
+                                            <%
+                                            // Retrieve study type.
+                                            for(StudyType st : EnumSet.allOf(StudyType.class)) {
+                                            %>
+                                            <option value="<%= st.value()%>"
+                                                    <%
+                                                    if (student.getStudyType().equalsIgnoreCase(st.description())) {
+                                                    %>selected="selected"<%
+                                                    }
+                                                    %>
+                                                    >
+                                                <%= st.description()%>
+                                            </option>
+                                            <%}%>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td> Ghi chú </td>
+                                    <td> <input type="text" id="txt-note" value="<%= student.getNote() %>"/> </td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                     <div class="clear"></div>
-                    <div id="import-student-button">
-                        <%--input type="button" value="Kiểm tra" onclick="checkAddOneStudent()" /--%>
-                        <input type="button" value="Cập nhật" onclick="updateStudent()" />
+                    <div id="update-result" style="text-align: center;"></div>
+                    <div id="import-student-button" class="button-1">
+                        <span class="atag" onclick="updateStudent()" ><img src="../../imgs/icon/update.png" />Cập nhật</span>
                     </div>
-                    <div id="update-result"></div>
+                    <br />
+                    
                 </div>
             </div><!--End Contents-->
             <!--Footer-->

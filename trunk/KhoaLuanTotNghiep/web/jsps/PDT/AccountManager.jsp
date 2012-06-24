@@ -201,8 +201,8 @@
                             </table>
                             <%-- Button Submit update --%>
                             <br/>
-                            <div style="float: left; padding-left: 220px;">
-                                <input type="button" onclick="createNew()" value="Tạo mới" />
+                            <div class="button-1">
+                                <span class="atag" onclick="createNew()" ><img src="../../imgs/check.png" />Tạo mới</span>
                             </div>
                             <div class="clear"></div>
                             <br/>
