@@ -105,10 +105,11 @@
             <%--Menu--%>
             <%@include file="Menu.jsp" %>
             <%--Main Navigation--%>
-            <div id="mainNav">
+            <%--<div id="mainNav">
                 <%@include file="MainNav.jsp" %>
             </div><!--End Navigation-->
-            <div id="content"><!--Main Contents-->
+            --%>
+            <%--<div id="content"><!--Main Contents-->--%>
                 <form name="myform" id="myform" method="post" action="../Login?function=login">
                     <div class="pop_login">
                        <div class="pop_login_top">
@@ -155,13 +156,6 @@
                              <a href="javascript: void(0)" onclick="Login()">
                                  Đăng nhập</a>
                          </div>
-                         
-                         <%--
-                         <div class="forget_ct">
-                             <a href="img///forgotpass" class="nyroModal">Quên mật khẩu</a> | 
-                             <a href="img///register">Đăng kí</a>
-                         </div>
-                         --%>
                          <%
                         String error = (String) session.getAttribute("error");
                             if (error != null) {
@@ -178,55 +172,12 @@
                      </div>
                     </table>
                 </form>
-                     <br /><br />
-                <%--
-                <form name="myform" id="myform" method="post" action="../Login?function=login">
-                    <table>
-                        <tr>
-                            <td>Tên Đăng Nhập</td>
-                            <td>
-                                <input type="text" name="txtUsername" id="txtUsername" onKeyPress="keypressed()"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Mật Khẩu</td>
-                            <td>
-                                <input type="password" name="txtPassword" id="txtPassword" onKeyPress="keypressed()"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td>
-                                <input type="checkbox" name="chkRemember"/> Nhớ tên truy cập
-                            </td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td>
-                                <input type="button" style="color: #000000; font-style: oblique; font-size: 15px; font-variant: inherit" name="login-submit" onclick="Login()" value="Đăng Nhập"/>
-                            </td>
-                        </tr>
-                        <%
-                        String error = (String) session.getAttribute("error");
-                            if (error != null) {
-                                session.removeAttribute("error");
-                        %>
-                            <tr style="padding-top: 20px; background-color: #ff3edf">
-                                <td colspan="2" align="center" style="font-size: 12px"> <%=error%></td>
-                            </tr>
-                        <%
-                         }
-                        %>
-                        
-                    </table>
-                </form>
-                --%>
+                <br />
             </div><!--End Contents-->
-
             <div id="footer"><!--Footer-->
                 <%@include file="Footer.jsp" %>
             </div><!--End footer-->
-        </div>
+        <%--</div>--%>
         <!--End Wrapper-->
       </body>
     
