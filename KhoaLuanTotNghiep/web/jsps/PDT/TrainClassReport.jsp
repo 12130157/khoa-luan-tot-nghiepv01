@@ -38,7 +38,7 @@
             </div><!--End Navigation-->
             <!--Main Contents-->
             <div id="content">
-                <div id="title">
+                <div id="main-title">
                     Chi tiết lớp học:<b> <%= trainClass.getId().getClassCode()%>
                     <u> (<%=trainClass.getSubjectName()%>)</u></b>
                 </div>
