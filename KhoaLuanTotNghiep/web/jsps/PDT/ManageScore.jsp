@@ -44,16 +44,6 @@
                 margin-right: 25px;
             }
             
-            #btn-submit-score {
-                margin-left: 175px;
-                text-align: center;
-                width: 100px;
-                background: #175F6E;
-            }
-            
-            #btn-submit-score:hover{
-                background: #22de33;
-            }
             #import-from-file-result {
                 font-size: 11px;
                 max-height: 500px;
@@ -75,7 +65,7 @@
             <!--Main Contents-->
             <div id="content">
                 <%-- Title --%>
-                <div id="title">
+                <div id="main-title">
                     Trang quản lý điểm Sinh Viên
                 </div>
                 <%--List file--%>
@@ -94,8 +84,8 @@
                     
                         <%-- Result --%>
                         <div class="clear"> <br /> </div>
-                        <div id="btn-submit-score">
-                            <span class="atag" onclick="doImportScoreFromFile('tbl-file-from-lecturer')" >Submit</span>
+                        <div class="button-1">
+                            <span class="atag" onclick="doImportScoreFromFile('tbl-file-from-lecturer')" ><img src="../../imgs/check.png"/>Submit</span>
                         </div>
                         <%-- Result --%>
                         <div class="clear"></div>
@@ -133,7 +123,9 @@
                         <br />
                         <div id="send-request-result">
                         </div>
-                        <input type="button" onclick="sendRequest()" value="Gửi yêu cầu"/>
+                        <div class="button-1">
+                            <span class="atag" onclick="sendRequest()" ><img src="../../imgs/check.png"/>Gửi yêu cầu</span>
+                        </div>
                     </div>
                 </div>
                 <br />
