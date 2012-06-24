@@ -575,8 +575,8 @@ public class ManageStudentController extends HttpServlet {
                         + "<td>" + DateTimeUtil.format(students.get(i).getBirthday()) + "</td>"
                         + "<td>" + students.get(i).getGender() + "</td>"
                         + "<td>" + students.get(i).getStudyType() + "</td>"
-                        + "<td>" + "<a href=\"../../ManageStudentController?function=editstudent&mssv=" + students.get(i).getId() + "\">Sửa</a></td>"
-                        + "<td><span class=\"atag\" onclick=\"deleteOneStudent('" + students.get(i).getId() + "')\">Xóa</span></td>"
+                        + "<td>" + "<a href=\"../../ManageStudentController?function=editstudent&mssv=" + students.get(i).getId() + "\"><img src=\"../../imgs/icon/edit.png\" title=\"Sửa\" alt=\"Sửa\"/></a></td>"
+                        + "<td><span class=\"atag\" onclick=\"deleteOneStudent('" + students.get(i).getId() + "')\"><img src=\"../../imgs/icon/delete.png\" title=\"Xóa\" alt=\"Xóa\"/></span></td>"
                         + "</tr>");
             }
         }
