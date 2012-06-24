@@ -11,7 +11,7 @@
     "http://www.w3.org/TR/html4/loose.dtd">
 <%
     News newsDetail = (News) session.getAttribute("newsdetail");
-    
+
 %>
 <html>
     <head>
@@ -30,13 +30,13 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-               <%
+                <%
                     if (newsDetail != null) {
-                        %>
-                        <h1><%=newsDetail.getTitle()%></h1><br>
-                        <%=newsDetail.getContent()%>
-                   <% }
-                        
+                %>
+                <h1><%=newsDetail.getTitle()%></h1><br>
+                <%=newsDetail.getContent()%>
+                <% }
+
                 %>
             </div><!--End Contents-->
 

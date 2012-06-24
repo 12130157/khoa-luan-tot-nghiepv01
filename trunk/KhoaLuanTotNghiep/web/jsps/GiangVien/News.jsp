@@ -29,30 +29,30 @@
                     News n = listNews.get(i);
                     if (listNews.get(i).getType() == Constants.NEWS_TYPE_UNREAD) {
         %>
-                <div id="new-range">
-                <div id="image">
-                    <%
-                        if ((n.getImgPath() != null) && !n.getImgPath().isEmpty()) {
-                            %>
-                            <img src="<%= "../" + n.getImgPath() %>" alt="<%= n.getTitle() %>" />
-                            <%
-                        }
-                    %>
-                </div>
-                <div id="title">
-                    <a href="../NewsController?Actor=normal&action=detail&Id=<%=n.getId()%>"><%=n.getTitle()%></a><br>
-                </div>
-                <div id="short-description">
-                <%=(n.getContent().length() >= 200 ? n.getContent().substring(0, 200)+"..." : n.getContent())%><br>
-                </div>
-                <div id="new-to-detail">
-                    <a href="../NewsController?Actor=normal&action=detail&Id=<%=n.getId()%>"> Chi tiết </a>
-                </div>
-                </div>
-                <div class="clear"></div>
-                <%}
-                        }
+        <div id="new-range">
+            <div id="image">
+                <%
+                    if ((n.getImgPath() != null) && !n.getImgPath().isEmpty()) {
+                %>
+                <img src="<%= "../" + n.getImgPath()%>" alt="<%= n.getTitle()%>" />
+                <%
                     }
                 %>
+            </div>
+            <div id="title">
+                <a href="../NewsController?Actor=normal&action=detail&Id=<%=n.getId()%>"><%=n.getTitle()%></a><br>
+            </div>
+            <div id="short-description">
+                <%=(n.getContent().length() >= 200 ? n.getContent().substring(0, 200) + "..." : n.getContent())%><br>
+            </div>
+            <div id="new-to-detail">
+                <a href="../NewsController?Actor=normal&action=detail&Id=<%=n.getId()%>"> Chi tiết </a>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <%}
+                }
+            }
+        %>
     </body>
 </html>
