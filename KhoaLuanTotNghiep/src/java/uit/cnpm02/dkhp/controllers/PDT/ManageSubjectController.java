@@ -314,8 +314,8 @@ private void filterSubjectList(PrintWriter out ,String sessionId, int currentPag
                         + "<td>" + subjects.get(i).getnumTCLT() + "</td>"
                         + "<td>" + subjects.get(i).getnumTCTH() + "</td>"
                         + "<td>" + type + "</td>"
-                        + "<td><a href = \"../../ManageSubjectController?function=edit_subject&subject_code=" + subjects.get(i).getId() + "\">Sửa</a></td>"
-                        + "<td><span class='atag' "+method+">Xóa</span></td></tr>"
+                        + "<td><a href = \"../../ManageSubjectController?function=edit_subject&subject_code=" + subjects.get(i).getId() + "\"> <img src=\"../../imgs/icon/edit.png\" title=\"Sửa\" alt=\"Sửa\"/> </a></td>"
+                        + "<td><span class='atag' "+method+"><img src=\"../../imgs/icon/delete.png\" title=\"Xóa\" alt=\"Xóa\"/></span></td></tr>"
                         + "</tr>";
                 out.println(currentLine);
             }
