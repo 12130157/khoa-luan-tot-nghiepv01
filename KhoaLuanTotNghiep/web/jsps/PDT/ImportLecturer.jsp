@@ -56,131 +56,138 @@
             </div><!--End Navigation-->
             <!--Main Contents-->
             <div id="content">
-                <div style="text-align: center;">
+                <div id="main-title">
                     Trang nhập Giảng Viên
                 </div>
-                <br>
-                <hr/><hr/><br>
-                <div id="btn-hide-import-form" class="clear-right">
-                    <span onclick="hideStuff('import-lecturer-one', 'btn-hide-import-form', 'Thêm GV', 'Ẩn')"
-                          class="atag"> Ẩn 
-                    </span>
-                </div>
-                <div id="import-lecturer-one">
-                    <b><u>Phần nhập thông tin Giảng viên</u></b></br></br>
-                    <div class="clear"></div>
-                    <%-- Persional information input range --%>
-                    <div id="lecturer-persional-info">
-                        <table id="tbl-persional-info">
-                            <tr>
-                                <%
-                                String year = "" + Calendar.getInstance().get(Calendar.YEAR);
-                                year = year.substring(2); // get 2 last number
-                                %>
-                                <td> Mã GV </td>
-                                <td> <input type="text" id="txt-magv" value="<%=year%>520" /> </td>
-                            </tr>
-                            <tr>
-                                <td> Họ và tên </td>
-                                <td> <input type="text" id="txt-fullname"/> </td>
-                            </tr>
-                            <tr>
-                                <td> Ngày sinh </td>
-                                <td>
-                                    <input type="text" id="txt-birthday" name="txt-birthday">
-                                    <img src="../../imgs/cal.gif" style="cursor: pointer;" onclick="javascript:NewCssCal('txt-birthday','YYMMMDD')" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> Giới tính </td>
-                                <td>
-                                    <select id="txt-gender" class="input-minwidth">
-                                        <option value="Nam"> Nam </option>
-                                        <option value="Nữ"> Nữ </option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> CMND </td>
-                                <td> <input type="text" id="txt-cmnd"/> </td>
-                            </tr>
-                            <tr>
-                                <td> Điện thoại </td>
-                                <td> <input type="text" id="txt-phone"/> </td>
-                            </tr>
-                            <tr>
-                                <td> Email </td>
-                                <td> <input type="text" id="txt-email"/> </td>
-                            </tr>
-                            <tr>
-                                <td> Quê quán </td>
-                                <td> 
-                                    <textarea id="txt-home" class="input-text-area">
-                                    </textarea> 
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> Khoa </td>
-                                <td> 
-                                    <select id="txt-faculty" class="input-minwidth" onchange="changeFaculty()">
-                                        <%
-                                        if ((faculties != null) && !faculties.isEmpty()) {
-                                            for (int i = 0; i < faculties.size(); i++) {
-                                                Faculty f = faculties.get(i);
-                                                %>
-                                                <option value="<%=f.getId()%>"> <%= f.getFacultyName()%> </option>
-                                                <%
+                <br /><br />
+                <%-- Form import one --%>
+                <div class="range">
+                    <h3><span id="btn-open-form-import-lecturer" class="atag">
+                            Thêm GV
+                    </span></h3>
+                    <div id="import-lecturer-one">
+                        <b><u>Phần nhập thông tin GV</u></b></br></br>
+                        <div class="clear"></div>
+                        <%-- Persional information input range --%>
+                        <div id="lecturer-persional-info">
+                            <table id="tbl-persional-info">
+                                <tr>
+                                    <%
+                                    String year = "" + Calendar.getInstance().get(Calendar.YEAR);
+                                    year = year.substring(2); // get 2 last number
+                                    %>
+                                    <td> Mã GV </td>
+                                    <td> <input type="text" id="txt-magv" value="<%=year%>520" /> </td>
+                                </tr>
+                                <tr>
+                                    <td> Họ và tên </td>
+                                    <td> <input type="text" id="txt-fullname"/> </td>
+                                </tr>
+                                <tr>
+                                    <td> Ngày sinh </td>
+                                    <td>
+                                        <input type="text" id="txt-birthday" name="txt-birthday">
+                                        <img src="../../imgs/cal.gif" style="cursor: pointer;" onclick="javascript:NewCssCal('txt-birthday','YYMMMDD')" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td> Giới tính </td>
+                                    <td>
+                                        <select id="txt-gender" class="input-minwidth">
+                                            <option value="Nam"> Nam </option>
+                                            <option value="Nữ"> Nữ </option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td> CMND </td>
+                                    <td> <input type="text" id="txt-cmnd"/> </td>
+                                </tr>
+                                <tr>
+                                    <td> Điện thoại </td>
+                                    <td> <input type="text" id="txt-phone"/> </td>
+                                </tr>
+                                <tr>
+                                    <td> Email </td>
+                                    <td> <input type="text" id="txt-email"/> </td>
+                                </tr>
+                                <tr>
+                                    <td> Quê quán </td>
+                                    <td> 
+                                        <textarea id="txt-home" class="input-text-area">
+                                        </textarea> 
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td> Khoa </td>
+                                    <td> 
+                                        <select id="txt-faculty" class="input-minwidth" onchange="changeFaculty()">
+                                            <%
+                                            if ((faculties != null) && !faculties.isEmpty()) {
+                                                for (int i = 0; i < faculties.size(); i++) {
+                                                    Faculty f = faculties.get(i);
+                                                    %>
+                                                    <option value="<%=f.getId()%>"> <%= f.getFacultyName()%> </option>
+                                                    <%
+                                                }
                                             }
-                                        }
-                                        %>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> Học Hàm </td>
-                                <td>
-                                    <select id="txt-hocham" class="input-minwidth">
-                                        <%
-                                        // Retrieve Student status
-                                        for(HocHam st : EnumSet.allOf(HocHam.class)) {
-                                        %>
-                                        <option value="<%= st.value()%>"> <%= st.description()%> </option>
-                                        <%}%>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> Học vị </td>
-                                <td> 
-                                    <select id="txt-hocvi" class="input-minwidth">
-                                        <%
-                                        // Retrieve Student status
-                                        for(HocVi st : EnumSet.allOf(HocVi.class)) {
-                                        %>
-                                        <option value="<%= st.value()%>"> <%= st.description()%> </option>
-                                        <%}%>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td> Ghi chú </td>
-                                <td> 
-                                    <textarea id="txt-note" class="input-text-area">
-                                    </textarea> 
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    
-                    <div class="clear"></div>
-                    <div id="import-student-button">
-                        <input type="button" value="Kiểm tra" onclick="checkAddOneLecturer()" />
-                        <input type="button" value="Thêm GV" onclick="addLecturerFromForm()" />
-                    </div>
-                    <%--div id="error"></div--%>
-                    <div id="add-from-table-result"></div>
-                    <div class="clear"></div>
-                    <div id="add-one-result" style="padding-top: 12px;">
+                                            %>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td> Học Hàm </td>
+                                    <td>
+                                        <select id="txt-hocham" class="input-minwidth">
+                                            <%
+                                            // Retrieve Student status
+                                            for(HocHam st : EnumSet.allOf(HocHam.class)) {
+                                            %>
+                                            <option value="<%= st.value()%>"> <%= st.description()%> </option>
+                                            <%}%>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td> Học vị </td>
+                                    <td> 
+                                        <select id="txt-hocvi" class="input-minwidth">
+                                            <%
+                                            // Retrieve Student status
+                                            for(HocVi st : EnumSet.allOf(HocVi.class)) {
+                                            %>
+                                            <option value="<%= st.value()%>"> <%= st.description()%> </option>
+                                            <%}%>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td> Ghi chú </td>
+                                    <td> 
+                                        <textarea id="txt-note" class="input-text-area">
+                                        </textarea> 
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <%-- Button check and add lecturer from form --%>
+                        <div class="clear"></div>
+                        <div id="btn-check-and-add-lecturer" style="margin-left: 25px; width: 265px;">
+                            <div id="btn-check-add-one-lecturer" style="float: left;">
+                                <div class="button-1">
+                                    <span class="atag" onclick="checkAddOneLecturer()" ><img src="../../imgs/check.png" />Kiểm tra</span>
+                                </div>
+                            </div>
+                            <div id="btn-add-one-lecturer" style="float: left; padding-left: 12px;">
+                                <div class="button-1">
+                                    <span class="atag" onclick="addLecturerFromForm()" ><img src="../../imgs/check.png" />Thêm SV</span>
+                                </div>
+                            </div>
+                        </div>
+                        <%--div id="error"></div--%>
+                        <div id="add-from-table-result"></div>
+                        <div class="clear"></div>
+                        <div id="add-one-result" style="padding-top: 12px;">
                             <%-- 
                                 After submit to add one lecturer from form
                                 User expect to see result here
@@ -188,29 +195,30 @@
                                 to cancel action...
                             --%>
                         </div>
-                </div>
-                
-                <div class="clear"></div>
-
-                <br />
-                <hr /><hr />
-                <%-- Import from File --%>
-                <div id="file-import">
-                    <div id="btn-show-import-file" class="clear-right">
-                        <span onclick="showStuff('import-lecturer-from-file', 'btn-show-import-file', 'Thêm từ file', 'Ẩn')"
-                              class="atag"> Thêm từ file 
-                        </span>
                     </div>
-                    <div id="import-lecturer-from-file">
+                </div>
+                <div class="clear"></div>
+                <%-- Import from File --%>
+                <div class="range">
+                    <h3><span id="btn-import-lecturer-from-file" class="atag">
+                        Thêm từ file 
+                    </span></h3>
+                    <div id="form-import-lecturer-from-file">
                         <form id="importFromFile" 
                               action="../../ManageLecturerController?function=importfromfile&import-as-possible=false"
                               method="post" name="importFromFile" enctype="multipart/form-data">
                             <u>Chọn File</u>
                             <table id="tblFromFile">
                                 <tr><td><input type="file" name="txtPath" id="txtPath"></td></tr>
-                                <tr><td><input type="submit" value="Hoàn thành"></td></tr>
+                                <tr>
+                                    <td>
+                                        <div class="button-1" style="margin-left: 3px !important; padding:3px; margin-top: 15px;">
+                                            <span class="atag" onclick="submitImportLecturerFromFile()" ><img src="../../imgs/check.png" />Hoàn thành</span>
+                                        </div>
+                                    </td>
+                                </tr>
                             </table>
-                        </form><br>
+                        </form>
                         <div id="import-from-file-result">
                             <%-- Show response result --%>
                             <%
@@ -275,19 +283,19 @@
                             } //Eend if
                             %>
                             <%--------------------%>
-                                
                         </div>
                         <%--Show file format--%>
-                        <div id="btn-show-file-format" class="clear-right">
-                            <span onclick="showStuff('file-format-view', 'btn-show-file-format', 'File format', 'Ẩn')"
-                                  class="atag"> File format 
+                        <div class="clear"></div>
+                        <br />
+                        <div class="range" style="margin:0 0 10px !important; width: 98%; ">
+                            <span id="btn-show-file-format" class="atag">
+                                File format
                             </span>
-                        </div>
-                        <div id="file-format-view" class="short_sidebar">
-                            <img src="../../imgs/form_format/import_lecturer_format_file.PNG"/>
+                            <div id="file-format-view" class="short_sidebar">
+                                <img src="../../imgs/form_format/import_lecturer_format_file.PNG"/>
+                            </div>
                         </div>
                     </div>
-                    
                 </div>
             </div><!--End Contents-->
 
@@ -304,21 +312,34 @@
 
     <script src="../../javascripts/UtilTable.js"> </script>
     <script src="../../javascripts/AjaxUtil.js"></script>
+    <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
     <SCRIPT language="javascript">
         var http = createRequestObject();
-        window.onload = doAfterPageLoaded; 
-        function doAfterPageLoaded() {
-            var isFormStudentInfoHidden = document.getElementById("is-respone-for-import-from-file").value;
-            var hiddenValue = '';
-            try {
-                hiddenValue = document.getElementById("btn-hide-import-form").value;
-            } catch (err) {
-                //
+        $("#btn-open-form-import-lecturer").click(function () {
+            $('#import-lecturer-one').slideToggle(500);
+        });
+        
+        $("#btn-import-lecturer-from-file").click(function () {
+            $('#form-import-lecturer-from-file').slideToggle(500);
+        });
+        
+        $("#btn-show-file-format").click(function () {
+            $('#file-format-view').slideToggle(500);
+        });
+        
+        function submitImportLecturerFromFile() {
+            var path = document.getElementById("txtPath").value;
+            if (path.length == 0) {
+                alert("Hãy chọn file trước khi submit.");
+                return;
             }
-            //if ((isFormStudentInfoHidden == 'true') && (hiddenValue == 'Ẩn')) {
-                hideStuff('import-lecturer-one', 'btn-hide-import-form', 'Thêm GV', 'Ẩn');
-            //}
-            showStuff('import-lecturer-from-file', 'btn-show-import-file', 'Thêm từ file', 'Ẩn');
+            
+            if (path.indexOf(".xls") < 0) {
+                alert("Hiện tại hệ thống chỉ hỗ trợ file .xls");
+                return;
+            }
+            
+            document.forms["importFromFile"].submit();
         }
         
         function validateData() {
