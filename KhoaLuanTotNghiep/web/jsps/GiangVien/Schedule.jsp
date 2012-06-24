@@ -11,15 +11,15 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 <%
-String year=(String) session.getAttribute("year");
-Integer semester=(Integer) session.getAttribute("semester");
- List<TrainClass> monday=(List<TrainClass>)session.getAttribute("monday");
- List<TrainClass> tuesday=(List<TrainClass>)session.getAttribute("tuesday");
- List<TrainClass> wednesday=(List<TrainClass>)session.getAttribute("wednesday");
- List<TrainClass> thursday=(List<TrainClass>)session.getAttribute("thursday");
- List<TrainClass> friday=(List<TrainClass>)session.getAttribute("friday");
- List<TrainClass> saturday=(List<TrainClass>)session.getAttribute("saturday");
- Lecturer lecturer = (Lecturer) session.getAttribute("lecturer");
+    String year = (String) session.getAttribute("year");
+    Integer semester = (Integer) session.getAttribute("semester");
+    List<TrainClass> monday = (List<TrainClass>) session.getAttribute("monday");
+    List<TrainClass> tuesday = (List<TrainClass>) session.getAttribute("tuesday");
+    List<TrainClass> wednesday = (List<TrainClass>) session.getAttribute("wednesday");
+    List<TrainClass> thursday = (List<TrainClass>) session.getAttribute("thursday");
+    List<TrainClass> friday = (List<TrainClass>) session.getAttribute("friday");
+    List<TrainClass> saturday = (List<TrainClass>) session.getAttribute("saturday");
+    Lecturer lecturer = (Lecturer) session.getAttribute("lecturer");
 %>
 <html>
     <head>
@@ -55,7 +55,7 @@ Integer semester=(Integer) session.getAttribute("semester");
             #detail th{
                 text-align: center;
             }
-          </style>
+        </style>
     </style>
 </head>
 <body>
@@ -80,121 +80,121 @@ Integer semester=(Integer) session.getAttribute("semester");
                         <th><b><u>Thứ 2:</u></b></th><th></th><th></th><th></th><th></th><th></th>
                     </tr>   
                     <%
-                     for(int i=0; i<monday.size();i++){%>
+                        for (int i = 0; i < monday.size(); i++) {%>
                     <tr>
                         <td></td>
                         <td><%=monday.get(i).getId().getClassCode()%></td>
                         <td><%=monday.get(i).getSubjectName()%></td>
                         <td><%=monday.get(i).getClassRoom()%></td>
-                        <%if(monday.get(i).getShift()==1){%>
+                        <%if (monday.get(i).getShift() == 1) {%>
                         <td>Sáng</td>
-                        <%}else{%>
+                        <%} else {%>
                         <td>Chiều</td>
                         <%}%>
                         <td><%=monday.get(i).getLectturerName()%></td>
                     </tr> 
                     <%
-                     }
+                        }
                     %>
                     <tr>
                         <th><b><u>Thứ 3:</u></b></th><th></th><th></th><th></th><th></th><th></th>
                     </tr>   
                     <%
-                     for(int i=0; i<tuesday.size();i++){%>
+                        for (int i = 0; i < tuesday.size(); i++) {%>
                     <tr>
                         <td></td>
                         <td><%=tuesday.get(i).getId().getClassCode()%></td>
                         <td><%=tuesday.get(i).getSubjectName()%></td>
                         <td><%=tuesday.get(i).getClassRoom()%></td>
-                        <%if(tuesday.get(i).getShift()==1){%>
+                        <%if (tuesday.get(i).getShift() == 1) {%>
                         <td>Sáng</td>
-                        <%}else{%>
+                        <%} else {%>
                         <td>Chiều</td>
                         <%}%>
                         <td><%=tuesday.get(i).getLectturerName()%></td>
                     </tr> 
                     <%
-                     }
+                        }
                     %>
                     <tr>
                         <th><b><u>Thứ 4:</u></b></th><th></th><th></th><th></th><th></th><th></th>
                     </tr>   
                     <%
-                     for(int i=0; i<wednesday.size();i++){%>
+                        for (int i = 0; i < wednesday.size(); i++) {%>
                     <tr>
                         <td></td>
                         <td><%=wednesday.get(i).getId().getClassCode()%></td>
                         <td><%=wednesday.get(i).getSubjectName()%></td>
                         <td><%=wednesday.get(i).getClassRoom()%></td>
-                        <%if(wednesday.get(i).getShift()==1){%>
+                        <%if (wednesday.get(i).getShift() == 1) {%>
                         <td>Sáng</td>
-                        <%}else{%>
+                        <%} else {%>
                         <td>Chiều</td>
                         <%}%>
                         <td><%=wednesday.get(i).getLectturerName()%></td>
                     </tr> 
                     <%
-                     }
+                        }
                     %>
                     <tr>
                         <th><b><u>Thứ 5:</u></b></th><th></th><th></th><th></th><th></th><th></th>
                     </tr>   
                     <%
-                     for(int i=0; i<thursday.size();i++){%>
+                        for (int i = 0; i < thursday.size(); i++) {%>
                     <tr>
                         <td></td>
                         <td><%=thursday.get(i).getId().getClassCode()%></td>
                         <td><%=thursday.get(i).getSubjectName()%></td>
                         <td><%=thursday.get(i).getClassRoom()%></td>
-                        <%if(thursday.get(i).getShift()==1){%>
+                        <%if (thursday.get(i).getShift() == 1) {%>
                         <td>Sáng</td>
-                        <%}else{%>
+                        <%} else {%>
                         <td>Chiều</td>
                         <%}%>
                         <td><%=thursday.get(i).getLectturerName()%></td>
                     </tr> 
                     <%
-                     }
+                        }
                     %>
                     <tr>
                         <th><b><u>Thứ 6:</u></b></th><th></th><th></th><th></th><th></th><th></th>
                     </tr>   
                     <%
-                     for(int i=0; i<friday.size();i++){%>
+                        for (int i = 0; i < friday.size(); i++) {%>
                     <tr>
                         <td></td>
                         <td><%=friday.get(i).getId().getClassCode()%></td>
                         <td><%=friday.get(i).getSubjectName()%></td>
                         <td><%=friday.get(i).getClassRoom()%></td>
-                        <%if(friday.get(i).getShift()==1){%>
+                        <%if (friday.get(i).getShift() == 1) {%>
                         <td>Sáng</td>
-                        <%}else{%>
+                        <%} else {%>
                         <td>Chiều</td>
                         <%}%>
                         <td><%=friday.get(i).getLectturerName()%></td>
                     </tr> 
                     <%
-                     }
+                        }
                     %>
                     <tr>
                         <th><b><u>Thứ 7:</u></b></th><th></th><th></th><th></th><th></th><th></th>
                     </tr>   
                     <%
-                     for(int i=0; i<saturday.size();i++){%>
+                        for (int i = 0; i < saturday.size(); i++) {%>
                     <tr>
                         <td></td>
                         <td><%=saturday.get(i).getId().getClassCode()%></td>
                         <td><%=saturday.get(i).getSubjectName()%></td>
                         <td><%=saturday.get(i).getClassRoom()%></td>
-                        <%if(saturday.get(i).getShift()==1){%>
+                        <%if (saturday.get(i).getShift() == 1) {%>
                         <td>Sáng</td>
-                        <%}else{%>
+                        <%} else {%>
                         <td>Chiều</td>
                         <%}%>
                         <td><%=saturday.get(i).getLectturerName()%></td>
                     </tr> 
                     <%
-                     }
+                        }
                     %>
                 </table>
             </form>
