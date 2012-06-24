@@ -242,12 +242,6 @@ a img {
     float: left;
 }
 
-#import-student-button {
-    margin-left: 106px;
-    padding-top: 25px;
-    padding-bottom: 12px;
-}
-
 #import-student-from-file {
     display: none;
 }
@@ -502,4 +496,15 @@ tr:hover .pop-up {
     border-radius: 10px 10px 10px 10px;
     height: 45px;
     padding-top: 5px;
+}
+.button-1 {
+    width: 110px;
+    background: #DD2;
+    border-radius: 6px;
+    text-align: center;
+    padding: 7px;
+    margin: auto;
+}
+.button-1:hover {
+    background: #FD2;
 }
