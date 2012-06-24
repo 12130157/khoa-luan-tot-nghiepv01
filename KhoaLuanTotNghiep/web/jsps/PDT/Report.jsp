@@ -102,7 +102,7 @@
                 <div class="range">
                     <h3><span id="btn-student-report" class="atag" >Thống kê SV</span></h3>
                     <div id="form-student-report">
-                        <div id="search" style="clear: both; margin-top: 10px;">
+                        <div style="clear: both; margin-top: 10px;">
                             <table>
                                 <tr>
                                     <td>
@@ -110,7 +110,9 @@
                                         <input id="search-student" type="text" placeholder="Nhập tên SV" value="" onKeyPress="keypressed()"/>
                                     </td>
                                     <td>
-                                        <input type="button" onclick="SendRequestFindStudent()" value="Tìm"/>
+                                        <div class="button-1" style="padding: 2px !important;">
+                                            <span class="atag" onclick="SendRequestFindStudent()" ><img src="../../imgs/check.png" />Tìm</span>
+                                        </div>
                                     </td>
                                 </tr>
                             </table>
