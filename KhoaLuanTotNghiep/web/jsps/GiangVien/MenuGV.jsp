@@ -11,7 +11,7 @@
 
 <html>
     <style media="all" type="text/css">
-        
+
     </style>
     <head>
         <link href="../../csss/menu.css" rel="stylesheet" type="text/css" media="screen">
@@ -35,12 +35,12 @@
     </div>
     <div id = "menu" align="center">
         <ul>
-             <li><a href="../../HomepageController?actor=Lecturer"> Trang chủ </a></li>
-             <li><a href="../HomepageController?action=view"> Thời khóa biểu </a></li>
-             <li><a href="../../FileUploadController?function=default"> Gửi bảng điểm </a></li>
-             <li><a href="../../LecturerPrivateController?function=load-persional-infor"> Trang cá nhân </a></li>
-             <li><a href="../../Login?function=logout"> Đăng xuất </a></li>
-             <li><a href="../ServHompage?action=view"> Liên hệ </a></li>
+            <li><a href="../../HomepageController?actor=Lecturer"> Trang chủ </a></li>
+            <li><a href="../../LecturerSchedule?action=view"> Thời khóa biểu </a></li>
+            <li><a href="../../FileUploadController?function=default"> Gửi bảng điểm </a></li>
+            <li><a href="../../LecturerPrivateController?function=load-persional-infor"> Trang cá nhân </a></li>
+            <li><a href="../../Login?function=logout"> Đăng xuất </a></li>
+            <li><a href="../ServHompage?action=view"> Liên hệ </a></li>
         </ul>
     </div>       
 </body>

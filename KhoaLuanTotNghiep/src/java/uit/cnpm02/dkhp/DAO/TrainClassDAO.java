@@ -132,6 +132,43 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         }
         return results;
     }
+     public List<TrainClass> findAllByStudyDateAndLecturerCode(int studyDate, String lecturerCode) throws Exception {
+        checkModelWellDefined();
+        TrainClass t = new TrainClass();
+        if (t == null) {
+            throw new Exception("Cannot initialize the " + TrainClass.class.getName()
+                    + " class");
+        }
+        ArrayList<TrainClass> results = new ArrayList<TrainClass>();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        String selectQuery = "Select * from KhoaLuanTotNghiep.MonHoc, " + t.getTableName() + " where KhoaLuanTotNghiep.MonHoc.MaMH=KhoaLuanTotNghiep.LopHoc.MaMH and NgayHoc= ? and MaGV = ? and TrangThai = "+Constants.OPEN_CLASS_STATUS+" and HocKy=" + Constants.CURRENT_SEMESTER + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
+        try {
+            con = getConnection();
+            statement = con.prepareStatement(selectQuery);
+            statement.setObject(1, studyDate);
+            statement.setObject(2, lecturerCode);
+            rs = statement.executeQuery();
+
+            while (rs.next()) {
+                String classCode = rs.getString("MaLopHoc");
+                TrainClassID trainclassID = new TrainClassID(classCode, Constants.CURRENT_YEAR, Constants.CURRENT_SEMESTER);
+                //TODO: Improve (Ham findById se mo mot Connection moi --> Not Good)
+                // Nen tao ham findById moi, truyen Connection vao
+                // Hoac Tao cau query moi + dung Connection vua tao o tren de find
+                TrainClass trainClass = findById(trainclassID);
+                //
+                results.add(trainClass);
+            }
+        } catch (SQLException ex) {
+            throw new Exception(ex);
+        } finally {
+            close(rs, statement);
+            close(con);
+        }
+        return results;
+    }
     public List<TrainClass> findAllByFacultyCodeAndTime(String facultyCode) throws Exception {
         checkModelWellDefined();
         TrainClass t = new TrainClass();
