@@ -3,6 +3,7 @@ package uit.cnpm02.dkhp.controllers;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,6 +24,7 @@ import uit.cnpm02.dkhp.DAO.FacultyDAO;
 import uit.cnpm02.dkhp.model.Class;
 import uit.cnpm02.dkhp.model.Course;
 import uit.cnpm02.dkhp.model.Faculty;
+import uit.cnpm02.dkhp.model.type.AccountStatus;
 import uit.cnpm02.dkhp.model.type.AccountType;
 import uit.cnpm02.dkhp.service.IAccountService;
 import uit.cnpm02.dkhp.service.impl.AccountServiceImpl;
@@ -286,17 +288,26 @@ public class AccountController extends HttpServlet {
 
         if (!accounts.isEmpty()) {
             for (int i = 0; i < accounts.size(); i++) {
-                Account a = accounts.get(i);
-                String accountType =  AccountType.getDescription(a.getType());
-                // StringUtils.getAccountTypeDescription(a.getType());
+                Account acc = accounts.get(i);
+                String accountType =  AccountType.getDescription(acc.getType());
+                String statusImg = "";
+                if(acc.getStatus()== AccountStatus.NORMAL.value()){
+                    statusImg = "<img src=\"../../imgs/icon/unlock.png\" title=\"Đang hoạt động\" alt=\"Bình thường\"/>";
+                } else if(acc.getStatus()== AccountStatus.LOCKED.value()) {
+                    statusImg = "<img src=\"../../imgs/icon/lock.png\" title=\"Đang bị khóa\" alt=\"Đang bị khóa\"/>";
+                }
+                
+                String editImg = "<img src=\"../../imgs/icon/edit.png\" title=\"Sửa\" alt=\"Sửa\"/>";
+                String deleteImg = "<img src=\"../../imgs/icon/delete.png\" title=\"Xóa\" alt=\"Xóa\"/>";
+                         
                 out.println("<tr>"
                         + "<td>" + ((currentPage-1)*numPerPage + 1 + i) + "</td>"
-                        + "<td>" + a.getId() + "</td>"
-                        + "<td>" + a.getFullName() + "</td>"
-                        + "<td>" + a.getStatus() + "</td>"
+                        + "<td>" + acc.getId() + "</td>"
+                        + "<td>" + acc.getFullName() + "</td>"
+                        + "<td>" + statusImg + "</td>"
                         + "<td>" + accountType + "</td>"
-                        + "<td> <a href=\"../../AccountController?action=editaccount&username=" + a.getId() + "\">Sửa</a> </td>"
-                        + "<td> <span class=\"atag\" onclick=\"deleteUser('" + a.getId() + "')\">Xóa</span></td>"
+                        + "<td> <a href=\"../../AccountController?action=editaccount&username=" + acc.getId() + "\">" + editImg + "</a> </td>"
+                        + "<td> <span class=\"atag\" onclick=\"deleteUser('" + acc.getId() + "')\">" + deleteImg + "</span></td>"
                         + "</tr>");
             }
         }
@@ -345,7 +356,7 @@ public class AccountController extends HttpServlet {
             if (accountService.deleteAccountByID(userName)) {
                 out = response.getWriter();
                 if (key.isEmpty()) {
-                    result = result = accDao.findAll(numPerPage,
+                    result = accDao.findAll(numPerPage,
                             currentPage, "TenDangNhap", "DESC");
                 } else {
                     List<Account> acc = accountService.search(key, session);
@@ -381,13 +392,80 @@ public class AccountController extends HttpServlet {
         String userName = request.getParameter("username");
 
         Account acc = accountService.findAccount(userName);
-        if (acc != null) {
+        /*if (acc != null) {
             HttpSession session = request.getSession();
             session.setAttribute("account", acc);
 
             String path = "./jsps/PDT/EditAccount.jsp";
             response.sendRedirect(path);
+        }*/
+        PrintWriter out = response.getWriter();
+        writeEditAccountForm(out, acc);
+    }
+    
+    private void writeEditAccountForm(PrintWriter out, Account acc) {
+        out.print("<table style=\"width: 450px;\">");
+        out.print("<tr>"
+                    + "<td> Tên đăng nhập </td>"
+                    + "<td> <input type=\"text\" name=\"txtUsername_edit\" id=\"txtUsername_edit\" readonly=\"readonly\" value=\""+ acc.getId() + "\" /></td>"
+                + "</tr>");
+        out.print("<tr>"
+                    + "<td> Mật khẩu </td>"
+                    + "<td><input type=\"password\" name=\"txtPassword_edit\" id=\"txtPassword_edit\" value=\"" +acc.getPassword() +"\" /> </td>"
+                + "</tr>");
+        out.print("<tr>"
+                    + "<td> Xác nhận mật khẩu </td>"
+                    + "<td><input type=\"password\" name=\"txtRePassword_edit\" id=\"txtRePassword_edit\" value=\"" + acc.getPassword() + "\" /></td>"
+                + "</tr>");
+        out.print("<tr>"
+            + "<td> Họ tên </td>"
+            + "<td><input type=\"text\" name=\"txtFullName_edit\" id=\"txtFullName_edit\" value=\""+ acc.getFullName() +"\" /></td>"
+        + "</tr>");
+        out.print("<tr>"
+            + "<td> Loại tài khoản </td>"
+            + "<td>");
+        out.print("<select name=\"selectType_edit\" id=\"selectType_edit\" class=\"input-minwidth\">");
+        for(AccountType at : EnumSet.allOf(AccountType.class)) {
+            String selected = "";
+            if (acc.getType() == at.value()) {
+                selected="selected=\"selected\"";
+            }
+            int value = at.value();
+            String description = at.description();
+            out.print("<option "+ selected +" value=" + value + ">");
+            out.print(description);
+            out.print("</option>");
         }
+        out.print("</select>");
+        out.print("</td>"
+        + "</tr>");
+        out.print("<tr>"
+            + "<td> Tình trạng </td>"
+            + "<td>");
+        out.print("<select name=\"selectStatus_edit\" id=\"selectStatus_edit\" class=\"input-minwidth\">");
+        for(AccountStatus at : EnumSet.allOf(AccountStatus.class)) {
+            String selected = "";
+            if (acc.getType() == at.value()) {
+                selected="selected=\"selected\"";
+            }
+            int value = at.value();
+            String description = at.description();
+            out.print("<option "+ selected +" value=" + value + ">");
+            out.print(description);
+            out.print("</option>");
+        }
+        out.print("</select>");
+        out.print("</td>"
+        + "</tr>");
+
+        out.print("</table>");
+        out.print("<br/>");
+        
+        out.print("<div style=\"float: left; padding-left: 220px;\"><input type=\"button\" onclick=\"update()\" value=\"Hoàn thành\" />");
+        out.print("</div>");
+	out.print("<div class=\"clear\"></div>");
+	out.print("<br/>");
+	out.print("<div id=\"respone-edit-area\"></div>");
     }
 
     private void doUpdateAccount(HttpServletRequest request,
