@@ -24,6 +24,18 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Quản lý sinh viên</title>
         <style media="all" type="text/css">
+            #btn-delete-selected {
+                float: left;
+                padding-top: 8px;
+                margin-left: 122px;
+            }
+            #btn-to-import-student {
+                float: right;
+                padding-top: 6px;
+                margin-right: 20px;
+            }
+            
+            
         </style>
     </head>
     <body onload="">
@@ -36,32 +48,37 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
+                <%--------------Title--------------%>
+                <div id="main-title">
+                    Quản lý Sinh Viên
+                </div>
+                <br /><br />
                 <p id="error">
                     <%-- NOT USED --%>
                 </p>
                 <br/>
-                <%-- Link import student --%>
-                <p align="right"><b><a href="../../ManageStudentController?function=pre-import-student">Tiếp nhận sinh viên</a></b></p>
-                <hr><hr>
-
-                Danh sách sinh viên:<br/>
-                <%-- Search Form --%>
-                <div id="search-student-form">
-                    <%-- BUTTON DELETE SELECT ROW --%>
-                    <div id="btn-form" class="clear-left">
-                        <input type="button" onclick="deleteStudent('tableliststudent')" value="Xóa mục đã chọn" />
-                    </div>
-                    <%--SEARCH FORM--%>
-                    <div id="search-form" class="clear-right" style="margin-right: 12px !important;">
-                        <div id="search-student" style="float: right;">
-                            <input type="text" id="txt-search" placeholder="Nhập mssv hoặc Họ tên" />
-                            <input type="button" value="Tìm" onclick="searchStudent()" />
+                <div id="control-range">
+                    <%--------------Search-------------%>
+                    <div id="search-area" style="float: left;">
+                        <%--SEARCH FORM--%>
+                        <div id="searchbox" action="#">
+                            <input id="search" type="text" onKeyPress="txtBoxSearchkeypressed()" placeholder="Search" />
+                            <input type="button" id="submit" onclick="searchStudent()" value="Tìm kiếm" />
                         </div>
+                    </div>
+                    <%-- Button delete selected rows --%>
+                    <div id="btn-delete-selected" class="clear-left">
+                        <span class="atag" type="button" onclick="deleteStudent('tableliststudent')"><img src="../../imgs/icon/delete.png"/>Xóa mục đã chọn</span>
+                    </div>
+                    <%-- Link import student --%>
+                    <div id="btn-to-import-student">
+                        <a href="../../ManageStudentController?function=pre-import-student"><img src="../../imgs/icon/add.png"/>Tiếp nhận sinh viên</a>
                     </div>
                 </div>
                 <div class="clear"></div>
                 <div id="list-students">
                     <%-- List student (Table)--%>
+                    <%--Danh sách sinh viên:--%>
                     <table id="tableliststudent" name="tableliststudent" class="general-table">
                             <tr id="tableliststudent-th">
                             <th><INPUT type="checkbox" name="chkAll" onclick="selectAll('tableliststudent', 0)" /></th>
@@ -89,8 +106,8 @@
                             <td> <%= listStudent.get(i).getBirthday()%> </td>
                             <td> <%= listStudent.get(i).getGender()%> </td>
                             <td> <%= listStudent.get(i).getStudyType()%> </td>
-                            <td><a href="../../ManageStudentController?function=editstudent&mssv=<%= listStudent.get(i).getId()%>">Sửa</a></td>
-                            <td><span class="atag" onclick="deleteOneStudent('<%=listStudent.get(i).getId()%>')" > Xóa </span></td>
+                            <td><a href="../../ManageStudentController?function=editstudent&mssv=<%= listStudent.get(i).getId()%>"><img src="../../imgs/icon/edit.png" title="Sửa" alt="Sửa"/></a></td>
+                            <td><span class="atag" onclick="deleteOneStudent('<%=listStudent.get(i).getId()%>')" > <img src="../../imgs/icon/delete.png" title="Xóa" alt="Xóa"/> </span></td>
                             <% }%>
                             </tr>
                             <%}%>
@@ -162,7 +179,7 @@
         }
         
         function searchStudent() {
-            var key = document.getElementById("txt-search").value;
+            var key = document.getElementById("search").value;
             var pagename = "../../ManageStudentController?function=search-students&key=" + key;
             if(http){
                 http.open("GET", pagename, true);
@@ -252,6 +269,11 @@
             }
         }
         
+        function txtBoxSearchkeypressed() {
+            if(event.keyCode == '13') {
+                searchStudent();
+            }
+        }
         
     </script>
 </html>
