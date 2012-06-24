@@ -38,9 +38,10 @@
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
                 
-                <div id="title">
+                <div id="main-title">
                     THỐNG KÊ ĐKHP
                 </div>
+                <br /><br />
                 <div class="clear"></div>
                 <div id="form-search">
                     Năm học 
