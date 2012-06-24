@@ -46,6 +46,8 @@ public class AccountController extends HttpServlet {
     private FacultyDAO facultyDao = DAOFactory.getFacultyDao();
     private CourseDAO courseDao = DAOFactory.getCourseDao();
     
+    private final int numPerPage = Constants.ELEMENT_PER_PAGE_DEFAULT;
+    
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -103,39 +105,44 @@ public class AccountController extends HttpServlet {
         }
     }
 
-    private void filterAccount(HttpServletRequest request, HttpServletResponse response){
-        PrintWriter out= null;
-        int numpage=0;
-        int currentPage=Integer.parseInt(request.getParameter("curentPage"));
+    private void filterAccount(HttpServletRequest request,
+            HttpServletResponse response) {
+        PrintWriter out = null;
+        int numpage = 0;
+        int currentPage = Integer.parseInt(request.getParameter("curentPage"));
         String key = request.getParameter("key");
-        List<Account> result = new ArrayList<Account>(Constants.ELEMENT_PER_PAGE_DEFAULT);
+        List<Account> result = new ArrayList<Account>(numPerPage);
         HttpSession session = request.getSession();
         try {
             out = response.getWriter();
-            if(key.isEmpty())
-             result= accDao.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, currentPage, "TenDangNhap", "DESC");
-            else{
-                    List<Account> acc = accountService.search(key, session.getId());
-                    if(acc.size() %Constants.ELEMENT_PER_PAGE_DEFAULT==0)
-                            numpage= acc.size() /Constants.ELEMENT_PER_PAGE_DEFAULT;
-                        else 
-                            numpage=acc.size() /Constants.ELEMENT_PER_PAGE_DEFAULT+1;
-                        if(currentPage > numpage)
-                            currentPage = numpage;
-                    if(acc.size()<= Constants.ELEMENT_PER_PAGE_DEFAULT)
-                     result = acc;
-                    else{
-                        int beginIndex=(currentPage-1)*Constants.ELEMENT_PER_PAGE_DEFAULT;
-                        int endIndex = (currentPage-1)*Constants.ELEMENT_PER_PAGE_DEFAULT + Constants.ELEMENT_PER_PAGE_DEFAULT;
-                         for(int i=0; i < acc.size(); i++){
-                            if(i>= beginIndex && i < endIndex )
+            if (key.isEmpty()) {
+                result = accDao.findAll(numPerPage, currentPage, "TenDangNhap", "DESC");
+            } else {
+                List<Account> acc = accountService.search(key, session.getId());
+                if ((acc.size() % numPerPage) == 0) {
+                    numpage = acc.size() / numPerPage;
+                } else {
+                    numpage = acc.size() / numPerPage + 1;
+                }
+                if (currentPage > numpage) {
+                    currentPage = numpage;
+                }
+                if (acc.size() <= numPerPage) {
+                    result = acc;
+                } else {
+                    int beginIndex = (currentPage - 1) * numPerPage;
+                    int endIndex = (currentPage - 1) * numPerPage + numPerPage;
+                    for (int i = 0; i < acc.size(); i++) {
+                        if (i >= beginIndex && i < endIndex) {
                             result.add(acc.get(i));
-                             }
+                        }
                     }
+                }
             }
             writeOutListAccount(out, result, currentPage);
         } catch (Exception ex) {
-         Logger.getLogger(AccountController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AccountController.class.getName())
+                    .log(Level.SEVERE, null, ex);
         } finally {
             out.close();
         }
@@ -146,7 +153,8 @@ public class AccountController extends HttpServlet {
      * @param session
      * @throws Exception
      */
-    private void changeInfo(HttpServletResponse response, HttpSession session) throws Exception {
+    private void changeInfo(HttpServletResponse response,
+            HttpSession session) throws Exception {
         String path = "./jsps/SinhVien/UpdateInfo.jsp";
         String user = (String) session.getAttribute("username");
         Student student = studentDao.findById(user);
@@ -160,7 +168,8 @@ public class AccountController extends HttpServlet {
      * @param session
      * @throws Exception
      */
-    private void getInfo(HttpServletResponse response, HttpSession session) throws Exception {
+    private void getInfo(HttpServletResponse response,
+            HttpSession session) throws Exception {
         String path = "./jsps/SinhVien/Info.jsp";
         String user = (String) session.getAttribute("username");
         Student student = studentDao.findById(user);
@@ -181,7 +190,8 @@ public class AccountController extends HttpServlet {
      * @param session
      * @throws Exception
      */
-    private void changePass(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
+    private void changePass(HttpServletRequest request,
+            HttpServletResponse response, HttpSession session) throws Exception {
         String path = "./jsps/SinhVien/ChangePass.jsp";
         try {
             String user = (String) session.getAttribute("username");
@@ -238,14 +248,15 @@ public class AccountController extends HttpServlet {
     /////////
     private void doListAccount(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        int numpage=1;
+        int numpage = 1;
         List<Account> accs = accDao.findAll();
         int rows = accs.size();
-        if(rows%Constants.ELEMENT_PER_PAGE_DEFAULT==0)
-            numpage=rows/Constants.ELEMENT_PER_PAGE_DEFAULT;
-        else 
-            numpage=rows/Constants.ELEMENT_PER_PAGE_DEFAULT+1;
-        List<Account> result= accDao.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, 1, "TenDangNhap", "DESC");
+        if ((rows % numPerPage) == 0) {
+            numpage = rows / numPerPage;
+        } else {
+            numpage = rows / numPerPage + 1;
+        }
+        List<Account> result = accDao.findAll(numPerPage, 1, "TenDangNhap", "DESC");
         HttpSession session = request.getSession();
         session.setAttribute("accountList", result);
         session.setAttribute("numpage", numpage);
@@ -254,7 +265,8 @@ public class AccountController extends HttpServlet {
     }
 
     private int slideLimit= 15;
-    private void writeOutListAccount(PrintWriter out, List<Account> accounts, int currentPage) {
+    private void writeOutListAccount(PrintWriter out, List<Account> accounts,
+                                                            int currentPage) {
         if (accounts == null) {
             return;
         }
@@ -278,7 +290,7 @@ public class AccountController extends HttpServlet {
                 String accountType =  AccountType.getDescription(a.getType());
                 // StringUtils.getAccountTypeDescription(a.getType());
                 out.println("<tr>"
-                        + "<td>" + ((currentPage-1)*Constants.ELEMENT_PER_PAGE_DEFAULT + 1 + i) + "</td>"
+                        + "<td>" + ((currentPage-1)*numPerPage + 1 + i) + "</td>"
                         + "<td>" + a.getId() + "</td>"
                         + "<td>" + a.getFullName() + "</td>"
                         + "<td>" + a.getStatus() + "</td>"
@@ -296,16 +308,17 @@ public class AccountController extends HttpServlet {
 
     private void doSearch(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        List<Account> result = new ArrayList<Account>(Constants.ELEMENT_PER_PAGE_DEFAULT);
+        List<Account> result = new ArrayList<Account>(numPerPage);
         String key = request.getParameter("key");
         HttpSession session = request.getSession();
         List<Account> acc = accountService.search(key, session.getId());
-        if(acc.size()> Constants.ELEMENT_PER_PAGE_DEFAULT){
-            for(int i=0; i < Constants.ELEMENT_PER_PAGE_DEFAULT; i++){
-               result.add(acc.get(i));
+        if (acc.size() > numPerPage) {
+            for (int i = 0; i < numPerPage; i++) {
+                result.add(acc.get(i));
             }
-        }else
-        result = acc;
+        } else {
+            result = acc;
+        }
         writeOutListAccount(response.getWriter(), result, 1);
 
     }
@@ -314,50 +327,53 @@ public class AccountController extends HttpServlet {
             HttpServletResponse response) throws IOException {
         String by = request.getParameter("by");
         List<Account> acc = accountService.sort(by,
-                        request.getSession().getId());
+                request.getSession().getId());
 
-        writeOutListAccount(response.getWriter(), acc,1);
+        writeOutListAccount(response.getWriter(), acc, 1);
     }
 
     private void doDeleteAccount(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-         String userName = request.getParameter("user");
-         String key = request.getParameter("key");
-         String session = request.getSession().getId();
-         List<Account> result = new ArrayList<Account>(Constants.ELEMENT_PER_PAGE_DEFAULT);  
-         int currentPage=Integer.parseInt(request.getParameter("curentPage"));
-         int numpage=0;
-         PrintWriter out = null;
-        try{
-        if(accountService.deleteAccountByID(userName)) {
-         out = response.getWriter();
-          if(key.isEmpty())
-            result = result= accDao.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, currentPage, "TenDangNhap", "DESC");
-          else{
-                   List<Account> acc = accountService.search(key, session);
-                   if(acc.size() %Constants.ELEMENT_PER_PAGE_DEFAULT==0)
-                   numpage= acc.size() /Constants.ELEMENT_PER_PAGE_DEFAULT;
-                   else 
-                   numpage=acc.size() /Constants.ELEMENT_PER_PAGE_DEFAULT+1;
-                   if(currentPage>numpage)
-                    currentPage=numpage;
-                   if(acc.size()<= Constants.ELEMENT_PER_PAGE_DEFAULT)
-                   result = acc;
-                   else{
-                   int beginIndex=(currentPage-1)*Constants.ELEMENT_PER_PAGE_DEFAULT;
-                   int endIndex = (currentPage-1)*Constants.ELEMENT_PER_PAGE_DEFAULT + Constants.ELEMENT_PER_PAGE_DEFAULT;
-                    for(int i=0; i < acc.size(); i++){
-                             if(i>= beginIndex && i < endIndex )
-                            result.add(acc.get(i));
-                 }
-         
+        String userName = request.getParameter("user");
+        String key = request.getParameter("key");
+        String session = request.getSession().getId();
+        List<Account> result = new ArrayList<Account>(numPerPage);
+        int currentPage = Integer.parseInt(request.getParameter("curentPage"));
+        int numpage = 0;
+        PrintWriter out = null;
+        try {
+            if (accountService.deleteAccountByID(userName)) {
+                out = response.getWriter();
+                if (key.isEmpty()) {
+                    result = result = accDao.findAll(numPerPage,
+                            currentPage, "TenDangNhap", "DESC");
+                } else {
+                    List<Account> acc = accountService.search(key, session);
+                    if (acc.size() % numPerPage == 0) {
+                        numpage = acc.size() / numPerPage;
+                    } else {
+                        numpage = acc.size() / numPerPage + 1;
+                    }
+                    if (currentPage > numpage) {
+                        currentPage = numpage;
+                    }
+                    if (acc.size() <= numPerPage) {
+                        result = acc;
+                    } else {
+                        int beginIndex = (currentPage - 1) * numPerPage;
+                        int endIndex = (currentPage - 1) * numPerPage + numPerPage;
+                        for (int i = 0; i < acc.size(); i++) {
+                            if (i >= beginIndex && i < endIndex) {
+                                result.add(acc.get(i));
+                            }
+                        }
+                    }
                 }
-          }
-        }
+            }
         } catch (Exception ex) {
             result = null;
         }
-        writeOutListAccount(out, result,1);
+        writeOutListAccount(out, result, 1);
     }
 
     private void doPreEditAccount(HttpServletRequest request,
@@ -377,16 +393,16 @@ public class AccountController extends HttpServlet {
     private void doUpdateAccount(HttpServletRequest request,
             HttpServletResponse response) throws IOException {
         PrintWriter out = response.getWriter();
-        
+
         if (!validatePassword(request)) {
             out.println("Mật khẩu không khớp.");
             return;
         }
-        
+
         Account account = getAccountFromRequest(request);
-        String sessionId =  request.getSession().getId();
+        String sessionId = request.getSession().getId();
         ExecuteResult er = accountService.update(
-                    account, sessionId);
+                account, sessionId);
         if (!er.isIsSucces()) {
             out.println(er.getMessage());
         } else {
@@ -397,16 +413,16 @@ public class AccountController extends HttpServlet {
     private void doCreateNew(HttpServletRequest request,
             HttpServletResponse response) throws IOException {
         PrintWriter out = response.getWriter();
-        
+
         if (!validatePassword(request)) {
             out.println("Mật khẩu không khớp.");
             return;
         }
-        
+
         Account account = getAccountFromRequest(request);
-        String sessionId =  request.getSession().getId();
+        String sessionId = request.getSession().getId();
         ExecuteResult er = accountService.createNew(
-                    account, sessionId);
+                account, sessionId);
         if (!er.isIsSucces()) {
             out.println(er.getMessage());
         } else {
@@ -417,27 +433,27 @@ public class AccountController extends HttpServlet {
     private boolean validatePassword(HttpServletRequest request) {
         String pass = request.getParameter("password");
         String rePass = request.getParameter("repassword");
-        if (StringUtils.isEmpty(pass) 
+        if (StringUtils.isEmpty(pass)
                 || (StringUtils.isEmpty(rePass))) {
             return false;
         }
-        
+
         return pass.equals(rePass);
     }
-    
+
     private Account getAccountFromRequest(HttpServletRequest request) {
         String userName = request.getParameter("username");
         String pass = request.getParameter("password");
         String fullName = request.getParameter("fullName");
         String status = request.getParameter("status");
         String type = request.getParameter("type");
-        
+
         int int_status = Integer.parseInt(status);
         int int_type = Integer.parseInt(type);
         Account account = new Account(
                 userName, pass, fullName, false, int_status, int_type);
         account.setId(userName);
-        
+
         return account;
     }
 
