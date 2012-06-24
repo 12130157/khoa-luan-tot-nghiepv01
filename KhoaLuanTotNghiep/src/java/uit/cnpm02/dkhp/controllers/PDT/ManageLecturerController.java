@@ -326,7 +326,7 @@ public class ManageLecturerController extends HttpServlet {
                 + "<th> <span class=\"atag\" onclick=\"sort('QueQuan')\" >  Địa chỉ </span> </th>"
                 + "<th> <span class=\"atag\" onclick=\"sort('NgaySinh')\" > Ngày sinh </span> </th>"
                 + "<th> <span class=\"atag\" onclick=\"sort('GioiTinh')\" >  Giới tính </span> </th>"
-                + "<th> <span class=\"atag\" onclick=\"sort('Email')\" >  Email </span> </th>"
+                /*+ "<th> <span class=\"atag\" onclick=\"sort('Email')\" >  Email </span> </th>"*/
                 + "<th> <span class=\"atag\" onclick=\"sort('HocHam')\" >  Học Hàm </span> </th>"
                 + "<th> <span class=\"atag\" onclick=\"sort('HocVi')\" >  Học Vị </span> </th>"
                 + "<th> Sửa </th>"
@@ -343,11 +343,11 @@ public class ManageLecturerController extends HttpServlet {
                         + "<td>" + lecturers.get(i).getAddress() + "</td>"
                         + "<td>" + DateTimeUtil.format(lecturers.get(i).getBirthday()) + "</td>"
                         + "<td>" + lecturers.get(i).getGender() + "</td>"
-                        + "<td>" + lecturers.get(i).getEmail() + "</td>"
+                        /*+ "<td>" + lecturers.get(i).getEmail() + "</td>"*/
                         + "<td>" + lecturers.get(i).getHocHam() + "</td>"
                         + "<td>" + lecturers.get(i).getHocVi() + "</td>"
-                        + "<td>" + "<a href=\"../../ManageLecturerController?function=edit&magv=" + lecturers.get(i).getId() + "\">Sửa</a></td>"
-                        + "<td><span class=\"atag\" onclick=\"deleteOneLecturer('" + lecturers.get(i).getId() + "')\">Xóa</span></td>"
+                        + "<td>" + "<a href=\"../../ManageLecturerController?function=edit&magv=" + lecturers.get(i).getId() + "\"><img src=\"../../imgs/icon/edit.png\" title=\"Sửa\" alt=\"Sửa\"/></a></td>"
+                        + "<td><span class=\"atag\" onclick=\"deleteOneLecturer('" + lecturers.get(i).getId() + "')\"><img src=\"../../imgs/icon/delete.png\" title=\"Xóa\" alt=\"Xóa\"/></span></td>"
                         + "</tr>");
             }
         }
