@@ -61,8 +61,8 @@ public class LecturerSchedule extends HttpServlet {
         TrainClassDAO trainClassDao = new TrainClassDAO();
         String path = "";
         try {
-            String lecturerCode=(String)session.getAttribute("username");
-            Lecturer lecturer= DAOFactory.getLecturerDao().findById(lecturerCode);
+            String lecturerCode = (String) session.getAttribute("username");
+            Lecturer lecturer = DAOFactory.getLecturerDao().findById(lecturerCode);
             List<TrainClass> monday = trainClassDao.findAllByStudyDateAndLecturerCode(Constants.MONDAY, lecturerCode);
             setSubjectAndLecturer(monday);
             List<TrainClass> tuesday = trainClassDao.findAllByStudyDateAndLecturerCode(Constants.TUESDAY, lecturerCode);
