@@ -20,6 +20,16 @@
         <title>Quản lý giảng viên</title>
         <style media="all" type="text/css">
             /* CSS definition */
+            #btn-delete-selected {
+                float: left;
+                padding-top: 8px;
+                margin-left: 122px;
+            }
+            #btn-to-import-lecturer {
+                float: right;
+                padding-top: 6px;
+                margin-right: 20px;
+            }
         </style>
     </head>
     <body>
@@ -33,25 +43,32 @@
             </div><%--End Navigation--%>
             <%--Main Contents--%>
             <div id="content">
-                <br/>
-                <%-- Link import student --%>
-                <p align="right"><b><a href="../../ManageLecturerController?function=pre-import-lecturer">Tiếp nhận giảng viên</a></b></p>
-                <hr><hr>
-                Danh sách giảng viên:<br/>
-                <%-- Search Form --%>
-                <div id="search-lecturer-form">
-                    <%-- BUTTON DELETE SELECT ROW --%>
-                    <div id="btn-form" class="clear-left">
-                        <input type="button" onclick="deleteLecturer('tablelistlecturer')" value="Xóa mục đã chọn" />
-                    </div>
-                    <%--SEARCH FORM--%>
-                    <div id="search-form" class="clear-right" style="margin-right: 12px !important;">
-                        <div id="search-lecturer" style="float: right;">
-                            <input type="text" id="txt-search" placeholder="Nhập mã hoặc tên GV" />
-                            <input type="button" value="Tìm" onclick="searchLecturer()" />
+                <%--------------Title--------------%>
+                <div id="main-title">
+                    Quản lý giảng Viên
+                </div>
+                <br /><br /><br />
+                <div id="control-range">
+                    <%--------------Search-------------%>
+                    <div id="search-area" style="float: left;">
+                        <%--SEARCH FORM--%>
+                        <div id="searchbox" action="#">
+                            <%--SEARCH FORM--%>
+                            <input type="text" id="search" onKeyPress="txtBoxSearchLecturerkeypressed()" placeholder="Search" />
+                            <input type="button" id="submit"value="Tìm kiếm" onclick="searchLecturer()" />
                         </div>
                     </div>
+                    <%-- BUTTON DELETE SELECT ROW --%>
+                    <div id="btn-delete-selected" class="clear-left">
+                        <span class="atag" type="button" onclick="deleteLecturer('tablelistlecturer')"><img src="../../imgs/icon/delete.png"/>Xóa mục đã chọn</span>
+                    </div>
+
+                    <%-- Link import lecturer page --%>
+                    <div id="btn-to-import-lecturer">
+                        <a href="../../ManageLecturerController?function=pre-import-lecturer"><img src="../../imgs/icon/add.png"/>Tiếp nhận giảng viên</a>
+                    </div>
                 </div>
+                <hr><hr>
                 <div class="clear"></div>
                 <div id="list-lecturers">
                 <%-- List lecturers (Table)--%>
@@ -65,7 +82,7 @@
                             <th><span class="atag" onclick="sort('QueQuan')" > Địa chỉ </span></th>
                             <th><span class="atag" onclick="sort('NgaySinh')" > Ngày sinh </span></th>
                             <th><span class="atag" onclick="sort('GioiTinh')" > Giới tính </span></th>
-                            <th><span class="atag" onclick="sort('Email')" > Email </span></th>
+                            <%--<th><span class="atag" onclick="sort('Email')" > Email </span></th>--%>
                             <th><span class="atag" onclick="sort('HocHam')" > Học Hàm </span></th>
                             <th><span class="atag" onclick="sort('HocVi')" > Học Vị </span></th>
                             <th> Sửa </th>
@@ -83,11 +100,11 @@
                             <td> <%= listLecturer.get(i).getAddress() %> </td>
                             <td> <%= listLecturer.get(i).getBirthday()%> </td>
                             <td> <%= listLecturer.get(i).getGender()%> </td>
-                            <td> <%= listLecturer.get(i).getEmail() %> </td>
+                            <%--<td> <%= listLecturer.get(i).getEmail() %> </td>--%>
                             <td> <%= listLecturer.get(i).getHocHam() %> </td>
                             <td> <%= listLecturer.get(i).getHocVi() %> </td>
-                            <td><a href="../../ManageLecturerController?function=editlecturer&magv=<%= listLecturer.get(i).getId()%>">Sửa</a></td>
-                            <td><span class="atag" onclick="deleteOneLecturer('<%= listLecturer.get(i).getId()%>')">Xóa</a></td>
+                            <td><a href="../../ManageLecturerController?function=editlecturer&magv=<%= listLecturer.get(i).getId()%>"><img src="../../imgs/icon/edit.png" title="Sửa" alt="Sửa"/></a></td>
+                            <td><span class="atag" onclick="deleteOneLecturer('<%= listLecturer.get(i).getId()%>')"><img src="../../imgs/icon/delete.png" title="Xóa" alt="Xóa"/></a></td>
                         <% }%>
                         </tr>
                         <%}%>
@@ -166,8 +183,14 @@
             }
         }
         
+        function txtBoxSearchLecturerkeypressed() {
+            if(event.keyCode == '13') {
+                searchLecturer();
+            }
+        }
+        
         function searchLecturer() {
-            var key = document.getElementById("txt-search").value;
+            var key = document.getElementById("search").value;
             var pagename = "../../ManageLecturerController?function=search"
                             + "&key=" + key;
             if(http){
