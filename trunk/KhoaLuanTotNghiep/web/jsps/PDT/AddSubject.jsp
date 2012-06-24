@@ -30,11 +30,10 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <div id="title">
-                    <u><h3>Thêm môn học</h3></u>
+                <div id="main-title">
+                    Thêm môn học
                 </div>
-                <br>
-                <hr/><hr/><br>
+                <br /><br />
                 
                 <div id="add-subject">
                     <table>
@@ -105,12 +104,19 @@
                         </tr>
                         
                     </table>
-                                    
-                    <div id="add-subject-button">
-                        <input type="button" onclick="addSubject()" value="Thêm"/>
-                        <input type="button" onclick="moveBack()" value="Quay lại"/>
-                        <%----%>
+                    <div style="margin-left: 5px; width: 265px;">
+                        <div id="btn-check-add-one-student" style="float: left;">
+                            <div class="button-1">
+                                <span class="atag" onclick="addSubject()" ><img src="../../imgs/check.png" />Thêm</span>
+                            </div>
+                        </div>
+                        <div id="btn-add-one-student" style="float: left; padding-left: 12px;">
+                            <div class="button-1">
+                                <span class="atag" onclick="moveBack()" ><img src="../../imgs/check.png" />Quay lại</span>
+                            </div>
+                        </div>
                     </div>
+                    <br /><br />
                 </div>
                     <div id="add-result">
                         
