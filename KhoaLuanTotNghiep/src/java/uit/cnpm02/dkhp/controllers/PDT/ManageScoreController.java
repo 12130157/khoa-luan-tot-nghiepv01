@@ -379,7 +379,7 @@ public class ManageScoreController extends HttpServlet {
      */
     private void writeOutListScoreSheet(List<FileInfo> files, PrintWriter out) {
         if ((files == null) || files.isEmpty()) {
-            out.println("Khong tim thay file diem.");
+            out.println("Không tìm thấy file điểm");
             return;
         }
         
@@ -390,7 +390,7 @@ public class ManageScoreController extends HttpServlet {
             out.println("<td> <input type=\"checkbox\" value=\""
                     + trainClassId + "\" id=\"chbox-list" + i + "\" /> </td>");
             // files.get(i).getFileName ~ TrainClass ID
-            out.println("<td><span class=\"atag\" value=\"" + trainClassId + "\" onclick=\"getClassDetail('" + trainClassId + "')\" >" + "Bang diem lop: "
+            out.println("<td><span class=\"atag\" value=\"" + trainClassId + "\" onclick=\"getClassDetail('" + trainClassId + "')\" >" + "Bảng điểm lớp: "
                     + files.get(i).getFileName()
                     + "</span></td>");
             out.println("</tr>");
@@ -469,14 +469,14 @@ public class ManageScoreController extends HttpServlet {
     private void writeOutImportScore(PrintWriter out, String trainClass,
             ImportScoreResult result) {
         // Write out message
-        out.println("<br /><b><u>Ket qua nhap diem cho lop: " + trainClass + "</u></b>");
+        out.println("<br /><b><u>Kết quả nhập điểm cho lớp: " + trainClass + "</u></b>");
         if (!StringUtils.isEmpty(result.getMsg())) {
             out.println(" - " + result.getMsg());
         }
         List<Student> students = result.getAdded();
         // Added result
         if (students != null) {
-            out.println("<br /><b>- SV duoc them diem: (" + students.size() + "):</b>");
+            out.println("<br /><b>- SV được thêm điểm: (" + students.size() + "):</b>");
             for (int i = 0; i < students.size(); i++) {
                 out.println("<br /> \t" + (i +1) + " - " + students.get(i).getFullName());
             }
@@ -485,7 +485,7 @@ public class ManageScoreController extends HttpServlet {
         // Updated result
         students = result.getUpdated();
         if (students != null) {
-            out.println("<br /><b>- SV duoc cap nhat lai diem: (" + students.size() + "):</b>");
+            out.println("<br /><b>- SV được cập nhật lại điểm: (" + students.size() + "):</b>");
             for (int i = 0; i < students.size(); i++) {
                 out.println("<br /> \t" + (i +1) + " - " + students.get(i).getFullName());
             }
@@ -493,8 +493,8 @@ public class ManageScoreController extends HttpServlet {
         // Inoged result
          students = result.getInoged();
         if (students != null) {
-            out.println("<br /> <b>- SV khong duoc cap nhat lai diem"
-                    + " (do diem hien tai > diem moi): (" + students.size() + "):</b>");
+            out.println("<br /> <b>- SV không được cập nhật lại điểm"
+                    + " (do điểm hiện tại > điểm mới): (" + students.size() + "):</b>");
             for (int i = 0; i < students.size(); i++) {
                 out.println("<br /> \t" + (i +1) + " - " + students.get(i).getFullName());
             }
@@ -814,7 +814,9 @@ public class ManageScoreController extends HttpServlet {
                 + "</tr>");
         }
         out.print("</table>");
-        out.print("<input type=\"button\" value=\"Hoàn thành\" onclick=\"submitManul()\"/>");
+        out.print("<div class=\"button-1\">");
+        out.print("<span class=\"atag\" onclick=\"submitManul()\"><img src=\"../../imgs/check.png\"/>Hoàn thành</span>");
+        out.print("</div>");
     }
 
     //
