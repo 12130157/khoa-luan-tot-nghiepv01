@@ -12,17 +12,11 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Quản lý môn học</title>
         <style media="all" type="text/css">
-            #title{
-                background-color: #2f4e3d;
-                text-align: center;
-                padding-top: 12px;
-                padding-bottom: 10px;
-            }
-            #page{
-                text-align: center;
-            }
-            a {
-                color: violet;
+            <%-- CSS definition --%>
+            #btn-to-move-page-add-subject {
+                float: right;
+                padding-top: 6px;
+                margin-right: 20px;
             }
         </style>
     </head>
@@ -49,27 +43,26 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <div id="title">
-                    <u><h3>Quản lý Môn học</h3></u>
+                <div id="main-title">
+                    Quản lý Môn học
                 </div>
-                <hr/><hr/><br>
-
-                <div id = "listsubject">
-                    <div style="padding-bottom: 10px;
-                         padding-left: 10px;
-                         ">
-                        <input type = "text" onKeyPress="keypressed()" placeholder = "Nhập thông tin tìm kiếm" id="search-box"  />
-                        <input type = "button" onclick = "searchSubject()" value = "Tìm">
-                    </div>
-                    <form method="post" action="../../ManageSubjectController?function=pre_add_subject">
-                        <div style="padding-bottom: 5px;
-                             float: right; padding-right: 15px;
-                             ">
-                            <input 
-                                style="background-color: #f40f0f;"
-                                type = "submit" value = "Thêm môn học">
+                <br /><br />
+                <div id="control-range">
+                    <%--------------Search-------------%>
+                    <div id="search-area" style="float: left;">
+                        <%--SEARCH FORM--%>
+                        <div id="searchbox" action="#">
+                            <input id="search" type = "text" placeholder = "Search" onkeypress="txtBoxSearchSubjectKeyPressed()" />
+                            <input type="button" id="submit" onclick = "searchSubject()" value = "Tìm" />
                         </div>
-                        <div class="clear"></div>
+                    </div>
+                    <div id="btn-to-move-page-add-subject">
+                        <span class="atag" type = "button" onclick="preAddSubject()"> <img src="../../imgs/icon/add.png"/>Thêm môn học</span>
+                    </div>
+                </div>
+                    
+                <div id = "listsubject">
+                    <form id="frm-pre-add-sub" method="post" action="../../ManageSubjectController?function=pre_add_subject">
                     </form>
                     <div id="error">
                         <%
@@ -107,23 +100,21 @@
                         <%}else{%>
                         <td> Tự chọn</td>
                         <%}%>
-                        <td><a href = "../../ManageSubjectController?function=edit_subject&ajx=false&subject_code=<%= subjects.get(i).getId()%>">Sửa</a></td>
-                        <td> <span class="atag" onclick="deleteSub('<%= subjects.get(i).getId() %>')">Xóa</span> </td>
+                        <td><a href = "../../ManageSubjectController?function=edit_subject&ajx=false&subject_code=<%= subjects.get(i).getId()%>"><img src="../../imgs/icon/edit.png" title="Sửa" alt="Sửa"/></a></td>
+                        <td> <span class="atag" onclick="deleteSub('<%= subjects.get(i).getId() %>')"><img src="../../imgs/icon/delete.png" title="Xóa" alt="Xóa"/></span> </td>
                         <% }%>
                         </tr>
                         <%}%>
                     </table>
-                    </div>
-                    <div id="page">
-                        <input type="button" value="|<<" onclick="firstPage()"/>- 
-                        <input type="button" value="<<" onclick="prePage()"/>-
-                        <input type="button" value=">>" onclick="nextPage()"/>-
-                        <input type="button" value=">>|" onclick="endPage()"/>
-                        <input type="hidden" value="<%= numpage%>" id = "numpage" />
-                    </div>
-                    <br/>
                 </div>
-
+                <div id="paggind">
+                    <input type="button" value="|<<" onclick="firstPage()"/>- 
+                    <input type="button" value="<<" onclick="prePage()"/>-
+                    <input type="button" value=">>" onclick="nextPage()"/>-
+                    <input type="button" value=">>|" onclick="endPage()"/>
+                    <input type="hidden" value="<%= numpage%>" id = "numpage" />
+                </div>
+                <br/>
                 <div id="editsubject">
                     <table id="tableeditsubject">
                     </table>
@@ -186,9 +177,15 @@
            searchSubject();
        } 
       }
+        function txtBoxSearchSubjectKeyPressed() {
+            if(event.keyCode == '13') {
+                searchSubject();
+            }
+        }
+        
         function searchSubject() {
             currentpage = 1;
-            var key = document.getElementById("search-box").value;
+            var key = document.getElementById("search").value;
             submitSearchSubject("../../ManageSubjectController?function=search&key=" + key);
         }
         
@@ -203,5 +200,8 @@
             submitSearchSubject("../../ManageSubjectController?function=delete&subject_code=" + subId +"&curentPage="+currentpage + "&key=" + key);
         }
         
+        function preAddSubject() {
+            document.forms["frm-pre-add-sub"].submit();
+        }
     </script>
 </html>

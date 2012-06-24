@@ -12,45 +12,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Quản lý tài khoản</title>
         <style media="all" type="text/css">
-
-            #table{
-                width: 100%;
-                padding-left: 10px;
-                padding-right: 10px;
-                text-align: center;
-
-            }
-            #table th{
-                background-color:#00ff00;
-                height: 30px;
-                border-color: black;
-            }
-
-            #table td{
-                text-align: center;
-                background-color: #5F676D;
-            }
-            #title{
-                background-color: #2f4e3d;
-                text-align: center;
-                padding-top: 12px;
-                padding-bottom: 10px;
-            }
-            #page{
-                text-align: center;
-            }
-            #sidebar {
-                height:250px;
-                overflow:auto;
-            }
-            a {
-                color: violet;
-            }
-
-            #error_code, #error_name, #error_tclt, #error_tcth {
-                font-size: 10px;
-                color: #cc0033;
-            }
+            /** CSS definition **/
         </style>
     </head>
     <%
@@ -89,17 +51,13 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-
-                <hr/><hr/>
-                <div id="title">
-                    <u><h3>Sửa môn học</h3></u>
+                <div id="main-title">
+                    Sửa môn học
                 </div>
-                <hr/><hr/><br>
-
+                <br /><br />
                 <input type="hidden" id="subs" value="<%= subjectStr%>">
                 <input type="hidden" id="pre_subs" value="<%= preSubStr%>">
                 <form action="" method="post">
-
                     <b><u>Vui lòng cập nhật thông tin môn học và nhấn "Hoàn thành"</u></b>
                     <table id="table_mh" >
                         <tr>
@@ -154,12 +112,8 @@
                         </tr>
                     </table>
                     <i style="font-size:11px">Nếu chọn nhiều môn học tiên quyết trùng nhau, chỉ 1 môn được tính.</i>
-                    <div style="padding-bottom: 20px;
-                         margin-left: 138px;">
-                        <input type="button"
-                               onclick="submitEditSubject('../../ManageSubjectController?function=edit_subject&ajax=true')"
-                               value="Hoàn thành" />
-                        <!--input type="button" onclick="clearData()" value="Xóa" /-->
+                    <div class="button-1">
+                        <span class="atag" onclick="submitEditSubject('../../ManageSubjectController?function=edit_subject&ajax=true')"> <img src="../../imgs/check.png"/>Update</span>
                     </div>
                     <div id="insert_from_table_error"
                          style="color: #cc0033;">
@@ -169,6 +123,7 @@
                         <% } %>
                     </div>
                 </form>
+                <br /><br />
             </div><!--End Contents-->
 
             <br/> <br/>
