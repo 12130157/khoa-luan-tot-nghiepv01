@@ -460,8 +460,8 @@ public class AccountController extends HttpServlet {
 
         out.print("</table>");
         out.print("<br/>");
-        
-        out.print("<div style=\"float: left; padding-left: 220px;\"><input type=\"button\" onclick=\"update()\" value=\"Hoàn thành\" />");
+        out.print("<div class=\"button-1\"><span class=\"atag\" onclick=\"update()\" ><img src=\"../../imgs/check.png\" />Hoàn thành</span></div>");
+        //out.print("<div style=\"float: left; padding-left: 220px;\"><input type=\"button\" onclick=\"update()\" value=\"Hoàn thành\" />");
         out.print("</div>");
 	out.print("<div class=\"clear\"></div>");
 	out.print("<br/>");
