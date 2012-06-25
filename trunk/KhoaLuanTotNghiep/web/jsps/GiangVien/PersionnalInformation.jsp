@@ -142,7 +142,9 @@
                                 </tr>
                             </table>
                             <br/>
-                            <input type="button" onclick="update()" value="Cập nhật"/>
+                            <div class="button-1" style="padding: 2px !important;">
+                                <span class="atag" onclick="update()" ><img src="../../imgs/check.png" />Cập nhật</span>
+                            </div>
                         <%
                         }
                         %>
@@ -201,7 +203,9 @@
                         <div id="send-request-result">
                             <%-- Show result after send request... --%>
                         </div>
-                        <input type="button" onclick="sendRequest()" value="Gửi yêu cầu"/>
+                        <div class="button-1" style="padding: 2px !important;">
+                            <span class="atag" onclick="sendRequest()" ><img src="../../imgs/check.png" />Gửi</span>
+                        </div>
                     </div>
                 </div>
                 <br /><br />
