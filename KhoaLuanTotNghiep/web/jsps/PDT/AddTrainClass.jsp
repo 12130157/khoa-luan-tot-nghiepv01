@@ -23,41 +23,6 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Mở lớp học</title>
         <style media="all" type="text/css">
-
-            #table{
-                width: 100%;
-                padding-left: 10px;
-                padding-right: 10px;
-                text-align: center;
-
-            }
-            #table th{
-                background-color:#00ff00;
-                height: 30px;
-                border-color: black;
-            }
-
-            #table td{
-                text-align: center;
-                background-color: #5F676D;
-            }
-            #title{
-                background-color: #2f4e3d;
-                text-align: center;
-                padding-top: 12px;
-                padding-bottom: 10px;
-            }
-            #page{
-                text-align: center;
-            }
-            #sidebar {
-                height:250px;
-                overflow:auto;
-            }
-            a {
-                color: violet;
-            }
-
             #error_code, #error_name, #error_tclt, #error_tcth {
                 font-size: 10px;
                 color: #cc0033;
@@ -73,12 +38,10 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-
-               <div id="title">
-                    <u><h3>Mở lớp học mới</h3></u>
+               <div id="main-title">
+                    Mở lớp học mới
                 </div>
-                <hr/><hr/><br>
-
+                <br />
                 <form id="addclassform" method="post">
                    <table id="table_mh">
                         <tr>
@@ -163,20 +126,25 @@
                         <tr>
                             <td>Ngày kết thúc:</td>
                             <td>
-                                <input type="text" id="endDate" name="endDate" readonly="readonly" value="<%=DateTimeUtil.format(new Date())%>">
+                                <input type="text" id="endDate" name="endDate" readonly="readonly" value="<%=DateTimeUtil.format(new Date())%>" />
                                 <img src="../../imgs/cal.gif" style="cursor: pointer;" onclick="javascript:NewCssCal('endDate','YYMMMDD')" /> 
                             </td> 
                         </tr>
                         </tr>
-                         <tr>
+                        <tr>
                              <td></td>
                              <td>
-                                 <input type="button" name="Check" id="Check" value="  Kiểm tra  " onclick="CheckClass()"/>
-                                 <input type="button" id="Create" onclick="SendRequestCreateNewTrainClass()" name="Create" value="  Tạo lớp học  "/> 
+                                 <br />
+                                <div class="button-1" style="padding: 2px !important; float: left;">
+                                    <span class="atag" onclick="CheckClass()" ><img src="../../imgs/check.png" />Kiểm tra</span>
+                                </div>
+                                 <div class="button-1" style="padding: 2px !important; float: left;">
+                                    <span class="atag" onclick="SendRequestCreateNewTrainClass()" ><img src="../../imgs/check.png" />Tạo lớp học</span>
+                                </div>
                              </td>
                         </tr>
                     </table>
-                     
+                    <br />
                     <div id="error">
                         
                     </div>
