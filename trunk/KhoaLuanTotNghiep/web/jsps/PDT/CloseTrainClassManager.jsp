@@ -14,43 +14,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Quản lý lớp học</title>
         <style media="all" type="text/css">
-
-            #table-list-train-class{
-                width: 100%;
-                padding-left: 10px;
-                padding-right: 10px;
-                text-align: center;
-
-            }
-            #table-list-train-class th{
-                background-color:#00ff00;
-                height: 30px;
-                border-color: black;
-            }
-
-            #table-list-train-class td{
-                text-align: center;
-                background-color: #5F676D;
-            }
-            #title{
-                background-color: #2f4e3d;
-                text-align: center;
-                padding-top: 12px;
-                padding-bottom: 10px;
-            }
-            #page{
-                text-align: center;
-            }
-            #sidebar {
-                height:250px;
-                overflow:auto;
-            }
-            a {
-                color: violet;
-            }
-            #createLabel{
-                padding-right: 15px;
-            }
+            <%-- CSS definition --%>
         </style>
     </head>
     <%
@@ -78,11 +42,10 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <div id="title">
-                    <u><h3>Danh sách các lớp học đã đóng</h3></u>
+                <div id="main-title">
+                    Danh sách các lớp học đã đóng
                 </div>
-                <hr/><hr/><br>
-
+                <br /><br />
                 <%--Form add new Train subject--%>
                  <div id="error">
                         <%
@@ -90,40 +53,59 @@
                                 <%= error %>
                             <%}
                         %>
-                    </div>  
-                     <b>
-                        <a id= "a1" href="uit.edu.vn">Tìm kiếm</a> /
-                        <a id="a2" href="uit.edu.vn">Lọc theo khoa</a> /
-                        <a id="a3" href="uit.edu.vn">Lọc theo năm và học kỳ</a> 
-                    </b>
-                    <div id="inputvalue">
-                        <input type = "text" id="searchValue" onKeyPress="keypressed()" placeholder = "Nhập thông tin tìm kiếm" />
-                        <input type = "button" onclick = "search()" value = "Tìm">
-                    </div>
-                    <div id="faculty">
-                        Khoa: <select id="facultyValue" name="facultyValue" onchange="reloadResultByFaculty()">
-                            <option value="All">Tất cả </option>
-                            <%for(int i=0; i<facultyList.size();i++){%>
-                            <option value="<%=facultyList.get(i).getId()%>"><%=facultyList.get(i).getFacultyName()%></option>
-                            <%}%>
-                        </select>
-                    </div>   
-                    <div id="yearAndSemester">
-                       Năm học: <select style="width:90px" name="year" id="year" onchange="reloadResultByYAS()">
-                                    <option value="all">Tất cả</option>
-                                    <% for (int i = 0; i < yearList.size(); i++) {%>
-                                    <option value="<%=yearList.get(i)%>"><%=yearList.get(i)%></option>
+                </div>  
+                <%-- Control range --%>
+                <div id="control-range" style="height: 70px !important;">
+                    <%-- Filter --%>
+                    <div>
+                        <div style="font-weight: bold;">
+                            <a id= "a1" href="uit.edu.vn">Tìm kiếm</a> /
+                            <a id="a2" href="uit.edu.vn">Lọc theo khoa</a> /
+                            <a id="a3" href="uit.edu.vn">Lọc theo năm và học kỳ</a> 
+                            <div id="add-new-btn" style="padding: 20px;">
+                                <span class="atag">
+                                    <a href="../../ManageClassController?action=pre_create"> <img src="../../imgs/icon/add.png" /> Mở lớp học mới</a>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div id="inputvalue">
+                            <form id="searchbox" style="width: 310px;  float: left; text-align: center;" action="">
+                                <input type="text" id="search" onKeyPress="keypressed()" placeholder = "Search" />
+                                <input type="button" id="submit" onclick = "search()" value = "Tìm" />
+                            </form>
+                        </div>
+
+                        <div id="faculty">
+                            <form id="searchbox" style="width: 310px;  float: left; text-align: center;" action="">
+                                Khoa: <select id="facultyValue" name="facultyValue" onchange="reloadResultByFaculty()">
+                                    <option value="All">Tất cả </option>
+                                    <%for(int i=0; i<facultyList.size();i++){%>
+                                    <option value="<%=facultyList.get(i).getId()%>"><%=facultyList.get(i).getFacultyName()%></option>
                                     <%}%>
                                 </select>
-                       Học kỳ: <select style="width:70px" name="semester" id="semester" onchange="reloadResultByYAS()">
-                                    <option value="0">Tất cả</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                       </select>  
-                    </div><br>
-                    <div id = "list-train-class">
-                    <form id="trainclaslist">
-                    <table id = "table-list-train-class" name = "table-list-train-class">
+                            </form>
+                        </div>
+                        <div id="yearAndSemester">
+                            <form id="searchbox" style="width: 310px; float: left; text-align: center;" action="">
+                                Năm học: <select style="width:90px" name="year" id="year" onchange="reloadResultByYAS()">
+                                        <option value="all">Tất cả</option>
+                                        <% for (int i = 0; i < yearList.size(); i++) {%>
+                                        <option value="<%=yearList.get(i)%>"><%=yearList.get(i)%></option>
+                                        <%}%>
+                                    </select>
+                                Học kỳ: <select style="width:70px" name="semester" id="semester" onchange="reloadResultByYAS()">
+                                        <option value="0">Tất cả</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                    </select>  
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div id="list-train-class">
+                <form id="trainclaslist">
+                    <table id="table-list-train-class" name="table-list-train-class" class="general-table">
                         <tr>
                         <th> STT </th>
                         <th> Lớp học </th>
@@ -153,7 +135,7 @@
                         </tr>
                         <%}%>
                     </table>
-                    <div id="page">
+                    <div id="paggind">
                         <input type="button" value="|<<" onclick="firstPage()"/>- 
                         <input type="button" value="<<" onclick="prePage()"/>-
                         <input type="button" value=">>" onclick="nextPage()"/>-
@@ -204,7 +186,7 @@
      });
      function openClass(classCode, classSemester, classYear){
          if(type=="input"){
-                value= document.getElementById("searchValue").value;
+                value= document.getElementById("search").value;
                if(http){
                     http.open("GET", "../../ManagerCloseClassController?action=OpenByInput&value="+value + "&curentPage="+ currentpage + "&classCode="+ classCode + "&classSemester="+ classSemester + "&classYear="+ classYear ,true);
                     http.onreadystatechange = searchResponeHandler;
@@ -260,7 +242,7 @@
             if(currentpage < 1)
                 currentpage = 1;
             if(type=="input"){
-                value= document.getElementById("searchValue").value;
+                value= document.getElementById("search").value;
                if(http){
                     http.open("GET", "../../ManagerCloseClassController?action=FilterPageByInput&value="+value + "&curentPage="+ currentpage  ,true);
                     http.onreadystatechange = searchResponeHandler;
@@ -314,7 +296,7 @@
         function endPage(){
             currentpage = numpage;
             if(type=="input"){
-                value= document.getElementById("searchValue").value;
+                value= document.getElementById("search").value;
                if(http){
                     http.open("GET", "../../ManagerCloseClassController?action=FilterPageByInput&value="+value + "&curentPage="+ currentpage  ,true);
                     http.onreadystatechange = searchResponeHandler;
