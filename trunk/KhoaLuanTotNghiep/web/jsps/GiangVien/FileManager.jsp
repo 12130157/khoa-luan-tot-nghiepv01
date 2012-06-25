@@ -32,11 +32,15 @@
             </div><%--End Navigation--%>
             <%--Main Contents--%>
             <div id="content">
-                <br /><br />
+                <div id="main-title">
+                    Mở lớp học mới
+                </div>
+                <br />
                 <div class="range">
                     <h3><span id="btn-show-form-upload" class="atag">
                             Gửi bảng điểm
                     </span></h3>
+                    <br /><br />
                     <div id="upload-score">
                         <i><u>Giảng viên vui lòng nộp bảng điểm về cho PĐT theo đúng định dạng file</u></i>
                         <ul>
@@ -56,7 +60,9 @@
                                 <input type="file" name="txtPath" id="txtPath" accept="application/xls" />
                                 <div class="clear"> </div>
                                 <br />
-                                <input type="button" value="Tải lên" onclick="submitUploadFile()" />
+                                <div class="button-1" style="padding: 2px !important;">
+                                    <span class="atag" onclick="submitUploadFile()" ><img src="../../imgs/check.png" />Tải lên</span>
+                                </div>
                             </form>
                             <%-- Validate result --%>
                             <div id="validate-filename-result">
