@@ -36,7 +36,10 @@
             </div><%--End Navigation--%>
             <%--Main Contents--%>
             <div id="content">
-                
+               <div id="main-title">
+                    Trang cá nhân
+                </div>
+                <br /><br />
                 <%-- Thong tin ca nhan --%>
                 <div class="range">
                     <h3><span id="btn-persional-information" class="atag">
