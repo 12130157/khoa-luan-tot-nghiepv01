@@ -508,3 +508,21 @@ tr:hover .pop-up {
 .button-1:hover {
     background: #FD2;
 }
+#search-area {
+    float: left;
+}
+#add-new-btn {
+    float: right;
+    padding: 10px 10px;
+}
+
+select {
+    border: 1 solid #745656;
+    border-radius: 8px;
+}
+
+input[type="text"], input[type="password"] {
+    border: 1 solid #745656;
+    border-radius: 8px;
+    height: 20px;
+}
