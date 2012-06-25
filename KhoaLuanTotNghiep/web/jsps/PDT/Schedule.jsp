@@ -7,7 +7,6 @@
 <%@page import="uit.cnpm02.dkhp.model.Faculty"%>
 <%@page import="uit.cnpm02.dkhp.model.TrainClass"%>
 <%@page import="java.util.List"%>
-<%@include file="MenuPDT.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
@@ -61,16 +60,20 @@ Integer semester=(Integer) session.getAttribute("semester");
                 font-weight: bold; 
             }
         </style>
-        </style>
     </head>
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
+            <%-- Menu --%>
+            <%@include file="MenuPDT.jsp" %>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <br>
+                <div id="main-title">
+                    Thời khóa biểu
+                </div>
+                <br /><br />
                 <h2 align="center"><u>Thời khóa biểu học kỳ <%=semester%> năm học <%=year%> </u></h2>
                 <br><hr/><hr/>
                 <b>Chọn khoa</b>
