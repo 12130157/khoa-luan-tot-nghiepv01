@@ -165,7 +165,7 @@
         $(yearAndSemester).hide()
     $(a1).click(function(event){
        event.preventDefault();
-        $(inputvalue).show()
+       $(inputvalue).slideDown(500);
         $(faculty).hide()
         $(yearAndSemester).hide()
         type = "input";
@@ -173,7 +173,7 @@
     $(a2).click(function(event){
        event.preventDefault();
         $(inputvalue).hide()
-        $(faculty).show()
+        $(faculty).slideDown(500);
         $(yearAndSemester).hide()
         type = "faculty";
     });
@@ -181,7 +181,7 @@
        event.preventDefault();
        $(inputvalue).hide()
        $(faculty).hide()
-       $(yearAndSemester).show()
+       $(yearAndSemester).slideDown(500);
        type = "YAS";
      });
      function openClass(classCode, classSemester, classYear){
