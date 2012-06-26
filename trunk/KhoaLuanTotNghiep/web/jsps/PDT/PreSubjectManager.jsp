@@ -120,8 +120,8 @@
                             <table id="tablelist" class="general-table" name="tablelist">
                                 <tr>
                                     <th> STT </th>
-                                    <th> <a href="#" onclick ="sort('TenMH')">Tên môn học </a></th>
-                                    <th> <a href="#" onclick="sort('TenMHTQ')"> Tên MHTQ </a></th>
+                                    <th> <span class="atag" onclick ="sort('TenMH')"> Tên môn học </span></th>
+                                    <th> <span class="atag" onclick="sort('TenMHTQ')"> Tên MHTQ </span></th>
                                     <th> <img src="../../imgs/icon/delete.png" title="Xóa" alt="Xóa"/> </th>
                                 </tr>
                                     <%
