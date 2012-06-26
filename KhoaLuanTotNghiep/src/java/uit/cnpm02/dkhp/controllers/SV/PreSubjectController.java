@@ -198,11 +198,11 @@ public class PreSubjectController extends HttpServlet {
                     + "<th> STT </th>"
                     + "<th> " + (includeLinkSort ? "<a href='#' onclick =\"sort('TenMH')\">" : "") + " Môn học " + (includeLinkSort ? "</a>" : "") + " </th>"
                     + "<th> " + (includeLinkSort ? "<a href='#' onclick =\"sort('TenMHTQ')\">" : "") + "Môn học tiên quyết " + (includeLinkSort ? "</a>" : "") + " </th>"
-                    + ((includeBtnDelete == true) ? "<th></th>" : "")
+                    + ((includeBtnDelete == true) ? "<th><img src=\"../../imgs/icon/delete.png\"/></th>" : "")
                       + "</tr>";
             out.println(tblHeader);
             //<a href="deletePreSub(<%=preSubjects.get(j).getId().getSudId()%>, <%=preSubjects.get(j).getId().getPreSudId() %>)"></a>
-            String btnOk = "<a href='#' onclick=\"deletePreSub('%s', '%s')\"> Xóa</a>";
+            String btnOk = "<a href='#' onclick=\"deletePreSub('%s', '%s')\"> <img src=\"../../imgs/icon/delete.png\"/></a>";
             for (int i = 0; i < preSubjects.size(); i++) {
                 PreSubject ps = preSubjects.get(i);
                 String currentLine = "<tr>"
