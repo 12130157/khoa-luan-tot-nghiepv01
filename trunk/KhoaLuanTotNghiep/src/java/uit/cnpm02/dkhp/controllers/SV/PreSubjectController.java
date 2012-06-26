@@ -196,8 +196,8 @@ public class PreSubjectController extends HttpServlet {
             out.println("<table class='general-table'" + (!includeBtnDelete ? " style=\"width:547px !important\"" : "") + ">");
             String tblHeader = "<tr>"
                     + "<th> STT </th>"
-                    + "<th> " + (includeLinkSort ? "<a href='#' onclick =\"sort('TenMH')\">" : "") + " Môn học " + (includeLinkSort ? "</a>" : "") + " </th>"
-                    + "<th> " + (includeLinkSort ? "<a href='#' onclick =\"sort('TenMHTQ')\">" : "") + "Môn học tiên quyết " + (includeLinkSort ? "</a>" : "") + " </th>"
+                    + "<th> " + (includeLinkSort ? "<span class=\"atag\" onclick =\"sort('TenMH')\">" : "") + " Môn học " + (includeLinkSort ? "</span>" : "") + " </th>"
+                    + "<th> " + (includeLinkSort ? "<span class=\"atag\" onclick =\"sort('TenMHTQ')\">" : "") + "Môn học tiên quyết " + (includeLinkSort ? "</span>" : "") + " </th>"
                     + ((includeBtnDelete == true) ? "<th><img src=\"../../imgs/icon/delete.png\"/></th>" : "")
                       + "</tr>";
             out.println(tblHeader);
