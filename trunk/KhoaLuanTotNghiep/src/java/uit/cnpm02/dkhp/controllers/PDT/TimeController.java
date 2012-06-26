@@ -7,8 +7,6 @@ package uit.cnpm02.dkhp.controllers.PDT;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,6 +18,7 @@ import uit.cnpm02.dkhp.model.RegistrationTime;
 import uit.cnpm02.dkhp.model.RegistrationTimeID;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.DateTimeUtil;
+import uit.cnpm02.dkhp.utilities.StringUtils;
 
 /**
  *
@@ -35,66 +34,87 @@ public class TimeController extends HttpServlet {
      * @throws ServletException
      * @throws IOException 
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+    protected void processRequest(HttpServletRequest request,
+            HttpServletResponse response)
             throws ServletException, IOException {
-         request.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
-           String action = request.getParameter("action");
-           if(action.equalsIgnoreCase("default"))
-               showTimeRegistration(request, response);
-           else if(action.equalsIgnoreCase("pre_update"))
-              preUpdateRegistrationTime(request, response);
-           else if(action.equalsIgnoreCase("update"))
-              updateRegistrationTime(request, response);
-        } finally {            
+            String action = request.getParameter("action");
+            if (action.equalsIgnoreCase("default")) {
+                showTimeRegistration(request, response);
+            } else if (action.equalsIgnoreCase("pre_update")) {
+                preUpdateRegistrationTime(request, response);
+            } else if (action.equalsIgnoreCase("update")) {
+                updateRegistrationTime(request, response);
+            }
+        } finally {
             out.close();
         }
     }
-    private void updateRegistrationTime(HttpServletRequest request, HttpServletResponse response) throws IOException{
-       String path="";
+    private void updateRegistrationTime(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        String path = "";
+        PrintWriter out = response.getWriter();
         try {
-        Date startDate = DateTimeUtil.parse(request.getParameter("startDate"));
-        Date endDate = DateTimeUtil.parse(request.getParameter("endDate"));
-        RegistrationTimeID id = new RegistrationTimeID(Constants.CURRENT_SEMESTER, Constants.CURRENT_YEAR);
-        RegistrationTime regisTime = new RegistrationTime(id, startDate, endDate);
-        regisTime = DAOFactory.getRegistrationTimeDAO().update(regisTime);
-        HttpSession session = request.getSession();
-        session.setAttribute("registrationTime", regisTime);
-        path="./jsps/PDT/RegistrationTime.jsp";
-        response.sendRedirect(path);
+            String startStr = request.getParameter("new_start");
+            String endStr = request.getParameter("new_end");
+            if (StringUtils.isEmpty(startStr)
+                    || StringUtils.isEmpty(endStr)) {
+                out.println("error - start day or end day is empty");
+                return;
+            }
+            Date startDate = DateTimeUtil.parse(startStr);
+            Date endDate = DateTimeUtil.parse(endStr);
+            RegistrationTimeID id = new RegistrationTimeID(
+                    Constants.CURRENT_SEMESTER, Constants.CURRENT_YEAR);
+            RegistrationTime regisTime = 
+                    new RegistrationTime(id, startDate, endDate);
+            regisTime = DAOFactory.getRegistrationTimeDAO().update(regisTime);
+            writeOutRegisterTime(out, regisTime);
+            //HttpSession session = request.getSession();
+            //session.setAttribute("registrationTime", regisTime);
+            //path = "./jsps/PDT/RegistrationTime.jsp";
+            //response.sendRedirect(path);
         } catch (Exception ex) {
-            path= "./jsps/Message.jsp";
-           response.sendRedirect(path);
+            path = "./jsps/Message.jsp";
+            response.sendRedirect(path);
         }
     }
-    private void preUpdateRegistrationTime(HttpServletRequest request, HttpServletResponse response) throws IOException{
-        RegistrationTimeID id = new RegistrationTimeID(Constants.CURRENT_SEMESTER, Constants.CURRENT_YEAR);
-        String path="";
+    private void preUpdateRegistrationTime(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        RegistrationTimeID id = new RegistrationTimeID(
+                Constants.CURRENT_SEMESTER, Constants.CURRENT_YEAR);
+        String path = "";
         try {
-            RegistrationTime registrationTime = DAOFactory.getRegistrationTimeDAO().findById(id);
+            RegistrationTime registrationTime = DAOFactory
+                    .getRegistrationTimeDAO().findById(id);
             HttpSession session = request.getSession();
             session.setAttribute("registrationTime", registrationTime);
-            path="./jsps/PDT/ChangeRegistrationTime.jsp";
+            path = "./jsps/PDT/ChangeRegistrationTime.jsp";
             response.sendRedirect(path);
         } catch (Exception ex) {
-            path= "./jsps/Message.jsp";
-           response.sendRedirect(path);
+            path = "./jsps/Message.jsp";
+            response.sendRedirect(path);
         }
     }
-    private void showTimeRegistration(HttpServletRequest request, HttpServletResponse response) throws IOException{
-        RegistrationTimeID id = new RegistrationTimeID(Constants.CURRENT_SEMESTER, Constants.CURRENT_YEAR);
-        String path="";
+    
+    private void showTimeRegistration(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        RegistrationTimeID id = new RegistrationTimeID(
+                Constants.CURRENT_SEMESTER, Constants.CURRENT_YEAR);
+        String path = "";
         try {
-            RegistrationTime registrationTime = DAOFactory.getRegistrationTimeDAO().findById(id);
+            RegistrationTime registrationTime = DAOFactory
+                    .getRegistrationTimeDAO().findById(id);
             HttpSession session = request.getSession();
             session.setAttribute("registrationTime", registrationTime);
-            path="./jsps/PDT/RegistrationTime.jsp";
+            path = "./jsps/PDT/RegistrationTime.jsp";
             response.sendRedirect(path);
         } catch (Exception ex) {
-            path= "./jsps/Message.jsp";
-           response.sendRedirect(path);
+            path = "./jsps/Message.jsp";
+            response.sendRedirect(path);
         }
     }
 
@@ -133,4 +153,11 @@ public class TimeController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private void writeOutRegisterTime(PrintWriter out,
+            RegistrationTime regisTime) {
+        String start = DateTimeUtil.format(regisTime.getStartDate());
+        String end = DateTimeUtil.format(regisTime.getEndDate());
+        out.print(start + ";" + end);
+    }
 }
