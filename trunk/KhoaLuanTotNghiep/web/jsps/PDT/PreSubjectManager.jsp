@@ -33,20 +33,7 @@
         <title>Trang quản lý môn học tiên quyết</title>
         
         <style media="all" type="text/css">
-            #page{
-                text-align: center;
-            }
-            a {
-                color: violet;
-            }
-            #sidebar {
-                height:400px;
-                overflow:auto;
-            }
-            #list-pre-sub {
-                height:400px;
-                overflow:auto;
-            }
+            <%-- CSS definition --%>
         </style>
     </head>
     <body>
@@ -58,103 +45,108 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <div id="title">
-                    <u><h3>Quản lý Môn học tiên quyết</h3></u>
+                <div id="main-title">
+                    Quản lý Môn học tiên quyết
                 </div>
-
-                <br>
-                <hr/><hr/><br>
-
-                <div id = "add-new" name="add-new">
-                    <h3> Thêm môn học tiên quyết: </h3>
-                    <table id="tableadd" name="tableadd" class="general-table" style="width:450px !important">
-                        <tr>
-                            <th> Chọn môn học </th>
-                            <th> Môn học tiên quyết </th>
-                        </tr>
-                        <tr>
-                        <td>
-                            <select id="select-sub">
-                                <% if ((subjects != null) && (!subjects.isEmpty())) {
-                                        for (int i = 0; i < subjects.size(); i++) {
-                                %>
-                                <option value="<%=subjects.get(i).getId()%>" > <%= subjects.get(i).getSubjectName() %> </option>
-                                <% }
-                                    }%>
-                            </select>
-                        </td>
-                        <td>
-                            <select id="select-pre-sub">
-                                <% if ((subjects != null) && (!subjects.isEmpty())) {
-                                        for (int i = 0; i < subjects.size(); i++) {
-                                %>
-                                <option value="<%=subjects.get(i).getId()%>" > <%= subjects.get(i).getSubjectName() %> </option>
-                                <% }
-                                    }%>
-                            </select>
-                        </td>
-                    </table>
-                    <div id = "btn-add">
-                        <input type="button" onclick="checkPreSubjectExisted()" value="Kiểm tra" />
-                        <input type="button" onclick="addPreSub()" value="Thêm" />
+                <br /><br />
+                <%-- Add new range --%>
+                <div class="range">
+                    <h3><span id="btn-add-pre-subject" class="atag" >Thêm môn học tiên quyết</span></h3>
+                    <div id = "add-new" name="add-new">
+                        <table id="tableadd" name="tableadd" class="general-table" style="width:450px !important">
+                            <tr>
+                                <th> Chọn môn học </th>
+                                <th> Môn học tiên quyết </th>
+                            </tr>
+                            <tr>
+                            <td>
+                                <select id="select-sub">
+                                    <% if ((subjects != null) && (!subjects.isEmpty())) {
+                                            for (int i = 0; i < subjects.size(); i++) {
+                                    %>
+                                    <option value="<%=subjects.get(i).getId()%>" > <%= subjects.get(i).getSubjectName() %> </option>
+                                    <% }
+                                        }%>
+                                </select>
+                            </td>
+                            <td>
+                                <select id="select-pre-sub">
+                                    <% if ((subjects != null) && (!subjects.isEmpty())) {
+                                            for (int i = 0; i < subjects.size(); i++) {
+                                    %>
+                                    <option value="<%=subjects.get(i).getId()%>" > <%= subjects.get(i).getSubjectName() %> </option>
+                                    <% }
+                                        }%>
+                                </select>
+                            </td>
+                        </table>
+                        <div class="button-1" style="float:left; margin-left: 15%; height: 22px;">
+                            <span class="atag" onclick="checkPreSubjectExisted()"><img src="../../imgs/check.png"/>Kiểm tra</span>
+                        </div>
+                        <div class="button-1" style="float:left; margin-left: 15px; height: 22px;">
+                            <span class="atag" onclick="addPreSub()"><img src="../../imgs/check.png"/>Thêm</span>
+                        </div>
+                        <div class="clear"></div> <br />
+                        <div id="check-respone">
+                        </div>
                     </div>
-                            
-                    <div id="check-respone">
-                    </div>
-                </div>
-
-                <br /> <hr /> <hr />            
-                <div id="pre-sub-search">
-                    <%--<i>Nhập thông tin tìm kiếm </i>--%>
-                    <input type="text" id="txt-search" />
-                    <input type="button" value="Tìm" onclick="search()" />
-                </div>
-                <div id="pre-sub-filter">
-                    <%--Filter by faculty--%>
-                    Tìm theo khoa 
-                    <select id="txt-search" onchange="" class="input-minwidth">
-                        <option value="all">Tất cả</option>
-                    </select>
                 </div>
                 <div class="clear"></div>
-                <div id = "list-pre-sub" name="list-pre-sub">
-                    <input type="hidden" id="sort-type" value="ASC" />
-                    <h3> Danh sách môn học tiên quyết: </h3>
-                    <table id="tablelist" class="general-table" name="tablelist">
-                        <tr>
-                        <th> STT </th>
-                        <th> <a href="#" onclick ="sort('TenMH')">Tên môn học </a></th>
-                        <th> <a href="#" onclick="sort('TenMHTQ')"> Tên MHTQ </a></th>
-                        <th> </th>
-                        </tr>
-                        <%
-                            if ((preSubjects != null) && (!preSubjects.isEmpty())) {
-                                for (int j = 0; j < preSubjects.size(); j++) {
-                                    PreSubject pSub = preSubjects.get(j);
-                        %>
-                        <tr>
-                        <td> <%= (j + 1)%> </td>
-                        <td> <%= pSub.getSubjectName()%> </td>
-                        <td> <%= pSub.getPreSubjectName()%> </td>
-                        <td> 
-                            <a href="#" onclick="deletePreSub('<%=pSub.getId().getSudId()%>', '<%=pSub.getId().getPreSudId()%>')"> Xóa </a>
-                        </td>
-                        </tr>
-                        <%        }
-                            }
-                        %>
+                <br />
+                <div class="range">
+                    <h3><span id="btn-list-pre-subject" class="atag" >Danh sách môn học tiên quyết</span></h3>
+                    <div id="list-pre-subject" style="display: none;">
+                        <div id="control-range" style="height: 45px;">
+                            <div id="searchbox" style="float: left;">
+                                <%--<i>Nhập thông tin tìm kiếm </i>--%>
+                                <input type="text" id="search" />
+                                <input type="button" id="submit" value="Tìm" onclick="search()" />
+                            </div>
+                            <div id="pre-sub-filter">
+                                <%--Filter by faculty--%>
+                                Tìm theo khoa
+                                <select id="select-search" onchange="" class="input-minwidth">
+                                    <option value="all">Tất cả</option>
+                                    <option value="cnpm">Thuộc khoa CNPM</option>
+                                    <option value="mmt">Thuộc khoa MMT</option>
+                                    <option value="ktmt">Thuộc khoa KTMT</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                        <div id = "list-pre-sub" name="list-pre-sub">
+                            <input type="hidden" id="sort-type" value="ASC" />
+                            <div style="padding-top: 25px; font-size: 12px;"> <b><i>Danh sách môn học tiên quyết</i></b></div>
+                            <table id="tablelist" class="general-table" name="tablelist">
+                                <tr>
+                                    <th> STT </th>
+                                    <th> <a href="#" onclick ="sort('TenMH')">Tên môn học </a></th>
+                                    <th> <a href="#" onclick="sort('TenMHTQ')"> Tên MHTQ </a></th>
+                                    <th> <img src="../../imgs/icon/delete.png" title="Xóa" alt="Xóa"/> </th>
+                                </tr>
+                                    <%
+                                        if ((preSubjects != null) && (!preSubjects.isEmpty())) {
+                                            for (int j = 0; j < preSubjects.size(); j++) {
+                                                PreSubject pSub = preSubjects.get(j);
+                                    %>
+                                <tr>
+                                    <td> <%= (j + 1)%> </td>
+                                    <td> <%= pSub.getSubjectName()%> </td>
+                                    <td> <%= pSub.getPreSubjectName()%> </td>
+                                    <td> 
+                                        <span class="atag" onclick="deletePreSub('<%=pSub.getId().getSudId()%>', '<%=pSub.getId().getPreSudId()%>')"> <img src="../../imgs/icon/delete.png" title="Xóa" alt="Xóa"/> </span>
+                                    </td>
+                                </tr>
+                                    <%        }
+                                        }
+                                    %>
 
-                    </table>
-                    <!--div id="page">
-                        <input type="button" value="|<<" onclick="firstPage()"/>- 
-                        <input type="button" value="<<" onclick="prePage()"/>-
-                        <input type="button" value=">>" onclick="nextPage()"/>-
-                        <input type="button" value=">>|" onclick="endPage()"/>
-                        <input type="hidden" value="<!--%= numpage %>" id="numpage" />
-                    </div-->
-                </div>
+                            </table>
+
+                        </div>
+                    </div>
+                    </div>
             </div><!--End Contents-->
-
             <div id="footer"><!--Footer-->
                 <%@include file="../Footer.jsp" %>
             </div><!--End footer-->
@@ -162,7 +154,17 @@
         <!--End Wrapper-->
     </body>
     <script src="../../javascripts/AjaxUtil.js"></script>
+    <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
     <script  type = "text/javascript" >
+        
+        $("#btn-add-pre-subject").click(function () {
+            $('#add-new').slideToggle(500);
+        });
+        $("#btn-list-pre-subject").click(function () {
+            $('#list-pre-subject').slideToggle(500);
+        });
+        
+        
         var currentpage = 1;
         var http = createRequestObject();
         numpage = document.getElementById("numpage").value;
@@ -236,7 +238,7 @@
         }
         
         function search() {
-            var key = document.getElementById("txt-search").value;
+            var key = document.getElementById("search").value;
             if(http){
                 http.open(
                 "GET", "../../PreSubjectController?action=search&key=" + key ,true);
