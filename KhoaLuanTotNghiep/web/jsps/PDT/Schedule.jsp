@@ -28,37 +28,6 @@ Integer semester=(Integer) session.getAttribute("semester");
         <title>Thời khóa biểu</title>
         <style media="all" type="text/css">
 
-           
-            #formdetail table{
-                width: 100%;
-                padding-left: 10px;
-                padding-right: 10px;
-
-            }
-            #formdetail table th{
-                background-color:#175F6E;
-                height: 30px;
-                border-color: black;
-            }
-
-            #formdetail table td{
-                text-align: center;
-                background-color: #474C52;
-                border-color: #7D8103;
-            }
-            #formdetail{
-                width: 99%;
-            }
-            #detail{
-                width: 90%;
-            }
-             #detail th{
-               text-align: center;
-            }
-            a.test 
-            {
-                font-weight: bold; 
-            }
         </style>
     </head>
     <body>
@@ -71,10 +40,9 @@ Integer semester=(Integer) session.getAttribute("semester");
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
                 <div id="main-title">
-                    Thời khóa biểu
+                    Thời khóa biểu học kỳ <%=semester%> năm học <%=year%>
                 </div>
                 <br /><br />
-                <h2 align="center"><u>Thời khóa biểu học kỳ <%=semester%> năm học <%=year%> </u></h2>
                 <br><hr/><hr/>
                 <b>Chọn khoa</b>
                 <select id="faculty" name="faculty" onchange="reloadData()">
@@ -94,10 +62,12 @@ Integer semester=(Integer) session.getAttribute("semester");
                     <option value="7">Thứ 7</option>
                 </select>
                  <form id="formdetail" name="formdetail">
+                     <%--
                     <u>
                         chi tiết:
                     </u>
-                    <table id="detail" name="detail" border="1" bordercolor="yellow" >
+                     --%>
+                    <table id="detail" class="general-table" name="detail" border="1" bordercolor="yellow" >
                      <tr>
                          <th width="50px"></th><th width="50px">Mã lớp</th><th width="200px">Môn học</th><th width="50px">Phòng</th><th width="50px">Buổi</th><th width="200px">Giảng viên</th>
                      </tr> 
