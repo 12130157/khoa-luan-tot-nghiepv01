@@ -4,7 +4,7 @@ html, body, div, span, h1, h2, h3, h4, strong, ol, ul, li{
     border: 0;
     outline: 0;
     font-family: arial !important;
-    font-size: 100%;
+    font-size: 14px;
     color: #000;
     vertical-align: baseline;
 
@@ -190,10 +190,12 @@ table.general-table th {
 }
 
 table.general-table th{
+    font-size: 14px;
     background:#328aa4 url(../imgs/table/tr_back.gif) repeat-x;color:#fff;
 }
 
 table.general-table td{
+    font-size: 13px;
     background:#e5f1f4;
 }
 
@@ -545,4 +547,8 @@ input[type="text"], input[type="password"] {
     border-radius: 10px;
     background: #ADD8E6;
     display: none;
+}
+
+#mailbox-1 {
+    float: right;
 }
