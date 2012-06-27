@@ -6,19 +6,18 @@
 
 <%@page import="uit.cnpm02.dkhp.model.TrainClass"%>
 <%@page import="java.util.List"%>
-<%@include file="MenuSV.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 <%
-String year=(String) session.getAttribute("year");
-Integer semester=(Integer) session.getAttribute("semester");
- List<TrainClass> monday=(List<TrainClass>)session.getAttribute("monday");
- List<TrainClass> tuesday=(List<TrainClass>)session.getAttribute("tuesday");
- List<TrainClass> wednesday=(List<TrainClass>)session.getAttribute("wednesday");
- List<TrainClass> thursday=(List<TrainClass>)session.getAttribute("thursday");
- List<TrainClass> friday=(List<TrainClass>)session.getAttribute("friday");
- List<TrainClass> saturday=(List<TrainClass>)session.getAttribute("saturday");
+    String year = (String) session.getAttribute("year");
+    Integer semester = (Integer) session.getAttribute("semester");
+    List<TrainClass> monday = (List<TrainClass>) session.getAttribute("monday");
+    List<TrainClass> tuesday = (List<TrainClass>) session.getAttribute("tuesday");
+    List<TrainClass> wednesday = (List<TrainClass>) session.getAttribute("wednesday");
+    List<TrainClass> thursday = (List<TrainClass>) session.getAttribute("thursday");
+    List<TrainClass> friday = (List<TrainClass>) session.getAttribute("friday");
+    List<TrainClass> saturday = (List<TrainClass>) session.getAttribute("saturday");
 %>
 <html>
     <head>
@@ -28,75 +27,47 @@ Integer semester=(Integer) session.getAttribute("semester");
         <style media="all" type="text/css">
 
            
-            #formdetail table{
-                width: 100%;
-                padding-left: 10px;
-                padding-right: 10px;
-
-            }
-            #formdetail table th{
-                background-color:#175F6E;
-                height: 30px;
-                border-color: black;
-            }
-
-            #formdetail table td{
-                text-align: center;
-                background-color: #474C52;
-                border-color: #7D8103;
-            }
-            #formdetail{
-                width: 99%;
-            }
-            #detail{
-                width: 90%;
-            }
-             #detail th{
-               text-align: center;
-            }
-            a.test 
-            {
-                font-weight: bold; 
-            }
-        </style>
         </style>
     </head>
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
+            <%@include file="MenuSV.jsp" %>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <br>
-                <h2 align="center"><u>Thời khóa biểu học kỳ <%=semester%> năm học <%=year%> </u></h2>
-                <br><hr/><hr/>
-                 <form id="formdetail" name="formdetail">
+                <div id="main-title">
+                    Thời khóa biểu học kỳ <%=semester%> năm học <%=year%>
+                </div>
+                <br /><br />
+                
                     <u>
-                        <a id= "a1" href="uit.edu.vn">Xem tất cả:</a>
-                        <a id="a2" href="uit.edu.vn">Xem rút gọn:</a><br>
+                        <a id= "a1" class="button-2" href="uit.edu.vn">Xem tất cả</a>
+                        <a id="a2" class="button-2" href="uit.edu.vn">Xem rút gọn</a>
                     </u>
-                    <table id="detail" name="detail" border="1" bordercolor="yellow" >
-                     <tr>
-                         <th width="50px"></th><th width="50px">Mã lớp</th><th width="200px">Môn học</th><th width="50px">Phòng</th><th width="50px">Buổi</th><th width="200px">Giảng viên</th>
-                     </tr> 
-                     <tr>
-                         <th><b><u>Thứ 2:</u></b></th><th></th><th></th><th></th><th></th><th></th>
-                     </tr>   
-                     <%
-                     for(int i=0; i<monday.size();i++){%>
-                     <tr>
-                         <td></td>
-                         <td><%=monday.get(i).getId().getClassCode()%></td>
-                         <td><%=monday.get(i).getSubjectName()%></td>
-                         <td><%=monday.get(i).getClassRoom()%></td>
-                         <%if(monday.get(i).getShift()==1){%>
-                         <td>Sáng</td>
-                         <%}else{%>
-                         <td>Chiều</td>
-                         <%}%>
-                         <td><%=monday.get(i).getLectturerName()%></td>
-                     </tr> 
+                    <br />
+                    <table class="general-table">
+                        <tr>
+                            <th width="50px"></th><th width="50px">Mã lớp</th><th width="200px">Môn học</th><th width="50px">Phòng</th><th width="50px">Buổi</th><th width="200px">Giảng viên</th>
+                        </tr> 
+                        <tr>
+                            <th><b><u>Thứ 2:</u></b></th><th></th><th></th><th></th><th></th><th></th>
+                        </tr>   
+                        <%
+                         for(int i=0; i<monday.size();i++){%>
+                         <tr>
+                             <td></td>
+                             <td><%=monday.get(i).getId().getClassCode()%></td>
+                             <td><%=monday.get(i).getSubjectName()%></td>
+                             <td><%=monday.get(i).getClassRoom()%></td>
+                             <%if(monday.get(i).getShift()==1){%>
+                             <td>Sáng</td>
+                             <%}else{%>
+                             <td>Chiều</td>
+                             <%}%>
+                             <td><%=monday.get(i).getLectturerName()%></td>
+                        </tr> 
                      <%
                       }
                      %>
@@ -201,7 +172,6 @@ Integer semester=(Integer) session.getAttribute("semester");
                       }
                      %>
                     </table>
-                 </form>
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
@@ -209,34 +179,35 @@ Integer semester=(Integer) session.getAttribute("semester");
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    </body>
-     <script src="../../javascripts/jquery-1.7.1.js"></script>
-     <script src="../../javascripts/Schedule.js"></script>
-     <script type = "text/javascript">
-        var http = createRequestObject();
-        var type="view";
-        $(a1).addClass("test");
-	$(a2).addClass("test");
-	$(a2).hide()
-       $(a1).click(function(event){
-       event.preventDefault();
-       $(a1).hide("slow");
-       $(a2).show("slow");
-        type="All";
-       SendRequest()
-       });
-    $(a2).click(function(event){
-       event.preventDefault();
-       $(a2).hide("slow");
-       $(a1).show("slow");
-       type="Only";
-       SendRequest()
+    
+        <script src="../../javascripts/jquery-1.7.1.js"></script>
+        <script src="../../javascripts/Schedule.js"></script>
+        <script type = "text/javascript">
+            var http = createRequestObject();
+            var type = "view";
+            $(a1).addClass("test");
+            $(a2).addClass("test");
+            $(a2).hide()
+           $(a1).click(function(event){
+           event.preventDefault();
+           $(a1).hide();
+           $(a2).show();
+            type="All";
+           SendRequest()
+           });
+        $(a2).click(function(event){
+           event.preventDefault();
+           $(a2).hide();
+           $(a1).show();
+           type="Only";
+           SendRequest()
 
-     });
-      function SendRequest(){
-          if(http){
-            ajaxfunction("../../ScheduleController?action=Ajax&type="+type);
-         }
-       }
-     </script>
+         });
+          function SendRequest(){
+              if(http){
+                ajaxfunction("../../ScheduleController?action=Ajax&type="+type);
+             }
+           }
+         </script>
+     </body>
    </html>
