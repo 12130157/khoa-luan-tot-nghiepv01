@@ -8,7 +8,6 @@
 <%@page import="uit.cnpm02.dkhp.model.Faculty"%>
 <%@page import="uit.cnpm02.dkhp.model.Student"%>
 <%@page import="uit.cnpm02.dkhp.model.TrainClass"%>
-<%@include file="MenuSV.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
@@ -62,61 +61,56 @@ List<Student> studentList =(List<Student>) session.getAttribute("studentList");
                 background-color: #474C52;
                 border-color: #7D8103;
             }
-
-           
             #info{
                 width: 100%;
             }
-                
-          
-        </style>
         </style>
     </head>
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
+            <%@include file="MenuSV.jsp" %>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <br>
-                <h2 align="center"><u>DANH SÁCH ĐĂNG KÝ LỚP HỌC</u></h2>
+                <div id="main-title">DANH SÁCH ĐĂNG KÝ LỚP HỌC</div>
                 <div>
                     <form action="" name="classDetail"  id="classDetail">
                         <table id="info">
-                        <tr>
-                            <td width="200px">Mã lớp: </td>
-                            <th width="100px"><%=trainClass.getId().getClassCode()%></th>
-                            <td width="200px">Môn học: </td>
-                            <th><%=trainClass.getSubjectName()%></th>
-                        </tr>
-                        <tr>
-                            <td width="200px">Giảng viên:  </td>
-                            <th width="100px"><%=trainClass.getLectturerName()%></th>
-                            <td width="200px">Ngày: </td>
-                            <th>Thứ <%=trainClass.getStudyDate()%></th>
-                        </tr>
-                        <tr>
-                            <td width="200px">Ca học: </td>
-                            <%if(trainClass.getShift()==1){%>
-                            <th width="100px">Sáng</th>
-                            <%}else{%>
-                            <th width="100px">Chiều</th>
-                            <%}%>
-                            <td width="200px">Phòng học:</td>
-                            <th><%=trainClass.getClassRoom()%></th>
-                        </tr>
-                        
-                    </table>
-                </form>
+                            <tr>
+                                <td width="200px">Mã lớp: </td>
+                                <th width="100px"><%=trainClass.getId().getClassCode()%></th>
+                                <td width="200px">Môn học: </td>
+                                <th><%=trainClass.getSubjectName()%></th>
+                            </tr>
+                            <tr>
+                                <td width="200px">Giảng viên:  </td>
+                                <th width="100px"><%=trainClass.getLectturerName()%></th>
+                                <td width="200px">Ngày: </td>
+                                <th>Thứ <%=trainClass.getStudyDate()%></th>
+                            </tr>
+                            <tr>
+                                <td width="200px">Ca học: </td>
+                                <%if(trainClass.getShift()==1){%>
+                                <th width="100px">Sáng</th>
+                                <%}else{%>
+                                <th width="100px">Chiều</th>
+                                <%}%>
+                                <td width="200px">Phòng học:</td>
+                                <th><%=trainClass.getClassRoom()%></th>
+                            </tr>
+                        </table>
+                    </form>
                 </div>
                <hr/><hr/>
-                 <form id="formdetail" name="formdetail">
-                     <b>Danh sách các sinh viên đăng ký: <%=studentList.size()%> sinh viên</b>
-                    <table id="detail" name="detail" border="1" bordercolor="yellow" >
-                     <tr>
-                            <th width="20px">STT</th><th width="100px">MSSV</th><th width="200px">Họ tên</th><th width="100px">Lớp</th>
-                     </tr>   
+               <div style="font-size: 12px; font-weight: bold; font-style: italic;">
+                    Danh sách các sinh viên đăng ký (<%=studentList.size()%> sv)
+                </div>
+                <table class="general-table" style="width: auto;">
+                    <tr>
+                        <th width="20px">STT</th><th width="100px">MSSV</th><th width="200px">Họ tên</th><th width="100px">Lớp</th>
+                    </tr>   
                      <%for(int i=0; i< studentList.size();i++){%>
                      <tr>
                          <td><%=i+1%></td>
@@ -125,9 +119,8 @@ List<Student> studentList =(List<Student>) session.getAttribute("studentList");
                          <td><%=studentList.get(i).getClassCode()%></td>
                      </tr>
                      <%}%>
-                    </table>
-                 </form>
-                    <br><br>        
+                </table>
+                 <br /><br />        
             </div><!--End Contents-->
             
             <div id="footer"><!--Footer-->
