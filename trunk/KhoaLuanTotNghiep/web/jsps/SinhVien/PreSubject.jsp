@@ -7,7 +7,6 @@
 
 <%@page import="uit.cnpm02.dkhp.model.PreSubject"%>
 <%@page import="java.util.List"%>
-<%@include file="MenuSV.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
@@ -21,70 +20,43 @@ List<PreSubject> preSub=(List<PreSubject>) session.getAttribute("preSub");
         <title>Môn học tiên quyết</title>
         <style media="all" type="text/css">
 
-            #formdetail table{
-                width: 800px;
-                padding-left: 220px;
-                padding-right: 10px;
-                text-align: center;
-                
-
-            }
-            #formdetail table th{
-                background-color: #5F676D;
-                height: 30px;
-                font-weight: bold;
-                color: purple;
-            }
-
-            #formdetail table td{
-                text-align: center;
-                background-color: #5F676D;
-            }
-            #title{
-                text-align: center;
-            }
-            #page{
-                text-align: center;
-            }
-            a {
-                 color: violet;
-            }
+            <%-- CSS definition --%>
          </style>
     </head>
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">            
+            <%@include file="MenuSV.jsp"%>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <div id="title">
-                    <p><h1><b><u>Quy định về môn học tiên quyết</u></b></h1></p>
-                </div><br>
-                <h1>Sinh viên muốn đăng ký học môn học bất kỳ thì điều kiện bắt buộc là sinh viên đã hoàn tất các môn học tiên quyết của môn học đó.</h1>
-                <br><hr/><hr/>
-                <u>Chi tiết các môn học tiên quyết:</u>
+                <div id="main-title">
+                    Quy định về môn học tiên quyết
+                </div>
+                <div class="clear"></div> <br />
                 
-                <div id="NewsList">
-                <form id="formdetail" name="formdetail">
-                    <table>
-                        <tr>
-                            <th>Môn học</th>
-                            <th>Môn học tiên quyết</th>
-                        </tr> 
-                        <%
-                        for(int i=0;i<preSub.size();i++){
-                            %>
-                            <tr>
-                                <td><%=preSub.get(i).getSubjectName()%></td>
-                                <td><%=preSub.get(i).getPreSubjectName()%></td>
-                            </tr>
-                            <%
-                        }
+                <div style="font-size: 12px; font-weight: bold; font-style: italic;">
+                    (*) Sinh viên muốn đăng ký học môn học bất kỳ thì điều kiện bắt buộc là sinh viên đã hoàn tất các môn học tiên quyết của môn học đó.
+                </div>
+                <br><hr/><hr/>
+                <div style="font-size: 12px; font-weight: inherit;"><b><u>Chi tiết các môn học tiên quyết</u></b></div>
+                <table class="general-table" style="width: 625px;">
+                    <tr>
+                        <th>Môn học</th>
+                        <th>Môn học tiên quyết</th>
+                    </tr> 
+                    <%
+                    for(int i=0;i<preSub.size();i++){
                         %>
-                    </table>
-                </form>
-               </div>      
+                        <tr>
+                            <td><%=preSub.get(i).getSubjectName()%></td>
+                            <td><%=preSub.get(i).getPreSubjectName()%></td>
+                        </tr>
+                        <%
+                    }
+                    %>
+                </table>
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
