@@ -10,7 +10,6 @@
 <%@page import="uit.cnpm02.dkhp.model.Faculty"%>
 <%@page import="uit.cnpm02.dkhp.model.Student"%>
 <%@page import="uit.cnpm02.dkhp.model.Class"%>
-<%@include file="MenuSV.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
@@ -60,25 +59,6 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
                 width: 200px;
                 text-align: left;
             }
-            #formdetail table{
-                width: 100%;
-                padding-left: 10px;
-                padding-right: 10px;
-
-            }
-            #formdetail table th{
-                background-color:#175F6E;
-                height: 30px;
-                border-color: black;
-            }
-
-            #formdetail table td{
-                text-align: center;
-                background-color: #474C52;
-                border-color: #7D8103;
-            }
-
-                
             #form-result{
                 margin-left: 20px;
                 margin-bottom: 20px;
@@ -92,9 +72,6 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
             #info{
                 width: 100%;
             }
-            #formdetail{
-                width: 99%;
-            }
             #detail{
                 width: 90%;
             }
@@ -106,12 +83,12 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
+            <%@include file="MenuSV.jsp" %>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <br>
-                <h2 align="center"><u>KẾT QUẢ HỌC TẬP</u></h2>
+                <div id="main-title">KẾT QUẢ HỌC TẬP</div>
                 <div>
                     <form action="" name="formstudent"  id="formstudent">
                         <table id="info">
@@ -133,6 +110,7 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
                             <td width="200px">Điểm trung bình:</td>
                             <th><%=Average%></th>
                         </tr>
+                        <%-- Share be removed
                         <tr>
                             <td width="50px">Năm học:  </td>
                             <td>
@@ -152,24 +130,46 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
                                 </select>
                             </td>
                         </tr>
-
+                        --%>
                     </table>
                 </form>
                 </div>
                <hr/><hr/>
                  <form id="formdetail" name="formdetail">
-                    <u>Chi tiết</u>
-                    <table id="detail" name="detail" border="1" bordercolor="yellow" >
-                     <tr>
+                    <div style="font-size: 12px; font-weight: bold; font-style: italic;">
+                        Chi tiết
+                    </div>
+                     <div id="control-range" style="height: 27px; width: 865px;">
+                        <div style="float: left; margin-left: 12px;">
+                            Năm học:
+                            <select name="year" id="year" onchange="reloadResult()">
+                                <option value="All">Tất cả</option>
+                                <% for (i = 0; i < yearList.size(); i++) {%>
+                                <option value="<%=yearList.get(i)%>"><%=yearList.get(i)%></option>
+                                <%}%>
+                            </select>
+                        </div>
+                        <div style="float: left; margin-left: 12px;">
+                            Học kỳ
+                            <select name="semester" onchange="reloadResult()">
+                                <option value="0">Tất cả</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                            </select>
+                        </div>
+                     </div>
+                     <%-- Table detail information --%>
+                    <table id="detail" name="detail" class="general-table">
+                        <tr>
                             <th width="100px">Năm học</th><th width="70px">Học kỳ</th><th width="100px">Mã môn</th><th width="300px">Tên môn học</th><th width="70px">Số TC</th><th width="80px">Điểm</th><th width="100px">Nhân hệ số</th>
-                     </tr>   
-                      <%
+                        </tr>   
+                        <%
                                  numTC = 0;
                                  SumMark = 0;
                                  Average = 0;
                                  for (j = 0; j < m; j++) {
-                                  int numTCSubject=subjectDao.findById(studyResult.get(j).getId().getSubjectCode()).getnumTC();
-                                  float markSubject=(subjectDao.findById(studyResult.get(j).getId().getSubjectCode()).getnumTC() * studyResult.get(j).getMark());
+                                    int numTCSubject=subjectDao.findById(studyResult.get(j).getId().getSubjectCode()).getnumTC();
+                                    float markSubject=(subjectDao.findById(studyResult.get(j).getId().getSubjectCode()).getnumTC() * studyResult.get(j).getMark());
                         %>
                         <tr>
                             <td><%=studyResult.get(j).getYear()%></td><td><%=studyResult.get(j).getSemester()%></td><td><%=studyResult.get(j).getId().getSubjectCode()%></td><td><%=studyResult.get(j).getSubjectName()%></td><td><%=numTCSubject%></td><td><%=studyResult.get(j).getMark()%></td><td><%=markSubject%></td>
@@ -192,9 +192,14 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
                         </tr>
                     </table>
                  </form>
-                        <form action="" method="post" id="frmexport">
-                    <a href="../../DownloadController?action=studentresult&mssv=<%=student.getId()%>">Tải bảng điểm</a>
+                <br />
+                <form action="" method="post" id="frmexport">
+                    <a class="button-1" style="text-decoration: none; margin-left: 40%;"
+                       href="../../DownloadController?action=studentresult&mssv=<%=student.getId()%>">
+                        Tải bảng điểm <img src="../../imgs/download.png"/>
+                    </a>
                 </form>
+                <br />
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
