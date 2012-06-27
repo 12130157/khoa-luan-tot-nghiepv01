@@ -43,12 +43,7 @@
                      <li><a href="../../RuleController?action=view"> Quy định</a></li>
                  </ul>
              </li>
-             <li><a href=""> Cá nhân </a>
-                 <ul>
-                     <li><a href="../../AccountController?action=Info"> Thông tin cá nhân</a></li>
-                     <li><a href="ChangePass.jsp"> Đổi mật khẩu</a></li>
-                 </ul>
-             </li>
+             <li><a href="../../AccountController?action=Info"> Trang cá nhân </a></li>
              <li><a href="../../Login?function=logout"> Đăng xuất </a></li>
              <li><a href="../../StudentCommentController?action=send"> Liên hệ </a></li>
          </ul>
