@@ -12,7 +12,6 @@
 <%@page import="uit.cnpm02.dkhp.model.Faculty"%>
 <%@page import="uit.cnpm02.dkhp.model.Student"%>
 <%@page import="uit.cnpm02.dkhp.model.Class"%>
-<%@include file="MenuSV.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
@@ -65,11 +64,14 @@ List<String> registried=(List<String>) session.getAttribute("registried");
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
+            <%@include file="MenuSV.jsp" %>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <h2 align="center"><u>Đăng ký học phần hoc kỳ <%=semester%> năm học <%=year%></u></h2>
+                <div id="main-title">Đăng ký học phần hoc kỳ <%=semester%> năm học <%=year%></div>
+                <div class="clear"></div>
+                <br />
                 <div>
                     <form action="" name="formstudent"  id="formstudent">
                         <table id="info">
@@ -90,7 +92,9 @@ List<String> registried=(List<String>) session.getAttribute("registried");
                 </div>
                <hr/><hr/>
                <form id="formdetail" name="formdetail" action="../../RegistryController?action=registry" method="post">
-                    <u>Chi tiết</u>
+                    <div style="font-size: 12px; font-weight: bold; font-style: italic;">
+                        (*) Sinh viên môn học muốn đk và click nút Đăng Ký
+                    </div>
                     <table id="detail" name="detail" class="general-table" >
                      <tr>
                          <th width="10px">STT</th><th width="70px">Mã lớp</th><th width="200px">Môn học</th>
@@ -124,9 +128,11 @@ List<String> registried=(List<String>) session.getAttribute("registried");
                      </tr>
                      <%}%>
                      </table>
-                     <br>
-                   <input type="submit" value="   Đăng ký   ">
+                     <br />
+                    <input type="submit" class="button-1" style="margin-left: 45%;" value="Đăng ký" />
                  </form>
+                     <div class="clear"></div>
+                     <br />
                 </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
