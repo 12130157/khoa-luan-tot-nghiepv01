@@ -7,7 +7,6 @@
 <%@page import="uit.cnpm02.dkhp.model.Student"%>
 <%@page import="uit.cnpm02.dkhp.model.ViewTrainProgram"%>
 <%@page import="uit.cnpm02.dkhp.model.Class "%>
-<%@include file="MenuSV.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
@@ -35,22 +34,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Chương trình đào tạo</title>
         <style media="all" type="text/css">
-            table{
-                margin-top: 10px;
-                margin-left: 5px;
-                margin-bottom: 120px;
-                width: 99%;
-            }
-
-            table th{
-                height: 15px;
-                background-color: #00ff00;
-            }
-
-            table td{
-                text-align: center;
-                background-color: #5F5A59;
-            }
+            <%-- CSS definition --%>
             #topleft{
                 float: left;
                 text-align: left;
@@ -65,12 +49,14 @@
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
+            <%@include file="MenuSV.jsp" %>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <br>
-                <h2 align="center"><u>CHƯƠNG TRÌNH KHUNG</u></h2><br>
+                <div id="main-title">CHƯƠNG TRÌNH KHUNG</div>
+                <div class="clear"></div>
+                <br />
                 <div>
                     <div id="topleft">
                         <b>Họ Tên: <%=student.getFullName()%></b><br>
@@ -88,8 +74,9 @@
                     Tổng số tín chỉ đã tích lũy: <%=numTC%>    <br>
                     Tổng số tín chỉ cần tích lũy: <%=SumTC%><br>
                 </p><br>
-                <u>Chi tiết chương trình đào tạo:</u>
-                <table>
+                <div style="font-size: 12px; font-weight: inherit;"><b><u>Chi tiết chương trình đào tạo</u></b></div>
+                
+                <table class="general-table" style="width:865px;">
                     <tr>
                         <th>STT</th><th>Học kỳ</th><th>Mã Môn</th><th>Tên môn</th><th>Số TC</th><th>LT</th><th>TH</th><th>Điểm</th><th>Đạt</th>
                     </tr>
