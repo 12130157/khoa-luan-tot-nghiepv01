@@ -11,7 +11,6 @@
 <%@page import="uit.cnpm02.dkhp.model.Faculty"%>
 <%@page import="uit.cnpm02.dkhp.model.Student"%>
 <%@page import="uit.cnpm02.dkhp.model.Class"%>
-<%@include file="MenuSV.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
@@ -52,38 +51,9 @@ int numTC=0;
                 width: 200px;
                 text-align: left;
             }
-            #completeRegistry table{
-                width: 100%;
-            }
-            #completeRegistry table th{
-                background-color:#175F6E;
-                height: 30px;
-                border-color: black;
-            }
-
-            #completeRegistry table td{
-                text-align: center;
-                background-color: #474C52;
-                border-color: #7D8103;
-            }
-            a{
-                color: #0000ff;
-            }
             
             #info{
                 width: 100%;
-            }
-            #formdetail{
-                width: 99%;
-            }
-            #detail{
-                width: 99%;
-            }
-             #detail th{
-               text-align: center;
-            }
-             #detail td{
-               text-align: center;
             }
             #message{
                 text-align: center;
@@ -92,16 +62,16 @@ int numTC=0;
                  color: #0000ff;
             }
         </style>
-        </style>
     </head>
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
+            <%@include file="MenuSV.jsp" %>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <h2 align="center"><u>Đăng ký học phần hoc kỳ <%=semester%> năm học <%=year%></u></h2>
+                <div id="main-title">Đăng ký học phần hoc kỳ <%=semester%> năm học <%=year%></div>
                 <div>
                     <form action="" name="formstudent"  id="formstudent">
                         <table id="info">
@@ -128,15 +98,17 @@ int numTC=0;
                         %>
                         <br>
                         <div id="message">
-                                <h1> <%=error%></h1>
+                            <h1> <%=error%></h1>
                         </div>
-                            <br>
+                        <br />
                         <%
                          }
                         %>
                <form id="completeRegistry" name="completeRegistry" action="../../RegistryController?action=completeRegistry" method="post">
-                    <u>Chi tiết</u>
-                    <table id="detail" name="detail" border="1" bordercolor="yellow" >
+                   <div style="font-size: 12px; font-weight: bold; font-style: italic;">
+                        Chi tiết
+                    </div>
+                    <table id="detail" class="general-table" name="detail" style="width: auto;" >
                      <tr>
                          <th width="10px">STT</th><th width="70px">Mã lớp</th><th width="200px">Môn học</th>
                          <th width="200px">Giảng viên</th><th width="10px">Thứ</th>
@@ -169,10 +141,14 @@ int numTC=0;
                      </tr>
                      </table>
                  </form>
+                 <br />
                 <form action="../../RegistryController?action=reRegistry" method="post" id="reRegistry" name="reRegistry">
-                    <input type="button" value="Đăng ký lại" onclick="reRegistration()"/>
-                    <input type="button" value="Hoàn tất đăng ký" onclick="completeRegistration()"/>
+                    <div style="margin-left: 30%;">
+                        <input type="button" class="button-1" value="Đăng ký lại" onclick="reRegistration()"/>
+                        <input type="button" class="button-1" value="Hoàn tất đăng ký" onclick="completeRegistration()"/>
+                    </div>
                 </form>
+                <br />
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
@@ -180,13 +156,14 @@ int numTC=0;
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
+    
+        <script  type = "text/javascript" >
+            function reRegistration(){
+                document.forms["reRegistry"].submit();
+            }
+            function completeRegistration(){
+                document.forms["completeRegistry"].submit();
+            }
+        </script>
     </body>
-    <script  type = "text/javascript" >
-        function reRegistration(){
-              document.forms["reRegistry"].submit();
-        }
-       function completeRegistration(){
-           document.forms["completeRegistry"].submit();
-       }
-    </script>
  </html>
