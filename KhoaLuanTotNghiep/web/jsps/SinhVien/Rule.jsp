@@ -7,7 +7,6 @@
 
 <%@page import="uit.cnpm02.dkhp.model.Rule"%>
 <%@page import="java.util.List"%>
-<%@include file="MenuSV.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
@@ -53,47 +52,47 @@ List<Rule> rule=(List<Rule>) session.getAttribute("rule");
     </head>
     <body>
         <!--Div Wrapper-->
-        <div id="wrapper">            
+        <div id="wrapper">
+            <%@include file="MenuSV.jsp"%>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <div id="title">
-                    <p><h1><b><u>Quy định trong việc đăng ký học phần</u></b></h1></p>
-                </div><br>
-                <h1>Một số quy định về việc đăng ký học phần đối với sinh viên trong mỗi học kỳ.</h1>
-                <br><hr/><hr/><br>
-                <div id="NewsList">
-                <form id="formdetail" name="formdetail">
-                   <table>
-                        <tr>
-                            <td>Số tín chỉ tối thiểu có thể đăng ký:</td>
-                            <th><%=(int)rule.get(5).getValue()%> </th>
-                        </tr> 
-                         <tr>
-                            <td>Số tín chỉ tối đa có thể đăng ký:</td>
-                            <th><%=(int)rule.get(4).getValue()%> </th>
-                        </tr>  
-                        <tr>
-                            <td>Số tín chỉ bắt buộc tối thiếu:</td>
-                            <th><%=(int)rule.get(3).getValue()%> </th>
-                        </tr>  
-                         <tr>
-                            <td>Số sinh viên tối thiểu để mở lớp:</td>
-                            <th><%=(int)rule.get(2).getValue()%> </th>
-                        </tr> 
-                         <tr>
-                            <td>Số sinh viên tối đa cho một lớp:</td>
-                            <th><%=(int)rule.get(1).getValue()%> </th>
-                        </tr>       
-                         <tr>
-                            <td>Điểm để qua môn học:</td>
-                            <th><%=rule.get(0).getValue()%> </th>
-                        </tr> 
-                    </table>
-                        <br><br>
-                </form>
-               </div>      
+                <div id="main-title">
+                    Quy định trong việc đăng ký học phần
+                </div>
+                <br /><br />
+                <div style="font-size: 12px; font-weight: bold; font-style: italic;">
+                    Một số quy định về việc đăng ký học phần đối với sinh viên trong mỗi học kỳ
+                </div>
+                
+               <table class="general-table" style="width: 320px;">
+                    <tr>
+                        <td>Số tín chỉ tối thiểu có thể đăng ký</td>
+                        <td><%=(int)rule.get(5).getValue()%> </td>
+                    </tr> 
+                     <tr>
+                        <td>Số tín chỉ tối đa có thể đăng ký</td>
+                        <td><%=(int)rule.get(4).getValue()%> </td>
+                    </tr>  
+                    <tr>
+                        <td>Số tín chỉ bắt buộc tối thiếu</td>
+                        <td><%=(int)rule.get(3).getValue()%> </td>
+                    </tr>  
+                     <tr>
+                        <td>Số sinh viên tối thiểu để mở lớp</td>
+                        <td><%=(int)rule.get(2).getValue()%> </td>
+                    </tr> 
+                     <tr>
+                        <td>Số sinh viên tối đa cho một lớp</td>
+                        <td><%=(int)rule.get(1).getValue()%> </td>
+                    </tr>       
+                     <tr>
+                        <td>Điểm để qua môn học</td>
+                        <td><%=rule.get(0).getValue()%> </td>
+                    </tr> 
+                </table>
+                <br/>
             </div><!--End Contents-->
             
             <div id="footer"><!--Footer-->
