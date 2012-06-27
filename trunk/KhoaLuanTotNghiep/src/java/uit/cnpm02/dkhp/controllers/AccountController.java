@@ -71,8 +71,8 @@ public class AccountController extends HttpServlet {
                 changePass(request, response, session);
             } else if (action.equalsIgnoreCase("Info")) {
                 getInfo(response, session);
-            } else if (action.equals("changeinfo")) {
-                changeInfo(response, session);
+            } else if (action.equals("update")) {
+                changeInfo(request, response);
             } else if (action.equalsIgnoreCase(AccountSupport
                                         .DEFAULT.description())) {
                 doListAccount(request, response);
@@ -155,13 +155,46 @@ public class AccountController extends HttpServlet {
      * @param session
      * @throws Exception
      */
-    private void changeInfo(HttpServletResponse response,
-            HttpSession session) throws Exception {
-        String path = "./jsps/SinhVien/UpdateInfo.jsp";
-        String user = (String) session.getAttribute("username");
-        Student student = studentDao.findById(user);
-        session.setAttribute("student", student);
-        response.sendRedirect(path);
+    private void changeInfo(HttpServletRequest request,
+            HttpServletResponse response) {
+        PrintWriter out = null;
+        try {
+            out = response.getWriter();
+            //String path = "./jsps/SinhVien/UpdateInfo.jsp";
+            HttpSession session = request.getSession();
+            String user = (String) session.getAttribute("username");
+            Student student = studentDao.findById(user);
+            if (student == null) {
+                out.println("Cập nhật không thành công, login user null");
+                return;
+            }
+            String cmnd = request.getParameter("IdentityCard");
+            String home = request.getParameter("home");
+            String address = request.getParameter("address");
+            String phone = request.getParameter("phone");
+            if (!StringUtils.isEmpty(cmnd)) {
+                student.setIdentityNumber(cmnd);
+            }
+            if (!StringUtils.isEmpty(home)) {
+                student.setHomeAddr(home);
+            }
+            if (!StringUtils.isEmpty(address)) {
+                student.setAddress(address);
+            }
+            if (!StringUtils.isEmpty(phone)) {
+                student.setPhone(phone);
+            }
+            studentDao.update(student);
+            out.println("Cập nhật thông tin thành công");
+            //session.setAttribute("student", student);
+            //response.sendRedirect(path);
+        } catch (Exception ex) {
+            Logger.getLogger(AccountController.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            out.println("Đã có lỗi xảy ra, vui lòng thử lại sau.");
+        } finally {
+            out.close();
+        }
     }
 
     /**
@@ -194,20 +227,37 @@ public class AccountController extends HttpServlet {
      */
     private void changePass(HttpServletRequest request,
             HttpServletResponse response, HttpSession session) throws Exception {
-        String path = "./jsps/SinhVien/ChangePass.jsp";
+        //String path = "./jsps/SinhVien/ChangePass.jsp";
+        PrintWriter out = response.getWriter();
         try {
             String user = (String) session.getAttribute("username");
             Account account = accDao.findById(user);
-            String newTxtPass = request.getParameter("newpass");
+            if (account == null) {
+                out.println("Đôi mật khẩu không thành công, login user null");
+                return;
+            }
+                    
+            String newTxtPass = request.getParameter("new_pwd");
+            String oldTxtPass = request.getParameter("old_pwd");
             String newPass = PasswordProtector.getMD5(newTxtPass);
+            String oldPass = PasswordProtector.getMD5(oldTxtPass);
+            if (!oldPass.equals(account.getPassword())) {
+                out.println("Mật khẩu hiện tại không đúng.");
+                return;
+            }
+            
             account.setPassword(newPass);
             accDao.update(account);
-            session.setAttribute("password", newPass);
-            session.setAttribute("messageChanPass", "Đổi mật khẩu thành công");
-            response.sendRedirect(path);
+            //session.setAttribute("password", newPass);
+            //session.setAttribute("messageChanPass", "Đổi mật khẩu thành công");
+            //response.sendRedirect(path);
+            out.println("Đổi mật khẩu thành công");
         } catch (Exception ex) {
-            session.setAttribute("messageChanPass", "Đổi mật khẩu thất bại");
-            response.sendRedirect(path);
+            //session.setAttribute("messageChanPass", "Đổi mật khẩu thất bại");
+            //response.sendRedirect(path);
+            out.println("Đôi mật khẩu không thành công. Vui lòng thử lại sau");
+            Logger.getLogger(AccountController.class.getName())
+                    .log(Level.SEVERE, null, ex);
         }
     }
 
