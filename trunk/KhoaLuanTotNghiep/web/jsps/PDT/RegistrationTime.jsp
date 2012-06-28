@@ -5,7 +5,6 @@
 --%>
 <%@page import="uit.cnpm02.dkhp.utilities.DateTimeUtil"%>
 <%@page import="uit.cnpm02.dkhp.model.RegistrationTime"%>
-<%@include file="MenuPDT.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
  RegistrationTime registrationTime = (RegistrationTime) session.getAttribute("registrationTime");
@@ -16,21 +15,8 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Chi tiết lớp học</title>
         <style media="all" type="text/css">
-          #table_mh{
-                padding-left: 100px;
-                text-align: left;
+            #table_mh {
                 width: 500px;
-
-            }
-            #table th{
-                background-color:#00ff00;
-                height: 30px;
-                border-color: black;
-            }
-
-            #table td{
-                text-align: center;
-                background-color: #5F676D;
             }
         </style>
     </head>
@@ -38,6 +24,7 @@
         <script src="../../javascripts/DateTimePicker.js" type="text/javascript"></script>
         <!--Div Wrapper-->
         <div id="wrapper">
+            <%@include file="MenuPDT.jsp"%>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
