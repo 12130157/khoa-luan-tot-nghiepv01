@@ -151,7 +151,7 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
                         </div>
                         <div style="float: left; margin-left: 12px;">
                             Học kỳ
-                            <select name="semester" onchange="reloadResult()">
+                            <select name="semester" id="semester" onchange="reloadResult()">
                                 <option value="0">Tất cả</option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
@@ -207,21 +207,24 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    </body>
+    
     <script src="../../javascripts/StudyResult.js"></script>
     <script  type = "text/javascript" >
         var http = createRequestObject();
         var year="2007-2008";
         var semester=1;
-        function reloadResult(){
-             year=document.formstudent.year.value;
-             semester=document.formstudent.semester.value;
+            function reloadResult(){
+            //year=document.formstudent.year.value;
+            //semester=document.formstudent.semester.value;
+            year = document.getElementById("year").value;
+            semester = document.getElementById("semester").value;
             SendRequest();
         }
         function SendRequest(){
-              if(http){
-              ajaxfunction("../../StudyResultController?action=reload&year="+year+"&semester="+semester );
-             }
-         }
+            if(http){
+                ajaxfunction("../../StudyResultController?action=reload&year="+year+"&semester="+semester );
+            }
+        }
     </script>
+    </body>
 </html>
