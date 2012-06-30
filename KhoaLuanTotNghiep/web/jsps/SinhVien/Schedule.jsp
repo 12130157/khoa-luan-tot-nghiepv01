@@ -47,7 +47,7 @@
                         <a id="a2" class="button-2" href="uit.edu.vn">Xem rút gọn</a>
                     </u>
                     <br />
-                    <table class="general-table">
+                    <table class="general-table" id="detail">
                         <tr>
                             <th width="50px"></th><th width="50px">Mã lớp</th><th width="200px">Môn học</th><th width="50px">Phòng</th><th width="50px">Buổi</th><th width="200px">Giảng viên</th>
                         </tr> 
