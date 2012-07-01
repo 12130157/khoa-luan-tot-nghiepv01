@@ -6,7 +6,21 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
-
+<%
+    String username_r = (String) session.getAttribute("username"); 
+    boolean displayMailbox = true;
+    if ((username_r == null) || (username_r.length() < 1)) {
+        username_r = "Khách";
+        displayMailbox = false;
+    }
+    
+    int userOnline = 1;
+    try {
+        userOnline = Integer.parseInt((String) session.getAttribute("user-online"));
+    } catch (Exception ex) {
+        
+    }
+%>
 <html>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <style media="all" type="text/css">
@@ -20,16 +34,65 @@
     </head>
     <body>
         <div id="main-navi">
-            <div id="range-1">
-                <div id="session-counter">
-                    Đang truy cập: 1
+            <div class="clear"></div>
+            <%
+            if (displayMailbox) {
+            %>
+                <div id="icon-mailbox" style="text-align: right;">
+                    <span class="atag" onclick=""><img src="../../imgs/icon/mailbox.png" title="Hộp thư" /></span>
                 </div>
+
+                <div id="mailbox-1">
+                    <div id="mailbox-detail">
+                    </div>
+                    <%-- List recently mail --%>
+                    <div id="mailbox-title">
+                        <span class="atag" onclick="">Mailbox title</span>
+                    </div>
+                    <div id="mailbox-shortcontent">
+                        This range show short description about the mail content.
+                        When user click on mailbox title --> mail detail will be
+                        showed on mailbox detail range
+                    </div>
+                </div>
+            <%}%>
+            <div id="range-1" style="text-align: center;">
+                Xin chào <b> <%= username_r %> </b>
+            </div>
+
+            <div id="range-1" style="text-align: center;">
+                Đang truy cập: <%= userOnline %>
             </div>
             <div id="range-1">
                 <canvas id="example" width="200" height="200">Browser not supported!</canvas>
             </div>
+            <%-- A few link to common site --%>
+            <div id="range-1" style="">
+                <u><b>Trang liên kết</b></u><br />
+                <div style="font-size: 11px;">
+                    <p>
+                        <a href="http://daa.uit.edu.vn/">Website trường ĐH CNTT</a>
+                    </p>
+                    <p>
+                        <a href="http://www.vnulib.edu.vn/?PageID=PublicPage">Thư viên trung tâm</a>
+                    </p>
+                    <p>
+                        <a href="http://www.thongtincongnghe.com/">Trang công nghệ thông tin</a>
+                    </p>
+                </div>
+            </div>
         </div>
     </body>
+    <script src="../../javascripts/AjaxUtil.js"></script>
+    <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
+    <script  type = "text/javascript" >
+        var http = createRequestObject();
+        
+        $("#icon-mailbox").click(function () {
+            // Do load mailbox
+            $('#mailbox-1').slideToggle(500);
+        });
+    </script>
     <script type="application/x-javascript">
         draw();
         
