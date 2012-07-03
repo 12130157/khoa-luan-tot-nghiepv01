@@ -11,7 +11,6 @@
 <%@page import="uit.cnpm02.dkhp.model.Faculty"%>
 <%@page import="uit.cnpm02.dkhp.model.Student"%>
 <%@page import="uit.cnpm02.dkhp.model.Class"%>
-<%@include file="MenuSV.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
@@ -71,16 +70,17 @@ int numTC=0;
                 margin-right: 10px;
             }
         </style>
-        </style>
     </head>
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
+            <%@include file="MenuSV.jsp" %>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <h2 align="center"><u>Đăng ký học phần hoc kỳ <%=semester%> năm học <%=year%></u></h2>
+                <div id="main-title">Đăng ký học phần hoc kỳ <%=semester%> năm học <%=year%></div>
+                <br />
                 <div>
                     <form action="" name="formstudent"  id="formstudent">
                         <table id="info">
@@ -101,7 +101,9 @@ int numTC=0;
                 </div>
                <hr/><hr/>
                  <form id="formdetail" name="formdetail">
-                    <u>Chi tiết</u>
+                    <div style="font-size: 12px; font-weight: bold; font-style: italic;">
+                        Chi tiết
+                    </div>
                     <table id="detail" name="detail" class="general-table" >
                      <tr>
                          <th width="10px">STT</th><th width="70px">Mã lớp</th><th width="200px">Môn học</th>
@@ -138,13 +140,14 @@ int numTC=0;
                 <div>
                     <%if(inTimeRegistry){%>
                     <div id="left">
-                    <a href="../../RegistryController?action=reRegistry">Đăng ký lại</a>
+                        <a href="../../RegistryController?action=reRegistry" class="button-1" style="text-decoration: none;">Đăng ký lại</a>
                     </div>
                     <%}%>
                     <div id="right">
-                    <a href="../../DownloadController?action=studentRegistry&mssv=<%=student.getId()%>">Tải file</a>
+                    <a class="button-1" href="../../DownloadController?action=studentRegistry&mssv=<%=student.getId()%>" style="text-decoration: none;"><img src="../../imgs/download.png"/> Tải file</a>
                     </div>
                 </div>
+                <br /> <br />
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
@@ -152,9 +155,8 @@ int numTC=0;
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    </body>
-    <script src="../../javascripts/UtilTable.js"></script>
     <script>
         
     </script>
+    </body>
  </html>
