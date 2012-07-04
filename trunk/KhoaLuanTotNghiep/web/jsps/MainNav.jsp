@@ -71,7 +71,7 @@
                 <u><b>Trang liên kết</b></u><br />
                 <div style="font-size: 11px;">
                     <p>
-                        <a href="http://daa.uit.edu.vn/">Website trường ĐH CNTT</a>
+                        <a href="http://uit.edu.vn/">Website trường ĐH CNTT</a>
                     </p>
                     <p>
                         <a href="http://www.vnulib.edu.vn/?PageID=PublicPage">Thư viên trung tâm</a>
@@ -166,15 +166,15 @@
                     c2d.stroke();
                 }
             //Fetch the current time
-            var ampm = "AM";
+            var ampm = "";
             var now = new Date();
             var hrs = now.getHours();
             var min = now.getMinutes();
             var sec = now.getSeconds();
             c2d.strokeStyle = "#000";
             //Draw AM/PM indicator
-            if (hrs >= 12)
-                ampm = "PM";
+            //if (hrs >= 12)
+                //ampm = "PM";
             c2d.lineWidth = 1;
             c2d.strokeRect(5,-10,30,20);
             c2d.fillText(ampm,20,0); // 25: left of ampm text
