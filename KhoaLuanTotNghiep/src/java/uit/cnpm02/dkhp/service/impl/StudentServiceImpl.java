@@ -189,7 +189,7 @@ public class StudentServiceImpl implements IStudentService {
                     importStudents.remove(sessionId);
                     ExecuteResult e = new ExecuteResult(true, "");
                     e.setData(s_temps);
-                    
+                    addAccountForStudent(s_temps);
                     return e;
                 }
             }
@@ -216,6 +216,7 @@ public class StudentServiceImpl implements IStudentService {
             } else {
                 studentDao.addAll(students);
                 result.setData(students);
+                addAccountForStudent(students);
             }
             return result;
         } catch (Exception ex) {
@@ -223,6 +224,30 @@ public class StudentServiceImpl implements IStudentService {
                     .log(Level.SEVERE, null, ex);
             return new ExecuteResult(
                     false, "[Error][StudentService]: " + ex.toString());
+        }
+    }
+    
+    private void addAccountForStudent(List<Student> students) {
+        List<Account> accounts = new ArrayList<Account>(10);
+        List<String> accountIds = new ArrayList<String>(10);
+        for (Student s : students) {
+            String pwd = PasswordProtector.getMD5(s.getId());
+            Account account = new Account(s.getId(), pwd, s.getFullName(),
+                    false, AccountStatus.NORMAL.value(), AccountType.STUDENT.value());
+            accounts.add(account);
+            accountIds.add(s.getId());
+        }
+        try {
+            AccountDAO accDao = DAOFactory.getAccountDao();
+            if (accDao != null) {
+                List<Account> existeds = accDao.findByIds(accountIds);
+                if ((existeds != null) && !existeds.isEmpty()) {
+                    accDao.delete(existeds);
+                }
+                
+                accDao.addAll(accounts);
+            }
+        } catch (Exception ex) {
         }
     }
 
