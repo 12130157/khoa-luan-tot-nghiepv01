@@ -124,6 +124,9 @@ public class StudentServiceImpl implements IStudentService {
         ExecuteResult er = new ExecuteResult(true, "");
         boolean addStudent = false;
         try {
+            if (studentDao.findById(s.getId()) != null) {
+                return new ExecuteResult(false, "SV (MSSV) đã tồn tại.");
+            }
             studentDao.add(s);
             addStudent = true;
             er.setData(s);

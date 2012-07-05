@@ -9,15 +9,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import uit.cnpm02.dkhp.DAO.AccountDAO;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.LecturerDAO;
 import uit.cnpm02.dkhp.DAO.TrainClassDAO;
+import uit.cnpm02.dkhp.model.Account;
 import uit.cnpm02.dkhp.model.Lecturer;
 import uit.cnpm02.dkhp.model.TrainClass;
+import uit.cnpm02.dkhp.model.type.AccountStatus;
+import uit.cnpm02.dkhp.model.type.AccountType;
 import uit.cnpm02.dkhp.service.ILecturerService;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
 import uit.cnpm02.dkhp.utilities.StringUtils;
+import uit.cnpm02.dkhp.utilities.password.PasswordProtector;
 
 /**
  *
@@ -102,17 +107,37 @@ public class LecturerServiceImpl implements ILecturerService {
     @Override
     public ExecuteResult addLecturer(Lecturer l) {
         ExecuteResult result = new ExecuteResult(true, "");
+        boolean addStudent = false;
         try {
             if (lecturerDao.findById(l.getId()) != null) {
-                return new ExecuteResult(false, "GV đã tồn tại.");
+                return new ExecuteResult(false, "GV (mã GV) đã tồn tại.");
             }
             lecturerDao.add(l);
+            addStudent = true;
             result.setData(l);
         } catch (Exception ex) {
             Logger.getLogger(LecturerServiceImpl.class.getName())
                     .log(Level.SEVERE, null, ex);
             return new ExecuteResult(false,
                     "[LecturerService] lỗi server: " + ex.toString());
+        }
+        if (addStudent) {
+            try {
+                // Add account for student
+                String pwd = PasswordProtector.getMD5(l.getId());
+                Account account = new Account(l.getId(), pwd, l.getFullName(),
+                        false, AccountStatus.NORMAL.value(), AccountType.LECTUTER.value());
+                AccountDAO accDao = DAOFactory.getAccountDao();
+                if (accDao != null) {
+                    Account existed = accDao.findById(l.getId());
+                    if (existed != null) {
+                        accDao.delete(existed);
+                    }
+                    accDao.add(account);
+                }
+            } catch (Exception ex) {
+
+            }
         }
         return result;
     }
@@ -132,6 +157,7 @@ public class LecturerServiceImpl implements ILecturerService {
                     importLecturers.remove(sessionId);
                     ExecuteResult e = new ExecuteResult(true, "");
                     e.setData(s_temps);
+                    addAccountForLecturer(s_temps);
                     
                     return e;
                 }
@@ -159,6 +185,7 @@ public class LecturerServiceImpl implements ILecturerService {
             } else {
                 lecturerDao.addAll(lecturers);
                 result.setData(lecturers);
+                addAccountForLecturer(lecturers);
             }
             return result;
         } catch (Exception ex) {
@@ -166,6 +193,30 @@ public class LecturerServiceImpl implements ILecturerService {
                     .log(Level.SEVERE, null, ex);
             return new ExecuteResult(
                     false, "[Error][LecturerService]: " + ex.toString());
+        }
+    }
+    
+    private void addAccountForLecturer(List<Lecturer> lecturers) {
+        List<Account> accounts = new ArrayList<Account>(10);
+        List<String> accountIds = new ArrayList<String>(10);
+        for (Lecturer l : lecturers) {
+            String pwd = PasswordProtector.getMD5(l.getId());
+            Account account = new Account(l.getId(), pwd, l.getFullName(),
+                    false, AccountStatus.NORMAL.value(), AccountType.LECTUTER.value());
+            accounts.add(account);
+            accountIds.add(l.getId());
+        }
+        try {
+            AccountDAO accDao = DAOFactory.getAccountDao();
+            if (accDao != null) {
+                List<Account> existeds = accDao.findByIds(accountIds);
+                if ((existeds != null) && !existeds.isEmpty()) {
+                    accDao.delete(existeds);
+                }
+                
+                accDao.addAll(accounts);
+            }
+        } catch (Exception ex) {
         }
     }
 
