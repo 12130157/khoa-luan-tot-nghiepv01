@@ -180,7 +180,7 @@
                             </div>
                             <div id="btn-add-one-lecturer" style="float: left; padding-left: 12px;">
                                 <div class="button-1">
-                                    <span class="atag" onclick="addLecturerFromForm()" ><img src="../../imgs/check.png" />Thêm SV</span>
+                                    <span class="atag" onclick="addLecturerFromForm()" ><img src="../../imgs/check.png" />Thêm GV</span>
                                 </div>
                             </div>
                         </div>
@@ -256,9 +256,9 @@
                                     lecturers = (List<Lecturer>)importFromFileER.getData();
                                     if ((lecturers != null) && !lecturers.isEmpty()) {
                                         %>
-                                        <i> Thêm thành công các SV: </i>
+                                        <i> Thêm thành công các GV: </i>
                                         <table class="general-table" style="width: 450px;">
-                                            <tr><th> STT </th><th>MSSV</th><th> Họ và tên </th><th>CMND</th></tr>
+                                            <tr><th> STT </th><th>Ma GV</th><th> Họ và tên </th><th>CMND</th></tr>
                                         <%
                                         for (int i = 0; i < lecturers.size(); i++) {
                                         %>
