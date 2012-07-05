@@ -8,15 +8,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import uit.cnpm02.dkhp.DAO.AccountDAO;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.RegistrationDAO;
 import uit.cnpm02.dkhp.DAO.StudentDAO;
+import uit.cnpm02.dkhp.model.Account;
 import uit.cnpm02.dkhp.model.Registration;
 import uit.cnpm02.dkhp.model.Student;
+import uit.cnpm02.dkhp.model.type.AccountStatus;
+import uit.cnpm02.dkhp.model.type.AccountType;
 import uit.cnpm02.dkhp.service.IStudentService;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
 import uit.cnpm02.dkhp.utilities.StringUtils;
+import uit.cnpm02.dkhp.utilities.password.PasswordProtector;
 
 /**
  *
@@ -117,14 +122,34 @@ public class StudentServiceImpl implements IStudentService {
     @Override
     public ExecuteResult addStudent(Student s) {
         ExecuteResult er = new ExecuteResult(true, "");
+        boolean addStudent = false;
         try {
             studentDao.add(s);
+            addStudent = true;
             er.setData(s);
         } catch (Exception ex) {
             Logger.getLogger(StudentServiceImpl.class.getName())
                     .log(Level.SEVERE, null, ex);
             er.setIsSucces(false);
             er.setMessage("[StudentService][Add-One] - " + ex.toString());
+        }
+        if (addStudent) {
+            try {
+                // Add account for student
+                String pwd = PasswordProtector.getMD5(s.getId());
+                Account account = new Account(s.getId(), pwd, s.getFullName(),
+                        false, AccountStatus.NORMAL.value(), AccountType.STUDENT.value());
+                AccountDAO accDao = DAOFactory.getAccountDao();
+                if (accDao != null) {
+                    Account existed = accDao.findById(s.getId());
+                    if (existed != null) {
+                        accDao.delete(existed);
+                    }
+                    accDao.add(account);
+                }
+            } catch (Exception ex) {
+
+            }
         }
         
         return er;
