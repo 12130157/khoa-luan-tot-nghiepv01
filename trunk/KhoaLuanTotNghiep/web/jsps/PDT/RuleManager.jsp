@@ -39,7 +39,7 @@
                             Qui định hiện tại
                     </span></h3>
                     <div id = "list-rules">
-                        <table id="table-rules" class="general-table" style="width: 750px !important">
+                        <table id="table-rules" class="general-table">
                             <tr> 
                                 <th> STT </th> 
                                 <th> Mã </th> 
@@ -96,6 +96,7 @@
                         <div class="button-1" style="float: left; margin-left: 25px;">
                             <span class="atag" onclick="addRule()" ><img src="../../imgs/check.png" />Thêm</span>
                         </div>
+                        <div class="clear"> </div>
                         <div id="add-rule-resule" style="font-size: 11px; font-weight: bold;">
                         </div>
                     </div>

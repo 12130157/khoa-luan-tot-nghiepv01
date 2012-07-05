@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uit.cnpm02.dkhp.controllers.PDT;
 
 import java.io.IOException;
@@ -54,7 +50,7 @@ public class ManageRuleController extends HttpServlet {
                 doDeleteRule(out, request);
                 return;
             } else if (action.equalsIgnoreCase(RuleFunction.EDIT.value())) {
-                doEditRule(out, request);
+                doEditRule(request);
                 return;
             }
         } finally {
@@ -175,7 +171,7 @@ public class ManageRuleController extends HttpServlet {
     }
 
     private void writeOutListRules(PrintWriter out, List<Rule> rules) {
-        out.println("<table id=\"table-rules\" class=\"general-table\" style=\"width: 750px !important\">");
+        out.println("<table id=\"table-rules\" class=\"general-table\">");
         String header = "<tr> <th> STT </th> <th> Mã </th> <th> Tên </th> <th> Giá trị </th> <th></th></tr>";
         out.println(header);
         if ((rules != null) && !rules.isEmpty()) {
@@ -188,15 +184,15 @@ public class ManageRuleController extends HttpServlet {
                         + rules.get(i).getValue() 
                         + " </td>");
                 out.println("<td id=\"td-edit" + i + "\"> " 
-                    + "<a href=\"#\" onclick=\"edit(" + i + ", '" + rules.get(i).getId() + "')\"> Sửa </a>"
-                    + " - <a href=\"#\" onclick=\"deleteRule('" + rules.get(i).getId() + "')\"> Xóa </a>");
+                    + "<span onclick=\"edit("+ i +", '" + rules.get(i).getId() + "')\"> <img src=\"../../imgs/icon/edit.png\" title=\"Sửa\" alt=\"Sửa\"/> </span>"
+                    + "- <span onclick=\"deleteRule('" + rules.get(i).getId() + "')\"> <img src=\"../../imgs/icon/delete.png\" title=\"Xóa\" alt=\"Xóa\" /> </span>");
                 out.println("</td>");
                 out.println("</tr>");
             }
         }
     }
 
-    private void doEditRule(PrintWriter out, HttpServletRequest request) {
+    private void doEditRule(HttpServletRequest request) {
         String id = request.getParameter("id");
         float value = Float.parseFloat(request.getParameter("new_value"));
         String description = request.getParameter("new_description");
