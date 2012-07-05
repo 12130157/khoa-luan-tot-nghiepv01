@@ -8,7 +8,8 @@
     "http://www.w3.org/TR/html4/loose.dtd">
 <%
     String username_r = (String) session.getAttribute("username"); 
-    boolean displayMailbox = true;
+    //boolean displayMailbox = true;
+    boolean displayMailbox = false;
     if ((username_r == null) || (username_r.length() < 1)) {
         username_r = "Khách";
         displayMailbox = false;
@@ -166,18 +167,18 @@
                     c2d.stroke();
                 }
             //Fetch the current time
-            var ampm = "";
+            ////var ampm = "AM";
             var now = new Date();
             var hrs = now.getHours();
             var min = now.getMinutes();
             var sec = now.getSeconds();
             c2d.strokeStyle = "#000";
             //Draw AM/PM indicator
-            //if (hrs >= 12)
-                //ampm = "PM";
-            c2d.lineWidth = 1;
-            c2d.strokeRect(5,-10,30,20);
-            c2d.fillText(ampm,20,0); // 25: left of ampm text
+            ////if (hrs >= 12)
+            ////    ampm = "PM";
+            ////c2d.lineWidth = 1;
+            ////c2d.strokeRect(5,-10,30,20);
+            ////c2d.fillText(ampm,20,0); // 25: left of ampm text
 
             c2d.lineWidth = 6;
             c2d.save();
