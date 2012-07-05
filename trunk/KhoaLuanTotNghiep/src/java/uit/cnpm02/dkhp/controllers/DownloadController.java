@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uit.cnpm02.dkhp.controllers;
 
 import java.io.File;
@@ -42,10 +38,8 @@ import uit.cnpm02.dkhp.model.Subject;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.model.TrainClassID;
 import uit.cnpm02.dkhp.service.IFileUploadService;
-import uit.cnpm02.dkhp.service.IReporter;
 import uit.cnpm02.dkhp.service.IStudentService;
 import uit.cnpm02.dkhp.service.impl.FileUploadServiceImpl;
-import uit.cnpm02.dkhp.service.impl.ReporterImpl;
 import uit.cnpm02.dkhp.service.impl.StudentServiceImpl;
 import uit.cnpm02.dkhp.utilities.Constants;
 
@@ -58,14 +52,14 @@ public class DownloadController extends HttpServlet {
     private IFileUploadService fuService = new FileUploadServiceImpl();
     
     private HSSFCellStyle style = null; //Normal style (No border)
-    private HSSFCellStyle styleTLBR = null; //(Top Left Bottom Right border)
+    /*private HSSFCellStyle styleTLBR = null; //(Top Left Bottom Right border)
     private HSSFCellStyle styleTL = null; // (Top left border)
     private HSSFCellStyle styleTR = null; //
     private HSSFCellStyle styleL = null; //
     private HSSFCellStyle styleR = null; //
     private HSSFCellStyle styleB = null; //
     private HSSFCellStyle styleBL = null; //
-    private HSSFCellStyle styleBR = null; //
+    private HSSFCellStyle styleBR = null; //*/
     
     /** 
      * 
@@ -215,9 +209,9 @@ public class DownloadController extends HttpServlet {
     private void exportStudyResult(HttpServletRequest req,
             HttpServletResponse resp) throws IOException {
         try {
-            SubjectDAO subjectDao = new SubjectDAO();
+            SubjectDAO subjectDao = DAOFactory.getSubjectDao();
             //get info
-            StudyResultDAO studyResultDao = new StudyResultDAO();
+            StudyResultDAO studyResultDao = DAOFactory.getStudyResultDao();
             String user = req.getParameter("mssv");
             List<StudyResult> studyResult = studyResultDao
                     .findByOther("MSSV", user, "NamHoc, HocKy", "ASC");
@@ -246,39 +240,56 @@ public class DownloadController extends HttpServlet {
 
             int nrow = 1, i = 0;
 
+            HSSFRow row1 = null;
+            row1 = sheet.createRow((short) +(nrow++));
+            createCell(row1, 2, style2, HSSFCell.CELL_TYPE_STRING, "BẢNG ĐIỂM SINH VIÊN");
+
+            row1 = sheet.createRow((short) +(nrow++));
+            row1 = sheet.createRow((short) +(nrow++));
+            font = hwb.createFont();
+            initialFont(font, HSSFFont.FONT_ARIAL, 10,
+                    HSSFFont.BOLDWEIGHT_BOLD, HSSFColor.BLACK.index);
+            style.setFont(font);
             String[] infoStudent = {"Họ Và Tên: " + student.getFullName(),
                 "MSSV: " + student.getId(),
                 "Lớp: " + classes.getClassName(),
                 "Khoa: " + faculty.getFacultyName(),
                 "Số tín chỉ đã tích lũy: " + numTC,
                 "Điểm trung bình: " + averageMark};
-            HSSFRow row1 = null;
-            row1 = sheet.createRow((short) +(nrow++));
-            createCell(row1, 4, style2, HSSFCell.CELL_TYPE_STRING, "BẢNG ĐIỂM SINH VIÊN");
-
-            row1 = sheet.createRow((short) +(nrow++));
-            row1 = sheet.createRow((short) +(nrow++));
-            HSSFFont font1 = hwb.createFont();
-            initialFont(font1, HSSFFont.FONT_ARIAL, 12,
-                    HSSFFont.BOLDWEIGHT_BOLD, HSSFColor.BLUE.index);
-            style.setFont(font1);
-            for (i = 0; i < infoStudent.length; i++) {
+            for (i = 0; i < 3; i++) {
                 row1 = sheet.createRow((short) +(nrow++));
-                createCell(row1, 0, style, HSSFCell.CELL_TYPE_STRING, infoStudent[i]);
+                createCell(row1, 1, style, HSSFCell.CELL_TYPE_STRING, infoStudent[i]); //HoTen, MSSV, Lop
+                createCell(row1, 4, style, HSSFCell.CELL_TYPE_STRING, infoStudent[i+3]);// Khoa, So TC, DTB
             }
-
+            
+            row1 = sheet.createRow((short) +(nrow++));
             row1 = sheet.createRow((short) +(nrow++));
             row1 = sheet.createRow((short) +(nrow++));
             row1 = sheet.createRow((short) +(nrow++));
 
             String[] title = {"Năm học", "Học kỳ", "Mã môn học", "Tên môn học", "Số tín chỉ", "Điểm"};
-            row1 = sheet.createRow((short) +(nrow++));
-            HSSFFont font2 = hwb.createFont();
-            initialFont(font2, HSSFFont.FONT_ARIAL, 12,
-                    HSSFFont.BOLDWEIGHT_BOLD, HSSFColor.RED.index);
-            style1.setFont(font2);
+            int[] widths = {125*32, 90*32, 125*32, 250*32, 100*32, 100*32};
             for (i = 0; i < title.length; i++) {
-                createCell(row1, (i+1), style1, HSSFCell.CELL_TYPE_STRING, title[i]);
+                sheet.setColumnWidth(i, widths[i]);
+            }
+            //HSSFFont font2 = hwb.createFont();
+            HSSFCellStyle headeStyle = hwb.createCellStyle();
+            HSSFCellStyle thinBorderStyle = hwb.createCellStyle();
+            font = hwb.createFont();
+            initialFont(font, HSSFFont.FONT_ARIAL, 12,
+                    HSSFFont.BOLDWEIGHT_BOLD, HSSFColor.BLACK.index);
+            headeStyle.setFont(font);
+            setBorder(headeStyle, CellStyle.BORDER_THICK,
+                                    CellStyle.BORDER_THIN,
+                                    CellStyle.BORDER_HAIR,
+                                    CellStyle.BORDER_MEDIUM);
+            setBorder(thinBorderStyle, CellStyle.BORDER_THIN,
+                                    CellStyle.BORDER_THIN,
+                                    CellStyle.BORDER_THIN,
+                                    CellStyle.BORDER_THIN);
+            
+            for (i = 0; i < title.length; i++) {
+                createCell(row1, i, headeStyle, HSSFCell.CELL_TYPE_STRING, title[i]);
             }
             String year;
             int semester;
@@ -296,17 +307,16 @@ public class DownloadController extends HttpServlet {
                 year = studyResult.get(i).getYear();
                 subTC = subjectDao.findById(
                         studyResult.get(i).getId().getSubjectCode()).getnumTC();
-                String[] info = {
-                    year,
-                    Integer.toString(semester),
-                    subCode,
-                    subName,
-                    Integer.toString(subTC),
-                    Float.toString(mark)};
+                String[] info = {   year,
+                                    Integer.toString(semester),
+                                    subCode,
+                                    subName,
+                                    Integer.toString(subTC),
+                                    Float.toString(mark)};
 
                 for (int j = 0; j < info.length; j++) {
-                    createCell(row, (j+1), style3, HSSFCell.CELL_TYPE_STRING, info[j]);
-                    sheet.autoSizeColumn(j + 1);
+                    createCell(row, j, style3, HSSFCell.CELL_TYPE_STRING, info[j]);
+                    //sheet.autoSizeColumn(j);
                 }
             }
 
@@ -504,11 +514,11 @@ public class DownloadController extends HttpServlet {
             row = sheet.createRow((short) +(currentRow++));
             row = sheet.createRow((short) +(currentRow++));
             row = sheet.createRow((short) +(currentRow++));
+            row = sheet.createRow((short) +(currentRow++));
             
             // Table's header
             HSSFCellStyle headeStyle = hwb.createCellStyle();
             HSSFCellStyle thinBorderStyle = hwb.createCellStyle();
-            row = sheet.createRow((short) +(currentRow++));
             initialFont(font, HSSFFont.FONT_ARIAL, 12,
                     HSSFFont.BOLDWEIGHT_BOLD, HSSFColor.BLACK.index);
             headeStyle.setFont(font);
