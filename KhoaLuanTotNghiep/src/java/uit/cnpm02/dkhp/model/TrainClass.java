@@ -220,6 +220,26 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
         
         return result;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if ((obj == null) || !(obj instanceof TrainClass))
+            return false;
+        
+        TrainClass other = (TrainClass) obj;
+        TrainClassID thisId = this.getId();
+        TrainClassID otherId = other.getId();
+        
+        return (thisId.getClassCode().equals(otherId.getClassCode())
+                && (thisId.getSemester() == otherId.getSemester())
+                && thisId.getYear().equals(otherId.getYear()));
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        return hash;
+    }
     
     @Override
     public String getTableName() {
