@@ -90,12 +90,12 @@ public class StringUtils {
         if ((objects == null) || objects.isEmpty()) {
             return false;
         }
-        boolean result = false;
+        
         for (int i = 0; i < objects.size(); i++) {
-            if (objects.get(i).equalsIgnoreCase(value)) {
-                result = true;
-            }
+            if (objects.get(i).equalsIgnoreCase(value))
+                return true;
         }
-        return result;
+        
+        return false;
     }
 }
