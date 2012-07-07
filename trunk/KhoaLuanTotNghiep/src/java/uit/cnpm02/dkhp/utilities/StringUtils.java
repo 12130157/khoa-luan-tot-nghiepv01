@@ -86,12 +86,16 @@ public class StringUtils {
         return buf.toString();
     }
 
-    public static boolean checkStringExitList(String value, List<String> list){
-        boolean result=false;
-        for(int i=0; i<list.size();i++){
-            if(list.get(i).equalsIgnoreCase(value))
-                result=true;
+    public static boolean checkStringExitList(String value, List<String> objects) {
+        if ((objects == null) || objects.isEmpty()) {
+            return false;
         }
-       return result;
+        boolean result = false;
+        for (int i = 0; i < objects.size(); i++) {
+            if (objects.get(i).equalsIgnoreCase(value)) {
+                result = true;
+            }
+        }
+        return result;
     }
 }
