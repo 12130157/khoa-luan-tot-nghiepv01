@@ -6,7 +6,6 @@
 <%@page import="uit.cnpm02.dkhp.model.Lecturer"%>
 <%@page import="uit.cnpm02.dkhp.model.TrainClass"%>
 <%@page import="java.util.List"%>
-<%@include file="MenuGV.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
@@ -27,25 +26,6 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Thời khóa biểu</title>
         <style media="all" type="text/css">
-
-
-            #formdetail table{
-                width: 100%;
-                padding-left: 10px;
-                padding-right: 10px;
-
-            }
-            #formdetail table th{
-                background-color:#175F6E;
-                height: 30px;
-                border-color: black;
-            }
-
-            #formdetail table td{
-                text-align: center;
-                background-color: #474C52;
-                border-color: #7D8103;
-            }
             #formdetail{
                 width: 99%;
             }
@@ -55,24 +35,23 @@
             #detail th{
                 text-align: center;
             }
-        </style>
     </style>
 </head>
 <body>
     <!--Div Wrapper-->
     <div id="wrapper">
+        <%@include file="MenuGV.jsp" %>
         <div id="mainNav"><!--Main Navigation-->
             <%@include file="../MainNav.jsp" %>
         </div><!--End Navigation-->
         <div id="content"><!--Main Contents-->
-            <br>
-            <h2 align="center"><u>Lịch dạy của giảng viên <%=lecturer.getFullName()%> trong học kỳ <%=semester%> năm học <%=year%> </u></h2>
-            <br><hr/><hr/>
+            <div id="main-title">
+                Lịch dạy của giảng viên <%=lecturer.getFullName()%> trong học kỳ <%=semester%> năm học <%=year%>
+            </div>
+            <br /><br />
             <form id="formdetail" name="formdetail">
-                <u>
-                    chi tiết:
-                </u>
-                <table id="detail" name="detail" border="1" bordercolor="yellow" >
+                <b><u>Chi tiết</u></b>
+                <table id="detail" name="detail" class="general-table" >
                     <tr>
                         <th width="50px"></th><th width="50px">Mã lớp</th><th width="200px">Môn học</th><th width="50px">Phòng</th><th width="50px">Buổi</th><th width="200px">Giảng viên</th>
                     </tr> 
