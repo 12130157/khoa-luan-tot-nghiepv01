@@ -3,6 +3,8 @@
     Created on : 26-04-2011, 21:12:12
     Author     : ngloc_it
 --%>
+<%@page import="java.util.List"%>
+<%@page import="uit.cnpm02.dkhp.model.TrainClass"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
@@ -21,11 +23,26 @@
     } catch (Exception ex) {
         
     }
+    
+    List<TrainClass> tcs = (List<TrainClass>) session.getAttribute("private_schedult");
 %>
 <html>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <style media="all" type="text/css">
-        
+        #schedule-title {
+            background: #ddb;
+            text-align: left;
+            font-weight: bold;
+            font-size: 11px;
+        }
+        #schedule-detail {
+            text-align: left;
+            font-weight: bold;
+            font-size: 10px;
+        }
+        #schedule-detail:hover{
+            background: #5CB3FF;
+        }
         
     </style>
     <head>
@@ -67,6 +84,20 @@
             <div id="range-1">
                 <canvas id="example" width="200" height="200">Browser not supported!</canvas>
             </div>
+            <%-- Personal schedule --%>
+            <%if ((tcs != null) && !tcs.isEmpty()) {
+            %>
+            <div id="range-1" style="text-align: center;">
+                <div id="schedule-title">Thời khóa biểu</div>
+                <%for (int k = 0; k < tcs.size(); k++) {%>
+                <div id="schedule-detail">
+                    <u>Thứ <%= tcs.get(k).getStudyDate()%></u>, ca <%= tcs.get(k).getShift()%>
+                    - môn <%= tcs.get(k).getSubjectName()%> - phòng <%= tcs.get(k).getClassRoom()%>
+                </div>
+                <%}%>
+            </div>
+                
+            <%}%>
             <%-- A few link to common site --%>
             <div id="range-1" style="">
                 <u><b>Trang liên kết</b></u><br />
