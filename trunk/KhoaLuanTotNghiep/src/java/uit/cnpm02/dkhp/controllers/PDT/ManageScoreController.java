@@ -775,7 +775,7 @@ public class ManageScoreController extends HttpServlet {
             List<Registration> regs, TrainClass tc) {
         StudentDAO studentDao = DAOFactory.getStudentDao();
         StudyResultDAO studyResultDao = DAOFactory.getStudyResultDao();
-        out.println("<input type=\"checkbox\"/> Ẩn SV đã có điểm");
+        //out.println("<input type=\"checkbox\"/> Ẩn SV đã có điểm");
         out.println();
         out.print("<table id=\"list-student-result\" class=\"general-table\" style=\"width:500px;\">");
         out.print("<tr>"
