@@ -506,6 +506,7 @@ tr:hover .pop-up {
     text-align: center;
     padding: 7px;
     margin: auto;
+    font-weight: bold;
 }
 .button-1:hover {
     background: #FD2;
@@ -550,5 +551,53 @@ input[type="text"], input[type="password"] {
 }
 
 #mailbox-1 {
-    float: right;
+    display: none;
+    width: 270px;
+    max-height: 550px;
+    border: 1px solid #dd2;
+    border-radius: 7px;
+    background: #666666;
+    z-index: 9999;
+    height: 251px;
+    position: absolute;
+    margin-left: 211px;
 }
+input[type="file"] {
+    background: #dd2;
+}
+
+#mailbox-detail {
+    
+}
+#mailbox-title {
+    font-weight: bold;
+    font-size: 11px;
+}
+#mailbox-shortcontent {
+    font-size: 10px;
+}
+
+.range-2 {
+    float: left;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    padding-left: 4px;
+    width: 98%px;
+}
+.range-2 h3 {
+    background: url("../imgs/rg2_h3.png") repeat-x scroll 0 0 transparent;
+    color: #FFFFFF;
+    height: 34px;
+    padding-top: 12px;
+    text-align: center;
+}
+.range-2 .content {
+    background: url("../imgs/rg2_bg.png") repeat-x scroll left bottom #FFFFFF;
+    border-left: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+    margin-top: -22px;
+    padding: 1px 13px 7px;
+}
+
+.datahighlight td{ background-color:#0066CC !important; }
+.mouseover_tr { background-color:#dde !important; }
