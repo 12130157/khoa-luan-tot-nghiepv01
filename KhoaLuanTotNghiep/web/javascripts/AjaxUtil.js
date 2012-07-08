@@ -44,3 +44,16 @@ function hideStuff(stuffId, btnId, btnShowLabel, btnHideLabel) {
     document.getElementById(btnId).innerHTML = btnShow;
     document.getElementById(stuffId).style.display = 'none';
 }
+
+/*function timeOut(timeOutFunction, delay) {
+    setTimeout(func, delay, param1, param2)
+}
+*/
+
+$(document).ready(function(){
+    $('.general-table tr').hover(function(){
+        $(this).children().addClass('mouseover_tr');
+    },function(){
+        $(this).children().removeClass('mouseover_tr');
+    });
+});
