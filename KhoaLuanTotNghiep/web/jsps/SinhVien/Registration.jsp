@@ -16,13 +16,16 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 <%
-List<TrainClass> trainClass=(List<TrainClass>) session.getAttribute("trainClass");
-String year=(String) session.getAttribute("year");
-Integer semester=(Integer) session.getAttribute("semester");
-Student student=(Student) session.getAttribute("student");
-Class classes=(Class) session.getAttribute("classes");
-Faculty faculty=(Faculty)session.getAttribute("faculty");
-List<String> registried=(List<String>) session.getAttribute("registried");    
+    List<TrainClass> trainClass = (List<TrainClass>) session.getAttribute("trainClass");
+    List<TrainClass> extTrainClasses = (List<TrainClass>) session.getAttribute("ExtTrainClass");
+    String year = (String) session.getAttribute("year");
+    Integer semester = (Integer) session.getAttribute("semester");
+    Student student = (Student) session.getAttribute("student");
+    Class classes = (Class) session.getAttribute("classes");
+    Faculty faculty = (Faculty) session.getAttribute("faculty");
+    
+    // Danh sach lop ma SV da dk
+    List<String> registried = (List<String>) session.getAttribute("registriedID");
 %>
 <html>
     <head>
@@ -92,39 +95,135 @@ List<String> registried=(List<String>) session.getAttribute("registried");
                 </div>
                <hr/><hr/>
                <form id="formdetail" name="formdetail" action="../../RegistryController?action=registry" method="post">
-                    <div style="font-size: 12px; font-weight: bold; font-style: italic;">
+                    <div style="float: left; font-size: 12px; font-weight: bold; font-style: italic;">
                         (*) Sinh viên môn học muốn đk và click nút Đăng Ký
                     </div>
+                   <%--<div id="btn-chkbox_external_trainclass" class="chkbox_external_trainclass">
+                       <input type="checkbox" class="button-1" value="Hiển thị lớp thuộc khoa khác" />
+                    </div>--%>
+                   
+                   <div class="clear"></div>
                     <table id="detail" name="detail" class="general-table" >
                      <tr>
-                         <th width="10px">STT</th><th width="70px">Mã lớp</th><th width="200px">Môn học</th>
-                         <th width="10px">TC</th><th width="200px">Giảng viên</th><th width="10px">Thứ</th>
-                         <th width="50px">Ca</th><th width="50px">Phòng</th><th width="50px">Tối đa</th>
+                         <th width="10px">STT</th>
+                         <th width="70px">Mã lớp</th>
+                         <th width="200px">Môn học</th>
+                         <th width="10px">TC</th>
+                         <th width="200px">Giảng viên</th>
+                         <th width="10px">Thứ</th>
+                         <th width="50px">Ca</th>
+                         <th width="50px">Phòng</th>
+                         <th width="50px">Tối đa</th>
                          <th width="50px">Đã ĐK</th>
                          <th width="10px"><INPUT type="checkbox" name="checkAll" onclick="selectAll('detail',10)" /></th>
                      </tr>   
-                     <%for(int i=0; i<trainClass.size();i++){%>
-                     <tr>
+                     <%for(int i = 0; i < trainClass.size(); i++){
+                         boolean checked = StringUtils.checkStringExitList(trainClass.get(i).getId().getClassCode(), registried);
+                         String clazz = "class='"+ (checked ? "datahighlight" : "") + "'";
+                     %>
+                     <tr id="tr_main_<%=i%>" <%=clazz%>>
+                         
+                         <%-- STT --%>
                          <td><%=i+1%></td>
+                         <%-- Ma lop --%>
                          <td><a href="../../RegistryController?action=detail&classCode=<%=trainClass.get(i).getId().getClassCode()%>&semester=<%=trainClass.get(i).getId().getSemester()%>&year=<%=trainClass.get(i).getId().getYear()%>"><%=trainClass.get(i).getId().getClassCode()%></a></td>
                          <td><%=trainClass.get(i).getSubjectName()%></td>
-                         <td><%=trainClass.get(i).getNumTC()%></td><td><%=trainClass.get(i).getLectturerName()%></td>
+                         <td><%=trainClass.get(i).getNumTC()%></td>
+                         <td><%=trainClass.get(i).getLectturerName()%></td>
                          <td><%=trainClass.get(i).getStudyDate()%></td>
+                         <%-- Ca hoc cua lop <Sang/Chieu> --%>
                          <%if(trainClass.get(i).getShift()==1){%>
-                         <td>Sáng</td>
-                         <%}else{%>
-                         <td>Chiều</td>
+                             <td>Sáng</td>
+                             <%}else{%>
+                             <td>Chiều</td>
                          <%}%>
-                         <td><%=trainClass.get(i).getClassRoom()%></td><td><%=trainClass.get(i).getNumOfStudent()%></td>
+                         <%-- Phon hoc --%>
+                         <td><%=trainClass.get(i).getClassRoom()%></td>
+                         <%-- SLSV toi da cua lop --%>
+                         <td><%=trainClass.get(i).getNumOfStudent()%></td>
+                         <%-- SLSV da dang ky cua lop --%>
                          <td><%=trainClass.get(i).getNumOfStudentReg()%></td>
-                         <%if(StringUtils.checkStringExitList(trainClass.get(i).getId().getClassCode(), registried)){%>
-                         <td width="10px"><input type="checkbox" name="check" checked="true" value="<%=trainClass.get(i).getId().getClassCode()%>"/></td>
-                         <%}else{
-                             if(trainClass.get(i).getNumOfStudentReg()>=120){%>
-                         <td width="10px"><input type="checkbox" disabled name="check" value="<%=trainClass.get(i).getId().getClassCode()%>"/></td>
-                         <%}else{%>
-                         <td width="10px"><input type="checkbox" name="check" value="<%=trainClass.get(i).getId().getClassCode()%>"/></td>
-                         <%}}%>
+                         <%-- Check box cho phep SV chon co dk hoc lop nay hay khong
+                            SV ko dc dang ky neu SLSV da dk vuot qua SLSV toi da
+                            SV ko dc dang ky neu ko du cac dk theo qui che Tin Chi: ...
+                         --%>
+                         <%if(checked){%>
+                             <td width="10px">
+                                 <input type="checkbox" name="check" checked="true" value="<%=trainClass.get(i).getId().getClassCode()%>" onclick="hightLightSelectedRow(this, 'tr_main_<%=i%>')"/>
+                             </td>
+                         <%}else {
+                             if(trainClass.get(i).getNumOfStudentReg() >= trainClass.get(i).getNumOfStudent()){%>
+                             <td width="10px"><input type="checkbox" disabled name="check" value="<%=trainClass.get(i).getId().getClassCode()%>"/></td>
+                             <%}else{%>
+                             <td width="10px"><input type="checkbox" name="check" value="<%=trainClass.get(i).getId().getClassCode()%>" onclick="hightLightSelectedRow(this, 'tr_main_<%=i%>')"/></td>
+                             <%}
+                         }%>
+                     </tr>
+                     <%}%>
+                     </table>
+                    <span class="atag" id="btn-chkbox_external_trainclass" style="">
+                        Danh sách mở rộng (<i>Gồm các lớp không thuộc khoa SV đang theo học</i>)
+                    </span>
+                     <%-- External trainclass - Danh sach lop hoc thuoc khoa khac khoa cua SV --%>
+                     <table id="ext-detail" name="detail" class="general-table" style="display: none;">
+                     <tr>
+                         <th width="10px">STT</th>
+                         <th width="70px">Mã lớp</th>
+                         <th width="200px">Môn học</th>
+                         <th width="10px">TC</th>
+                         <th width="200px">Giảng viên</th>
+                         <th width="10px">Thứ</th>
+                         <th width="50px">Ca</th>
+                         <th width="50px">Phòng</th>
+                         <th width="50px">Tối đa</th>
+                         <th width="50px">Đã ĐK</th>
+                         <th width="10px"><%--<INPUT type="checkbox" name="checkAll" onclick="selectAll('detail',10)" />--%></th>
+                     </tr>
+                     <%for(int i = 0; i < extTrainClasses.size(); i++){
+                         TrainClass tcTemp = extTrainClasses.get(i);
+                         boolean checked1 = StringUtils.checkStringExitList(tcTemp.getId().getClassCode(), registried);
+                         String clazz = "class='"+ (checked1 ? "datahighlight" : "") + "'";
+                         %>
+                         <tr id="tr_<%=i%>" <%=clazz%>>
+                         <%-- STT --%>
+                         <td><%=i+1%></td>
+                         <%-- Ma lop --%>
+                         <td><a href="../../RegistryController?action=detail&classCode=<%=tcTemp.getId().getClassCode()%>&semester=<%=tcTemp.getId().getSemester()%>&year=<%=tcTemp.getId().getYear()%>"><%=tcTemp.getId().getClassCode()%></a></td>
+                         <td><%=tcTemp.getSubjectName()%></td>
+                         <td><%=tcTemp.getNumTC()%></td>
+                         <td><%=tcTemp.getLectturerName()%></td>
+                         <td><%=tcTemp.getStudyDate()%></td>
+                         <%-- Ca hoc cua lop <Sang/Chieu> --%>
+                         <%if(tcTemp.getShift() == 1){%>
+                             <td>Sáng</td>
+                             <%}else{%>
+                             <td>Chiều</td>
+                         <%}%>
+                         <%-- Phon hoc --%>
+                         <td><%=tcTemp.getClassRoom()%></td>
+                         <%-- SLSV toi da cua lop --%>
+                         <td><%=tcTemp.getNumOfStudent()%></td>
+                         <%-- SLSV da dang ky cua lop --%>
+                         <td><%=tcTemp.getNumOfStudentReg()%></td>
+                         <%-- Check box cho phep SV chon co dk hoc lop nay hay khong
+                            SV ko dc dang ky neu SLSV da dk vuot qua SLSV toi da
+                            SV ko dc dang ky neu ko du cac dk theo qui che Tin Chi: ...
+                         --%>
+                         <%if(checked1){%>
+                             <td width="10px">
+                                 <input type="checkbox" name="check" checked="true" value="<%=tcTemp.getId().getClassCode()%>" onclick="hightLightSelectedRow(this, 'tr_<%=i%>')"/>
+                             </td>
+                         <%}else {
+                             if(tcTemp.getNumOfStudentReg() >= tcTemp.getNumOfStudent()){%>
+                             <td width="10px">
+                                 <input type="checkbox" disabled name="check" value="<%=tcTemp.getId().getClassCode()%>" />
+                             </td>
+                             <%}else{%>
+                             <td width="10px">
+                                 <input type="checkbox" name="check" value="<%=tcTemp.getId().getClassCode()%>" onclick="hightLightSelectedRow(this, 'tr_<%=i%>')"/>
+                             </td>
+                             <%}
+                         }%>
                      </tr>
                      <%}%>
                      </table>
@@ -140,9 +239,24 @@ List<String> registried=(List<String>) session.getAttribute("registried");
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
+    
+        <script src="../../javascripts/AjaxUtil.js"> </script>
+        <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
+        <script  type = "text/javascript" >
+            
+            $("#btn-chkbox_external_trainclass").click(function () {
+                $('#ext-detail').slideToggle(50);
+            });
+
+             function hightLightSelectedRow(chb, row) {
+                var trobj = document.getElementById(row);
+                 
+                if(chb.checked){
+                    trobj.setAttribute("class", 'datahighlight');
+                } else {
+                    trobj.removeAttribute("class", 'datahighlight');
+                }
+            }
+        </script>
     </body>
-    <script src="../../javascripts/UtilTable.js"></script>
-    <script>
-        
-    </script>
  </html>
