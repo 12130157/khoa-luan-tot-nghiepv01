@@ -1,11 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uit.cnpm02.dkhp.controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,10 +16,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import uit.cnpm02.dkhp.DAO.AccountDAO;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
+import uit.cnpm02.dkhp.DAO.RegistrationDAO;
+import uit.cnpm02.dkhp.DAO.SubjectDAO;
 import uit.cnpm02.dkhp.DAO.TaskDAO;
+import uit.cnpm02.dkhp.DAO.TrainClassDAO;
 import uit.cnpm02.dkhp.bo.AccountBO;
 import uit.cnpm02.dkhp.model.Account;
+import uit.cnpm02.dkhp.model.Registration;
 import uit.cnpm02.dkhp.model.Task;
+import uit.cnpm02.dkhp.model.TrainClass;
+import uit.cnpm02.dkhp.model.TrainClassID;
 import uit.cnpm02.dkhp.model.type.AccountType;
 import uit.cnpm02.dkhp.model.type.TaskStatus;
 import uit.cnpm02.dkhp.utilities.Constants;
@@ -34,6 +39,9 @@ import uit.cnpm02.dkhp.utilities.password.PasswordProtector;
 public class Login extends HttpServlet {
 
     private AccountDAO accDao = new AccountDAO();
+    private TrainClassDAO tcDao = DAOFactory.getTrainClassDAO();
+    
+    private final String SCHEDULE_CK = "private_schedult";
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -44,6 +52,7 @@ public class Login extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
@@ -52,9 +61,9 @@ public class Login extends HttpServlet {
         try {
             if (function != null) {
                 if (function.equals("login")) {
-                    Login(session, request, response);
+                    login(request, response);
                 } else if (function.equals("logout")) {
-                    LogOut(session, response);
+                    logOut(session, response);
                 }
             } else {
                 session.setAttribute("error", "Lỗi hệ thống. Vui lòng quay lại sau.");
@@ -77,7 +86,9 @@ public class Login extends HttpServlet {
      * @param response
      * @throws Exception
      */
-    private void Login(HttpSession session, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    private void login(HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        HttpSession session = request.getSession();
         String user = request.getParameter("txtUsername");
         String textPass = request.getParameter("txtPassword");
         String pass = PasswordProtector.getMD5(textPass);
@@ -85,10 +96,12 @@ public class Login extends HttpServlet {
         String path = "";
         if (accBo.Login(user, pass)) {
             if (accBo.isLogined(user)) {
-                session.setAttribute("error", "Tài khoản của bạn đang được đăng nhập ở một máy khác!");
+                session.setAttribute("error",
+                        "Tài khoản của bạn đang được đăng nhập ở một máy khác!");
                 path = "./jsps/Login.jsp";
             } else if (accBo.isLock(user)) {
-                session.setAttribute("error", "Tài khoản của bạn đang bị khóa vui lòng liên hệ quản lý khoa để giải quyết!");
+                session.setAttribute("error",
+                        "Tài khoản của bạn đang bị khóa vui lòng liên hệ quản lý khoa để giải quyết!");
                 path = "./jsps/Login.jsp";
             } else {
                 session.setAttribute("username", user);
@@ -101,13 +114,21 @@ public class Login extends HttpServlet {
                 //accDao.update(acc);
                 
                 if (acc.getType() == AccountType.ADMIN.value()) {
-                    getRemindTask(request, response);
+                    getRemindTask(request);
                     path = "./jsps/PDT/PDTStart.jsp";
                 } else if (acc.getType() == AccountType.STUDENT.value()) {
-                    getRemindTask(request, response);
+                    getRemindTask(request);
+                    List<TrainClass> tcs = getStudentSchedule(user);
+                    if ((tcs != null) && !tcs.isEmpty()) {
+                        session.setAttribute(SCHEDULE_CK, tcs);
+                    }
                     path = "./jsps/SinhVien/SVStart.jsp";
                 } else if (acc.getType() == AccountType.LECTUTER.value()) {
-                    getRemindTask(request, response);
+                    getRemindTask(request);
+                    List<TrainClass> tcs = getLecturerSchedule(user);
+                    if ((tcs != null) && !tcs.isEmpty()) {
+                        session.setAttribute(SCHEDULE_CK, tcs);
+                    }
                     path = "./jsps/GiangVien/GVStart.jsp";
                 }
             }
@@ -119,14 +140,16 @@ public class Login extends HttpServlet {
         response.sendRedirect(path);
     }
 
-    private void LogOut(HttpSession session, HttpServletResponse response) throws IOException, Exception {
-         String user=(String) session.getAttribute("username");
-         Account acc = accDao.findById(user);
+    private void logOut(HttpSession session, HttpServletResponse response)
+            throws IOException, Exception {
+        session.removeAttribute(SCHEDULE_CK);
+        String user = (String) session.getAttribute("username");
+        Account acc = accDao.findById(user);
 
-        if(acc != null) {
-           //acc.setIsLogined(false);
-           //accDao.update(acc);
-         }
+        if (acc != null) {
+            //acc.setIsLogined(false);
+            //accDao.update(acc);
+        }
 
         session.removeAttribute("username");
         session.removeAttribute("logineduser");
@@ -171,8 +194,7 @@ public class Login extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void getRemindTask(HttpServletRequest request,
-            HttpServletResponse response) {
+    private void getRemindTask(HttpServletRequest request) {
         TaskDAO taskDao = DAOFactory.getTaskDAO();
         HttpSession session = request.getSession();
         session.removeAttribute("tasks");
@@ -207,5 +229,71 @@ public class Login extends HttpServlet {
             Logger.getLogger(HomepageController.class.getName())
                     .log(Level.SEVERE, null, ex);
         }
+    }
+    
+     private List<TrainClass> getLecturerSchedule(String lecturerId) {
+        try {
+            int semeter = Constants.CURRENT_SEMESTER;
+            String year = Constants.CURRENT_YEAR;
+            List<TrainClass> trainClasses = tcDao.findByColumNames(
+                    new String[] {"MaGV", "HocKy", "NamHoc"},
+                    new Object[] {lecturerId, semeter, year});
+            SubjectDAO subDao = DAOFactory.getSubjectDao();
+            for (TrainClass tc : trainClasses) {
+                String subName = subDao.findById(tc.getSubjectCode()).getSubjectName();
+                tc.setSubjectName(subName);
+            }
+            sortListTrainClassByStudyDate(trainClasses);
+            return trainClasses;
+        } catch (Exception ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+     }
+    
+    private List<TrainClass> getStudentSchedule(String studentId) {
+        RegistrationDAO regDao = DAOFactory.getRegistrationDAO();
+        try {
+            int semeter = Constants.CURRENT_SEMESTER;
+            String year = Constants.CURRENT_YEAR;
+            // Cac lop SV da dk (trong hoc ki hien tai)
+            List<Registration> regs = regDao.findByColumNames(
+                    new String[] {"MSSV", "HocKy", "NamHoc"},
+                    new Object[] {studentId, semeter, year});
+            List<TrainClassID> tcIDs = new ArrayList<TrainClassID>(10);
+            if ((regs == null) || regs.isEmpty()) {
+                return null;
+            }
+            
+            for (Registration reg : regs) {
+                TrainClassID tcID = new TrainClassID(reg.getId().getClassCode(),
+                        year, semeter);
+                tcIDs.add(tcID);
+            }
+            List<TrainClass> trainClasses = tcDao.findByIds(tcIDs);
+            SubjectDAO subDao = DAOFactory.getSubjectDao();
+            for (TrainClass tc : trainClasses) {
+                String subName = subDao.findById(tc.getSubjectCode()).getSubjectName();
+                tc.setSubjectName(subName);
+            }
+            sortListTrainClassByStudyDate(trainClasses);
+            
+            return trainClasses;
+        } catch (Exception ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        return null;
+    }
+    
+    private void sortListTrainClassByStudyDate(List<TrainClass> trainClasses) {
+        Collections.sort(trainClasses, new Comparator<TrainClass>() {
+
+            @Override
+            public int compare(TrainClass o1, TrainClass o2) {
+                return (o1.getStudyDate() - o2.getStudyDate());
+            }
+        });
     }
 }
