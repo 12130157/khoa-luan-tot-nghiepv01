@@ -374,7 +374,7 @@
         }
         
         function deleteUser(username) {
-            var key = document.getElementById("txtSearch").value;
+            var key = document.getElementById("search").value;
             var pagename = "../../AccountController?action=delete&user="
                 + username + "&key=" + key +"&curentPage="+currentpage;
             if(http){
