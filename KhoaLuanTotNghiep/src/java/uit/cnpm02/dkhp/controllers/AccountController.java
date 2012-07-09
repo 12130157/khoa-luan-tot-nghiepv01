@@ -405,7 +405,7 @@ public class AccountController extends HttpServlet {
         try {
             if (accountService.deleteAccountByID(userName)) {
                 out = response.getWriter();
-                if (key.isEmpty()) {
+                if (StringUtils.isEmpty(key)) {
                     result = accDao.findAll(numPerPage,
                             currentPage, "TenDangNhap", "DESC");
                 } else {
