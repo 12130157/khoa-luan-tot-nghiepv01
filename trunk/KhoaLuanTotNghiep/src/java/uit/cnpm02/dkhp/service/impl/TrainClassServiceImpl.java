@@ -331,7 +331,7 @@ public class TrainClassServiceImpl implements ITrainClassService {
     @Override
     public List<TrainClass> getAllClassOpen() {
         try {
-            List<TrainClass> result = classDAO.findByOther(classStatus, String.valueOf(Constants.OPEN_CLASS_STATUS));
+            List<TrainClass> result = classDAO.findByOther(classStatus, String.valueOf(TrainClassStatus.OPEN.getValue()));
             return result;
         } catch (Exception ex) {
             Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -342,7 +342,7 @@ public class TrainClassServiceImpl implements ITrainClassService {
     @Override
     public List<TrainClass> getAllClassClose() {
        try {
-            List<TrainClass> result = classDAO.findByOther(classStatus, String.valueOf(Constants.CLOSE_CLASS_STATUS));
+            List<TrainClass> result = classDAO.findByOther(classStatus, String.valueOf(TrainClassStatus.CLOSE.getValue()));
             return result;
         } catch (Exception ex) {
             Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -369,7 +369,7 @@ public class TrainClassServiceImpl implements ITrainClassService {
                     values.add(semester);
                 }
                 columnName.add(classStatus);
-                values.add(Constants.OPEN_CLASS_STATUS);
+                values.add(TrainClassStatus.OPEN.getValue());
                 String[] strColumnNames = (String[]) columnName.toArray(
                         new String[columnName.size()]);
 
@@ -421,7 +421,7 @@ public class TrainClassServiceImpl implements ITrainClassService {
                     values.add(semester);
                 }
                 columnName.add(classStatus);
-                values.add(Constants.CLOSE_CLASS_STATUS);
+                values.add(TrainClassStatus.CLOSE.getValue());
                 String[] strColumnNames = (String[]) columnName.toArray(
                         new String[columnName.size()]);
 
@@ -468,7 +468,7 @@ public class TrainClassServiceImpl implements ITrainClassService {
                     values.add(value);
                 }
                 columnNames.add(classStatus);
-                values.add(Constants.OPEN_CLASS_STATUS);
+                values.add(TrainClassStatus.OPEN.getValue());
                 String[] strColumnNames = (String[]) columnNames.toArray(
                         new String[columnNames.size()]);
 
@@ -514,7 +514,7 @@ public class TrainClassServiceImpl implements ITrainClassService {
                     values.add(value);
                 }
                 columnNames.add(classStatus);
-                values.add(Constants.CLOSE_CLASS_STATUS);
+                values.add(TrainClassStatus.CLOSE.getValue());
                 String[] strColumnNames = (String[]) columnNames.toArray(
                         new String[columnNames.size()]);
 
