@@ -36,6 +36,7 @@
                 padding-right: 15px;
             }
             #detailclass{
+                width: 100%;
                 text-align: left;
             }
             #detailclass th td{
@@ -62,14 +63,14 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <div id="title">
-                    <u><h3>Hủy lớp học <%=trainClass.getId().getClassCode()%></h3></u>
+                <div id="main-title">
+                    Hủy lớp học <%=trainClass.getId().getClassCode()%>
                 </div>
-                <hr/><hr/><br>
+                <br/><br/>
                 <div id="message">
                     
-                </div><br><hr/><br>
-                <u>Chi tiết lơp học:</u>
+                </div><br />
+                <u>Chi tiết lớp học:</u>
                 <table id="detailclass">
                     <tr>
                         <th width="100px">Mã lớp:</th>
@@ -83,13 +84,11 @@
                         <th>Ngày học: </th>
                         <td>Thứ <%=trainClass.getStudyDate()%></td>
                     </tr>
-                    <tr>
-                        <th ></th>
-                        <td></td>
-                        <th></th>
-                        <td><input type="button" value="  Hủy lớp  " onclick="autoCancelClass('<%=trainClass.getId().getClassCode()%>',<%=trainClass.getId().getSemester()%>,'<%=trainClass.getId().getYear()%>')" /></td>
-                    </tr>
                 </table>
+                <div class="button-1" style="padding: 2px !important; margin-top: 13px;">
+                    <span class="atag" onclick="autoCancelClass('<%=trainClass.getId().getClassCode()%>',<%=trainClass.getId().getSemester()%>,'<%=trainClass.getId().getYear()%>')" ><img src="../../imgs/check.png" />Hủy lớp</span>
+                </div>
+                
                <br><hr>  
                 <%--Form add new Train subject--%>
                 <%if(studentList.size()>0 && sameClass.size()>0){%>
@@ -137,37 +136,38 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    </body>
-    <script src="../../javascripts/AjaxUtil.js"></script>
-    <script  type = "text/javascript" >
-        var http = createRequestObject();
-        function autoCancelClass(classCode, classSemester, classYear){
-         if(http){
-                    http.open("GET", "../../ManageClassController?action=autoCancel&classCode="+ classCode + "&classSemester="+ classSemester + "&classYear="+ classYear  ,true);
-                    http.onreadystatechange = cancelResponeHandler;
-                    http.send(null);
-         }
-      }  
-      function cancelResponeHandler() {
-            if(http.readyState == 4 && http.status == 200){
-                var detail=document.getElementById("message");
-                detail.innerHTML=http.responseText;
+    
+        <script src="../../javascripts/AjaxUtil.js"></script>
+        <script  type = "text/javascript" >
+            var http = createRequestObject();
+            function autoCancelClass(classCode, classSemester, classYear){
+             if(http){
+                http.open("GET", "../../ManageClassController?action=autoCancel&classCode="+ classCode + "&classSemester="+ classSemester + "&classYear="+ classYear  ,true);
+                http.onreadystatechange = cancelResponeHandler;
+                http.send(null);
+             }
+          }  
+          function cancelResponeHandler() {
+                if(http.readyState == 4 && http.status == 200){
+                    var detail=document.getElementById("message");
+                    detail.innerHTML=http.responseText;
+                }
             }
-        }
-       
-      function moveEachStudent(studenttCode, sourceClass, id, classSemester, classYear){
-          var desClass = document.getElementById(id).value;
-          if(http){
+
+          function moveEachStudent(studenttCode, sourceClass, id, classSemester, classYear){
+              var desClass = document.getElementById(id).value;
+              if(http){
                     http.open("GET", "../../ManageClassController?action=moveStudent&studentCode="+ studenttCode + "&sourceClass="+ sourceClass + "&desClass="+ desClass + "&semester="+ classSemester + "&year="+ classYear  ,true);
                     http.onreadystatechange = moveResponeHandler;
                     http.send(null);
-         }
-       }
-      function moveResponeHandler() {
-            if(http.readyState == 4 && http.status == 200){
-                var detail=document.getElementById("table-list-train-class");
-                detail.innerHTML=http.responseText;
-            }
-        }  
-    </script>
+             }
+           }
+          function moveResponeHandler() {
+                if(http.readyState == 4 && http.status == 200){
+                    var detail=document.getElementById("table-list-train-class");
+                    detail.innerHTML=http.responseText;
+                }
+            }  
+        </script>
+    </body>
 </html>
