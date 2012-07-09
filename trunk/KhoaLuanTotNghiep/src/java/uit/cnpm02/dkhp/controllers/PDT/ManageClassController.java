@@ -317,7 +317,7 @@ public class ManageClassController extends HttpServlet {
             values.add(classDAO.findById(id).getSubjectCode());
             values.add(id.getSemester());
             values.add(id.getYear());
-            values.add(Constants.OPEN_CLASS_STATUS);
+            values.add(TrainClassStatus.OPEN.getValue());
             String[] strColumnNames = (String[]) columnNames.toArray(
                     new String[columnNames.size()]);
             sameClass = classDAO.findByColumNames(strColumnNames, values.toArray());
