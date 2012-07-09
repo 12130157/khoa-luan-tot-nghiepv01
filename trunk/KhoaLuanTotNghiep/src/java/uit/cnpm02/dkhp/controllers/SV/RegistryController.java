@@ -149,13 +149,12 @@ public class RegistryController extends HttpServlet {
       * @throws Exception 
       */
     private boolean checkNumOfStudentReg(String classCode) throws Exception {
-        boolean result = false;
-        TrainClassID trainClassId = new TrainClassID(classCode, Constants.CURRENT_YEAR, Constants.CURRENT_SEMESTER);
-        TrainClass trainClass = DAOFactory.getTrainClassDAO().findById(trainClassId);
-        if (trainClass.getNumOfStudentReg() >= trainClass.getNumOfStudent()) {
-            result = true;
-        }
-        return result;
+        TrainClassID trainClassId = new TrainClassID(
+                classCode, Constants.CURRENT_YEAR, Constants.CURRENT_SEMESTER);
+        TrainClass trainClass = tcDao.findById(trainClassId);
+        
+        return (trainClass.getNumOfStudentReg()
+                >= trainClass.getNumOfStudent());
     }
     /**
      * 
@@ -164,43 +163,34 @@ public class RegistryController extends HttpServlet {
      * @throws Exception 
      */
     private boolean isNotEnoughTC(List<TrainClass> registried) throws Exception {
-        boolean result = false;
         int minNumTC = (int) ruleDao.findById("SoTinChiToiThieu").getValue();
-        if (getNumTCRegistry(registried) < minNumTC) {
-            result = true;
-        }
-        return result;
+        return (getNumTCRegistry(registried) < minNumTC);
     }
     
-    private boolean isRegTwoClassTrainASubject(List<TrainClass> registried) {
-        boolean result = false;
-        for (int i = 0; i < registried.size(); i++) {
-            for (int j = i + 1; j < registried.size(); j++) {
-                if (registried.get(i).getSubjectCode().equalsIgnoreCase(registried.get(j).getSubjectCode())) {
-                    result = true;
-                }
-                if (result) {
-                    return result;
+    private boolean isRegTwoClassTrainASubject(List<TrainClass> registries) {
+        for (int i = 0; i < registries.size()-1; i++) {
+            for (int j = i + 1; j < registries.size(); j++) {
+                if (registries.get(i).getSubjectCode()
+                        .equalsIgnoreCase(registries.get(j).getSubjectCode())) {
+                    //result = true;
+                    return true;
                 }
             }
         }
-        return result;
+        return false;
     }
     
     private boolean isRegTwoClassInADay(List<TrainClass> registried) {
-        boolean result = false;
-        for (int i = 0; i < registried.size(); i++) {
+        for (int i = 0; i < registried.size()-1; i++) {
             for (int j = i + 1; j < registried.size(); j++) {
                 if (registried.get(i).getStudyDate() == registried.get(j).getStudyDate()
                         && registried.get(i).getShift() == registried.get(j).getShift()) {
-                    result = true;
-                }
-                if (result) {
-                    return result;
+                    //result = true;
+                    return true;
                 }
             }
         }
-        return result;
+        return false;
     }
     /**
      * 
@@ -209,12 +199,9 @@ public class RegistryController extends HttpServlet {
      * @throws Exception 
      */
     private boolean isOverTC(List<TrainClass> registried) throws Exception {
-        boolean result = false;
         int maxNumTC = (int) ruleDao.findById("SoTinChiToiDa").getValue();
-        if (getNumTCRegistry(registried) > maxNumTC) {
-            result = true;
-        }
-        return result;
+        
+        return (getNumTCRegistry(registried) > maxNumTC);
     }
     /**
      * 
@@ -222,25 +209,22 @@ public class RegistryController extends HttpServlet {
      * @return 
      */
     private boolean isEnoughRequiredTC(List<TrainClass> registried) {
-        boolean result = false;
         try {
             int maxNumTC = (int) ruleDao
                     .findById("SoTinChiBatBuocToiThieu").getValue();
-            if (getNumRequirdTC(registried) > maxNumTC) {
-                result = true;
-            }
-
+            return (getNumRequireTC(registried) > maxNumTC);
         } catch (Exception ex) {
-            Logger.getLogger(RegistryController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RegistryController.
+                    class.getName()).log(Level.SEVERE, null, ex);
         }
-        return result;
+        return false;
     }
     /**
      * 
      * @param registried
      * @return 
      */
-    private int getNumRequirdTC(List<TrainClass> registried) {
+    private int getNumRequireTC(List<TrainClass> registried) {
         int numTC = 0;
         if (registried.isEmpty() == false) {
             for (int i = 0; i < registried.size(); i++) {
@@ -249,7 +233,8 @@ public class RegistryController extends HttpServlet {
                         numTC += registried.get(i).getNumTC();
                     }
                 } catch (Exception ex) {
-                    Logger.getLogger(RegistryController.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(RegistryController.class.getName())
+                            .log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -652,8 +637,8 @@ public class RegistryController extends HttpServlet {
         ArrayList<String> result = new ArrayList<String>();
         List<Registration> regs = regDao.findAllByStudentCode(studentCode);
         if ((regs != null) && !regs.isEmpty()) {
-            for (int i = 0; i < regs.size(); i++) {
-                result.add(regs.get(i).getId().getClassCode());
+            for (Registration r : regs) {
+                result.add(r.getId().getClassCode());
             }
         }
         return result;
@@ -715,7 +700,8 @@ public class RegistryController extends HttpServlet {
                 return true;
             }*/
         } catch (Exception ex) {
-            Logger.getLogger(RegistryController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(RegistryController.class.getName())
+                    .log(Level.SEVERE, null, ex);
             return false;
         }
     }
