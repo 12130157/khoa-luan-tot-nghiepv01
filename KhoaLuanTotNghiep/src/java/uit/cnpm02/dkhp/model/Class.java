@@ -114,4 +114,10 @@ public class Class extends  AbstractJdbcModel<String>{
                     numOfStudent
                 };
     }
+
+    @Override
+    public boolean isIdAutoIncrement() {
+        return false;
+    }
+     
 }
