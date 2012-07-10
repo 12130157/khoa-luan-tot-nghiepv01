@@ -3,6 +3,7 @@ package uit.cnpm02.dkhp.controllers.PDT;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,10 +14,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
+import uit.cnpm02.dkhp.DAO.FacultyDAO;
 import uit.cnpm02.dkhp.DAO.LecturerDAO;
 import uit.cnpm02.dkhp.DAO.SubjectDAO;
 import uit.cnpm02.dkhp.DAO.TrainClassDAO;
+import uit.cnpm02.dkhp.model.Faculty;
 import uit.cnpm02.dkhp.model.Student;
+import uit.cnpm02.dkhp.model.Subject;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.service.IReporter;
 import uit.cnpm02.dkhp.service.IStudentService;
@@ -25,6 +29,7 @@ import uit.cnpm02.dkhp.service.impl.ReporterImpl;
 import uit.cnpm02.dkhp.service.impl.StudentServiceImpl;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.Message;
+import uit.cnpm02.dkhp.utilities.StringUtils;
 import uit.cnpm02.dkhp.utilities.filedownload.FileDownloadUtility;
 
 /**
@@ -66,6 +71,7 @@ public class ReportController extends HttpServlet {
             if (requestAction.equals(ReportFunctionSupported.
                                                 DEFAULT.getValue())) {
                 String path = "./jsps/PDT/Report.jsp";
+                session.setAttribute("faculties", getAllFaculty());
                 response.sendRedirect(path);
                 return;
             } else if (requestAction.equals(ReportFunctionSupported.
@@ -105,7 +111,6 @@ public class ReportController extends HttpServlet {
                         sortType = "DES";
                     else
                         sortType = "ASC";
-                    //103/33 duong dien cao the
                     return;
                 } else {
                     out.println(Message.STUDENT_SEARCH_NOTFOUND);
@@ -204,6 +209,15 @@ public class ReportController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    private List<Faculty> getAllFaculty() {
+        try {
+            return DAOFactory.getFacultyDao().findAll();
+        } catch (Exception ex) {
+            Logger.getLogger(ReportController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return new ArrayList<Faculty>(1);
+    }
+    
     private List<Student> searchStudent(String key) {
         List<Student> results = reportService.searchStudent(key);
         return results;
@@ -290,9 +304,7 @@ public class ReportController extends HttpServlet {
 
     private void writeTrainClassReport(List<TrainClass> trainClassReg,
                                                         PrintWriter out) {
-        
         out.println("<table>");
-
         /**
             Tổng số lớp đã tạo: 	120
             Tổng số lớp hủy do không đủ điều kiện: 	100
@@ -371,21 +383,21 @@ public class ReportController extends HttpServlet {
         PrintWriter out = response.getWriter();
         String yearStr = request.getParameter("year");
         String semeterStr = request.getParameter("semeter");
+        String facultyId = request.getParameter("faculty");
         String status = request.getParameter("status");
         List<String> columnName = new ArrayList<String>(3);
         List<Object> values = new ArrayList<Object>(3);
-        if (!yearStr.equalsIgnoreCase("All")) {
+        if ((yearStr != null) && !yearStr.equalsIgnoreCase("All")) {
             columnName.add("NamHoc");
             values.add(yearStr);
             //columnNames[0] = "NamHoc";
             //values[0] = yearStr;
         }
-        if (!semeterStr.equalsIgnoreCase("All")) {
+        if ((semeterStr != null) && !semeterStr.equalsIgnoreCase("All")) {
             columnName.add("HocKy");
             values.add(Integer.parseInt(semeterStr));
         }
         columnName.add("TrangThai");
-        
         TrainClassStatus st = TrainClassStatus.getTrainClassStatus(status);
         if (st != null) {
             values.add(st.getValue());
@@ -404,6 +416,25 @@ public class ReportController extends HttpServlet {
                     .log(Level.SEVERE, null, ex);
             out.println("Error load data.");
             return;
+        }
+        
+        if (facultyId != null && !facultyId.equalsIgnoreCase("All")) {
+            SubjectDAO subDao = DAOFactory.getSubjectDao();
+            List<TrainClass> tobeRemoved = new ArrayList<TrainClass>(10);
+            for (TrainClass tc : tcs) {
+                try {
+                    Subject sub = subDao.findById(tc.getSubjectCode());
+                    if (sub != null && !sub.getFacultyCode().equalsIgnoreCase(facultyId)) {
+                        tobeRemoved.add(tc);
+                    }
+                } catch (Exception ex) {
+                    Logger.getLogger(ReportController.class.getName())
+                            .log(Level.SEVERE, null, ex);
+                }
+            }
+            if (tobeRemoved.size() > 0) {
+                tcs.removeAll(tobeRemoved);
+            }
         }
         
         writeOutTrainClassReport(out, tcs);
@@ -436,6 +467,7 @@ public class ReportController extends HttpServlet {
             out.print("<td>" + subjectName + "</td>");
             out.print("<td>" + lecturerName + "</td>");
             out.print("</tr>");
+            
         }
         out.print("</table>");
     }
