@@ -124,6 +124,35 @@
                  <%-- Download file form --%>
                 <form id="formdown" name="formdown" action="../DownloadFile?action=test" method="post">    
                 </form>
+                <br /><br />
+                <%-- Thogn ke theo SV --%>
+                <div class="range">
+                    <h3><span id="btn-student-report" class="atag" >Tìm kiếm SV</span></h3>
+                    <div id="form-student-report">
+                        <div style="clear: both; margin-top: 10px;">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <b>Tìm kiếm</b>
+                                        <input id="search-student" type="text" placeholder="Nhập tên SV" value="" onKeyPress="keypressed()"/>
+                                    </td>
+                                    <td>
+                                        <div class="button-1" style="padding: 2px !important;">
+                                            <span class="atag" onclick="SendRequestFindStudent()" ><img src="../../imgs/check.png" />Tìm</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    
+                        <div id="list-student" style="float: left;">
+                        </div>
+                        <div id="student-detail" style="float: left; margin-top: -25px; padding-left: 16px;">
+                        </div>
+                    </div>
+                <div class="clear"></div>
+                <br /><br />
+                </div>
             </div>
             <div id="footer"><!--Footer-->
                 <%@include file="../Footer.jsp" %>
@@ -139,6 +168,10 @@
         var searchType = 'none';
         var searchValue = 'all';
         var http = createRequestObject();
+        
+        $("#btn-student-report").click(function () {
+            $('#form-student-report').slideToggle(500);
+        });
         
         function firstPage(){
             currentpage = 1;
@@ -274,6 +307,63 @@
                 searchStudent();
             }
         }
+        
+        //
+        //
+        // Search Student
+        //
+        function keypressed() { 
+            if(event.keyCode=='13') {
+                SendRequestFindStudent();
+            }
+        }
+        
+        function SendRequestFindStudent(){
+            var search = document.getElementById("search-student").value;
+            if (http) {
+                http.open("GET", "../../ReportController?action=search_student&value="
+                    + search, true);
+                http.onreadystatechange = handleResponseFindStudent;
+                http.send(null);
+            }
+        }
+        
+         function handleResponseFindStudent() {
+             if(http.readyState == 4 && http.status == 200){
+                 var detail=document.getElementById("list-student");
+                 detail.innerHTML=http.responseText;
+             }
+         }
+         
+         //
+         // Get student Report
+         //
+         function getDetailStudentReport(mssv) {
+            //var search = document.getElementById("search-student").value;
+             if (http) {
+                http.open("GET", "../../ReportController?action=student-report&value="
+                    + mssv, true);
+                http.onreadystatechange = handleResponseStudentReport;
+                http.send(null);
+              }
+         }
+         
+         function handleResponseStudentReport() {
+             if(http.readyState == 4 && http.status == 200){
+                 var detail=document.getElementById("student-detail");
+                 detail.innerHTML=http.responseText;
+             }
+         }
+         
+         function sortTrainClass(by, type) {
+             if (http) {
+                http.open("GET", "../../ReportController?action=sort-student-report"
+                    + "&by=" + by
+                    + "&type=" + type, true);
+                http.onreadystatechange = handleResponseStudentReport;
+                http.send(null);
+              }
+         }
         
     </script>
 </html>
