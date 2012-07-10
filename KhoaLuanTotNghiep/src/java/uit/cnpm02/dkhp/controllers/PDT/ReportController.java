@@ -338,7 +338,7 @@ public class ReportController extends HttpServlet {
         }
         
         out.println("</table>");
-        out.println("<a href='#'>Tai file excel</a>");
+        out.println("<a href='#'>Tải file excel</a>");
     }
     
     private void downloadStudentReport(HttpServletResponse resp, String sessionId) {
@@ -448,7 +448,7 @@ public class ReportController extends HttpServlet {
         SubjectDAO subDao = DAOFactory.getSubjectDao();
         LecturerDAO lecturerDao = DAOFactory.getLecturerDao();
         out.print("<table class=\"general-table\" style=\"width: 660px; margin-top: 1px;\">");
-        out.print("<tr><th>STT</th><th>Ma lop</th><th>Ten MH</th><th>SLSV</th></tr>");
+        out.print("<tr><th>STT</th><th>Mã lớp</th><th>Tên MH</th><th>SLSV</th></tr>");
         for (int i = 0; i < tcs.size(); i++) {
             TrainClass tc = tcs.get(i);
             String subjectName = tc.getSubjectCode();
