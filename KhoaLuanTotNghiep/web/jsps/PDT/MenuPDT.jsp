@@ -56,7 +56,7 @@
                      <li><a href="#"> Khóa học</a></li>
                      <li><a href="#"> Quản lý khoa</a></li>
                      <li><a href="#"> Chương trình đào tạo</a></li>
-                     <li><a href="#"> Quản lý lớp</a></li>
+                     <li><a href="../../StudentClassController?action=default"> Quản lý lớp</a></li>
                  </ul>
              </li>
              <li><a href="../../ManageScoreController?function=manage"> Điểm cuối kỳ </a></li>
