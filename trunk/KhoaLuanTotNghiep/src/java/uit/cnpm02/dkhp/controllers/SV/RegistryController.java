@@ -33,6 +33,7 @@ import uit.cnpm02.dkhp.model.RegistrationTime;
 import uit.cnpm02.dkhp.model.RegistrationTimeID;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.model.TrainClassID;
+import uit.cnpm02.dkhp.model.type.StudentStatus;
 import uit.cnpm02.dkhp.service.TrainClassStatus;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
@@ -658,6 +659,14 @@ public class RegistryController extends HttpServlet {
             if (regDao == null) {
                 throw new Exception("Can't not create RegistrationDAO object.");
             }
+            
+            Student s = studentDao.findById(user);
+            boolean nonStudy = false;
+            if ((s != null) &&
+                    (s.getStatus() == StudentStatus.NON_STUDING.value())) {
+                nonStudy = true;
+            }
+            session.setAttribute("non-study-student", nonStudy);
             
             // Danh sach mon hoc SV da dk trc (co the null)
             List<Registration> regsSub = regDao.findAllByStudentCode(user);

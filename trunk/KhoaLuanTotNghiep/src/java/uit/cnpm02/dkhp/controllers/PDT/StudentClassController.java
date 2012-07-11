@@ -20,9 +20,11 @@ import uit.cnpm02.dkhp.DAO.CourseDAO;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.FacultyDAO;
 import uit.cnpm02.dkhp.DAO.LecturerDAO;
+import uit.cnpm02.dkhp.DAO.StudentDAO;
 import uit.cnpm02.dkhp.model.Course;
 import uit.cnpm02.dkhp.model.Faculty;
 import uit.cnpm02.dkhp.model.Lecturer;
+import uit.cnpm02.dkhp.model.Student;
 
 /**
  *
@@ -51,6 +53,8 @@ public class StudentClassController extends HttpServlet {
                 updateChangeFaculty(request, response);
             } else if(action.equalsIgnoreCase("create-class")) {
                 createNewClass(request, response);
+            } else if (action.equalsIgnoreCase("delete-student-class")) {
+                deleteStudentClass(request, response);
             }
             
         } finally {            
@@ -197,6 +201,43 @@ public class StudentClassController extends HttpServlet {
             Logger.getLogger(StudentClassController.class.getName())
                     .log(Level.SEVERE, null, ex);
             out.println("Lỗi: " + ex.toString());
+        }
+    }
+
+    private void deleteStudentClass(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        String clazzID = request.getParameter("clazzid");
+        PrintWriter out = response.getWriter();
+        if (clazzID == null) {
+            out.println("- Lỗi: Phiên làm việc hết hiệu lực, vui lòng thử lại.");
+            return;
+        }
+        
+        try {
+            ClassDAO clazzDao = DAOFactory.getClassDao();
+            uit.cnpm02.dkhp.model.Class clazz = clazzDao.findById(clazzID);
+            if (clazz == null) {
+                out.println("- Lớp không tồn tại");
+                return;
+            }
+            StudentDAO studentDao = DAOFactory.getStudentDao();
+            List<Student> students = studentDao.findByColumName("MaLop", clazzID);
+            if ((students != null) && !students.isEmpty()) {
+                out.println("- Không thể xóa lớp đã có SV.");
+                return;
+            }
+        
+            clazzDao.delete(clazz);
+            ClassDAO classDao = DAOFactory.getClassDao();
+            
+            // Reset data for next F5...
+            List<uit.cnpm02.dkhp.model.Class> allClasses = classDao.findAll();
+            HttpSession session = request.getSession();
+            session.setAttribute("classes", allClasses);
+            out.println("Xóa thành công");
+        } catch(Exception ex) {
+            out.println("- Lỗi xóa lớp: " + ex.toString());
+            return;
         }
     }
 }
