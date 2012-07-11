@@ -220,7 +220,7 @@
                 <div class="range" id="edit-account-range">
                     <h3><span id="btn-to-edite-account" class="atag" >Cập nhật tài khoản</span></h3>
                     <div id="form-edit-account" style="display: none;">
-                        <u>Cập nhật thôn tin tài khoản và nhấn <b>Hoàn Thành</b></u>
+                        <u>Cập nhật thông tin tài khoản và nhấn <b>Hoàn Thành</b></u>
                         <br/>
                         <div id="form-edit-account">
                             <br />
@@ -448,8 +448,8 @@
             var fullName = document.getElementById("txtFullName_edit").value;
             var type = document.getElementById("selectType_edit").value;
             var status = document.getElementById("selectStatus_edit").value;
-            
-            if (!validate(pass, re_pass, fullName)) {
+           
+           if (!validate(username, pass, re_pass, fullName)) {
                 return;
             }
             var controller = "../../AccountController?action=update-account&username=" 
@@ -459,7 +459,7 @@
                 + "&fullName=" + fullName
                 + "&type=" + type
                 + "&status=" + status;
-            
+                        
             if(http){
                 http.open("GET", controller ,true);
                 http.onreadystatechange = updateResponseHandler;
