@@ -1,0 +1,241 @@
+<%-- 
+    Document   : TrainingProgram
+    Created on : 11-07-2012, 21:26:00
+    Author     : LocNguyen
+--%>
+
+<%@page import="uit.cnpm02.dkhp.model.Course"%>
+<%@page import="uit.cnpm02.dkhp.model.Faculty"%>
+<%@page import="uit.cnpm02.dkhp.model.TrainProgram"%>
+<%@page import="uit.cnpm02.dkhp.model.TrainProgram"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<%
+    List<TrainProgram> trainProgs = (List<TrainProgram>) session.getAttribute("train-programs");
+    List<Faculty> faculties = (List<Faculty>) session.getAttribute("faculties");
+    List<Course> courses = (List<Course>) session.getAttribute("courses");
+%>
+<html>
+    <head>
+        <link href="../../csss/menu.css" rel="stylesheet" type="text/css" media="screen">
+        <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Quản lý Chương trình đào tạo</title>
+        <style media="all" type="text/css">
+            
+        </style>
+    </head>
+    <body>
+        <!--Div Wrapper-->
+        <div id="wrapper">
+            <%-- Menu --%>
+            <%@include file="MenuPDT.jsp" %>
+            <div id="mainNav"><!--Main Navigation-->
+                <%@include file="../MainNav.jsp" %>
+            </div><!--End Navigation-->
+            <!--Main Contents-->
+            <div id="content">
+                <%-- Title --%>
+                <div id="main-title">
+                    Quản lý Chương trình đào tạo
+                </div>
+                <%--List file--%>
+                <br />
+                <div id="list-existed-training-pro" class="range">
+                    <%-- File from Lecturer --%>
+                    <h3><span id="btn-list-existed-class" class="atag">Chương trình đào tạo</span></h3> 
+                    <div id="tbl-existed-training-pro">
+                        <%-- Existed Training program --%>
+                        <div style="float: left;">
+                            <table class="general-table" style="width: 400px;">
+                                <tr>
+                                    <th>Mã CTĐT</th>
+                                    <th>Khoa</th>
+                                    <th>Khóa học</th>
+                                </tr>
+                                <%
+                                if ((trainProgs != null) && !trainProgs.isEmpty()) {
+                                    for (TrainProgram tp : trainProgs) {%>
+                                    <tr>
+                                        <td><span class="atag" onclick="getTrainProgDetail('<%=tp.getId() %>')"> <%= tp.getId()  %></span></td>
+                                        <td><%= tp.getFacultyCode() %></td>
+                                        <td><%= tp.getCourseCode() %></td>
+                                    </tr>
+                                <%  }
+                                }
+                                %>
+                            </table>
+                        </div>
+                        <div id="train-class-detail" style="float: left; padding-left: 25px;">
+                        </div>
+                    </div>
+                        
+                    <div id="msg-response"></div>
+                </div>
+
+                <div class="clear"></div>
+                <%-- Add a class --%>
+                <div class="range">
+                    <h3><span id="btn-create-new-training-pro" class="atag">Tạo mới CTĐT</span></h3> 
+                    <div id="form-create-new-training-pro" style="display: block;">
+                        <%-- New Training program creation --%>
+                        <div id="form-new-train-prog" style="float: left;">
+                            <table class="general-table" style="width: 320px;">
+                                <tr>
+                                    <td>Mã CTDT</td>
+                                    <td>
+                                        <input type="text" placeholder="CNPM01, CNPM02, ..." id="txt-trainprog-id" name="txt-trainprog-id" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Chọn khoa</td>
+                                    <td>
+                                        <select id="txt-faculty" class="input-minwidth" onchange="changeFacultyUpdateLecturer()">
+                                            <%
+                                            if ((faculties != null) && !faculties.isEmpty()) {
+                                                for (Faculty f : faculties) {
+                                                    %>
+                                                    <option value="<%=f.getId()%>"> <%= f.getFacultyName()%> </option>
+                                                    <%
+                                                }
+                                            }
+                                            %>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Khóa học</td>
+                                    <td>
+                                        <select id="txt-course" class="input-minwidth">
+                                            <%
+                                            if ((courses != null) && !courses.isEmpty()) {
+                                                for (Course c : courses) {
+                                                    String description = c.getYearIn() + " - " + c.getYearOut();
+                                                    %>
+                                                    <option value="<%=c.getId()%>"> <%= description %> </option>
+                                                    <%
+                                                }
+                                            }
+                                            %>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="button-1">
+                                <span class="atag" onclick="createNewTrainPro()" ><img src="../../imgs/check.png"/>Tạo mới</span>
+                            </div>
+                        </div>
+                        <%-- Import data for training class --%>
+                        <div id="form-new-train-prog-update" style="float: left; padding-left: 12px;">
+                            Chi tiết chương trình đào tạo
+                        </div>
+                        <div class="clear"> <br /> </div>
+                        <div class="button-1">
+                            <span class="atag" onclick="createNewTrainPro()" ><img src="../../imgs/check.png"/>Submit</span>
+                        </div>
+                        <div class="clear"></div>
+                        <div id="message-handler"></div>
+                    </div>
+                </div>
+                <br />
+            </div><!--End Contents-->
+
+            <!--Footer-->
+            <div id="footer">
+                <%@include file="../Footer.jsp" %>
+            </div><!--End footer-->
+        </div>
+        <!--End Wrapper-->
+        <script src="../../javascripts/AjaxUtil.js"> </script>
+        <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
+        <script  type = "text/javascript" >
+            var http = createRequestObject();
+            
+            $("#btn-list-existed-class").click(function () {
+                $('#tbl-existed-training-pro').slideToggle(500);
+            });
+            $("#btn-create-new-training-pro").click(function () {
+                $('#form-create-new-training-pro').slideToggle(500);
+            });
+            
+            function test(clazzID) {
+                var controller = "../../StudentClassController?action=delete-student-class"
+                        + "&clazzid=" + clazzID;
+                if(http){
+                    http.open("GET", controller ,true);
+                    http.onreadystatechange = deleteStudentClassHandler;
+                    http.send(null);
+                } else {
+                    alert("Error: http object not found");
+                }
+            }
+            
+            function testHandler() {
+                if(http.readyState == 4 && http.status == 200){
+                    var detail = document.getElementById("msg-response");
+                    detail.innerHTML = http.responseText;
+                }
+            }
+            
+            function createNewTrainPro() {
+                var id = document.getElementById("txt-trainprog-id").value;
+                var facultyId = document.getElementById("txt-faculty").value;
+                var courseId =  document.getElementById("txt-course").value;
+                if (id==null || id.length <= 0) {
+                    alert("Vui lòng nhập mã CTĐT");
+                    return;
+                }
+                var controller = "../../TrainingProgramControler?action=create-new-train-prog"
+                        + "&train-program-ID=" + id
+                        + "&faculty-ID=" + facultyId
+                        + "&course-ID=" + courseId;
+                if(http){
+                    http.open("GET", controller, true);
+                    http.onreadystatechange = createNewTrainProHandler;
+                    http.send(null);
+                } else {
+                    alert("Error: http object not found");
+                }
+            }
+            
+            function createNewTrainProHandler() {
+                if(http.readyState == 4 && http.status == 200){
+                    var detail = document.getElementById("form-new-train-prog-update");
+                    detail.innerHTML = http.responseText;
+                }
+            }
+            
+            function getTrainProgDetail(trainProgId) {
+                var controller = "../../TrainingProgramControler?action=get-train-prog-detail"
+                        + "&train-program-ID=" + trainProgId ;
+                if(http){
+                    http.open("GET", controller, true);
+                    http.onreadystatechange = getTrainProgDetailHandler;
+                    http.send(null);
+                } else {
+                    alert("Error: http object not found");
+                }
+            }
+            function getTrainProgDetailHandler() {
+                if(http.readyState == 4 && http.status == 200){
+                    var detail = document.getElementById("train-class-detail");
+                    detail.innerHTML = http.responseText;
+                }
+            }
+            
+            function updateTrainPro(trainProgId) {
+                /*var controller = "../../TrainingProgramControler?action=pre-update-train-prog"
+                        + "&train-program-ID=" + trainProgId ;
+                if(http){
+                    http.open("GET", controller, true);
+                    http.onreadystatechange = null;
+                    http.send(null);
+                } else {
+                    alert("Error: http object not found");
+                }*/
+                document.forms["form-update"].submit();
+            }
+            
+        </script>
+    </body>
+</html>
