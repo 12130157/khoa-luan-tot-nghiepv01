@@ -21,7 +21,8 @@ public class Student extends AbstractJdbcModel<String> {
     private String classCode;
     private String facultyCode;
     private String courseCode;
-    private String status;
+    //private String status;
+    private int status;
     private String studyLevel;
     private Date dateStart;
     private String studyType;
@@ -35,7 +36,7 @@ public class Student extends AbstractJdbcModel<String> {
     public Student(String mssv, String fullName, Date birthday, String gender,
             String identityNumber, String homeAddr, String address,
             String phone, String email, String classCode, String facultyCode,
-            String courseCode, String status, String studyLevel, Date dateStart,
+            String courseCode, int status, String studyLevel, Date dateStart,
             String studyType, String note) {
         setId(mssv);
         this.fullName = fullName;
@@ -169,11 +170,11 @@ public class Student extends AbstractJdbcModel<String> {
         this.phone = phone;
     }
 
-    public String getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 
@@ -240,7 +241,7 @@ public class Student extends AbstractJdbcModel<String> {
             classCode = values[8].toString();
             facultyCode = values[9].toString();
             courseCode = values[10].toString();
-            status = values[11].toString();
+            status = Integer.parseInt(values[11].toString());
             studyLevel = values[12].toString();
             dateStart = (Date) values[13];
             studyType = values[14].toString();
