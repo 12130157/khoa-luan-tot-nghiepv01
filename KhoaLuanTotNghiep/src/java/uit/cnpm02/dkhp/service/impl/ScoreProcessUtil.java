@@ -225,8 +225,17 @@ public class ScoreProcessUtil {
 
             cellTemp = rowTemp.getCell(0);
             cellType = cellTemp.getCellType();
+            String firstValue = cellTemp.getStringCellValue();
+            boolean firstLine = false;
+            try {
+                int value = Integer.parseInt(firstValue);
+                firstLine = true;
+            } catch (Exception ex) {
+                firstLine = false;
+            }
             //check the first cell of data must be a number
-            if (cellType != HSSFCell.CELL_TYPE_NUMERIC) {
+            //if (cellType != HSSFCell.CELL_TYPE_NUMERIC) {
+            if (!firstLine) {
                 continue;
             } else {
                 //MSSV	MaMH	Diem	HocKy	NamHoc

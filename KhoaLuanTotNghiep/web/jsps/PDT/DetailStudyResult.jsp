@@ -10,7 +10,6 @@
 <%@page import="uit.cnpm02.dkhp.model.Faculty"%>
 <%@page import="uit.cnpm02.dkhp.model.Student"%>
 <%@page import="uit.cnpm02.dkhp.model.Class"%>
-<%@include file="MenuPDT.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
@@ -60,25 +59,7 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
                 width: 200px;
                 text-align: left;
             }
-            #formdetail table{
-                width: 100%;
-                padding-left: 10px;
-                padding-right: 10px;
-
-            }
-            #formdetail table th{
-                background-color:#175F6E;
-                height: 30px;
-                border-color: black;
-            }
-
-            #formdetail table td{
-                text-align: center;
-                background-color: #474C52;
-                border-color: #7D8103;
-            }
-
-                
+                            
             #form-result{
                 margin-left: 20px;
                 margin-bottom: 20px;
@@ -107,12 +88,12 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
+            <%@include file="MenuPDT.jsp" %>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <br>
-                <h2 align="center"><u>KẾT QUẢ HỌC TẬP</u></h2>
+                <div id="main-title">KẾT QUẢ HỌC TẬP</div>
                 <div>
                     <form action="" name="formstudent"  id="formstudent">
                         <table id="info">
@@ -160,7 +141,7 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
                <hr/><hr/>
                  <form id="formdetail" name="formdetail">
                     <u>Chi tiết</u>
-                    <table id="detail" name="detail" border="1" bordercolor="yellow" >
+                    <table id="detail" name="detail" class="general-table" >
                      <tr>
                             <th width="100px">Năm học</th><th width="70px">Học kỳ</th>
                             <th width="100px">Mã môn</th><th width="300px">Tên môn học</th>
@@ -205,9 +186,11 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
                         </tr>
                     </table>
                  </form>
-                        <form action="" method="post" id="frmexport">
-                    <a href="../../DownloadController?action=studentresult&mssv=<%=student.getId()%>">Tải bảng điểm</a>
-                    <input type="hidden" id="studentCode" name="studentCode" value="<%=student.getId()%>"/>
+                <form action="" method="post" id="frmexport">
+                    <div style="margin-left: 40%;">
+                        <a class="button-1" href="../../DownloadController?action=studentresult&mssv=<%=student.getId()%>"><img src="../../imgs/download.png"/>Tải bảng điểm</a>
+                        <input type="hidden" id="studentCode" name="studentCode" value="<%=student.getId()%>"/>
+                    </div>
                 </form>
             </div><!--End Contents-->
 

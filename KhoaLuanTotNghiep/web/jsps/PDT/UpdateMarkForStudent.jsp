@@ -10,7 +10,6 @@
 <%@page import="uit.cnpm02.dkhp.model.Faculty"%>
 <%@page import="uit.cnpm02.dkhp.model.Student"%>
 <%@page import="uit.cnpm02.dkhp.model.Class"%>
-<%@include file="MenuPDT.jsp" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
@@ -95,12 +94,12 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
+            <%@include file="MenuPDT.jsp" %>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <br>
-                <h2 align="center"><u>CẬP NHẬT KẾT QUẢ HỌC TẬP CỦA SINH VIÊN</u></h2>
+                <div id="main-title">CẬP NHẬT KẾT QUẢ HỌC TẬP CỦA SINH VIÊN</div>
                 <div>
                     <form action="" name="formstudent"  id="formstudent">
                     <table id="info">
@@ -123,7 +122,7 @@ Faculty faculty=(Faculty)session.getAttribute("faculty");
                <hr/><hr/>
                <form id="formdetail" name="formdetail" action="../../StudyResultManager?action=complete_update&studentCode=<%=student.getId()%>&subjectCode=<%=result.getId().getSubjectCode()%>" method="post">
                     <u>Chi tiết môn học</u>
-                    <table id="detail" name="detail" border="1" >
+                    <table id="detail" name="detail"  class="general-table" style="width: 350px;" >
                         <tr>
                             <td>Mã môn học: </td>
                             <th><%=result.getId().getSubjectCode()%></th>
