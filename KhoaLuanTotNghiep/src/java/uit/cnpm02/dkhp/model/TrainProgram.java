@@ -6,19 +6,34 @@ import uit.cnpm02.dkhp.access.mapper.MapperConstant;
  * Training program
  * @author LocNguyen
  */
-public class TrainProgram extends  AbstractJdbcModel<String>{
+public class TrainProgram extends AbstractJdbcModel<String>{
 
     /**Training program**/
     private String programCode;
     /**Faculty Code**/
     private String facultyCode;
+    private String facultyName;
+
     /**Course Code**/
     private String courseCode;
+    
+    public TrainProgram() {
+        
+    }
 
     public TrainProgram(String programCode, String facultyCode, String courseCode) {
+        setId(programCode);
         this.programCode = programCode;
         this.facultyCode= facultyCode;
         this.courseCode = courseCode;
+    }
+    
+    public String getFacultyName() {
+        return facultyName;
+    }
+
+    public void setFacultyName(String facultyName) {
+        this.facultyName = facultyName;
     }
 
     public String getProgramCode() {
@@ -76,5 +91,10 @@ public class TrainProgram extends  AbstractJdbcModel<String>{
                     facultyCode,
                     courseCode
         };
+    }
+
+    @Override
+    public boolean isIdAutoIncrement() {
+        return false;
     }
 }

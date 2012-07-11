@@ -4,11 +4,14 @@
  */
 package uit.cnpm02.dkhp.model;
 
+import uit.cnpm02.dkhp.access.advancedJDBC.AdvancedAbstractJdbcModel;
+import uit.cnpm02.dkhp.access.mapper.MapperConstant;
+
 /**
  *
  * @author LocNguyen
  */
-public class TrainProDetail {
+public class TrainProDetail extends AdvancedAbstractJdbcModel<TrainProDetailID> {
     /**Training Program code**/
     private String programCode;
     
@@ -21,6 +24,7 @@ public class TrainProDetail {
     }
 
     public TrainProDetail(String programCode, String subjectCode, int semester) {
+        setId(new TrainProDetailID(programCode, subjectCode));
         this.programCode = programCode;
         this.subjectCode = subjectCode;
         this.semester = semester;
@@ -64,5 +68,43 @@ public class TrainProDetail {
      */
     public void setSubjectCode(String subjectCode) {
         this.subjectCode = subjectCode;
+    }
+
+    @Override
+    public String[] getColumnNames() {
+        return new String[] {"HocKy"};
+    }
+
+    @Override
+    public Object[] getColumnValues() {
+        return new Object[] {semester};
+    }
+
+    @Override
+    public void setColumnValues(Object[] values) {
+        try {
+            this.semester = Integer.parseInt(values[0].toString());
+        } catch(Exception ex) {
+            //
+        }
+    }
+    
+    @Override
+    public String getTableName() {
+        return MapperConstant.DB_NAME
+                + ".chitietctdt";
+    }
+
+    @Override
+    public String[] getIdColumnName() {
+        return new String[]{
+                   "MaCTDT",
+                   "MaMH",
+                };
+    }
+
+    @Override
+    public Object[] getIdColumnValues() {
+        return getId().getIDValues();
     }
 }
