@@ -22,6 +22,7 @@ Integer semester=(Integer) session.getAttribute("semester");
 Student student=(Student) session.getAttribute("student");
 Class classes=(Class) session.getAttribute("classes");
 Faculty faculty=(Faculty)session.getAttribute("faculty");
+boolean nonStudy=(Boolean) session.getAttribute("non-study-student");
 int numTC=0;    
 %>
 <html>
@@ -138,6 +139,13 @@ int numTC=0;
                      </table>
                  </form>
                 <div>
+                    <%
+                    if (nonStudy) {
+                        inTimeRegistry = false;
+                    %>
+                        <div class="clear"></div>
+                        <b>Sinh viên <b><%=" " + student.getFullName() + " "%></b> đang tạm thời bị đình chỉ học tập không được phép đăng ký học phần</b> 
+                    <%}%>
                     <%if(inTimeRegistry){%>
                     <div id="left">
                         <a href="../../RegistryController?action=reRegistry" class="button-1" style="text-decoration: none;">Đăng ký lại</a>
