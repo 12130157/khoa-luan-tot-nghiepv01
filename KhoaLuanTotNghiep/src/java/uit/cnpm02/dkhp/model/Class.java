@@ -14,8 +14,13 @@ public class Class extends  AbstractJdbcModel<String>{
     /**course code**/
     private String courseCode;
     
-    /**homeroom lecturer**/
+    /**homeroom lecturerCode**/
     private String homeroom;
+    
+    /**homeroom lecturerName**/
+    private String homeroomName;
+
+    
     
     /**number of student**/
     private int numOfStudent;
@@ -30,6 +35,7 @@ public class Class extends  AbstractJdbcModel<String>{
         this.courseCode = courseCode;
         this.homeroom = homeroom;
         this.numOfStudent = numOfStudent;
+        homeroomName="";
     }
 
     public int getNumOfStudent() {
@@ -70,6 +76,13 @@ public class Class extends  AbstractJdbcModel<String>{
 
     public void setClassName(String className) {
         this.className = className;
+    }
+    public String getHomeroomName() {
+        return homeroomName;
+    }
+
+    public void setHomeroomName(String homeroomName) {
+        this.homeroomName = homeroomName;
     }
     @Override
     public String getIdColumnName() {

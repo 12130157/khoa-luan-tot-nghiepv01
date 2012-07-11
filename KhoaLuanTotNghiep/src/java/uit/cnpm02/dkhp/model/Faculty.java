@@ -15,6 +15,7 @@ public class Faculty extends AbstractJdbcModel<String> {
     private String facultyName;
     private String dean;
     private int numOfStudent;
+    private String deanName;
 
     public Faculty() {
 
@@ -25,7 +26,16 @@ public class Faculty extends AbstractJdbcModel<String> {
         this.facultyName=_facultyName;
         this.dean=_dean;
         this.numOfStudent=_numOfStudent;
+        deanName="";
  }
+
+    public String getDeanName() {
+        return deanName;
+    }
+
+    public void setDeanName(String deanName) {
+        this.deanName = deanName;
+    }
 
     //***********
     // set parameter
@@ -97,5 +107,9 @@ public class Faculty extends AbstractJdbcModel<String> {
                     facultyName,
                     dean,
                     numOfStudent,};
+    }
+    @Override
+    public boolean isIdAutoIncrement() {
+        return false;
     }
 }

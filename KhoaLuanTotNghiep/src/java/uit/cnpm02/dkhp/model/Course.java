@@ -9,7 +9,6 @@ import uit.cnpm02.dkhp.access.JDBC.AbstractJdbcModel;
  */
 public class Course extends AbstractJdbcModel<String> {
 
-    private String courseCode;
     private int yearIn;
     private int yearOut;
     private float numOfSemester;
@@ -30,17 +29,6 @@ public class Course extends AbstractJdbcModel<String> {
     //************
     //set parameter
     //************
-
-
-    public String getCourseCode() {
-        return courseCode;
-    }
-
-
-    public void setCourseCode(String courseCode) {
-        this.courseCode = courseCode;
-    }
-
     public float getNumOfSemester() {
         return numOfSemester;
     }
@@ -118,5 +106,9 @@ public class Course extends AbstractJdbcModel<String> {
                     yearOut,
                     numOfSemester,
                     numOfStudent,};
+    }
+    @Override
+    public boolean isIdAutoIncrement() {
+        return false;
     }
 }
