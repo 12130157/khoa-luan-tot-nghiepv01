@@ -14,7 +14,6 @@
 <%@page import="uit.cnpm02.dkhp.model.Faculty"%>
 <%@page import="java.util.List"%>
 <%@page import="uit.cnpm02.dkhp.model.Student"%>
-<script src="../../javascripts/DateTimePicker.js" type="text/javascript"></script>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
@@ -32,6 +31,7 @@
     <head>
         <link href="../../csss/menu.css" rel="stylesheet" type="text/css" media="screen">
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
+        <script src="../../javascripts/DateTimePicker.js" type="text/javascript"></script>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Quản lý sinh viên</title>
         <%--CSS override--%>
@@ -229,7 +229,7 @@
                                             %>
                                             <option value="<%= st.value()%>"
                                                     <%
-                                                    if (student.getStatus().equalsIgnoreCase(st.description())) {
+                                                    if (student.getStatus() == st.value()) {
                                                     %>selected="selected"<%
                                                     }
                                                     %>
@@ -317,7 +317,7 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    </body>
+    
 
     <script src="../../javascripts/AjaxUtil.js"></script>
     <SCRIPT language = "javascript">
@@ -451,4 +451,5 @@
         }
         
     </SCRIPT>
+    </body>
 </html>

@@ -54,6 +54,7 @@
                                 <th>Khóa học</th>
                                 <th>GVCN</th>
                                 <th>Số SV</th>
+                                <th></th>
                             </tr>
                             <%
                             if (allClasses != null && !allClasses.isEmpty()) {
@@ -66,11 +67,13 @@
                                     <td><%= clazz.getCourseCode() %></td>
                                     <td><%= clazz.getHomeroom() %></td>
                                     <td><%= clazz.getNumOfStudent() %></td>
+                                    <td><span class="atag" onclick="deleteStudentClass('<%=clazz.getId() %>')" > <img src="../../imgs/icon/delete.png" title="Xóa" alt="Xóa"/> </span></td>
                                 </tr>
                             <%}}
                             %>
                         </table>
                     </div>
+                        <div id="msg-response"></div>
                 </div>
 
                 <div class="clear"></div>
@@ -245,6 +248,26 @@
                     detail.innerHTML = http.responseText;
                 }
             }
+            
+            function deleteStudentClass(clazzID) {
+                var controller = "../../StudentClassController?action=delete-student-class"
+                        + "&clazzid=" + clazzID;
+                if(http){
+                    http.open("GET", controller ,true);
+                    http.onreadystatechange = deleteStudentClassHandler;
+                    http.send(null);
+                } else {
+                    alert("Error: http object not found");
+                }
+            }
+            
+            function deleteStudentClassHandler() {
+                if(http.readyState == 4 && http.status == 200){
+                    var detail = document.getElementById("msg-response");
+                    detail.innerHTML = http.responseText;
+                }
+            }
+            
         </script>
     </body>
 </html>
