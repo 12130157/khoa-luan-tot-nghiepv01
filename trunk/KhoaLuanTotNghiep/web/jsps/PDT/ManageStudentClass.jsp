@@ -21,7 +21,7 @@
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
         <link href="../../csss/menu.css" rel="stylesheet" type="text/css" media="screen">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Quản lý Điểm Sinh Viên</title>
+        <title>Quản lý lớp</title>
         <style media="all" type="text/css">
             
         </style>
@@ -54,7 +54,8 @@
                                 <th>Khóa học</th>
                                 <th>GVCN</th>
                                 <th>Số SV</th>
-                                <th></th>
+                                <th>Sửa</th>
+                                <th>Xóa</th>
                             </tr>
                             <%
                             if (allClasses != null && !allClasses.isEmpty()) {
@@ -65,15 +66,22 @@
                                     <td><%= clazz.getClassName() %></td>
                                     <td><%= clazz.getFacultyCode() %></td>
                                     <td><%= clazz.getCourseCode() %></td>
-                                    <td><%= clazz.getHomeroom() %></td>
+                                    <td><%= clazz.getHomeroomName() %></td>
                                     <td><%= clazz.getNumOfStudent() %></td>
+                                    <td>
+                                        <span class="atag" onclick="loadDataToEdit('<%= clazz.getId()%>')">
+                                            <a href="#edit-account-range"> <img src="../../imgs/icon/edit.png" title="Sửa" alt="Sửa"/> </a>
+                                        </span>    
+                                    </td>
                                     <td><span class="atag" onclick="deleteStudentClass('<%=clazz.getId() %>')" > <img src="../../imgs/icon/delete.png" title="Xóa" alt="Xóa"/> </span></td>
                                 </tr>
                             <%}}
                             %>
                         </table>
                     </div>
-                        <div id="msg-response"></div>
+                        <div id="msg-response">
+                            
+                        </div>
                 </div>
 
                 <div class="clear"></div>
@@ -152,6 +160,21 @@
                         <div id="message-handler"></div>
                     </div>
                 </div>
+                 <div class="range" id="edit-account-range">
+                    <h3><span id="btn-to-edite-class" class="atag" >Cập nhật thông tin lớp</span></h3>
+                    <div id="form-edit-class" style="display: none;">
+                        <u>Cập nhật thông tin lớp và nhấn <b>Hoàn Thành</b></u>
+                        <br/>
+                        <div id="form-edit-class">
+                            <br />
+                            <u>
+                                <li>
+                                    Để thay đổi thông tin lớp học, vui long click vào biểu tượng <img src="../../imgs/icon/edit.png" title="Sửa" alt="Sửa"/> tương ứng vơi lớp.
+                                </li>
+                            </u>
+                        </div>
+                    </div>
+                </div>
                 <br />
             </div><!--End Contents-->
 
@@ -165,6 +188,9 @@
         <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
         <script  type = "text/javascript" >
             var http = createRequestObject();
+            $("#btn-to-edite-class").click(function () {
+            $('#form-edit-class').slideToggle(500);
+            });
             
             $("#btn-list-existed-class").click(function () {
                 $('#tbl-existed-class').slideToggle(500);
@@ -203,7 +229,6 @@
                     alert("Vui lòng nhập đầy đủ thông tin.");
                     return;
                 }
-                alert(id);
                 var controller = "../../StudentClassController?action=create-class"
                         + "&id=" + id
                         + "&name=" + name
@@ -267,7 +292,52 @@
                     detail.innerHTML = http.responseText;
                 }
             }
-            
+            function loadDataToEdit(classID) {
+            // Load data
+             preDataForEditClass(classID);   
+            // Open edit range
+            $('#form-edit-class').slideDown(500);
+        }
+        function preDataForEditClass(classID) {
+            var pagename = "../../StudentClassController?action=edit-student-class"
+                + "&clazzid=" + classID;
+            if(http){
+                http.open("GET", pagename, true);
+                http.onreadystatechange = preDataForEditAccountHandler;
+                http.send(null);
+            } else {
+                alert("Error: Could not create http object.");
+            }
+        }
+        
+        function preDataForEditAccountHandler() {
+            if((http.readyState == 4) && (http.status == 200)){
+                var detail = document.getElementById("form-edit-class");
+                detail.innerHTML = http.responseText;
+            }
+        }
+        
+        function update() {
+            var classID = document.getElementById("txtClassID_edit").value;
+            var newLecturerCode = document.getElementById("GVCN").value;
+            var controller = "../../StudentClassController?action=update&classID=" 
+                + classID 
+                + "&newLecturerCode=" + newLecturerCode;
+           if(http){
+                http.open("GET", controller ,true);
+                http.onreadystatechange = updateResponseHandler;
+                http.send(null);
+            } else {
+                alert("Error: http object not found");
+            }
+        }
+        function updateResponseHandler() {
+            if(http.readyState == 4 && http.status == 200){
+                var detail = document.getElementById("respone-edit-area");
+                detail.innerHTML = http.responseText;
+            }
+        }
+        // Update account --
         </script>
     </body>
 </html>
