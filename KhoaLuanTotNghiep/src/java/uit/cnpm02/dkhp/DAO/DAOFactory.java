@@ -25,12 +25,29 @@ public class DAOFactory {
     private static TaskDAO taskDao = null;
     private static FileInfoDAO fileInfoDao = null;
     private static DetailTrainDAO detailTrainfoDao = null;
+    private static TrainProgramDAO trainProDao = null;
+    private static TrainProgDetailDAO trainProDetailDao = null;
+    
     
     public static FileInfoDAO getFileInfoDao() {
         if (fileInfoDao == null) {
             fileInfoDao = new FileInfoDAO();
         }
         return fileInfoDao;
+    }
+    
+    public static TrainProgDetailDAO getTrainProgDetailDAO() {
+        if (trainProDetailDao == null) {
+            trainProDetailDao = new TrainProgDetailDAO();
+        }
+        return trainProDetailDao;
+    }
+    
+    public static TrainProgramDAO getTrainProgramDAO() {
+        if (trainProDao == null) {
+            trainProDao = new TrainProgramDAO();
+        }
+        return trainProDao;
     }
 
     public static DetailTrainDAO getDetainTrainDAO() {
