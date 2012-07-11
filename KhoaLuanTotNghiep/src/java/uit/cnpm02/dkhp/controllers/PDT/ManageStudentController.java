@@ -254,7 +254,16 @@ public class ManageStudentController extends HttpServlet {
 
             cellTemp = rowTemp.getCell(13);
             String status = cellTemp.getStringCellValue();
-            s.setStatus(status);
+            StudentStatus statusEnum = StudentStatus.NORMAL;
+            try {
+                statusEnum = StudentStatus.getStudyStatus(status);
+            } catch(Exception ex) {
+                //
+            }
+            if (statusEnum == null) {
+                statusEnum = StudentStatus.NORMAL;
+            }
+            s.setStatus(statusEnum.value());
 
             cellTemp = rowTemp.getCell(14);
             String level = cellTemp.getStringCellValue();
@@ -352,18 +361,18 @@ public class ManageStudentController extends HttpServlet {
         String faculty = request.getParameter("faculty");
         String clazz = request.getParameter("clazz");
         String course = request.getParameter("course");
-        String status = request.getParameter("status");
+        String statusStr = request.getParameter("status");
         String level = request.getParameter("level");
         String studyType = request.getParameter("studyType");
         String note = request.getParameter("note");
         
         SimpleDateFormat sdf = new SimpleDateFormat(
                                         Constants.DATETIME_PARTERM_DEFAULT);
+        int status = StudentStatus.NORMAL.value();
         try {
-            int statusInt = Integer.parseInt(status);
+            status = Integer.parseInt(statusStr);
             int studyLevelInt = Integer.parseInt(level);
             int typeInt = Integer.parseInt(studyType);
-            status = StudentStatus.getStudyStatus(statusInt).description();
             level = StudyLevel.getStudyLevel(studyLevelInt).description();
             studyType = StudyType.getStudyType(typeInt).description();
         } catch (Exception ex) {
