@@ -112,7 +112,7 @@ public class RegistrationManager extends HttpServlet {
         String studentName = studentService.getStudent(mssv).getFullName();
         
         out.println("Danh sách các lớp học <b>" + studentName + "</b> đã đăng ký:");
-        out.println("<table id = \"student-report\" name = \"student-report\">");
+        out.println("<table id = \"student-report\" name = \"student-report\" class=\"general-table\" style=\"float: right; width: 350;\">");
 
         out.println("<tr><th>STT</th><th>Mã lớp</th><th>Môn học</th><th>Số TC</th><th>Xóa</th</tr>");
         for (int i = 0; i < datas.size(); i++) {

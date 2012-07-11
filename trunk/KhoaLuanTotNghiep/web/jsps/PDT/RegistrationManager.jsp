@@ -5,7 +5,7 @@
 --%>
 
 <%@page import="java.util.Calendar"%>
-<%@include file="MenuPDT.jsp"%>
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html>
@@ -85,30 +85,24 @@
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
-
+            <%@include file="MenuPDT.jsp"%>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <div id="title">
+                <div id="main-title">
                     Quản lý đăng ký học phần
                 </div>
-                <div id="search">
-                    <table>
-                        <tr>
-                            <td>
-                                <b>Thông tin tìm kiếm </b>
-                                <input id="search-student" type="text" value="" onKeyPress="keypressed()"/>
-                            </td>
-                            <td>
-                                <input type="button" onclick="FindStudent()" value="Tìm"/>
-                            </td>
-                        </tr>
-                    </table>
+                <div style="float: left;">
+                    <div id="searchbox" action="#">
+                        <input id="search" type="text" onKeyPress="keypressed()" placeholder="Search" />
+                        <input type="button" id="submit" onclick="FindStudent()" value="Tìm kiếm" />
+                    </div>
                 </div>
+                <div class="clear"></div>
                 <div>
                     <div id="list-student">
-                        <table id ="list-studentFind" name = "list-studentFind">
+                        <table id ="list-studentFind" name = "list-studentFind" class="general-table">
                            
                         </table>
                     </div>
@@ -142,7 +136,7 @@
        } 
       }
         function FindStudent(){
-            var search = document.getElementById("search-student").value;
+            var search = document.getElementById("search").value;
              if (http) {
                 http.open("GET", "../../RegistrationManager?action=search_student&value="
                     + search, true);

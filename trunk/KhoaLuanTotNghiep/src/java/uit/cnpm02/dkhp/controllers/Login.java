@@ -143,13 +143,13 @@ public class Login extends HttpServlet {
     private void logOut(HttpSession session, HttpServletResponse response)
             throws IOException, Exception {
         session.removeAttribute(SCHEDULE_CK);
-        String user = (String) session.getAttribute("username");
-        Account acc = accDao.findById(user);
+        //String user = (String) session.getAttribute("username");
+        //Account acc = accDao.findById(user);
 
-        if (acc != null) {
+        //if (acc != null) {
             //acc.setIsLogined(false);
             //accDao.update(acc);
-        }
+        //}
 
         session.removeAttribute("username");
         session.removeAttribute("logineduser");

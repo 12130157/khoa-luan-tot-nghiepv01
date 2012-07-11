@@ -397,7 +397,7 @@
                 return false;
             }
 
-            if (pass.length != re_pass.length) {
+            if (pass != re_pass) {
                 alert("Mật khẩu xác nhận không đúng.");
                 return false;
             }
@@ -439,24 +439,7 @@
                 detail.innerHTML = http.responseText;
             }
         }
-        // Add account --
-        // Update account ++
-        function validate(pass, re_pass, fullName) {
-            if ((pass.length == 0)
-                    || (re_pass.length == 0)
-                    || (fullName.length == 0)) {
-                    alert("Vui lòng nhập đầy đủ thông tin trước khi submit.");
-                    
-                    return false;
-            }
-            
-            if (pass.length != re_pass.length) {
-                alert("Mật khẩu xác nhận không đúng.");
-                return false;
-            }
-            
-            return true;
-        }
+        
         
         function update() {
             var username = document.getElementById("txtUsername_edit").value;
