@@ -43,21 +43,26 @@ public class StudentClassController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession();
+        request.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
+        HttpSession session = request.getSession();
         try {
             String action = request.getParameter("action");
             if (action.equalsIgnoreCase("default")) {
                 loadDefault(session, response);
             } else if (action.equalsIgnoreCase("change-faculty")) {
                 updateChangeFaculty(request, response);
-            } else if(action.equalsIgnoreCase("create-class")) {
+            } else if (action.equalsIgnoreCase("create-class")) {
                 createNewClass(request, response);
             } else if (action.equalsIgnoreCase("delete-student-class")) {
                 deleteStudentClass(request, response);
+            }else if(action.equalsIgnoreCase("edit-student-class")){
+                doPreEditClass(request, response);
+            }else if(action.equalsIgnoreCase("update")){
+                doUpdateAccount(request, response);
             }
-            
-        } finally {            
+
+        } finally {
             out.close();
         }
     }
@@ -98,29 +103,112 @@ public class StudentClassController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    private void doUpdateAccount(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        try {
+            PrintWriter out = response.getWriter();
+            ClassDAO classDao = DAOFactory.getClassDao();
+            String classID  = request.getParameter("classID");
+            String newLectererCode = request.getParameter("newLecturerCode");
+            uit.cnpm02.dkhp.model.Class clazz = classDao.findById(classID);
+            clazz.setHomeroom(newLectererCode);
+            classDao.update(clazz);
+            out.println("Cập nhật thông tin thành công.");
+         } catch (Exception ex) {
+            Logger.getLogger(StudentClassController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    private void doPreEditClass(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        try {
+            String classID = request.getParameter("clazzid");
+            ClassDAO classDao = DAOFactory.getClassDao();
+            uit.cnpm02.dkhp.model.Class clazz = classDao.findById(classID);
+            PrintWriter out = response.getWriter();
+            writeEditAccountForm(out, clazz);
+        } catch (Exception ex) {
+            Logger.getLogger(StudentClassController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    private void writeEditAccountForm(PrintWriter out, uit.cnpm02.dkhp.model.Class clazz) {
+        try {
+            LecturerDAO lecturerDao = DAOFactory.getLecturerDao();
+            List<Lecturer> lecturer = lecturerDao.findByColumName("MaKhoa", clazz.getFacultyCode());
+            out.print("<table style=\"width: 450px;\">");
+            out.print("<tr>"
+                        + "<td> Mã lớp </td>"
+                        + "<td> <input type=\"text\" name=\"txtClassID_edit\" id=\"txtClassID_edit\" readonly=\"readonly\" value=\""+ clazz.getId() + "\" /></td>"
+                    + "</tr>");
+             out.print("<tr>"
+                        + "<td> Tên lớp </td>"
+                        + "<td> <input type=\"text\" name=\"txtClassName_edit\" id=\"txtClassName_edit\" readonly=\"readonly\" value=\""+ clazz.getClassName() + "\" /></td>"
+                    + "</tr>");
+             out.print("<tr>"
+                        + "<td> Khoa </td>"
+                        + "<td> <input type=\"text\" name=\"txtFaculty_edit\" id=\"txtFaculty_edit\" readonly=\"readonly\" value=\""+ clazz.getFacultyCode() + "\" /></td>"
+                    + "</tr>");
+             out.print("<tr>"
+                        + "<td> Khóa học </td>"
+                        + "<td> <input type=\"text\" name=\"txtCourse_edit\" id=\"txtCourse_edit\" readonly=\"readonly\" value=\""+ clazz.getCourseCode() + "\" /></td>"
+                    + "</tr>");
+            out.print("<tr>"
+                + "<td> Giảng viên chủ nhiệm </td>"
+                + "<td>");
+            out.print("<select name=\"GVCN\" id=\"GVCN\" class=\"input-minwidth\">");
+            for(int i=0; i<lecturer.size(); i++){
+                out.print("<option value='"+lecturer.get(i).getId()+"'>"+lecturer.get(i).getFullName()+"</option>");
+            }
+            out.print("</select>");
+            out.print("</td>"
+            + "</tr>");
+           out.print("</table>");
+            out.print("<br/>");
+            out.print("<div class=\"button-1\"><span class=\"atag\" onclick=\"update()\" ><img src=\"../../imgs/check.png\" />Hoàn thành</span></div>");
+            //out.print("<div style=\"float: left; padding-left: 220px;\"><input type=\"button\" onclick=\"update()\" value=\"Hoàn thành\" />");
+            out.print("</div>");
+            out.print("<div class=\"clear\"></div>");
+            out.print("<br/>");
+            out.print("<div id=\"respone-edit-area\"></div>");
+        } catch (Exception ex) {
+            Logger.getLogger(StudentClassController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    private void setLecturerName(List<uit.cnpm02.dkhp.model.Class> classList) {
+        try {
+            LecturerDAO lecturerDao = DAOFactory.getLecturerDao();
+            if (classList != null && classList.size() > 0) {
+                for (int i = 0; i < classList.size(); i++) {
+                    String lecturerName = lecturerDao.findById(classList.get(i).getHomeroom()).getFullName();
+                    classList.get(i).setHomeroomName(lecturerName);
+                }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(StudentClassController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     private void loadDefault(HttpSession session,
             HttpServletResponse response) throws IOException {
-        
+
         try {
             ClassDAO classDao = DAOFactory.getClassDao();
             List<uit.cnpm02.dkhp.model.Class> allClasses = classDao.findAll();
+            setLecturerName(allClasses);
             session.setAttribute("classes", allClasses);
-            
+
             FacultyDAO facDao = DAOFactory.getFacultyDao();
             List<Faculty> faculties = facDao.findAll();
             session.setAttribute("faculties", faculties);
-            
+
             CourseDAO courseDao = DAOFactory.getCourseDao();
             List<Course> courses = courseDao.findAll();
             session.setAttribute("courses", courses);
-            
+
             LecturerDAO lecturerDao = DAOFactory.getLecturerDao();
-            List<Lecturer> lecturer = lecturerDao.
-                    findByColumName("MaKhoa", faculties.get(0).getId());
+            List<Lecturer> lecturer = lecturerDao.findByColumName("MaKhoa", faculties.get(0).getId());
             session.setAttribute("lecturers", lecturer);
         } catch (Exception ex) {
-            Logger.getLogger(StudentClassController.class.getName())
-                    .log(Level.SEVERE, null, ex);
+            Logger.getLogger(StudentClassController.class.getName()).log(Level.SEVERE, null, ex);
         }
         String path = "./jsps/PDT/ManageStudentClass.jsp";
         response.sendRedirect(path);
@@ -132,16 +220,14 @@ public class StudentClassController extends HttpServlet {
             PrintWriter out = response.getWriter();
             String facultyId = request.getParameter("faculty");
             LecturerDAO lecturerDao = DAOFactory.getLecturerDao();
-            List<Lecturer> lecturers = lecturerDao.
-                    findByColumName("MaKhoa", facultyId);
+            List<Lecturer> lecturers = lecturerDao.findByColumName("MaKhoa", facultyId);
             if (lecturers != null && !lecturers.isEmpty()) {
                 updateListLecturer(out, lecturers);
             }
         } catch (Exception ex) {
-            Logger.getLogger(StudentClassController.class.getName())
-                    .log(Level.SEVERE, null, ex);
+            Logger.getLogger(StudentClassController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
 
     private void updateListLecturer(PrintWriter out, List<Lecturer> lecturers) {
@@ -166,40 +252,37 @@ public class StudentClassController extends HttpServlet {
         String numberStudent = request.getParameter("numberStudent");
 
         int numOfStudent = Integer.parseInt(numberStudent);
-        uit.cnpm02.dkhp.model.Class clazz
-                = new uit.cnpm02.dkhp.model.Class(
-                        id, name, faculty, course, lecturer, numOfStudent);
+        uit.cnpm02.dkhp.model.Class clazz = new uit.cnpm02.dkhp.model.Class(
+                id, name, faculty, course, lecturer, numOfStudent);
         try {
             ClassDAO clazzDao = DAOFactory.getClassDao();
-            uit.cnpm02.dkhp.model.Class existedClazz =  clazzDao.findById(id);
+            uit.cnpm02.dkhp.model.Class existedClazz = clazzDao.findById(id);
             if (existedClazz != null) {
                 out.println("Mã lớp đã tồn tại.");
                 return;
             }
-            
-            List<uit.cnpm02.dkhp.model.Class> existedClasses 
-                    = clazzDao.findByColumName("GVCN", lecturer);
+
+            List<uit.cnpm02.dkhp.model.Class> existedClasses = clazzDao.findByColumName("GVCN", lecturer);
             if (existedClasses != null && !existedClasses.isEmpty()) {
                 String lecturerName = DAOFactory.getLecturerDao().findById(lecturer).getFullName();
                 out.println("Lỗi không thể tạo lớp: <br />"
-                        + "- Giảng viên <b>" + lecturerName 
+                        + "- Giảng viên <b>" + lecturerName
                         + "</b> hiện đang là GVCN của lớp <b>" + existedClasses.get(0).getClassName() + "</b>");
                 return;
             }
-            
+
             clazzDao.add(clazz);
             ClassDAO classDao = DAOFactory.getClassDao();
             List<uit.cnpm02.dkhp.model.Class> allClasses = classDao.findAll();
             HttpSession session = request.getSession();
             session.setAttribute("classes", allClasses);
-            
+
             out.println("Thêm thành công lớp:<br />");
             out.println("<br />- Mã lớp: " + id);
             out.println("<br />- Tên lớp: " + name);
             out.println("<br />- Khoa lớp: " + faculty);
         } catch (Exception ex) {
-            Logger.getLogger(StudentClassController.class.getName())
-                    .log(Level.SEVERE, null, ex);
+            Logger.getLogger(StudentClassController.class.getName()).log(Level.SEVERE, null, ex);
             out.println("Lỗi: " + ex.toString());
         }
     }
@@ -212,7 +295,7 @@ public class StudentClassController extends HttpServlet {
             out.println("- Lỗi: Phiên làm việc hết hiệu lực, vui lòng thử lại.");
             return;
         }
-        
+
         try {
             ClassDAO clazzDao = DAOFactory.getClassDao();
             uit.cnpm02.dkhp.model.Class clazz = clazzDao.findById(clazzID);
@@ -226,16 +309,16 @@ public class StudentClassController extends HttpServlet {
                 out.println("- Không thể xóa lớp đã có SV.");
                 return;
             }
-        
+
             clazzDao.delete(clazz);
             ClassDAO classDao = DAOFactory.getClassDao();
-            
+
             // Reset data for next F5...
             List<uit.cnpm02.dkhp.model.Class> allClasses = classDao.findAll();
             HttpSession session = request.getSession();
             session.setAttribute("classes", allClasses);
             out.println("Xóa thành công");
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             out.println("- Lỗi xóa lớp: " + ex.toString());
             return;
         }
