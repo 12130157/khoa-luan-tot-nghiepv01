@@ -26,6 +26,7 @@
     
     // Danh sach lop ma SV da dk
     List<String> registried = (List<String>) session.getAttribute("registriedID");
+    boolean nonStudy=(Boolean) session.getAttribute("non-study-student");
 %>
 <html>
     <head>
@@ -149,13 +150,13 @@
                          --%>
                          <%if(checked){%>
                              <td width="10px">
-                                 <input type="checkbox" name="check" checked="true" value="<%=trainClass.get(i).getId().getClassCode()%>" onclick="hightLightSelectedRow(this, 'tr_main_<%=i%>')"/>
+                                 <input type="checkbox" name="check" checked="true" value="<%=trainClass.get(i).getId().getClassCode()%>" onclick="validateSelectTrainClass(this, 'tr_main_<%=i%>')"/>
                              </td>
                          <%}else {
                              if(trainClass.get(i).getNumOfStudentReg() >= trainClass.get(i).getNumOfStudent()){%>
                              <td width="10px"><input type="checkbox" disabled name="check" value="<%=trainClass.get(i).getId().getClassCode()%>"/></td>
                              <%}else{%>
-                             <td width="10px"><input type="checkbox" name="check" value="<%=trainClass.get(i).getId().getClassCode()%>" onclick="hightLightSelectedRow(this, 'tr_main_<%=i%>')"/></td>
+                             <td width="10px"><input type="checkbox" name="check" value="<%=trainClass.get(i).getId().getClassCode()%>" onclick="validateSelectTrainClass(this, 'tr_main_<%=i%>')"/></td>
                              <%}
                          }%>
                      </tr>
@@ -211,7 +212,7 @@
                          --%>
                          <%if(checked1){%>
                              <td width="10px">
-                                 <input type="checkbox" name="check" checked="true" value="<%=tcTemp.getId().getClassCode()%>" onclick="hightLightSelectedRow(this, 'tr_<%=i%>')"/>
+                                 <input type="checkbox" name="check" checked="true" value="<%=tcTemp.getId().getClassCode()%>" onclick="validateSelectTrainClass(this, 'tr_<%=i%>')"/>
                              </td>
                          <%}else {
                              if(tcTemp.getNumOfStudentReg() >= tcTemp.getNumOfStudent()){%>
@@ -220,7 +221,7 @@
                              </td>
                              <%}else{%>
                              <td width="10px">
-                                 <input type="checkbox" name="check" value="<%=tcTemp.getId().getClassCode()%>" onclick="hightLightSelectedRow(this, 'tr_<%=i%>')"/>
+                                 <input type="checkbox" name="check" value="<%=tcTemp.getId().getClassCode()%>" onclick="validateSelectTrainClass(this, 'tr_<%=i%>')"/>
                              </td>
                              <%}
                          }%>
@@ -228,7 +229,14 @@
                      <%}%>
                      </table>
                      <br />
-                    <input type="submit" class="button-1" style="margin-left: 45%;" value="Đăng ký" />
+                      <%
+                    if (nonStudy) {
+                    %>
+                        <div class="clear"></div>
+                        <b>Sinh viên <b><%=" " + student.getFullName() + " "%></b> đang tạm thời bị đình chỉ học tập không được phép đăng ký học phần</b> 
+                    <%} else {%>
+                        <input type="submit" class="button-1" style="margin-left: 45%;" value="Đăng ký" />
+                    <%}%>
                  </form>
                      <div class="clear"></div>
                      <br />
@@ -243,12 +251,15 @@
         <script src="../../javascripts/AjaxUtil.js"> </script>
         <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
         <script  type = "text/javascript" >
+            //var http = createRequestObject();
             
             $("#btn-chkbox_external_trainclass").click(function () {
                 $('#ext-detail').slideToggle(50);
             });
 
-             function hightLightSelectedRow(chb, row) {
+             function validateSelectTrainClass(chb, row) {
+                // validate condition
+                 
                 var trobj = document.getElementById(row);
                  
                 if(chb.checked){
