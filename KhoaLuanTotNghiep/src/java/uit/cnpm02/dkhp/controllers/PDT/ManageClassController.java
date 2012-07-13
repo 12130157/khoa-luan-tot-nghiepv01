@@ -19,6 +19,7 @@ import uit.cnpm02.dkhp.DAO.DetailTrainDAO;
 import uit.cnpm02.dkhp.DAO.FacultyDAO;
 import uit.cnpm02.dkhp.DAO.LecturerDAO;
 import uit.cnpm02.dkhp.DAO.RegistrationDAO;
+import uit.cnpm02.dkhp.DAO.StudentDAO;
 import uit.cnpm02.dkhp.DAO.SubjectDAO;
 import uit.cnpm02.dkhp.DAO.TrainClassDAO;
 import uit.cnpm02.dkhp.model.DetailTrain;
@@ -38,6 +39,7 @@ import uit.cnpm02.dkhp.service.impl.TrainClassServiceImpl;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.DateTimeUtil;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
+import uit.cnpm02.dkhp.utilities.StringUtils;
 
 /**
  * Manage Class
@@ -885,7 +887,7 @@ public class ManageClassController extends HttpServlet {
         String path = "";
         try {
             HttpSession session = request.getSession();
-            String ClassCode = (String) request.getParameter("classId");
+            String classCode = (String) request.getParameter("classId");
             String lecturerCode = (String) request.getParameter("lecturer");
             int studyDate = Integer.parseInt((String) request.getParameter("Date"));
             int shift = Integer.parseInt((String) request.getParameter("Shift"));
@@ -898,7 +900,7 @@ public class ManageClassController extends HttpServlet {
             Date startDate = DateTimeUtil.parse(request.getParameter("startDate"));
             Date endDate = DateTimeUtil.parse(request.getParameter("endDate"));
 
-            TrainClassID classID = new TrainClassID(ClassCode, year, semester);
+            TrainClassID classID = new TrainClassID(classCode, year, semester);
             TrainClass trainClass = trainClassService.getClassInfomation(classID);
             trainClass.setLecturerCode(lecturerCode);
             trainClass.setStudyDate(studyDate);
@@ -912,6 +914,7 @@ public class ManageClassController extends HttpServlet {
             trainClass = classDAO.update(trainClass);
 
             session.setAttribute("trainclass", trainClass);
+            session.setAttribute("students", getStudents(classCode, year, semester));
 
             path = "./jsps/PDT/TrainClassDetail.jsp";
         } catch (Exception ex) {
@@ -928,18 +931,45 @@ public class ManageClassController extends HttpServlet {
     private void viewDetailClass(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String path = "";
         try {
-            String ClassCode = (String) request.getParameter("classID");
+            String classCode = (String) request.getParameter("classID");
             String year = (String) request.getParameter("year");
             int semester = Integer.parseInt((String) request.getParameter("semester"));
-            TrainClassID classID = new TrainClassID(ClassCode, year, semester);
+            TrainClassID classID = new TrainClassID(classCode, year, semester);
             TrainClass trainClass = trainClassService.getClassInfomation(classID);
             HttpSession session = request.getSession();
             session.setAttribute("trainclass", trainClass);
+            session.setAttribute("students", getStudents(classCode, year, semester));
             path = "./jsps/PDT/TrainClassDetail.jsp";
         } catch (Exception ex) {
             path = "./jsps/Message.jsp";
         }
         response.sendRedirect(path);
+    }
+    
+    List<Student> getStudents(String trainClassID, String year, int semeter) {
+        if (StringUtils.isEmpty(trainClassID) || 
+                StringUtils.isEmpty(year)) {
+            return null;
+        }
+
+        try {
+            RegistrationDAO regDao = DAOFactory.getRegistrationDAO();
+            List<Registration> regs = regDao.findByColumNames(new String[]{"MaLopHoc", "HocKy", "NamHoc"},
+                    new Object[] {trainClassID, semeter, year});
+            if (regs == null || regs.isEmpty()) {
+                return null;
+            }
+            
+            List<String> studentIds = new ArrayList<String>(10);
+            for (Registration reg : regs) {
+                studentIds.add(reg.getId().getStudentCode());
+            }
+            return DAOFactory.getStudentDao().findByIds(studentIds);
+            
+        } catch (Exception ex) {
+            Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     /**
