@@ -10,7 +10,8 @@
     "http://www.w3.org/TR/html4/loose.dtd">
 
 <%
-    List<String> clazz = (List<String>) session.getAttribute("list-subject");
+    List<TrainClass> missingScoreClazzes
+            = (List<TrainClass>) session.getAttribute("list-miss-core-class");
     String error = (String) session.getAttribute("error");
     if (error != null) {
         //Clear session
@@ -129,6 +130,39 @@
                     </div>
                 </div>
                 <br />
+                <%-- Danh sach lop chua cap nhat diem --%>
+                <br />
+                <div class="range">
+                    <h3><span id="btn-list-class-not-update-score" class="atag">Các lớp chưa nhập điểm</span></h3> 
+                    <div id="list-class-not-update-score" style="display: none;" class="div-range">
+                        <%-- Danh sach cac lop chua cap nhat diem J --%>
+                        <%if ((missingScoreClazzes == null) || missingScoreClazzes.isEmpty()) {%>
+                            <i>Không có lớp</i>
+                        <%} else {
+                            int counter = 1;
+                        %>
+                        <table class="general-table" style="width: 720px;">
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Mã lớp</th>
+                                    <th>Môn học</th>
+                                    <th>GV</th>
+                                </tr>
+                                <%for (TrainClass clzz : missingScoreClazzes) {%>
+                                    <tr>
+                                        <td><%= counter++ %></td>
+                                        <td> <%-- This will link to TrainClass Detail--%>
+                                            <a href="../../ManageClassController?action=detail&classID=<%= clzz.getId().getClassCode()%>&year=<%= clzz.getId().getYear()%>&semester=<%= clzz.getId().getSemester()%>"><%= clzz.getId().getClassCode() %></a>
+                                        </td>
+                                        <td><%= clzz.getSubjectName() %></td>
+                                        <td><%= clzz.getLectturerName() %></td>
+                                    </tr>
+                                <%}%>
+                            </table>
+                        <%}%>
+                    </div>
+                </div>
+                <br />
             </div><!--End Contents-->
 
             <!--Footer-->
@@ -155,6 +189,10 @@
                     getFileFromLecturer();
                     loadFileFromLecturer = true;
                 }
+            });
+            
+            $("#btn-list-class-not-update-score").click(function () {
+                $('#list-class-not-update-score').slideToggle(500);
             });
             
             function getFileFromLecturer() {
