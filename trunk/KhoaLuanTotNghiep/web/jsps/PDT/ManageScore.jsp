@@ -434,6 +434,28 @@
                     detail.innerHTML = http.responseText;
                 }
             }
+            
+            // Mark a trainclass is updated score
+            function markClassToUpdatedScore(classID) {
+                var controller = "../../ManageScoreController?function=score-updated"
+                    + "&trainclss_id=" + classID;
+                if(http){
+                    http.open("GET", controller ,true);
+                    http.onreadystatechange = markUpdateScoreHandler;
+                    http.send(null);
+                } else {
+                    alert("Error: http object not found");
+                }
+            }
+            
+             function markUpdateScoreHandler() {
+                if(http.readyState == 4 && http.status == 200){
+                    var detail = document.getElementById("close-class-msg");
+                    detail.innerHTML = http.responseText;
+                }
+            }
+            // On handler: remove butn, show msg
+            //btn-mark-as-update-score
         </script>
     </body>
 </html>
