@@ -28,6 +28,7 @@ import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.model.TrainClassID;
 import uit.cnpm02.dkhp.model.type.AccountType;
 import uit.cnpm02.dkhp.model.type.TaskStatus;
+import uit.cnpm02.dkhp.service.TrainClassStatus;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.password.PasswordProtector;
 
@@ -236,8 +237,8 @@ public class Login extends HttpServlet {
             int semeter = Constants.CURRENT_SEMESTER;
             String year = Constants.CURRENT_YEAR;
             List<TrainClass> trainClasses = tcDao.findByColumNames(
-                    new String[] {"MaGV", "HocKy", "NamHoc"},
-                    new Object[] {lecturerId, semeter, year});
+                    new String[] {"MaGV", "HocKy", "NamHoc", "TrangThai"},
+                    new Object[] {lecturerId, semeter, year, TrainClassStatus.OPEN.getValue()});
             SubjectDAO subDao = DAOFactory.getSubjectDao();
             for (TrainClass tc : trainClasses) {
                 String subName = subDao.findById(tc.getSubjectCode()).getSubjectName();
@@ -258,8 +259,8 @@ public class Login extends HttpServlet {
             String year = Constants.CURRENT_YEAR;
             // Cac lop SV da dk (trong hoc ki hien tai)
             List<Registration> regs = regDao.findByColumNames(
-                    new String[] {"MSSV", "HocKy", "NamHoc"},
-                    new Object[] {studentId, semeter, year});
+                    new String[] {"MSSV", "HocKy", "NamHoc", "TrangThai"},
+                    new Object[] {studentId, semeter, year, TrainClassStatus.OPEN.getValue()});
             List<TrainClassID> tcIDs = new ArrayList<TrainClassID>(10);
             if ((regs == null) || regs.isEmpty()) {
                 return null;
