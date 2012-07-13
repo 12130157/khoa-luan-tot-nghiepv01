@@ -9,7 +9,6 @@
 <%@page import="uit.cnpm02.dkhp.model.TrainClass"%>
 <%@page import="uit.cnpm02.dkhp.utilities.Constants"%>
 <%@page import="uit.cnpm02.dkhp.model.web.LecturerWeb"%>
-<%@include file="MenuPDT.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
   TrainClass trainClass = (TrainClass) session.getAttribute("trainclass");
@@ -23,74 +22,32 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Cập nhật thông tin lớp học</title>
         <style media="all" type="text/css">
-
-            #table_mh{
-                padding-left: 100px;
-                padding-right: 10px;
-                text-align: left;
-
-            }
-            #table th{
-                background-color:#00ff00;
-                height: 30px;
-                border-color: black;
-            }
-
-            #table td{
-                text-align: center;
-                background-color: #5F676D;
-            }
-            #title{
-                background-color: #2f4e3d;
-                text-align: center;
-                padding-top: 12px;
-                padding-bottom: 10px;
-            }
-            #page{
-                text-align: center;
-            }
-            #sidebar {
-                height:250px;
-                overflow:auto;
-            }
-            a {
-                color: violet;
-            }
-
-            #error_code, #error_name, #error_tclt, #error_tcth {
-                font-size: 10px;
-                color: #cc0033;
-            }
         </style>
     </head>
     <body>
         <script src="../../javascripts/DateTimePicker.js" type="text/javascript"></script>
         <!--Div Wrapper-->
         <div id="wrapper">
-
+            <%@include file="MenuPDT.jsp"%>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-
-                <hr/><hr/>
-                <div id="title">
-                    <u><h3><b>Chi tiết lớp học: <%=trainClass.getId().getClassCode()%></b></h3></u>
+                <div id="main-title">
+                    Cập nhật thông tin lớp học: <%=trainClass.getId().getClassCode()%>
                 </div>
-                <hr/><hr/><br>
-
                 <form id="classDetail" action="../../ManageClassController?action=update&classId=<%=trainClass.getId().getClassCode()%>&year=<%= trainClass.getId().getYear()%>&semester=<%= trainClass.getId().getSemester()%>" method="post" >
-                   <table id="table_mh">
+                    <table id="table_mh" class="general-table" style="width: 350px;">
                         <tr>
-                            <td width="100px"> Mã lớp: </td>
-                            <td> <%=trainClass.getId().getClassCode()%> </td>
+                            <td width="100px"> Mã lớp </td>
+                            <td> <b> <%=trainClass.getId().getClassCode()%> </b></td>
                         </tr>
                         <tr>
-                            <td> Môn học: </td>
+                            <td> Môn học </td>
                             <td><%=trainClass.getSubjectName()%> </td>
                         </tr>
                         <tr>
-                            <td> Giảng viên: </td>
+                            <td> Giảng viên </td>
                             <td> 
                             <select id="lecturer" name="lecturer">
                                 <%for(int i=0; i<Lecture.size();i++){%>
@@ -101,7 +58,7 @@
                         </td>
                         </tr>
                         <tr>
-                            <td> Ngày học: </td>
+                            <td> Ngày học </td>
                              <td> 
                            <select id="Date" name="Date">
                                 <option value="2">Thứ 2</option>
@@ -114,34 +71,32 @@
                         </td>
                         </tr>
                         <tr>
-                            <td> Ca học: </td>
+                            <td> Ca học </td>
                              <td> 
                             <select id="Shift" name="Shift">
                                 <option value="1">Sáng</option>
                                 <option value="2">Chiều</option>
                             </select>
                         </tr> 
-                        </tr>
                         <tr>
-                            <td>Phòng học:</td>
+                            <td>Phòng học</td>
                             <td> 
-                            <select id="room" name="room">
-                              <%for(int i=0; i<roomList.size();i++){%>
-                                <option value="<%=roomList.get(i)%>"><%=roomList.get(i)%></option>
-                                <%}
-                                %>  
-                            </select>
-                        </td>
+                                <select id="room" name="room">
+                                    <%for(int i=0; i<roomList.size();i++){%>
+                                        <option value="<%=roomList.get(i)%>"><%=roomList.get(i)%></option>
+                                    <%}%>  
+                                </select>
+                            </td>
                         </tr>
                         <tr>
-                            <td>Ngày thi:</td>
+                            <td>Ngày thi</td>
                             <td>
                                 <input type="text" id="testDate" name="testDate" readonly="readonly" value="<%=DateTimeUtil.format(trainClass.getTestDate())%>">
                                 <img src="../../imgs/cal.gif" style="cursor: pointer;" onclick="javascript:NewCssCal('testDate','YYMMMDD')" /> 
                             </td> 
                         </tr>
                         <tr>
-                            <td>Phòng thi:</td>
+                            <td>Phòng thi</td>
                             <td> 
                             <select id="testroom" name="testroom">
                               <%for(int i=0; i<roomList.size();i++){%>
@@ -152,7 +107,7 @@
                         </td>
                         </tr>
                         <tr>
-                            <td>Giờ thi:</td>
+                            <td>Giờ thi</td>
                             <td>
                                 <select id="hh" name="hh">
                                     <%for(int i =8; i<16; i++){%>
@@ -168,27 +123,21 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>Ngày bắt đầu học:</td>
+                            <td>Ngày bắt đầu học</td>
                             <td>
                                 <input type="text" id="startDate" name="startDate" readonly="readonly" value="<%=DateTimeUtil.format(trainClass.getStartDate())%>">
                                 <img src="../../imgs/cal.gif" style="cursor: pointer;" onclick="javascript:NewCssCal('startDate','YYMMMDD')" /> 
                             </td> 
                         </tr>
                         <tr>
-                            <td>Ngày kết thúc:</td>
+                            <td>Ngày kết thúc</td>
                             <td>
                                 <input type="text" id="endDate" name="endDate" readonly="readonly" value="<%=DateTimeUtil.format(trainClass.getEndDate())%>">
                                 <img src="../../imgs/cal.gif" style="cursor: pointer;" onclick="javascript:NewCssCal('endDate','YYMMMDD')" /> 
                             </td> 
                         </tr>
-                        <tr>
-                             <td></td>
-                             <td>
-                              <input type="submit" id="update" name="update" value="  Cập nhật  "/> 
-                             </td>
-                        </tr>
                     </table>
-
+                  <input type="submit" id="submit" name="update" value="Cập nhật"/> 
                 </form>
             </div><!--End Contents-->
 
