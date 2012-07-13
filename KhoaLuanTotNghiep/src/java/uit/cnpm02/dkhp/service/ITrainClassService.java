@@ -46,5 +46,7 @@ public interface ITrainClassService {
      */
     public List<TrainClass> getCurrentTrainClass(String lecturer);
     
+    public List<TrainClass> getClosedTrainClass(String lecturer);
+    
     
 }
