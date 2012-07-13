@@ -3,12 +3,15 @@
     Created on : 11-11-2011, 23:45:21
     Author     : LocNguyen
 --%>
+<%@page import="uit.cnpm02.dkhp.model.Student"%>
 <%@page import="uit.cnpm02.dkhp.utilities.DateTimeUtil"%>
 <%@page import="java.util.List"%>
 <%@page import="uit.cnpm02.dkhp.model.TrainClass"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
   TrainClass trainClass = (TrainClass) session.getAttribute("trainclass");
+  List<Student> students
+            = (List<Student>) session.getAttribute("students");
 %>
 <html>
     <head>
@@ -16,45 +19,6 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Chi tiết lớp học</title>
         <style media="all" type="text/css">
-
-            #table_mh{
-                padding-left: 100px;
-                padding-right: 10px;
-                text-align: left;
-
-            }
-            #table th{
-                background-color:#00ff00;
-                height: 30px;
-                border-color: black;
-            }
-
-            #table td{
-                text-align: center;
-                background-color: #5F676D;
-                
-            }
-            #title{
-                background-color: #2f4e3d;
-                text-align: center;
-                padding-top: 12px;
-                padding-bottom: 10px;
-            }
-            #page{
-                text-align: center;
-            }
-            #sidebar {
-                height:250px;
-                overflow:auto;
-            }
-            a {
-                color: violet;
-            }
-
-            #error_code, #error_name, #error_tclt, #error_tcth {
-                font-size: 10px;
-                color: #cc0033;
-            }
         </style>
     </head>
     <body>
@@ -66,93 +30,123 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-
-                <hr/><hr/>
-                <div id="title">
-                    <u><h3><b>Chi tiết lớp học: <%=trainClass.getId().getClassCode()%></b></h3></u>
+                <div id="main-title">
+                    Chi tiết lớp học: <%=trainClass.getId().getClassCode()%>
                 </div>
-                <hr/><hr/><br>
-
-                <form id="classDetail" action="../../ManageClassController?action=pre_update&classId=<%=trainClass.getId().getClassCode()%>&year=<%= trainClass.getId().getYear()%>&semester=<%= trainClass.getId().getSemester()%>" method="post" >
-                   <table id="table_mh">
-                        <tr>
-                            <td width="200px"> Mã lớp: </td>
-                            <th> <%=trainClass.getId().getClassCode()%> </th>
-                        </tr>
-                        <tr>
-                            <td> Môn học: </td>
-                            <th><%=trainClass.getSubjectName()%> </th>
-                        </tr>
-                        <tr>
-                            <td> Giảng viên: </td>
-                            <th><%=trainClass.getLectturerName()%></th>
-                        </tr>
-                        <tr>
-                            <td> Đã đăng ký </td>
-                            <th> <%=trainClass.getNumOfStudentReg()+" / "+trainClass.getNumOfStudent()%> </th>
-                        </tr>
-                        <tr>
-                            <td> Ngày học: </td>
-                            <th><%=trainClass.getStudyDate()%></th>
-                        </tr>
-                        <tr>
-                            <td> Ca học: </td>
-                            <%if(trainClass.getShift()==1){%>
-                            <th>Sáng</th>
-                            <%}else {%>
-                            <th>Chiều</th>
-                            <%}%>
-                        </tr>
-                        <tr>
-                            <td>Phòng học:</td>
-                            <th> <%=trainClass.getClassRoom()%></th>
-                        </tr>
-                        <tr>
-                            <td>Ngày thi:</td>
-                            <%if(trainClass.getTestDate() == null ){%>
-                            <th>Chưa có</th>
-                            <%}else {%>
-                            <th><%=DateTimeUtil.format(trainClass.getTestDate())%></th>
-                            <%}%>
-                        </tr>
-                        <tr>
-                            <td>Phòng thi:</td>
-                            <%if(trainClass.getTestRoom() == null || trainClass.getTestRoom().isEmpty() ){%>
-                            <th>Chưa có</th>
-                            <%}else {%>
-                            <th><%=trainClass.getTestRoom()%></th>
-                            <%}%>
-                        </tr>
-                        <tr>
-                            <td>Ca thi:</td>
-                            <%if(trainClass.getTestHours() == null || trainClass.getTestHours().isEmpty()){%>
-                            <th>Chưa có</th>
-                            <%}else {%>
-                            <th><%=trainClass.getTestHours()%></th>
-                            <%}%>
-                        </tr>
-                        <tr>
-                            <td>Ngày bắt đầu học:</td>
-                            <th> <%=DateTimeUtil.format(trainClass.getStartDate())%></th>
-                        </tr>
-                        <tr>
-                            <td>Ngày kết thúc dự kiến:</td>
-                            <th> <%=DateTimeUtil.format(trainClass.getEndDate())%></th>
-                        </tr>
-                        <tr>
-                             <td></td>
-                             <td>
-                             <input type="submit" id="update" name="update" value="  Cập nhật  "/> 
-                             </td>
-                        </tr>
-                    </table>
+                <br /><br />
+                <div class="range">
+                    <h3><span id="btn-trainclass-information" class="atag">Thông tin lớp học</span></h3> 
+                    <div id="trainclass-information" class="div-range">
+                    <form id="classDetail" action="../../ManageClassController?action=pre_update&classId=<%=trainClass.getId().getClassCode()%>&year=<%= trainClass.getId().getYear()%>&semester=<%= trainClass.getId().getSemester()%>" method="post" >
+                       <table class="general-table">
+                            <tr>
+                                <td width="200px"> Mã lớp: </td>
+                                <td> <%=trainClass.getId().getClassCode()%> </td>
+                                <td> Môn học: </td>
+                                <td><%=trainClass.getSubjectName()%> </td>
+                            </tr>
+                            <tr>
+                                <td> Giảng viên: </td>
+                                <td><%=trainClass.getLectturerName()%></td>
+                                <td> Đã đăng ký </td>
+                                <td> <%=trainClass.getNumOfStudentReg()+" / "+trainClass.getNumOfStudent()%> </td>
+                            </tr>
+                            <tr>
+                                <td> Ngày học: </td>
+                                <td><%=trainClass.getStudyDate()%></td>
+                                <td> Ca học: </td>
+                                <%if(trainClass.getShift()==1){%>
+                                <td>Sáng</td>
+                                <%}else {%>
+                                <td>Chiều</td>
+                                <%}%>
+                            </tr>
+                            <tr>
+                                <td>Phòng học:</td>
+                                <td> <%=trainClass.getClassRoom()%></td>
+                                <td>Ngày thi:</td>
+                                <%if(trainClass.getTestDate() == null ){%>
+                                <td>Chưa có</td>
+                                <%}else {%>
+                                <td><%=DateTimeUtil.format(trainClass.getTestDate())%></td>
+                                <%}%>
+                            </tr>
+                            <tr>
+                                <td>Phòng thi:</td>
+                                <%if(trainClass.getTestRoom() == null || trainClass.getTestRoom().isEmpty() ){%>
+                                <td>Chưa có</td>
+                                <%}else {%>
+                                <td><%=trainClass.getTestRoom()%></td>
+                                <%}%>
+                                <td>Ca thi:</td>
+                                <%if(trainClass.getTestHours() == null || trainClass.getTestHours().isEmpty()){%>
+                                <td>Chưa có</td>
+                                <%}else {%>
+                                <td><%=trainClass.getTestHours()%></td>
+                                <%}%>
+                            </tr>
+                            <tr>
+                                <td>Ngày bắt đầu học:</td>
+                                <td> <%=DateTimeUtil.format(trainClass.getStartDate())%></td>
+                                <td>Ngày kết thúc dự kiến:</td>
+                                <td> <%=DateTimeUtil.format(trainClass.getEndDate())%></td>
+                            </tr>
+                        </table>
+                        <input type="submit" id="submit" name="update" value="Cập nhật"/> 
                         <div id="message"></div>
-                </form>
+                    </form>
+                    </div>
+                </div>
+                <%-- Danh sach SV --%>
+                <br />
+                <div class="range">
+                    <h3><span id="btn-list-student" class="atag">Danh sách SV</span></h3> 
+                    <div id="list-student" style="display: none;" class="div-range">
+                        <%-- Danh sach cac lop chua cap nhat diem J --%>
+                        <%if (students == null || students.isEmpty()) {%>
+                            <i>Không có SV</i>
+                        <%} else {
+                            int counter = 1;
+                        %>
+                        <table class="general-table" style="width: 720px;">
+                                <tr>
+                                    <th>STT</th>
+                                    <th>MSSV</th>
+                                    <th>Họ và tên</th>
+                                    <th>Lớp</th>
+                                    <th>Khoa</th>
+                                </tr>
+                                <%for (Student s : students) {%>
+                                    <tr>
+                                        <td><%= counter++ %></td>
+                                        <td><%= s.getId() %></td>
+                                        <td><%= s.getFullName() %></td>
+                                        <td><%= s.getClassCode() %></td>
+                                        <td><%= s.getCourseCode() %></td>
+                                    </tr>
+                                <%}%>
+                            </table>
+                        <%}%>
+                    </div>
+                </div>
             </div><!--End Contents-->
             <div id="footer"><!--Footer-->
                 <%@include file="../Footer.jsp" %>
             </div><!--End footer-->
-        </div>
+        </div> <!--Wrapper-->
         <!--End Wrapper-->
+        <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
+        <script  type = "text/javascript" >
+            //
+            // Manual input process...
+            //
+            $("#btn-trainclass-information").click(function () {
+                $('#trainclass-information').slideToggle(500);
+            });
+            $("#btn-list-student").click(function () {
+                $('#list-student').slideToggle(500);
+            });
+            //
+        </script>
     </body>
 </html>
