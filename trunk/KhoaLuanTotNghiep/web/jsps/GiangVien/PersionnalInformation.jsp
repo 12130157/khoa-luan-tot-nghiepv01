@@ -165,7 +165,16 @@
                     <div id="list-trainclass" style="display: none;">
                     </div>
                 </div>
-                
+                <%-- Lich su cac lop da day --%>
+                <br />
+                <div class="clear"></div>
+                <div class="range">
+                    <h3><span id="btn-show-closed-class" class="atag">
+                        Các lớp đã dạy xong
+                    </span></h3>
+                    <div id="list-closed-trainclass" style="display: none;">
+                    </div>
+                </div>
                 <%-- Thong bao nghi day --%>
                 <br />
                 <div class="range">
@@ -227,6 +236,7 @@
     <SCRIPT language="javascript">
         var http = createRequestObject();
         var loadTrainClassOfLecturer = false;
+        var loadCloseClassByLecturer = false;
         
         $("#btn-show-send-notify").click(function () {
             $('#delay-schedule').slideToggle(500);
@@ -248,6 +258,16 @@
         $("#btn-persional-information").click(function () {
             $('#persional-information').slideToggle(500);
         });
+        
+        $("#btn-show-closed-class").click(function () {
+            $('#list-closed-trainclass').slideToggle(500);
+            if (!loadCloseClassByLecturer) {
+                var lecturerId = document.getElementById("txt-lecturer-id").value;
+                getClosedTrainClassByLecturer(lecturerId);
+                loadCloseClassByLecturer = true;
+            }
+        });
+        //
         
         ////////////////////////
         //     SEND REQUEST   //
@@ -366,6 +386,25 @@
                 return false;
 
             return true;
+        }
+        
+        function getClosedTrainClassByLecturer(lecturerId) {
+            var controller = "../../LecturerPrivateController?function=get-closed-train-class"
+                    + "&lecturer=" + lecturerId;
+            if(http){
+                http.open("GET", controller ,true);
+                http.onreadystatechange = getClosedTrainClassByLecturerHandler;
+                http.send(null);
+            } else {
+                alert("Error: http object not found");
+            }
+        }
+        
+        function getClosedTrainClassByLecturerHandler() {
+            if(http.readyState == 4 && http.status == 200){
+                var detail = document.getElementById("list-closed-trainclass");
+                detail.innerHTML = http.responseText;
+            }
         }
     </script>
     </body>
