@@ -1,6 +1,8 @@
 package uit.cnpm02.dkhp.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,7 +16,6 @@ import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.model.TrainClassID;
 import uit.cnpm02.dkhp.service.ITrainClassService;
 import uit.cnpm02.dkhp.service.TrainClassStatus;
-import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
 import uit.cnpm02.dkhp.utilities.Message;
 
@@ -295,37 +296,34 @@ public class TrainClassServiceImpl implements ITrainClassService {
     @Override
     public List<TrainClass> getCurrentTrainClass(String lecturer) {
         try {
-            List<TrainClass> results = classDAO.findByColumName("MaGV", lecturer);
-            if ((results != null) && !results.isEmpty()) {
-                for (int i = 0; i < results.size(); i++) {
-                    if (results.get(i).getStatus().getValue() 
-                            != TrainClassStatus.OPEN.getValue()) {
-                        results.remove(i);
-                        i--;
-                    }
-                }
-            }
-            
-            if ((results != null) && !results.isEmpty()) {
-            try {
-                    for (TrainClass t : results) {
-                        String subName = subjectDAO.findById(t.getSubjectCode()).getSubjectName();
-                        //String lecturerName = lectureDAO.findById(t.getLecturerCode()).getFullName();
-
-                        t.setSubjectName(subName);
-                        t.setLectturerName(lecturer);
-                    }
-                } catch (Exception ex) {
-                    Logger.getLogger(TrainClassServiceImpl.class.getName())
-                            .log(Level.SEVERE, null, ex);
-                }
-            }
+            List<TrainClass> results = classDAO.findByColumNames(
+                    new String[]{"MaGV", "TrangThai"},
+                    new Object[] {lecturer, TrainClassStatus.OPEN.getValue()});
+            updateTrainCLassInfo(results);
+            sortTrainClassBySemeterAndYear(results);
             return results;
         } catch (Exception ex) {
             Logger.getLogger(TrainClassServiceImpl.class.getName())
                     .log(Level.SEVERE, null, ex);
             return null;
         }
+    }
+    
+    private void updateTrainCLassInfo(List<TrainClass> tcs) {
+        if ((tcs != null) && !tcs.isEmpty()) {
+            try {
+                    for (TrainClass t : tcs) {
+                        String subName = subjectDAO.findById(t.getSubjectCode()).getSubjectName();
+                        //String lecturerName = lectureDAO.findById(t.getLecturerCode()).getFullName();
+
+                        t.setSubjectName(subName);
+                        //t.setLectturerName(lecturerName);
+                    }
+                } catch (Exception ex) {
+                    Logger.getLogger(TrainClassServiceImpl.class.getName())
+                            .log(Level.SEVERE, null, ex);
+                }
+            }
     }
 
     @Override
@@ -546,6 +544,42 @@ public class TrainClassServiceImpl implements ITrainClassService {
             Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return results;
+    }
+
+    @Override
+    public List<TrainClass> getClosedTrainClass(String lecturer) {
+        try {
+            List<TrainClass> results = classDAO.findByColumNames(
+                    new String[]{"MaGV", "TrangThai"},
+                    new Object[] {lecturer, TrainClassStatus.CLOSE.getValue()});
+            /*if ((results != null) && !results.isEmpty()) {
+                for (int i = 0; i < results.size(); i++) {
+                    if (results.get(i).getStatus().getValue() 
+                            != TrainClassStatus.OPEN.getValue()) {
+                        results.remove(i);
+                        i--;
+                    }
+                }
+            }*/
+            
+            updateTrainCLassInfo(results);
+            sortTrainClassBySemeterAndYear(results);
+            return results;
+        } catch (Exception ex) {
+            Logger.getLogger(TrainClassServiceImpl.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    private void sortTrainClassBySemeterAndYear(List<TrainClass> tcs) {
+        Collections.sort(tcs, new Comparator<TrainClass>() {
+
+            @Override
+            public int compare(TrainClass o1, TrainClass o2) {
+                return o1.getStartDate().before(o2.getStartDate()) ? 1 : -1;
+            }
+        });
     }
 
 }
