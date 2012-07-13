@@ -34,6 +34,9 @@ public class TrainClass extends AdvancedAbstractJdbcModel<TrainClassID>{
     private TrainClassStatus status;
     private int numTC;
     private int updateScore;
+    
+    public static final int SCORE_NOT_UPDATED = 0;
+    public static final int SCORE_UPDATED = 1;
 
     public TrainClass() {
     }
