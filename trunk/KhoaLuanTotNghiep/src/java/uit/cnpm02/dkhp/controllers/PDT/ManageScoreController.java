@@ -42,10 +42,8 @@ import uit.cnpm02.dkhp.model.TrainClassID;
 import uit.cnpm02.dkhp.model.type.TaskStatus;
 import uit.cnpm02.dkhp.model.type.TaskType;
 import uit.cnpm02.dkhp.service.IFileUploadService;
-import uit.cnpm02.dkhp.service.ILecturerService;
 import uit.cnpm02.dkhp.service.TrainClassStatus;
 import uit.cnpm02.dkhp.service.impl.FileUploadServiceImpl;
-import uit.cnpm02.dkhp.service.impl.LecturerServiceImpl;
 import uit.cnpm02.dkhp.service.impl.ScoreProcessUtil;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
@@ -61,7 +59,6 @@ public class ManageScoreController extends HttpServlet {
 
     private IFileUploadService fuService = new FileUploadServiceImpl();
     private ScoreProcessUtil scoreUtil = new ScoreProcessUtil();
-    private ILecturerService lecturerService = new LecturerServiceImpl();
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
@@ -81,8 +78,7 @@ public class ManageScoreController extends HttpServlet {
             String action = (String) request.getParameter("function");
 
             if (action.equals("manage")) {
-                //List<String> classDetail = getListRegisteredClass();
-                //session.setAttribute("list-subject", classDetail);
+                session.setAttribute("list-miss-core-class", getMissingScoreClass());
                 response.sendRedirect(path);
             } else if (action.equals("get-files")) {
                 doGetFileScoresFromLecturer(request, response);
@@ -883,6 +879,37 @@ public class ManageScoreController extends HttpServlet {
             results.add(sr);
         }
         return results;
+    }
+
+    // Danh sach cac lop chua dc cap nhat diem
+    private List<TrainClass> getMissingScoreClass() {
+        TrainClassDAO tcDao = DAOFactory.getTrainClassDAO();
+        List<TrainClass> tcs = new ArrayList<TrainClass>(10);
+        try {
+            tcs = tcDao.findByColumName("CapNhatDiem", TrainClass.SCORE_NOT_UPDATED);
+            //return null;
+        } catch (Exception ex) {
+            Logger.getLogger(ManageScoreController.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+        if (!tcs.isEmpty()) {
+            SubjectDAO subDao = DAOFactory.getSubjectDao();
+            LecturerDAO lecturerDao = DAOFactory.getLecturerDao();
+            for (TrainClass tc : tcs) {
+                try {
+                    tc.setSubjectName(subDao.findById(tc.getSubjectCode()).getSubjectName());
+                } catch(Exception ex) {
+                    //
+                }
+                
+                try {
+                    tc.setLectturerName(lecturerDao.findById(tc.getLecturerCode()).getFullName());
+                } catch(Exception ex) {
+                    //
+                }
+            }
+        }
+        return tcs;
     }
     
 }
