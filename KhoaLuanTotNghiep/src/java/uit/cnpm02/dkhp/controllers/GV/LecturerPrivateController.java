@@ -3,6 +3,8 @@ package uit.cnpm02.dkhp.controllers.GV;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -11,6 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import uit.cnpm02.dkhp.DAO.DAOFactory;
+import uit.cnpm02.dkhp.DAO.TrainClassDAO;
 import uit.cnpm02.dkhp.model.Lecturer;
 import uit.cnpm02.dkhp.model.Task;
 import uit.cnpm02.dkhp.model.TrainClass;
@@ -19,6 +23,7 @@ import uit.cnpm02.dkhp.model.type.TaskType;
 import uit.cnpm02.dkhp.service.ILecturerService;
 import uit.cnpm02.dkhp.service.IPDTService;
 import uit.cnpm02.dkhp.service.ITrainClassService;
+import uit.cnpm02.dkhp.service.TrainClassStatus;
 import uit.cnpm02.dkhp.service.impl.LecturerServiceImpl;
 import uit.cnpm02.dkhp.service.impl.PDTServiceImpl;
 import uit.cnpm02.dkhp.service.impl.TrainClassServiceImpl;
@@ -54,10 +59,7 @@ public class LecturerPrivateController extends HttpServlet {
         
         try {
             String action = request.getParameter("function");
-            /*if (action.equalsIgnoreCase(LecturerPrivateSupport
-                    .DEFAULT.getValue())) {
-                doDefaultAction(request, response);
-            }*/if (action.equalsIgnoreCase(LecturerPrivateSupport
+            if (action.equalsIgnoreCase(LecturerPrivateSupport
                     .LOAD_PERSIONAL_INFO.getValue())) {
                 doDefaultAction(request, response);
             } else if (action.equalsIgnoreCase(LecturerPrivateSupport
@@ -69,6 +71,9 @@ public class LecturerPrivateController extends HttpServlet {
             } else if (action.equalsIgnoreCase(LecturerPrivateSupport
                     .SEND_REQUEST.getValue())) {
                 doSendRequest(request, response);
+            } else if (action.equalsIgnoreCase(LecturerPrivateSupport
+                    .GET_CLOSED_TRAIN_CLASS.getValue())) {
+                doLoadClosedTrainClassForLecturer(request, response);
             }
         } catch (Exception ex) {
             out.println("Đã xảy ra sự cố: </br>" + ex);
@@ -167,16 +172,19 @@ public class LecturerPrivateController extends HttpServlet {
                     + "<th>STT</th>"
                     + "<th>Mã Lớp</th>"
                     + "<th>Môn học</th>"
+                    + "<th>Học kỳ/Năm học</th>"
                     + "<th>Download</th>"
                     + "</tr>");
             for (int i = 0; i < trainClasses.size(); i++) {
-                String key = trainClasses.get(i).getId().getClassCode() + ";"
-                        + trainClasses.get(i).getId().getYear() + ";"
-                        + trainClasses.get(i).getId().getSemester();
+                TrainClass tcTemp = trainClasses.get(i);
+                String key = tcTemp.getId().getClassCode() + ";"
+                        + tcTemp.getId().getYear() + ";"
+                        + tcTemp.getId().getSemester();
                 out.println("<tr>"
                         + "<td>" + (i + 1) + "</td>"
-                        + "<td>" + trainClasses.get(i).getId().getClassCode() + "</td>"
-                        + "<td>" + trainClasses.get(i).getSubjectName() + "</td>"
+                        + "<td>" + tcTemp.getId().getClassCode() + "</td>"
+                        + "<td>" + tcTemp.getSubjectName() + "</td>"
+                        + "<td>" + tcTemp.getId().getSemester() + "\\" + tcTemp.getId().getYear() + "</td>"
                         + "<td><a href=\"../../DownloadController?action=download-empty-file-score&key="
                         + key + "\"><img src=\"../../imgs/download.png\" alt=\"Download\" title=\"Tải bảng điểm\" /></a></td>"
                         + "</tr>");
@@ -288,13 +296,25 @@ public class LecturerPrivateController extends HttpServlet {
             out.println("Yêu cầu được gửi thành công");
         }
     }
+
+    private void doLoadClosedTrainClassForLecturer(HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        String lecturerId = (String) request.getParameter("lecturer");
+        List<TrainClass> trainClasses =
+                trainClassSeervice.getClosedTrainClass(lecturerId);
+        
+        
+        
+        writeOutListTrainClass(response.getWriter(), trainClasses);
+    }
 //#############################################
     public enum LecturerPrivateSupport {
         DEFAULT("default"),
         GET_TRAIN_CLASS("get-train-class"),
         LOAD_PERSIONAL_INFO("load-persional-infor"),
         UPDATE("update"),
-        SEND_REQUEST("send-request");        
+        SEND_REQUEST("send-request"),
+        GET_CLOSED_TRAIN_CLASS("get-closed-train-class");        
         
         
         private String description;
