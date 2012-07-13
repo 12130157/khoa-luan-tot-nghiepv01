@@ -114,6 +114,8 @@ public class ManageScoreController extends HttpServlet {
                 List<Student> listStudent = searchStudent(searchValue);
                 writeListStringToClient(listStudent, out);
                 return;
+            } else if (action.equalsIgnoreCase("score-updated")){
+                markTrainClassAsUpdatedScore(request, response);
             }
         } catch (Exception ex) {
             Logger.getLogger(ManageScoreController.class.getName())
@@ -462,6 +464,12 @@ public class ManageScoreController extends HttpServlet {
         return scoreUtil.importScore(id);
     }
     
+    /**
+     * 
+     * @param out
+     * @param trainClass (id)
+     * @param result 
+     */
     private void writeOutImportScore(PrintWriter out, String trainClass,
             ImportScoreResult result) {
         // Write out message
@@ -495,6 +503,13 @@ public class ManageScoreController extends HttpServlet {
                 out.println("<br /> \t" + (i +1) + " - " + students.get(i).getFullName());
             }
         }
+        out.print("<div id=\"close-class-msg\">");
+        out.print("<div id=\"btn-mark-as-update-score\" class=\"button-1\">");
+        out.print("<span class=\"atag\""
+                + " onclick=\"markClassToUpdatedScore('" + trainClass + "')\">"
+                + "<img src=\"../../imgs/check.png\"/>Đóng lớp</span>");
+        out.print("</div>");
+        out.println("</div>");
     }
 
     /**
@@ -910,6 +925,35 @@ public class ManageScoreController extends HttpServlet {
             }
         }
         return tcs;
+    }
+
+    private void markTrainClassAsUpdatedScore(HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        PrintWriter out = response.getWriter();
+        
+        String id = (String) request.getParameter("trainclss_id");
+        TrainClassDAO tcDao = DAOFactory.getTrainClassDAO();
+        TrainClassID ID = new TrainClassID(id, Constants.CURRENT_YEAR,
+                Constants.CURRENT_SEMESTER);
+        TrainClass tc = null;
+        try {
+            tc = tcDao.findById(ID);
+            if (tc != null) {
+                tc.setUpdateScore(TrainClass.SCORE_UPDATED);
+                tc.setStatus(TrainClassStatus.CLOSE);
+                tcDao.update(tc);
+                out.println("<br />Lớp đã đóng...");
+                return;
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ManageScoreController.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            out.println("<br />Lỗi: " + ex.toString());
+            return;
+        }
+        if (tc == null) {
+            out.println("Lỗi, lớp chưa được đóng. Vui lòng vào trang quản lý lớp để thử lại.");
+        }
     }
     
 }
