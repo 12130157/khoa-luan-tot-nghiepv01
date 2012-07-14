@@ -114,9 +114,38 @@
                         
                     <div id="msg-response"></div>
                 </div>
-
                 <div class="clear"></div>
-                
+                <%-- Helper --%>
+                <div class="range">
+                    <h3><span id="btn-form-helper" class="atag">Hướng dẫn</span></h3> 
+                    <div id="form-helper" style="display: none;">
+                        <div style="font-size: 12px; font-weight: bold; font-style: italic;">
+                            <p>Trang cập nhật chương trình đào tạo (TCĐT) cho phép Admin thay đổi thông tin của một
+                            CTĐT</p>
+                            <p>
+                                Để thêm môn học vào CTĐT:<br/><br/>
+                                - Từ mục Cập nhật Chương trình đào tạo, Admin chọn môn học và học kỳ <br />
+                                - Để thêm một môn học khác, Admin click vào nút <img src="../../imgs/icon/add.png" title="add" alt="add"/><br />
+                                - Để xóa một môn đã chọn, Admin click vào nút <img src="../../imgs/icon/delete.png" title="Xóa" alt="Xóa"/><br />
+                                - Cuối cùng, Admin click vào nút 
+                                <span class="button-1" ><img src="../../imgs/check.png" />Submit</span>
+                                để hoàn thành việc thêm môn học vào CTĐT.
+                            </p>
+                            <br/>
+                            <p>
+                                Để Xóa môn hiện có trong CTĐT:<br/>
+                                - Từ mục <b>Chương trình đào tạo</b>, Admin chọn các môn học cần xóa<br />
+                                - Admin click button
+                                <span class="button-1" ><img src="../../imgs/check.png" />Xóa</span>
+                                để hoàn thành việc xóa môn học khỏi CTĐT.
+                            </p>
+                            <br/>
+                            <p>
+                                <i>LocNGuyen: locnv.uit@gmail.com</i>
+                            </p>
+                        </div>
+                    </div>
+                </div>
                 <br />
             </div><!--End Contents-->
 
@@ -139,6 +168,9 @@
             
             $("#btn-list-existed-training-pro").click(function () {
                 $('#list-existed-training-pro').slideToggle(500);
+            });
+            $("#btn-form-helper").click(function () {
+                $('#form-helper').slideToggle(500);
             });
             
             function addSubjectToTrainProg() {
