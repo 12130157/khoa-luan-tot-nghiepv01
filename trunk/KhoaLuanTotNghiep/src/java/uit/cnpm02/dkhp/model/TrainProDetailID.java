@@ -60,5 +60,22 @@ public class TrainProDetailID implements IID{
         this.trainProgID = idValues[0].toString();
         this.subjectID = idValues[1].toString();
     }
-    
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof TrainProDetailID))
+            return false;
+
+        TrainProDetailID other = (TrainProDetailID) obj;
+        return (this.getTrainProgID().equals(other.getTrainProgID()) &&
+                this.getSubjectID().equals(other.getSubjectID()));
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 17 * hash + (this.trainProgID != null ? this.trainProgID.hashCode() : 0);
+        hash = 17 * hash + (this.subjectID != null ? this.subjectID.hashCode() : 0);
+        return hash;
+    }
 }

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package uit.cnpm02.dkhp.model;
 
 import uit.cnpm02.dkhp.access.advancedJDBC.AdvancedAbstractJdbcModel;
@@ -17,7 +13,8 @@ public class TrainProDetail extends AdvancedAbstractJdbcModel<TrainProDetailID> 
     
     /**Subject code**/
     private String subjectCode;
-    
+    private String subjectName;
+
     private int semester;
 
     public TrainProDetail() {
@@ -28,6 +25,14 @@ public class TrainProDetail extends AdvancedAbstractJdbcModel<TrainProDetailID> 
         this.programCode = programCode;
         this.subjectCode = subjectCode;
         this.semester = semester;
+    }
+    
+    public String getSubjectName() {
+        return subjectName;
+    }
+
+    public void setSubjectName(String subjectName) {
+        this.subjectName = subjectName;
     }
 
     public int getSemester() {
@@ -106,5 +111,26 @@ public class TrainProDetail extends AdvancedAbstractJdbcModel<TrainProDetailID> 
     @Override
     public Object[] getIdColumnValues() {
         return getId().getIDValues();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (! (obj instanceof TrainProDetail)) {
+            return false;
+        }
+        TrainProDetailID a;
+        TrainProDetail other = (TrainProDetail) obj;
+        
+        return this.getId().equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 59 * hash + (this.programCode != null ? this.programCode.hashCode() : 0);
+        hash = 59 * hash + (this.subjectCode != null ? this.subjectCode.hashCode() : 0);
+        hash = 59 * hash + (this.subjectName != null ? this.subjectName.hashCode() : 0);
+        hash = 59 * hash + this.semester;
+        return hash;
     }
 }
