@@ -102,7 +102,7 @@
                 </div>
                 <div>
                     <div id="list-student">
-                        <table id ="list-studentFind" name = "list-studentFind">
+                        <table class="general-table" id="list-studentFind" name="list-studentFind">
                            
                         </table>
                     </div>
