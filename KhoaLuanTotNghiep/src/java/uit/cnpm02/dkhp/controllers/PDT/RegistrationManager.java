@@ -112,7 +112,7 @@ public class RegistrationManager extends HttpServlet {
         String studentName = studentService.getStudent(mssv).getFullName();
         
         out.println("Danh sách các lớp học <b>" + studentName + "</b> đã đăng ký:");
-        out.println("<table id = \"student-report\" name = \"student-report\" class=\"general-table\" style=\"float: right; width: 350;\">");
+        out.println("<table id = \"student-report\" name = \"student-report\" class=\"general-table\" style=\"left: right; width: 450; margin-left: 32px;\">");
 
         out.println("<tr><th>STT</th><th>Mã lớp</th><th>Môn học</th><th>Số TC</th><th>Xóa</th</tr>");
         for (int i = 0; i < datas.size(); i++) {
@@ -128,7 +128,7 @@ public class RegistrationManager extends HttpServlet {
             String method = String.format(" onclick=deleteTrainClassRegistration('%s','%s')>",
                                                       mssv, datas.get(i).getId().getClassCode());
             out.println("<td>"+numTC+"</td>");
-            out.println("<td><a href=\'#\' " + method + "Xóa </a> </td>");
+            out.println("<td><span class=\"atag\" " + method + "Xóa </span> </td>");
             out.println("</tr>");
             sumTC+= numTC;
             } catch (Exception ex) {
@@ -151,9 +151,9 @@ public class RegistrationManager extends HttpServlet {
             out.println("<td> " + datas.get(i).getId() + " </td>");
             String method = String.format(" onclick=getDetailStudentReport('%s')>",
                                                         datas.get(i).getId());
-            out.println("<td> <a href=\'#\'" + method
+            out.println("<td> <span class=\"atag\"" + method
                     + datas.get(i).getFullName()
-                    + "</a> </td>");
+                    + "</span> </td>");
             out.println("<td> " + datas.get(i).getClassCode() + " </td>");
             out.println("</tr>");// <a hreft > abc </a>
         }
