@@ -50,6 +50,18 @@ function hideStuff(stuffId, btnId, btnShowLabel, btnHideLabel) {
 }
 */
 
+function highLightSelectRow(chb, row) {
+    // validate condition
+
+    var trobj = document.getElementById(row);
+
+    if(chb.checked){
+        trobj.setAttribute("class", 'datahighlight');
+    } else {
+        trobj.removeAttribute("class", 'datahighlight');
+    }
+}
+
 $(document).ready(function(){
     $('.general-table tr').hover(function(){
         $(this).children().addClass('mouseover_tr');
