@@ -74,7 +74,7 @@
                 <%-- List lecturers (Table)--%>
                     <table id="tablelistlecturer" name="tablelistlecturer" class="general-table">
                         <tr>
-                            <th><INPUT type="checkbox" name="chkAll" onclick="selectAll('tablelistlecturer', 0)" /></td>
+                            <th><INPUT type="checkbox" name="chkAll" onclick="selectAll('tablelistlecturer', 0)" /></th>
                             <th> STT </th>
                             <th><span class="atag" onclick="sort('MaGV')" > Mã GV </span></th>
                             <th><span class="atag" onclick="sort('HoTen')" > Họ Tên </span></th>
@@ -91,8 +91,8 @@
                         </tr>
                         <%if ((listLecturer != null) && !listLecturer.isEmpty()) {%>
                         <% for (int i = 0; i < listLecturer.size(); i++) {%>
-                        <tr>
-                            <td><INPUT type="checkbox" name="chk<%= i%>"/></td>
+                        <tr id="tr_lecturer<%=i%>">
+                            <td><INPUT type="checkbox" name="chk<%= i%>" onchange="highLightSelectRow(this, 'tr_lecturer<%=i%>')" />
                             <td> <%= (i + 1)%> </td>
                             <td> <%= listLecturer.get(i).getId()%> </td> 
                             <td> <%= listLecturer.get(i).getFullName()%> </td>
