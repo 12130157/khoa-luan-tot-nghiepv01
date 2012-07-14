@@ -96,8 +96,10 @@
                             </tr>
                             <%if ((listStudent != null) && !listStudent.isEmpty()) {%>
                             <% for (int i = 0; i < listStudent.size(); i++) {%>
-                            <tr>
-                            <td><INPUT type="checkbox" value="aaaa" name="chk<%= i%>"/></td>
+                            <tr id="tr_student<%= i%>">
+                            <td>
+                                <INPUT type="checkbox" value="aaaa" name="chk<%= i%>" onchange="highLightSelectRow(this, 'tr_student<%=i%>')" />
+                            </td>
                             <td> <%= (i + 1)%> </td>
                             <td> <%= listStudent.get(i).getId()%> </td> 
                             <td> <%= listStudent.get(i).getFullName()%> </td>
@@ -158,7 +160,7 @@
                 <%@include file="../Footer.jsp" %>
             </div><!--End footer-->
         </div><!--End Wrapper-->
-    </body>
+    
 
     <script src="../../javascripts/UtilTable.js"></script>
     <script src="../../javascripts/AjaxUtil.js"></script>
@@ -366,4 +368,5 @@
          }
         
     </script>
+    </body>
 </html>
