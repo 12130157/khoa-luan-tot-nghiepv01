@@ -19,7 +19,6 @@ import uit.cnpm02.dkhp.DAO.DetailTrainDAO;
 import uit.cnpm02.dkhp.DAO.FacultyDAO;
 import uit.cnpm02.dkhp.DAO.LecturerDAO;
 import uit.cnpm02.dkhp.DAO.RegistrationDAO;
-import uit.cnpm02.dkhp.DAO.StudentDAO;
 import uit.cnpm02.dkhp.DAO.SubjectDAO;
 import uit.cnpm02.dkhp.DAO.TrainClassDAO;
 import uit.cnpm02.dkhp.model.DetailTrain;
@@ -204,9 +203,58 @@ public class ManageClassController extends HttpServlet {
             Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    private boolean checkRegistrationListWithSameClass(List<Registration> studentReg,TrainClass sameClass){
+        boolean result= false;
+        for(int i =0; i<studentReg.size();i++){
+            try {
+                TrainClassID classID = new TrainClassID(studentReg.get(i).getId().getClassCode(), Constants.CURRENT_YEAR, Constants.CURRENT_SEMESTER);
+                TrainClass curentClass= classDAO.findById(classID);
+                if(curentClass.getStudyDate()== sameClass.getStudyDate()){
+                    result= true;
+                    break;
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return result;
+    }
+    private String getValidTrainClassToMoveRegistration(Registration curentReg, List<TrainClass> sameClass ){
+        try {
+            String studentCode = curentReg.getId().getStudentCode();
+            List<Registration> studentReg = regDAO.findAllByStudentCode(studentCode);
+            //tim lop trong va khong trung lich
+            for(int i =0; i<sameClass.size(); i++){
+                int numAllow = sameClass.get(i).getNumOfStudent() - sameClass.get(i).getNumOfStudentReg();
+                if(numAllow > 0 && checkRegistrationListWithSameClass(studentReg, sameClass.get(i))== false )
+                return sameClass.get(i).getId().getClassCode();
+            }
+            //tim lop khong trung lich
+            for(int i =0; i<sameClass.size(); i++){
+                if(!checkRegistrationListWithSameClass(studentReg, sameClass.get(i)) )
+                    return sameClass.get(i).getId().getClassCode();
+            }
+            return sameClass.get(0).getId().getClassCode();
+        } catch (Exception ex) {
+            Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
+        }
+    }
     private void moveAllStudentToSameClass(TrainClass trainclass, List<Registration> registration, List<TrainClass> sameClass) {
-        for (int j = 0; j < sameClass.size(); j++) {
+        while (registration != null && !registration.isEmpty()) {
+            try {
+                int moveReg = registration.size() - 1;
+                Registration temp = registration.get(moveReg);
+                regDAO.delete(temp);
+                String newClassCode = getValidTrainClassToMoveRegistration(temp, sameClass);
+                temp.getId().setClassCode(newClassCode);
+                regDAO.add(temp);
+                registration.remove(moveReg);
+            } catch (Exception ex) {
+                Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        /*for (int j = 0; j < sameClass.size(); j++) {
             int k = 0;
             int l = 0;
             if (registration != null && !registration.isEmpty()) {
@@ -252,7 +300,7 @@ public class ManageClassController extends HttpServlet {
             } catch (Exception ex) {
                 Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
+        }*/
     }
 
     private void autoCancelClass(HttpServletRequest request, HttpServletResponse response) {
@@ -290,6 +338,7 @@ public class ManageClassController extends HttpServlet {
                         out.println("Đã hủy lớp thành công.");
                     } else {
                         moveAllStudentToSameClass(trainclass, registration, sameClass);
+                        classDAO.delete(trainclass);
                         out.println("Lớp có " + numReg + " sinh viên đăng ký.");
                         out.println("<br>");
                         out.println("Hiện có " + sameClass.size() + " lớp học khác dạy môn học " + trainclass.getSubjectName() + ".");
