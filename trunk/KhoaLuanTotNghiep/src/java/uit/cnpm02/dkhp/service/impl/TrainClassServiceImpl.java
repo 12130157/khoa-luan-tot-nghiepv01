@@ -11,9 +11,12 @@ import uit.cnpm02.dkhp.DAO.LecturerDAO;
 import uit.cnpm02.dkhp.DAO.RuleDAO;
 import uit.cnpm02.dkhp.DAO.SubjectDAO;
 import uit.cnpm02.dkhp.DAO.TrainClassDAO;
+import uit.cnpm02.dkhp.DAO.TrainProgramDAO;
 import uit.cnpm02.dkhp.model.Rule;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.model.TrainClassID;
+import uit.cnpm02.dkhp.model.TrainProDetail;
+import uit.cnpm02.dkhp.model.TrainProgram;
 import uit.cnpm02.dkhp.service.ITrainClassService;
 import uit.cnpm02.dkhp.service.TrainClassStatus;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
@@ -161,13 +164,29 @@ public class TrainClassServiceImpl implements ITrainClassService {
     }
 
     private ExecuteResult internal_checkCreateNewTrainClass(TrainClass obj) throws Exception {
-        ExecuteResult result = new ExecuteResult(true, Message.ADD_TRAINCLASS_SUCCSESS);
-        boolean checkPass = true;
+        //ExecuteResult result = new ExecuteResult(true, Message.ADD_TRAINCLASS_SUCCSESS);
+        //boolean checkPass = true;
+         //
+            //Check subject in program of faculty            
+            //
+            String subjectCode = obj.getSubjectCode();
+            if(subjectDAO.findById(subjectCode).getType()==0){
+            String facultyCode= subjectDAO.findById(subjectCode).getFacultyCode();
+            List<String> proCodeList = getListProCodeByFaculty(facultyCode);
+            List<TrainProDetail> detailTrainProList = DAOFactory.getTrainProgDetailDAO().findByColumNameAndValueList("MaCTDT", proCodeList);
+            if(checkSubjectInListProgram(subjectCode, detailTrainProList)==false){
+              String message = "<b>Lớp không hợp lệ: Môn học " + subjectCode
+                        + " không thuộc chương trình đào tạo nào của khoa "+facultyCode+"</b>";
+                        //result.setMessage(Message.ADD_TRAINCLASS_ERROR_ROOM_DUPLECATE);
+                return new ExecuteResult(false, message);
+            }
+            }
             TrainClass classExisted;
             classExisted = classDAO.findById(obj.getId());
             if (classExisted != null) {
-                result.setMessage(Message.ADD_TRAINCLASS_ERROR_CLASS_EXISTED);
-                checkPass = false;
+                return new ExecuteResult(false, Message.ADD_TRAINCLASS_ERROR_CLASS_EXISTED);
+                //result.setMessage(Message.ADD_TRAINCLASS_ERROR_CLASS_EXISTED);
+                //checkPass = false;
             }
             
             //
@@ -193,7 +212,6 @@ public class TrainClassServiceImpl implements ITrainClassService {
                 String msg = "Số SV không thỏa mãn (" + numMin + " < SLSV < " + numMax +").";
                 return new ExecuteResult(false, msg);
             }
-                        
             //////
             // Room - In a time --> 1 train class
             //
@@ -204,9 +222,10 @@ public class TrainClassServiceImpl implements ITrainClassService {
                 String message = "<b>Lớp không hợp lệ: Tại phòng " + obj.getClassRoom()
                         + ", ca " + obj.getShift() + ", ngày thứ " + obj.getStudyDate()
                         + " có lớp " + existedClasses.get(0).getId().getClassCode() + "</b>";
-                        //result.setMessage(Message.ADD_TRAINCLASS_ERROR_ROOM_DUPLECATE);
-                result.setMessage(message);
-                checkPass = false;
+                       //result.setMessage(Message.ADD_TRAINCLASS_ERROR_ROOM_DUPLECATE);
+                //result.setMessage(message);
+                //checkPass = false;
+                return new ExecuteResult(false, message);
             }
             //////
             // Lecturer - In a time --> 1 train class
@@ -218,19 +237,55 @@ public class TrainClassServiceImpl implements ITrainClassService {
                 String message = "<b>Lớp không hợp lệ: Giảng viên " + obj.getLecturerCode()
                         + " bị trùng giờ tại lớp: " + existedClasses.get(0).getId().getClassCode() + "</b>";
                         //result.setMessage(Message.ADD_TRAINCLASS_ERROR_ROOM_DUPLECATE);
-                result.setMessage(message);
-                result.setMessage(Message.ADD_TRAINCLASS_ERROR_LECTURER_DUPLECATE);
-                checkPass = false;
+                //result.setMessage(message);
+                //result.setMessage(Message.ADD_TRAINCLASS_ERROR_LECTURER_DUPLECATE);
+                //checkPass = false;
+                 return new ExecuteResult(false, message);
             }
 
-            if (!checkPass) {
-                result.setIsSucces(false);
-                return result;
-            }
+            //if (!checkPass) {
+              //  result.setIsSucces(false);
+              //  return result;
+           // }
             
-            return result;
+            return new ExecuteResult(true, Message.ADD_TRAINCLASS_SUCCSESS);
     }
-    
+    private boolean checkSubjectInListProgram(String subjectCode, List<TrainProDetail> detailTrainProList){
+        boolean result = false;
+        for(int i=0; i<detailTrainProList.size(); i++){
+            if(detailTrainProList.get(i).getId().getSubjectID().equalsIgnoreCase(subjectCode)){
+             result=true;
+             break;
+            }                
+        }
+        return result;
+    }
+    private List<String> getListProCodeByFaculty(String facultyCode){
+        List<String> result = new ArrayList<String>(20);
+        try {
+            TrainProgramDAO trainDao= DAOFactory.getTrainProgramDAO();
+            List<TrainProgram> trainList = trainDao.findByColumName("MaKhoa", facultyCode);
+            for(int i=0; i<trainList.size(); i++){
+                if(checkItemInList(trainList.get(i).getId(), result)==false){
+                    result.add(trainList.get(i).getId());
+                }
+            }
+            return result;
+        } catch (Exception ex) {
+            Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    private boolean checkItemInList(String item, List<String> list){
+        boolean result= false;
+        for(int i =0; i<list.size(); i++){
+            if(list.get(i).equalsIgnoreCase(item)){
+                result=true;
+                break;
+            }
+        }
+        return result;
+    }
     @Override
     public ExecuteResult updateTrainClass(TrainClass obj) {
         //TODO: implementation.
