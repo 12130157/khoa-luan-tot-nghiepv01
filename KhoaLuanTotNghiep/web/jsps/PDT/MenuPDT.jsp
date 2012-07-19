@@ -53,10 +53,11 @@
              </li>
              <li><a href=""> Đào tạo </a>
                  <ul>
-                     <li><a href="../../CourseManager?action=default"> Khóa học</a></li>
-                     <li><a href="../../FacultyManager?action=default"> Quản lý khoa</a></li>
-                     <li><a href="../../TrainingProgramControler?action=default"> Chương trình đào tạo</a></li>
                      <li><a href="../../StudentClassController?action=default"> Quản lý lớp</a></li>
+                     <li><a href="../../FacultyManager?action=default"> Quản lý khoa</a></li>
+                     <li><a href="../../CourseManager?action=default"> Quản lý khóa học</a></li>
+                     <li><a href="../../TrainingProgramControler?action=default"> Chương trình đào tạo</a></li>
+                     <li><a href="DetailTrainManager.jsp"> Chi tiết giảng dạy</a></li>
                  </ul>
              </li>
              <li><a href="../../ManageScoreController?function=manage"> Điểm cuối kỳ </a></li>

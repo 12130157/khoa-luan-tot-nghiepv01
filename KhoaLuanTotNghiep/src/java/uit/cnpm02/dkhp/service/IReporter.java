@@ -1,6 +1,8 @@
 package uit.cnpm02.dkhp.service;
 
 import java.util.List;
+import uit.cnpm02.dkhp.model.DetailTrain;
+import uit.cnpm02.dkhp.model.Lecturer;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.model.TrainClass;
 
@@ -35,8 +37,10 @@ public interface IReporter {
     List<TrainClass> sort(String sessionId, String by, String type);
     
     //
-    // Student report
+    // Student report and lecturer
     //
+    List<DetailTrain> getDetainTrainByLecturer(String lecturerCode);
+    List<Lecturer> searchLecturer(String value);
     List<Student> searchStudent(String key);
     List<TrainClass> getTrainClassRegistered(String sessionId, String mssv, boolean fullInfor);
     List<TrainClass> getTrainClassRegistered(String mssv, String year, int semeter);
