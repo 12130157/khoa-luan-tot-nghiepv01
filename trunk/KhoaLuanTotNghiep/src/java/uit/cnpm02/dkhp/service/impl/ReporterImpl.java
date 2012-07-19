@@ -9,11 +9,14 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
+import uit.cnpm02.dkhp.DAO.DetailTrainDAO;
 import uit.cnpm02.dkhp.DAO.LecturerDAO;
 import uit.cnpm02.dkhp.DAO.RegistrationDAO;
 import uit.cnpm02.dkhp.DAO.StudentDAO;
 import uit.cnpm02.dkhp.DAO.SubjectDAO;
 import uit.cnpm02.dkhp.DAO.TrainClassDAO;
+import uit.cnpm02.dkhp.model.DetailTrain;
+import uit.cnpm02.dkhp.model.Lecturer;
 import uit.cnpm02.dkhp.model.Registration;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.model.TrainClass;
@@ -31,6 +34,7 @@ public class ReporterImpl implements IReporter {
     private RegistrationDAO regDao;
     private TrainClassDAO classDao;
     private SubjectDAO subjectDao;
+    private LecturerDAO lecturerDao;
     
     /**
      * Keep back data for search purpose
@@ -48,6 +52,7 @@ public class ReporterImpl implements IReporter {
         regDao = DAOFactory.getRegistrationDAO();
         classDao = DAOFactory.getTrainClassDAO();
         subjectDao = DAOFactory.getSubjectDao();
+        lecturerDao= DAOFactory.getLecturerDao();
     }
 
     @Override
@@ -208,7 +213,6 @@ public class ReporterImpl implements IReporter {
         String year = Constants.CURRENT_YEAR;
         int semeter = Constants.CURRENT_SEMESTER;
         TrainClassID id = new TrainClassID(classId, year, semeter);
-        LecturerDAO lecturerDao = DAOFactory.getLecturerDao();
         try {
             TrainClass t = classDao.findById(id);
             if (t != null) {
@@ -237,9 +241,9 @@ public class ReporterImpl implements IReporter {
      * @param semeter
      * @return 
      */
+    @Override
     public TrainClass getTrainClass(String classId, String year, int semeter) {
         TrainClassID id = new TrainClassID(classId, year, semeter);
-        LecturerDAO lecturerDao = DAOFactory.getLecturerDao();
         try {
             TrainClass t = classDao.findById(id);
             if (t != null) {
@@ -259,5 +263,49 @@ public class ReporterImpl implements IReporter {
                     .log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+
+    @Override
+    public List<Lecturer> searchLecturer(String value) {
+         List<Lecturer> lecturerList = new ArrayList<Lecturer>(10);
+        try {
+            lecturerList = lecturerDao.findByColumName("HoTen", value);
+                    
+            List<Lecturer> lecturer_1 = lecturerDao.findByColumName("MaGV", value);
+            
+            if ((lecturer_1 != null) && !lecturer_1.isEmpty()) {
+                for (Lecturer s : lecturer_1) {
+                    if (!lecturerList.contains(s)) {
+                        lecturerList.add(s);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(
+                    ReporterImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return lecturerList;
+    }
+
+    @Override
+    public List<DetailTrain> getDetainTrainByLecturer(String lecturerCode) {
+        try {
+            List<DetailTrain> results = new ArrayList<DetailTrain>(10);
+            DetailTrainDAO detailTrainDao= DAOFactory.getDetainTrainDAO();
+            results= detailTrainDao.findByColumName("MaGV", lecturerCode);
+            if(results != null && !results.isEmpty() ){
+                for(int i=0; i<results.size(); i++){
+                    String subjectName= subjectDao.findById(results.get(i).getId().getSubjectCode()).getSubjectName();
+                    String lecturerName = lecturerDao.findById(results.get(i).getId().getLecturerCode()).getFullName();
+                    results.get(i).setSubjectName(subjectName);
+                    results.get(i).setLecturerName(lecturerName);
+                }
+            }
+            return results;
+        } catch (Exception ex) {
+            Logger.getLogger(ReporterImpl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
 }

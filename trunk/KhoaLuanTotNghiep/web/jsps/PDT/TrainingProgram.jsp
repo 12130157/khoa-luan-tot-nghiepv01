@@ -223,7 +223,7 @@
                 }
             }
             
-            function updateTrainPro(trainProgId) {
+            function updateTrainPro() {
                 /*var controller = "../../TrainingProgramControler?action=pre-update-train-prog"
                         + "&train-program-ID=" + trainProgId ;
                 if(http){

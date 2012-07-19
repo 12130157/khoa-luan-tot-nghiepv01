@@ -193,7 +193,7 @@ public class TrainingProgramControler extends HttpServlet {
         
         
         out.println("<div class=\"button-1\">"
-                    + "<span class=\"atag\" onclick=\"updateTrainPro('" + trainProgId + "')\" ><img src=\"../../imgs/check.png\"/>Cập nhật</span>"
+                    + "<span class=\"atag\" onclick=\"updateTrainPro()\" ><img src=\"../../imgs/check.png\"/>Cập nhật</span>"
                     + "</div>");
     }
 
