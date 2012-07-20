@@ -16,8 +16,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
+import uit.cnpm02.dkhp.DAO.DetailTrainDAO;
+import uit.cnpm02.dkhp.DAO.LecturerDAO;
+import uit.cnpm02.dkhp.DAO.SubjectDAO;
 import uit.cnpm02.dkhp.model.DetailTrain;
+import uit.cnpm02.dkhp.model.DetailTrainID;
 import uit.cnpm02.dkhp.model.Lecturer;
+import uit.cnpm02.dkhp.model.Subject;
 import uit.cnpm02.dkhp.service.IReporter;
 import uit.cnpm02.dkhp.service.impl.ReporterImpl;
 import uit.cnpm02.dkhp.utilities.Message;
@@ -37,12 +42,13 @@ public class DetailTrainManager extends HttpServlet {
      * @throws IOException 
      */
      private IReporter reportService = new ReporterImpl();
+     private LecturerDAO lecturerDao= DAOFactory.getLecturerDao();
+     private DetailTrainDAO detailDao= DAOFactory.getDetainTrainDAO();
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
-        HttpSession session = request.getSession();
         String requestAction;
         try {
           requestAction = (String) request.getParameter("action");
@@ -53,10 +59,88 @@ public class DetailTrainManager extends HttpServlet {
                                                 LECTURER_REPORT.getValue())) {
               String lecturerCode = request.getParameter("value");
               getDetailTrainByLecturer(lecturerCode,out);
+          }else if(requestAction.equals(ReportFunctionSupported.
+                                                PRE_UPDATE.getValue())){
+              preUpdateTrainDetailByLecturer(request, response);
+          }else if(requestAction.equals(ReportFunctionSupported.
+                                                ADD_DETAIL.getValue())){
+              addDetailTrain(request, response);
+          }else if(requestAction.equals(ReportFunctionSupported.
+                                                REMOVE_DETAIL.getValue())){
+              removeDetailTrain(request, response);
+          }else if(requestAction.equals(ReportFunctionSupported.
+                                                UPDATE.getValue())){
+             updateComplete(request, response);
           }
-        } finally {            
+        } finally {           
             out.close();
         }
+    }
+    private void updateComplete(HttpServletRequest request, HttpServletResponse response){
+        try {
+            PrintWriter out = response.getWriter();
+            out.println("Cập nhật thành công");
+        } catch (IOException ex) {
+            Logger.getLogger(DetailTrainManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            
+    }
+    private void writeDetailTrainListAfterUpdate(PrintWriter out, List<DetailTrain> listDetailTrain){
+        if(listDetailTrain!= null && !listDetailTrain.isEmpty()){
+            for(int i=0; i<listDetailTrain.size(); i++){
+                out.println("<option value='" + listDetailTrain.get(i).getId().getSubjectCode()+ "'>"+listDetailTrain.get(i).getSubjectName()+"</option>");
+            }
+        }
+    }
+    private void addDetailTrain(HttpServletRequest request, HttpServletResponse response){
+        PrintWriter out;
+        try {
+            out = response.getWriter();
+            String subjectCode = request.getParameter("subCode");
+            String lecCode = request.getParameter("lecCode");
+            DetailTrainID id = new DetailTrainID(lecCode, subjectCode);
+            DetailTrain checkItem = detailDao.findById(id);
+            if(checkItem == null){
+               DetailTrain detailTrain = new DetailTrain(id);
+               detailDao.add(detailTrain);
+            }
+            List<DetailTrain> listDetailTrain = getdetailTrainByLecturer(lecCode);
+            writeDetailTrainListAfterUpdate(out, listDetailTrain);
+        } catch (Exception ex) {
+           Logger.getLogger(DetailTrainManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    private void removeDetailTrain(HttpServletRequest request, HttpServletResponse response){
+       PrintWriter out;
+        try {
+            out = response.getWriter();
+            String subjectCode = request.getParameter("subCode");
+            String lecCode = request.getParameter("lecCode");
+            DetailTrainID id = new DetailTrainID(lecCode, subjectCode);
+            DetailTrain detailTrain = new DetailTrain(id);
+            detailDao.delete(detailTrain);
+            List<DetailTrain> listDetailTrain = getdetailTrainByLecturer(lecCode);
+            writeDetailTrainListAfterUpdate(out, listDetailTrain);
+        } catch (Exception ex) {
+            Logger.getLogger(DetailTrainManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+   }
+    private void preUpdateTrainDetailByLecturer(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        try {
+            HttpSession session = request.getSession();
+            SubjectDAO subjectDao= DAOFactory.getSubjectDao();
+            String lecturerCode = request.getParameter("lecturerCode");
+            List<DetailTrain> detainTrainList = getdetailTrainByLecturer(lecturerCode);
+            Lecturer lecturer= lecturerDao.findById(lecturerCode);
+            List<Subject> subjectList = subjectDao.findByColumName("MaKhoa", lecturer.getFacultyCode());
+            session.setAttribute("lecturer", lecturer);
+            session.setAttribute("detainTrainList", detainTrainList);
+            session.setAttribute("subjectList", subjectList);
+        } catch (Exception ex) {
+            Logger.getLogger(DetailTrainManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        String path = "./jsps/PDT/UpdateDetailTrain.jsp";
+        response.sendRedirect(path);
     }
     private void writeLecturerReportDetail(String lecturerCode, List<DetailTrain> datas,
                                                         PrintWriter out) {
@@ -86,9 +170,9 @@ public class DetailTrainManager extends HttpServlet {
             Logger.getLogger(DetailTrainManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    private void getDetailTrainByLecturer(String lectrerCode, PrintWriter out){
-        List<DetailTrain> detainTrainList = getdetailTrainByLecturer(lectrerCode);
-        writeLecturerReportDetail(lectrerCode, detainTrainList, out);
+    private void getDetailTrainByLecturer(String lecturerCode, PrintWriter out){
+        List<DetailTrain> detainTrainList = getdetailTrainByLecturer(lecturerCode);
+        writeLecturerReportDetail(lecturerCode, detainTrainList, out);
     }
     private List<DetailTrain> getdetailTrainByLecturer(String lecturerCode){
         return reportService.getDetainTrainByLecturer(lecturerCode);
@@ -141,7 +225,10 @@ public class DetailTrainManager extends HttpServlet {
         DEFAULT("default"), // List first page of class opened.
         SEARCH_LECTURER("search_lecturer"),
         LECTURER_REPORT("lecturer-report"),
-        DELETE("delete"),
+        PRE_UPDATE("pre-update-train-prog"),
+        UPDATE("update"),
+        ADD_DETAIL("AddDetailTrain"),
+        REMOVE_DETAIL("RemoveDetailTrain"),
         CLASS_REPORT("class-report"),
         CLASS_DETAIL("class-detail");
         
