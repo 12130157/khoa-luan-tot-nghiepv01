@@ -46,12 +46,13 @@
                     <h3><span id="btn-list-existed-class" class="atag">Chương trình đào tạo</span></h3> 
                     <div id="tbl-existed-training-pro">
                         <%-- Existed Training program --%>
-                        <div style="float: left;">
+                        <div id="list-trainprog" style="float: left;">
                             <table class="general-table" style="width: 400px;">
                                 <tr>
                                     <th>Mã CTĐT</th>
                                     <th>Khoa</th>
                                     <th>Khóa học</th>
+                                    <th></th>
                                 </tr>
                                 <%
                                 if ((trainProgs != null) && !trainProgs.isEmpty()) {
@@ -60,6 +61,7 @@
                                         <td><span class="atag" onclick="getTrainProgDetail('<%=tp.getId() %>')"> <%= tp.getId()  %></span></td>
                                         <td><%= tp.getFacultyCode() %></td>
                                         <td><%= tp.getCourseCode() %></td>
+                                        <td><span class="atag" onclick="deleteTrainProg('<%=tp.getId()%>')"><img src="../../imgs/icon/delete.png" alt="delete" title="delete"/></span></td>
                                     </tr>
                                 <%  }
                                 }
@@ -158,25 +160,44 @@
                 $('#form-create-new-training-pro').slideToggle(500);
             });
             
-            function test(clazzID) {
-                var controller = "../../StudentClassController?action=delete-student-class"
-                        + "&clazzid=" + clazzID;
+            // Delete
+            // Neu ton tai trainprog detail --> show confirm dialog, NO --> do nothing, YES --> delete
+            // Neu khong ton tai trainprog detail --> delete
+            function deleteTrainProg(trainProgId) {
+                var confirmDelete = confirm("Xác nhận xóa ?");
+                if (confirmDelete == false){
+                    alert("Delete canceled ...");
+                    return;
+                }
+                
+                var controller = "../../TrainingProgramControler?action=delete-train-prog"
+                        + "&tpid=" + trainProgId;
                 if(http){
                     http.open("GET", controller ,true);
-                    http.onreadystatechange = deleteStudentClassHandler;
+                    http.onreadystatechange = deleteTrainProgHandler;
                     http.send(null);
                 } else {
                     alert("Error: http object not found");
                 }
             }
-            
-            function testHandler() {
+            // Exist trainprog detail --> exist_trainprog_detail
+            function deleteTrainProgHandler() {
                 if(http.readyState == 4 && http.status == 200){
-                    var detail = document.getElementById("msg-response");
-                    detail.innerHTML = http.responseText;
+                    var responseValue = http.responseText;
+                    if (responseValue.indexOf("exist_trainprog_detail") == 0) {
+                        alert("Không cho phép xóa CTĐT đã tồn tại chi tiêt CTĐT");
+                        return;
+                    } else if (responseValue.indexOf("error") == 0) {
+                        alert("Lỗi: " + responseValue.substring(5, responseValue.length - 1));
+                        return;
+                    } else {
+                        var detail = document.getElementById("list-trainprog");
+                        detail.innerHTML = responseValue;
+                    }
                 }
             }
             
+            // Create new
             function createNewTrainPro() {
                 var id = document.getElementById("txt-trainprog-id").value;
                 var facultyId = document.getElementById("txt-faculty").value;
