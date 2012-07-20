@@ -15,6 +15,14 @@ public class DetailTrain extends AdvancedAbstractJdbcModel<DetailTrainID> {
     private String lecturerName;
     private String subjectName;
 
+     public DetailTrain(){
+         
+     }
+    public DetailTrain(DetailTrainID _id){
+        this.setId(_id);
+        lecturerName="";
+        subjectName="";
+    }
     public String getLecturerName() {
         return lecturerName;
     }
