@@ -65,7 +65,9 @@ public class TrainingProgramControler extends HttpServlet {
                 addSubjectToTrainProg(request, response);
             } else if (action.equalsIgnoreCase("remove-subject-to-traing-prog")) {
                 deleteSubFromTrainProg(request, response);
-            }           
+            } else if (action.equals("delete-train-prog")) {
+                deleteTrainProgram(request, response);
+            }
         } finally {            
             out.close();
         }
@@ -429,5 +431,58 @@ public class TrainingProgramControler extends HttpServlet {
         
         }
         out.println("</table>");
+    }
+
+    private void deleteTrainProgram(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        
+        PrintWriter out = response.getWriter();
+        String trainProgId = request.getParameter("tpid");
+        TrainProgramDAO tpDao = DAOFactory.getTrainProgramDAO();
+        try {
+            TrainProgram tp = tpDao.findById(trainProgId);
+            if (tp == null) {
+                out.println("error - Lỗi: không tìm thấy CTĐT.");
+                return;
+            }
+            List<TrainProDetail> tpds = tpdDao.findByColumName("MaCTDT", trainProgId);
+            if (tpds != null && !tpds.isEmpty()) {
+                out.println("exist_trainprog_detail -- J");
+                return;
+            }
+            
+            // Ok for delete...
+            tpDao.delete(tp);
+            // Update list train program
+            List<TrainProgram> tps = tpDao.findAll();
+            HttpSession session = request.getSession();
+            session.setAttribute("train-programs", tps);
+            writeOutListTrainProg(out, tps);
+        } catch (Exception ex) {
+            Logger.getLogger(TrainingProgramControler.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            out.println("error - Lỗi: " + ex.toString());
+        }
+    }
+
+    private void writeOutListTrainProg(PrintWriter out,
+            List<TrainProgram> tps) {
+        out.print("<table class=\"general-table\" style=\"width: 400px;\">");
+        out.print("<tr><th>Mã CTĐT</th>"
+                + "<th>Khoa</th>"
+                + "<th>Khóa học</th>"
+                + "<th></th></tr>");
+        if (tps != null && !tps.isEmpty()) {
+            for (TrainProgram tp : tps) {
+                out.print("<tr>");
+                out.print("<td><span class=\"atag\" onclick=\"getTrainProgDetail('" + tp.getId() + "')\">" + tp.getId() + "</span></td>");
+                out.print("<td>" + tp.getFacultyCode() + "</td>");
+                out.print("<td>" + tp.getCourseCode() + "</td>");
+                out.print("<td><span class=\"atag\" onclick=\"deleteTrainProg('" + tp.getId() + "')\"><img src=\"../../imgs/icon/delete.png\" alt=\"delete\" title=\"delete\"/></span></td>");
+                out.print("</tr>");
+            }
+        }
+        
+        out.print("</table>");
     }
 }
