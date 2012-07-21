@@ -609,6 +609,7 @@ input[type="file"] {
     position: absolute;
     background: #E3E4FA;
     z-index: 120;
+    opacity: 0.9;
 }
 #popup-title {
     background: #ddc;
@@ -620,4 +621,5 @@ input[type="file"] {
     text-align: left;
     font-style: italic;
     font-size: 11px;
+    height: 100%;
 }
