@@ -75,6 +75,9 @@
                 </div>
             <%}%>
             <div id="range-1" style="text-align: center;">
+                <%if (!username_r.equalsIgnoreCase("Khách")) {%>
+                  <img src="../../imgs/icon/user.png"/>      
+                <%}%>
                 Xin chào <b> <%= username_r %> </b>
             </div>
 
