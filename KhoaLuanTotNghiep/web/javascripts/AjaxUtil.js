@@ -81,6 +81,7 @@ function hideMe(id) {
     });
 }
 
+// Show pop up window
 function initPopupWindowAtMousePossition(popupId) {
     var detailForm = document.getElementById(popupId);
     var posx = 0;
@@ -95,4 +96,14 @@ function initPopupWindowAtMousePossition(popupId) {
     }
     detailForm.style.left = posx - 5;
     detailForm.style.top = posy - 5;
+    
+    detailForm.innerHTML = "<img src = '../../imgs/icon/loading.gif' />";
+}
+
+// Set time out for element by id
+function setTimeOut(id, seconds) {
+    var object = document.getElementById(id);
+    setTimeout(function() {
+        $(object).fadeOut('slow');
+    }, seconds * 1000); // <-- time in milliseconds
 }
