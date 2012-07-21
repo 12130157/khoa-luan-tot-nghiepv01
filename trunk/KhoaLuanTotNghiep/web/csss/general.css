@@ -601,3 +601,23 @@ input[type="file"] {
 
 .datahighlight td{ background-color:#98AFC7 !important; }
 .mouseover_tr { background-color:#dde !important; }
+.popup-hidden {
+    display: none;
+    border: 1px solid #dde;
+    min-height: 120px;
+    min-width: 320px;
+    position: absolute;
+    background: #E3E4FA;
+    z-index: 120;
+}
+#popup-title {
+    background: #ddc;
+    text-align: center;
+    font-weight: bold;
+}
+
+#popup-content {
+    text-align: left;
+    font-style: italic;
+    font-size: 11px;
+}
