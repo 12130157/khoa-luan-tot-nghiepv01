@@ -9,6 +9,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 
+<%
+    String username = (String) session.getAttribute("username");
+%>
 <html>
     <head>
         <link href="../../csss/menu.css" rel="stylesheet" type="text/css" media="screen">
@@ -73,6 +76,9 @@
                      <li><a href="../../CommentController?action=manager"> Quản lý yêu cầu</a></li>
                  </ul>
              </li>
+             <%if (username != null && username.equals("admin")) {%>
+                <li><a href="../../DiaryController?action=default">Nhật ký</a></li>
+             <%}%>
              <li><a href="../../Login?function=logout"> Đăng xuất</a></li>
          </ul>
     </div>       
