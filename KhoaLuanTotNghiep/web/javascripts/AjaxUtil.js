@@ -69,3 +69,30 @@ $(document).ready(function(){
         $(this).children().removeClass('mouseover_tr');
     });
 });
+
+
+/**
+* Hide specified element by id
+**/
+function hideMe(id) {
+    var divObj = document.getElementById(id);
+    $(divObj).fadeOut('slow', function() {
+        // Animation complete
+    });
+}
+
+function initPopupWindowAtMousePossition(popupId) {
+    var detailForm = document.getElementById(popupId);
+    var posx = 0;
+    var posy = 0;
+    if (!e) var e = window.event;
+    if (e.pageX || e.pageY) {
+        posx = e.pageX;
+        posy = e.pageY;
+    } else if (e.clientX || e.clientY) {
+        posx = e.clientX;
+        posy = e.clientY;
+    }
+    detailForm.style.left = posx - 5;
+    detailForm.style.top = posy - 5;
+}
