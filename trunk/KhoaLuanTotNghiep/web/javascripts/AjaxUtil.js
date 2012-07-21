@@ -81,7 +81,10 @@ function hideMe(id) {
     });
 }
 
-// Show pop up window
+/**
+ * Show pop up window, also add an loading icon
+ * as innerHtml text as default.
+ */
 function initPopupWindowAtMousePossition(popupId) {
     var detailForm = document.getElementById(popupId);
     var posx = 0;
