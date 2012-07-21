@@ -390,6 +390,9 @@ tr:hover .pop-up {
     background: url("../imgs/bgtitle.gif") repeat;
     /*background-color: #dfd;*/
 }
+#range-1 img {
+    vertical-align: bottom;
+}
 
 #main-navi {
 
