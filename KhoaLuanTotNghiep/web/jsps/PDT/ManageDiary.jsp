@@ -55,7 +55,7 @@
                 </div>
                 <%-- User detail popup window --%>
                 <div id="popup-detail" class="popup-hidden" onClick="hideMe('popup-detail');">
-                    Show user's information in detail...
+                    popup window...
                 </div>
                 <%--  PAGGING --%>
                 <div id="paggind">
@@ -65,7 +65,7 @@
                     <input type="button" value=">>|" onclick="endPage()" /><br />
                     <input type="hidden" value="<%= 1%>" id="numpage" />
                 </div>
-                <h1>TOBE CONTINUE J</h1>
+                <h1></h1>
             </div><!--End Contents-->
             <div id="footer"><!--Footer-->
                 <%@include file="../Footer.jsp" %>
@@ -79,6 +79,7 @@
 
             function loadUserDetail(username) {
                 initPopupWindowAtMousePossition('popup-detail');
+                //setTimeOut('popup-detail', 10);
                 $('#popup-detail').fadeIn('slow', function() {
                 // Animation complete
                     var controller = '../../DiaryController?action=get-user-detail' 
