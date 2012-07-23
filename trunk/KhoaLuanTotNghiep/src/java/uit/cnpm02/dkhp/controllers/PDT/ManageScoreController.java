@@ -47,6 +47,7 @@ import uit.cnpm02.dkhp.service.impl.FileUploadServiceImpl;
 import uit.cnpm02.dkhp.service.impl.ScoreProcessUtil;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
+import uit.cnpm02.dkhp.utilities.Log;
 import uit.cnpm02.dkhp.utilities.MultipartMap;
 import uit.cnpm02.dkhp.utilities.StringUtils;
 
@@ -443,6 +444,8 @@ public class ManageScoreController extends HttpServlet {
             HttpServletResponse response) throws IOException {
         String data = (String) request.getParameter("data");
         PrintWriter out = response.getWriter();
+        HttpSession session = request.getSession();
+        String user = (String) session.getAttribute("username");
         if (StringUtils.isEmpty(data)) {
             out.println("Lỗi: vui lòng chọn lại lớp.");
             return;
@@ -454,6 +457,10 @@ public class ManageScoreController extends HttpServlet {
         for (int i = 0; i < tobeValidateFile.length; i++) {
             er = processImportScore(tobeValidateFile[i]);
             writeOutImportScore(out, tobeValidateFile[i], er);
+            
+            // Log
+            Log.getInstance().log(user, "Cập nhật điểm cho lớp: "
+                    + tobeValidateFile[i] +" từ file GV gửi.");
         }
     }
 
@@ -840,7 +847,8 @@ public class ManageScoreController extends HttpServlet {
     private void importScoreFromForm(HttpServletRequest request,
             HttpServletResponse response) throws IOException {
         String data = (String) request.getParameter("data");
-        
+        HttpSession session = request.getSession();
+        String user = (String) session.getAttribute("username");
         PrintWriter out = response.getWriter();
         if (StringUtils.isEmpty(data)) {
             out.println("Da co loi xay ra, vui long thu lai sau.");
@@ -878,6 +886,9 @@ public class ManageScoreController extends HttpServlet {
         ImportScoreResult importResult = scoreUtil.importScore(studyResults);
         
         writeOutImportScore(out, trainClassId, importResult);
+        // Log
+        Log.getInstance().log(user, "Cập nhật điểm cho lớp: "
+                + trainClassId +" form nhập điểm.");
     }
 
     private List<StudyResult> parstData(String[] datas,
