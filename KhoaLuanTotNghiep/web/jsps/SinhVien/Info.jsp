@@ -4,6 +4,8 @@
     Author     : ngloc_it
 --%>
 
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="uit.cnpm02.dkhp.utilities.DateTimeUtil"%>
 <%@page import="uit.cnpm02.dkhp.model.Course"%>
 <%@page import="uit.cnpm02.dkhp.model.Faculty"%>
@@ -13,11 +15,14 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 <%
-Student student=(Student) session.getAttribute("student");
-Class classes=(Class) session.getAttribute("classes");
-Faculty faculty=(Faculty)session.getAttribute("faculty");
-Course course=(Course)session.getAttribute("course");
-String pass = (String) session.getAttribute("password");
+    // Validate access role
+    ClientValidate.validateAcess(AccountType.STUDENT, session, response);
+    
+    Student student=(Student) session.getAttribute("student");
+    Class classes=(Class) session.getAttribute("classes");
+    Faculty faculty=(Faculty)session.getAttribute("faculty");
+    Course course=(Course)session.getAttribute("course");
+    String pass = (String) session.getAttribute("password");
 %>
 <html>
     <head>

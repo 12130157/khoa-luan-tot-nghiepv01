@@ -32,5 +32,4 @@
         </div>
         <!--End Wrapper-->
     </body>
-    </script>
   </html>

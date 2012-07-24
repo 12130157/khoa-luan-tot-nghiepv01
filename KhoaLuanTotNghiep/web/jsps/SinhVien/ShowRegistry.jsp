@@ -4,6 +4,8 @@
     Author     : ngloc_it
 --%>
 
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="uit.cnpm02.dkhp.model.TrainClass"%>
 <%@page import="uit.cnpm02.dkhp.DAO.SubjectDAO"%>
 <%@page import="uit.cnpm02.dkhp.model.StudyResult"%>
@@ -15,15 +17,18 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 <%
-Boolean inTimeRegistry =(Boolean)session.getAttribute("inTimeRegistry");
-List<TrainClass> registried=(List<TrainClass>) session.getAttribute("registried");
-String year=(String) session.getAttribute("year");
-Integer semester=(Integer) session.getAttribute("semester");
-Student student=(Student) session.getAttribute("student");
-Class classes=(Class) session.getAttribute("classes");
-Faculty faculty=(Faculty)session.getAttribute("faculty");
-boolean nonStudy=(Boolean) session.getAttribute("non-study-student");
-int numTC=0;    
+    // Validate access role
+    ClientValidate.validateAcess(AccountType.STUDENT, session, response);
+
+    Boolean inTimeRegistry =(Boolean)session.getAttribute("inTimeRegistry");
+    List<TrainClass> registried=(List<TrainClass>) session.getAttribute("registried");
+    String year=(String) session.getAttribute("year");
+    Integer semester=(Integer) session.getAttribute("semester");
+    Student student=(Student) session.getAttribute("student");
+    Class classes=(Class) session.getAttribute("classes");
+    Faculty faculty=(Faculty)session.getAttribute("faculty");
+    boolean nonStudy=(Boolean) session.getAttribute("non-study-student");
+    int numTC=0;    
 %>
 <html>
     <head>

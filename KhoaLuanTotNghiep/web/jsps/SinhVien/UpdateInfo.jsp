@@ -4,13 +4,18 @@
     Author     : ngloc_it
 --%>
 
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="uit.cnpm02.dkhp.model.Student"%>
 <%@include file="MenuSV.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 <%
-Student student=(Student) session.getAttribute("student");
+    // Validate access role
+    ClientValidate.validateAcess(AccountType.STUDENT, session, response);
+    
+    Student student=(Student) session.getAttribute("student");
 %>
 <html>
     <head>
