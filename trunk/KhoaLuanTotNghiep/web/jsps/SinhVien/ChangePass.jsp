@@ -4,10 +4,15 @@
     Author     : ngloc_it
 --%>
 
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@include file="MenuSV.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 <%
+    // Validate access role
+    ClientValidate.validateAcess(AccountType.STUDENT, session, response);
+    
     String pass = (String) session.getAttribute("password");
 %>
 <html>
