@@ -4,11 +4,20 @@
     Author     : LocNguyen
 --%>
 
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="uit.cnpm02.dkhp.model.Student"%>
 <%@page import="uit.cnpm02.dkhp.model.Faculty"%>
 <%@page import="uit.cnpm02.dkhp.model.TrainClass"%>
 <%@page import="java.util.List"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%
+    // Validate access role
+    ClientValidate.validateAcess(AccountType.ADMIN, session, response);
+    TrainClass trainClass = (TrainClass) session.getAttribute("trainclass");
+    List<TrainClass> sameClass = (List<TrainClass>) session.getAttribute("classList");
+    List<Student> studentList = (List<Student>) session.getAttribute("studentList");
+%>
 <html>
     <head>
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
@@ -48,12 +57,6 @@
              }
         </style>
     </head>
-    <%
-        TrainClass trainClass = (TrainClass) session.getAttribute("trainclass");
-        List<TrainClass> sameClass = (List<TrainClass>) session.getAttribute("classList");
-        List<Student> studentList = (List<Student>) session.getAttribute("studentList");
-                
-    %>
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">

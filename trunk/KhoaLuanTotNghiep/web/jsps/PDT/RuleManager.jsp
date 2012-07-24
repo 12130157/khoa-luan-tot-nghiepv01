@@ -3,10 +3,15 @@
     Created on : 06-05-2012, 10:57:42
     Author     : LocNguyen
 --%>
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="uit.cnpm02.dkhp.model.Rule"%>
 <%@page import="java.util.List"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
+    // Validate Access role
+    ClientValidate.validateAcess(AccountType.ADMIN, session, response);
+    
     List<Rule> rules = (List<Rule>) session.getAttribute("rules");
 %>
 <html>

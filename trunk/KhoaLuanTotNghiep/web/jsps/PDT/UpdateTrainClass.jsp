@@ -3,6 +3,8 @@
     Created on : 11-11-2011, 23:45:21
     Author     : LocNguyen
 --%>
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="uit.cnpm02.dkhp.utilities.DateTimeUtil"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="java.util.List"%>
@@ -11,10 +13,13 @@
 <%@page import="uit.cnpm02.dkhp.model.web.LecturerWeb"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
-  TrainClass trainClass = (TrainClass) session.getAttribute("trainclass");
-  List<LecturerWeb> Lecture = (List<LecturerWeb>) session.getAttribute("lecturers");
-  List<String> roomList = Constants.ROOM_LISS;
-  SimpleDateFormat sdf= new SimpleDateFormat(Constants.DATETIME_PARTERM_DEFAULT);
+    // Validate Access role
+    ClientValidate.validateAcess(AccountType.ADMIN, session, response);
+  
+    TrainClass trainClass = (TrainClass) session.getAttribute("trainclass");
+    List<LecturerWeb> Lecture = (List<LecturerWeb>) session.getAttribute("lecturers");
+    List<String> roomList = Constants.ROOM_LISS;
+    SimpleDateFormat sdf= new SimpleDateFormat(Constants.DATETIME_PARTERM_DEFAULT);
 %>
 <html>
     <head>

@@ -3,6 +3,8 @@
     Created on : 24-12-2011, 12:40:49
     Author     : LocNguyen
 --%>
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="uit.cnpm02.dkhp.model.type.HocVi"%>
 <%@page import="uit.cnpm02.dkhp.model.type.HocHam"%>
 <%@page import="java.util.EnumSet"%>
@@ -16,6 +18,9 @@
     "http://www.w3.org/TR/html4/loose.dtd">
 
 <%
+    // Validate Access role
+    ClientValidate.validateAcess(AccountType.ADMIN, session, response);
+
     Lecturer lecturer = (Lecturer) session.getAttribute("lecturer");
     List<Faculty> faculties = (List<Faculty>) session.getAttribute("faculties");
 %>

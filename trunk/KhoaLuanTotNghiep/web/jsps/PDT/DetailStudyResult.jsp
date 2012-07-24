@@ -4,6 +4,8 @@
     Author     : ngloc_it
 --%>
 
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="uit.cnpm02.dkhp.DAO.SubjectDAO"%>
 <%@page import="uit.cnpm02.dkhp.model.StudyResult"%>
 <%@page import="java.util.List"%>
@@ -14,11 +16,14 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 <%
-List<StudyResult> studyResult=(List<StudyResult>) session.getAttribute("studyResult");
-List<String> yearList=(List<String>) session.getAttribute("yearList");
-Student student=(Student) session.getAttribute("student");
-Class classes=(Class) session.getAttribute("classes");
-Faculty faculty=(Faculty)session.getAttribute("faculty");
+    // Validate Access role
+    ClientValidate.validateAcess(AccountType.ADMIN, session, response);
+
+    List<StudyResult> studyResult=(List<StudyResult>) session.getAttribute("studyResult");
+    List<String> yearList=(List<String>) session.getAttribute("yearList");
+    Student student=(Student) session.getAttribute("student");
+    Class classes=(Class) session.getAttribute("classes");
+    Faculty faculty=(Faculty)session.getAttribute("faculty");
     SubjectDAO subjectDao=new SubjectDAO();
     int m = studyResult.size();
     int i, j;

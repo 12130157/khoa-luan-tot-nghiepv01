@@ -3,6 +3,8 @@
     Created on : 11-11-2011, 23:45:21
     Author     : LocNguyen
 --%>
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="uit.cnpm02.dkhp.model.Faculty"%>
 <%@page import="java.util.Date"%>
 <%@page import="uit.cnpm02.dkhp.utilities.DateTimeUtil"%>
@@ -12,10 +14,12 @@
 <%@page import="uit.cnpm02.dkhp.utilities.Constants"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
-  List<LecturerWeb> Lecture = (List<LecturerWeb>) session.getAttribute("lecturers");
-  List<SubjectWeb> Subject = (List<SubjectWeb>) session.getAttribute("subjects");
-  List<Faculty> faculty = (List<Faculty>) session.getAttribute("faculty");
-  List<String> roomList = Constants.ROOM_LISS;
+    // Validate access role
+    ClientValidate.validateAcess(AccountType.ADMIN, session, response);
+    List<LecturerWeb> Lecture = (List<LecturerWeb>) session.getAttribute("lecturers");
+    List<SubjectWeb> Subject = (List<SubjectWeb>) session.getAttribute("subjects");
+    List<Faculty> faculty = (List<Faculty>) session.getAttribute("faculty");
+    List<String> roomList = Constants.ROOM_LISS;
 %>
 <html>
     <head>

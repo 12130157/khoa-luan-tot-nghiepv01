@@ -4,11 +4,16 @@
     Author     : LocNguyen
 --%>
 
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
 <%@page import="uit.cnpm02.dkhp.model.Diary"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
+    // Validate Access role
+    ClientValidate.validateAcess(AccountType.ADMIN, session, response);
+
     List<Diary> diaries = (List<Diary>) session.getAttribute("diaries");
 %>
 <html>

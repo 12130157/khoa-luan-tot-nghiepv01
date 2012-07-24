@@ -3,6 +3,8 @@
     Created on : 13-11-2011, 11:11:38
     Author     : LocNguyen
 --%>
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="java.util.List"%>
 <%@page import="uit.cnpm02.dkhp.model.Subject"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -16,6 +18,9 @@
         </style>
     </head>
     <%
+        // Validate Access role
+        ClientValidate.validateAcess(AccountType.ADMIN, session, response);
+
         String subjectStr = "";
         String preSubStr = "";
         String error = "";

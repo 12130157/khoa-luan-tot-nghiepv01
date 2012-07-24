@@ -4,6 +4,8 @@
     Author     : ngloc_it
 --%>
 
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="uit.cnpm02.dkhp.model.Faculty"%>
 <%@page import="uit.cnpm02.dkhp.model.TrainClass"%>
 <%@page import="java.util.List"%>
@@ -11,15 +13,18 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 <%
-String year=(String) session.getAttribute("year");
-Integer semester=(Integer) session.getAttribute("semester");
- List<TrainClass> monday=(List<TrainClass>)session.getAttribute("monday");
- List<TrainClass> tuesday=(List<TrainClass>)session.getAttribute("tuesday");
- List<TrainClass> wednesday=(List<TrainClass>)session.getAttribute("wednesday");
- List<TrainClass> thursday=(List<TrainClass>)session.getAttribute("thursday");
- List<TrainClass> friday=(List<TrainClass>)session.getAttribute("friday");
- List<TrainClass> saturday=(List<TrainClass>)session.getAttribute("saturday");
- List<Faculty> facultyList = (List<Faculty>) session.getAttribute("facultyList");
+    // Validate Access role
+    ClientValidate.validateAcess(AccountType.ADMIN, session, response);
+    
+    String year=(String) session.getAttribute("year");
+    Integer semester=(Integer) session.getAttribute("semester");
+    List<TrainClass> monday=(List<TrainClass>)session.getAttribute("monday");
+    List<TrainClass> tuesday=(List<TrainClass>)session.getAttribute("tuesday");
+    List<TrainClass> wednesday=(List<TrainClass>)session.getAttribute("wednesday");
+    List<TrainClass> thursday=(List<TrainClass>)session.getAttribute("thursday");
+    List<TrainClass> friday=(List<TrainClass>)session.getAttribute("friday");
+    List<TrainClass> saturday=(List<TrainClass>)session.getAttribute("saturday");
+    List<Faculty> facultyList = (List<Faculty>) session.getAttribute("facultyList");
 %>
 <html>
     <head>

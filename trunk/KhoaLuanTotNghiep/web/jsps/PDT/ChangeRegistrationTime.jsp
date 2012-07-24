@@ -3,12 +3,16 @@
     Created on : 11-11-2011, 23:45:21
     Author     : LocNguyen
 --%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
 <%@page import="uit.cnpm02.dkhp.utilities.DateTimeUtil"%>
 <%@page import="uit.cnpm02.dkhp.model.RegistrationTime"%>
 <%@include file="MenuPDT.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
- RegistrationTime registrationTime = (RegistrationTime) session.getAttribute("registrationTime");
+    // Validate access role
+    ClientValidate.validateAcess(AccountType.ADMIN, session, response);  
+    RegistrationTime registrationTime = (RegistrationTime) session.getAttribute("registrationTime");
 %>
 <html>
     <head>
@@ -53,7 +57,6 @@
                 font-size: 10px;
                 color: #cc0033;
             }
-        </style>
         </style>
     </head>
     <body>
@@ -104,4 +107,5 @@
         </div>
         <!--End Wrapper-->
     </body>
+    
 </html>

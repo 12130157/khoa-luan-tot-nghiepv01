@@ -4,6 +4,8 @@
     Author     : LocNguyen
 --%>
 
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="uit.cnpm02.dkhp.model.TrainClass"%>
 <%@page import="java.util.List"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -17,6 +19,9 @@
         </style>
     </head>
     <%
+        // Validate Access role
+        ClientValidate.validateAcess(AccountType.ADMIN, session, response);
+        
         int numpage;
         try {
             numpage = (Integer) session.getAttribute("numpage");

@@ -4,12 +4,17 @@
     Author     : LocNguyen
 --%>
 
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="java.util.List"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 
 <%
+    // Validate Access role
+    ClientValidate.validateAcess(AccountType.ADMIN, session, response);
+
     List<TrainClass> missingScoreClazzes
             = (List<TrainClass>) session.getAttribute("list-miss-core-class");
     String error = (String) session.getAttribute("error");

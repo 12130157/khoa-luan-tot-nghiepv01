@@ -4,6 +4,8 @@
     Author     : LocNguyen
 --%>
 
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="uit.cnpm02.dkhp.utilities.ExecuteResult"%>
 <%@page import="uit.cnpm02.dkhp.utilities.Constants"%>
 <%@page import="java.text.SimpleDateFormat"%>
@@ -23,6 +25,9 @@
     "http://www.w3.org/TR/html4/loose.dtd">
 
 <%
+    // Validate Access role
+    ClientValidate.validateAcess(AccountType.ADMIN, session, response);
+
     List<uit.cnpm02.dkhp.model.Class> clazzes = 
             (List<uit.cnpm02.dkhp.model.Class>)session.getAttribute("clazzes");
     List<Faculty> faculties = (List<Faculty>) session.getAttribute("faculties");

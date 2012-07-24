@@ -1,8 +1,13 @@
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="uit.cnpm02.dkhp.model.Subject"%>
 <%@page import="uit.cnpm02.dkhp.model.TrainProDetail"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <%
+    // Validate Access role
+    ClientValidate.validateAcess(AccountType.ADMIN, session, response);
+    
     List<TrainProDetail> trainProDetails = (List<TrainProDetail>) session.getAttribute("lst-train-pro-detail");
     List<Subject> subjects = (List<Subject>) session.getAttribute("all-subjects");
     String trainProgID = (String)session.getAttribute("train-prog-ID");

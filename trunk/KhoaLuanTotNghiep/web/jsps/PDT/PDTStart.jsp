@@ -4,12 +4,17 @@
     Author     : ngloc_it
 --%>
 
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="uit.cnpm02.dkhp.model.Task"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 <%
+    // Validate Access role
+    ClientValidate.validateAcess(AccountType.ADMIN, session, response);
+    
     List<Task> tasks = (List<Task>) session.getAttribute("tasks");
 
 %>
@@ -80,11 +85,10 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
+        <script src="../javascripts/News.js"></script>
+        <script src="../../javascripts/AjaxUtil.js"></script>
+        <script src="../../javascripts/TaskUtil.js"></script>
+        <script language="javascript" >
+        </script>
     </body>
-
-    <script src="../javascripts/News.js"></script>
-    <script src="../../javascripts/AjaxUtil.js"></script>
-    <script src="../../javascripts/TaskUtil.js"></script>
-    <script language="javascript" >
-    </script>
 </html>

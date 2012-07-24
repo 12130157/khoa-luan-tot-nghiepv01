@@ -4,6 +4,8 @@
     Author     : LocNguyen
 --%>
 
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="uit.cnpm02.dkhp.model.type.HocVi"%>
 <%@page import="java.util.EnumSet"%>
 <%@page import="uit.cnpm02.dkhp.model.type.HocHam"%>
@@ -19,6 +21,9 @@
     "http://www.w3.org/TR/html4/loose.dtd">
 
 <%
+    // Validate Access role
+    ClientValidate.validateAcess(AccountType.ADMIN, session, response);
+
     List<Faculty> faculties = (List<Faculty>) session.getAttribute("faculties");
     
     /**Is this page load by response when submit import student

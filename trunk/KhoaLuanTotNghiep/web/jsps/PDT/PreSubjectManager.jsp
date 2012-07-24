@@ -4,6 +4,8 @@
     Author     : LocNguyen
 --%>
 
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
 <%@page import="uit.cnpm02.dkhp.model.Subject"%>
 <%@page import="uit.cnpm02.dkhp.model.PreSubID"%>
 <%@page import="uit.cnpm02.dkhp.model.PreSubject"%>
@@ -11,6 +13,9 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <%
+    // Validate Access role
+    ClientValidate.validateAcess(AccountType.ADMIN, session, response);
+    
     int numpage;
     try {
         numpage = (Integer) session.getAttribute("numpage_pre_sub");
