@@ -35,7 +35,7 @@
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
                 <div id="msg-range">
-                    Vui lòng đăng nhập đăng nhập để xem trang này.
+                    Bạn chưa đăng nhập hoặc tài khoản của bạn không được phép truy cập trang này!
                 </div>
             </div><!--End Contents-->
 
