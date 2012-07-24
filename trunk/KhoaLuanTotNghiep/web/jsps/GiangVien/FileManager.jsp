@@ -3,12 +3,17 @@
     Created on : 11-11-2011, 23:45:21
     Author     : LocNguyen
 --%>
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="uit.cnpm02.dkhp.model.FileInfo"%>
 <%@page import="java.util.List"%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <%
+    // Validate access role
+    ClientValidate.validateAcess(AccountType.LECTUTER, session, response);
+    
     List<FileInfo> files = (List<FileInfo>)session.getAttribute("files");
     String username = (String)session.getAttribute("username");
 %>
