@@ -3,11 +3,16 @@
     Created on : 11-11-2011, 23:45:21
     Author     : LocNguyen
 --%>
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="uit.cnpm02.dkhp.utilities.DateTimeUtil"%>
 <%@page import="uit.cnpm02.dkhp.model.RegistrationTime"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
- RegistrationTime registrationTime = (RegistrationTime) session.getAttribute("registrationTime");
+    // Validate Access role
+    ClientValidate.validateAcess(AccountType.ADMIN, session, response);
+    
+    RegistrationTime registrationTime = (RegistrationTime) session.getAttribute("registrationTime");
 %>
 <html>
     <head>

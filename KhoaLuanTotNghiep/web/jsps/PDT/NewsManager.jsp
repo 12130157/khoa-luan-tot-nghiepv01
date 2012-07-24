@@ -4,15 +4,18 @@
     Author     : ngloc_it
 --%>
 
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="java.util.List"%>
 <%@page import="uit.cnpm02.dkhp.model.News"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 <%
+    // Validate Access role
+    ClientValidate.validateAcess(AccountType.ADMIN, session, response);
     List<News> listNews = (List<News>) session.getAttribute("newsList");
-     Integer numpage = (Integer) session.getAttribute("numpage");
-
+    Integer numpage = (Integer) session.getAttribute("numpage");
  %>
 <html>
     <head>
@@ -32,9 +35,10 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <div id="title">
-                    <u>Quản lý tin tức hệ thống</u>
+                <div id="main-title">
+                    Quản lý tin tức hệ thống
                 </div>
+                
                 <br><h3>Danh sách các tin tức:</h3>
                    <a href="CreateNews.jsp">Đăng tin mới</a>
                  <hr/><hr/><br>
@@ -86,34 +90,35 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    </body>
-    <script src="../../javascripts/NewsManage.js"></script>
-     <script  type = "text/javascript" >
-         var currentpage=1;
-         var http = createRequestObject();
-         numpage=document.getElementById("numpage").value;
-         function FirstPage(){
-             currentpage=1;
-             SendRequest();
-         }
-         function PrePage(){
-             currentpage=currentpage-1;
-             if(currentpage<1) currentpage=1;
-             SendRequest();
-         }
-         function NextPage(){
-              currentpage=currentpage+1;
-              if(currentpage>numpage)currentpage=numpage;
-              SendRequest();
-         }
-         function EndPage(){
-             currentpage=numpage;
-             SendRequest();
-         }
-         function SendRequest(){
-              if(http){
-              ajaxfunction("../../NewsController?action=Filter&curentPage="+currentpage);
+    
+         <script src="../../javascripts/NewsManage.js"></script>
+         <script  type = "text/javascript" >
+             var currentpage=1;
+             var http = createRequestObject();
+             numpage=document.getElementById("numpage").value;
+             function FirstPage(){
+                 currentpage=1;
+                 SendRequest();
              }
-         }
-    </script>
+             function PrePage(){
+                 currentpage=currentpage-1;
+                 if(currentpage<1) currentpage=1;
+                 SendRequest();
+             }
+             function NextPage(){
+                  currentpage=currentpage+1;
+                  if(currentpage>numpage)currentpage=numpage;
+                  SendRequest();
+             }
+             function EndPage(){
+                 currentpage=numpage;
+                 SendRequest();
+             }
+             function SendRequest(){
+                  if(http){
+                  ajaxfunction("../../NewsController?action=Filter&curentPage="+currentpage);
+                 }
+             }
+        </script>
+    </body>
 </html>

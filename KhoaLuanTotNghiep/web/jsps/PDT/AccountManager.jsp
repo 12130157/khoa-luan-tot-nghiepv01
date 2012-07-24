@@ -4,6 +4,7 @@
     Author     : LocNguyen
 --%>
 
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
 <%@page import="java.util.EnumSet"%>
 <%@page import="uit.cnpm02.dkhp.model.type.AccountStatus"%>
 <%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
@@ -14,6 +15,9 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <%
+    // Validate access role
+    ClientValidate.validateAcess(AccountType.ADMIN, session, response);
+    //
     List<Account> accounts = (List<Account>) session.getAttribute("accountList");
     Integer numpage = (Integer) session.getAttribute("numpage");
     if (numpage == null) {

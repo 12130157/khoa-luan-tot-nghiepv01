@@ -1,3 +1,5 @@
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="uit.cnpm02.dkhp.model.DetailTrain"%>
 <%@page import="uit.cnpm02.dkhp.model.Lecturer"%>
 <%@page import="java.util.List"%>
@@ -6,6 +8,9 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <%
+    // Validate Access role
+    ClientValidate.validateAcess(AccountType.ADMIN, session, response);
+    
     Lecturer lecturer=(Lecturer) session.getAttribute("lecturer");
     List<Subject> subjectList = (List<Subject>) session.getAttribute("subjectList");
     List<DetailTrain> lecsublist = (List<DetailTrain>) session.getAttribute("detainTrainList");
