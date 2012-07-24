@@ -3,7 +3,8 @@
     Created on : Apr 23, 2011, 10:59:14 PM
     Author     : ngloc_it
 --%>
-
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="uit.cnpm02.dkhp.model.Task"%>
 <%@page import="java.util.List"%>
@@ -12,6 +13,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 <%
+    // Validate access role
+    ClientValidate.validateAcess(AccountType.LECTUTER, session, response);
+    
     List<Task> tasks = (List<Task>) session.getAttribute("tasks");
 %>
 <html>
@@ -76,12 +80,12 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
+
+        <script src="../../javascripts/AjaxUtil.js"></script>
+        <script src="../../javascripts/TaskUtil.js"></script>
+
+        <script  type = "text/javascript" >
+
+        </script>
     </body>
-
-    <script src="../../javascripts/AjaxUtil.js"></script>
-    <script src="../../javascripts/TaskUtil.js"></script>
-
-    <script  type = "text/javascript" >
-       
-    </script>
 </html>

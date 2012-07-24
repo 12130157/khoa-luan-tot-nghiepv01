@@ -3,6 +3,8 @@
     Created on : Apr 23, 2011, 4:33:27 PM
     Author     : ngloc_it
 --%>
+<%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
+<%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="uit.cnpm02.dkhp.model.Lecturer"%>
 <%@page import="uit.cnpm02.dkhp.model.TrainClass"%>
 <%@page import="java.util.List"%>
@@ -10,6 +12,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
 <%
+    // Validate access role
+    ClientValidate.validateAcess(AccountType.LECTUTER, session, response);
+    
     String year = (String) session.getAttribute("year");
     Integer semester = (Integer) session.getAttribute("semester");
     List<TrainClass> monday = (List<TrainClass>) session.getAttribute("monday");
