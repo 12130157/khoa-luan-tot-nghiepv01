@@ -60,10 +60,10 @@
                 <div id="control-range">
                     <%--------------Search-------------%>
                     <div id="search-area">
-                        <form id="searchbox" action="">
+                        <div id="searchbox">
                             <input id="search" type="text" placeholder="Search" onKeyPress="keypressed()">
                             <input type="button" id="submit" onclick="searchAccount();" value="Tìm kiếm">
-                        </form>
+                        </div>
                         <%--
                         <input type="text" name="txtSearch" onKeyPress="keypressed()" id="txtSearch" />
                         <input type="button" onclick="search()" value="Tìm kiếm">
@@ -334,7 +334,7 @@
         
         function searchHandler() {
             if((http.readyState == 4) && (http.status == 200)){
-                var detail = document.getElementById("formdetail");
+                var detail = document.getElementById("accountdetail");
                 detail.innerHTML = http.responseText;
             }
         }
