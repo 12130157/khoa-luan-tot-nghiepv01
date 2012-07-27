@@ -883,7 +883,7 @@ public class ManageScoreController extends HttpServlet {
                     + "Vui long kiem tra lai du lieu nhap vao.");
             return;
         }
-        ImportScoreResult importResult = scoreUtil.importScore(studyResults);
+        ImportScoreResult importResult = scoreUtil.importScore(tc, studyResults);
         
         writeOutImportScore(out, trainClassId, importResult);
         // Log
