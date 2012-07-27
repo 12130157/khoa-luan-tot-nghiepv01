@@ -81,15 +81,15 @@
                         <tr>
                             <th><INPUT type="checkbox" name="chkAll" onclick="selectAll('tablelistlecturer', 0)" /></th>
                             <th> STT </th>
-                            <th><span class="atag" onclick="sort('MaGV')" > Mã GV </span></th>
-                            <th><span class="atag" onclick="sort('HoTen')" > Họ Tên </span></th>
-                            <th><span class="atag" onclick="sort('MaKhoa')" > Khoa </span></th>
-                            <th><span class="atag" onclick="sort('QueQuan')" > Địa chỉ </span></th>
-                            <th><span class="atag" onclick="sort('NgaySinh')" > Ngày sinh </span></th>
-                            <th><span class="atag" onclick="sort('GioiTinh')" > Giới tính </span></th>
+                            <th> Mã GV </span></th>
+                            <th> Họ Tên </span></th>
+                            <th> Khoa </span></th>
+                            <th> Địa chỉ </span></th>
+                            <th> Ngày sinh </span></th>
+                            <th> Giới tính </span></th>
                             <%--<th><span class="atag" onclick="sort('Email')" > Email </span></th>--%>
-                            <th><span class="atag" onclick="sort('HocHam')" > Học Hàm </span></th>
-                            <th><span class="atag" onclick="sort('HocVi')" > Học Vị </span></th>
+                            <th> Học Hàm </span></th>
+                            <th> Học Vị </span></th>
                             <th> Sửa </th>
                             <th> Xóa </th>
                         <%--Should be sorted when click on table's header ? --%>
@@ -206,7 +206,7 @@
         }
         
         function deleteOneLecturer(id) {
-            var pagename = "../../ManageLecturerController?function=delete-one&magv=" + id;
+            var pagename = "../../ManageLecturerController?function=delete-one&magv=" + id + "&currentPage=" + currentpage;
             if(http){
                 http.open("GET", pagename, true);
                 http.onreadystatechange = handleResponseDelete
@@ -272,15 +272,6 @@
                 
                 var detail = document.getElementById("list-lecturers");
                 detail.innerHTML = http.responseText;
-            }
-        }
-    
-        function sort(sortBy) {
-            var pagename = "../../ManageLecturerController?function=sort&by=" + sortBy;
-            if(http){
-                http.open("GET", pagename, true);
-                http.onreadystatechange = searchHandler;
-                http.send(null);
             }
         }
     </script>

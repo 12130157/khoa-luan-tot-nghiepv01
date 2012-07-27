@@ -88,13 +88,13 @@
                             <tr id="tableliststudent-th">
                             <th><INPUT type="checkbox" name="chkAll" onclick="selectAll('tableliststudent', 0)" /></th>
                             <th> STT </th>
-                            <th> <span class="atag" onclick="sort('MSSV')" > MSSV </span></th>
-                            <th> <span class="atag" onclick="sort('HoTen')" >  Họ Tên </span></th>
-                            <th> <span class="atag" onclick="sort('MaLop')" >  Lớp </span></th>
-                            <th> <span class="atag" onclick="sort('MaKhoa')" >  Khoa </span></th>
-                            <th> <span class="atag" onclick="sort('NgaySinh')" > Ngày sinh </span></th>
-                            <th> <span class="atag" onclick="sort('GioiTinh')" >  Giới tính </span></th>
-                            <th> <span class="atag" onclick="sort('LoaiHinhHoc')" >  Loại </span></th>
+                            <th> MSSV </span></th>
+                            <th> Họ Tên </span></th>
+                            <th> Lớp </span></th>
+                            <th> Khoa </span></th>
+                            <th> Ngày sinh </span></th>
+                            <th> Giới tính </span></th>
+                            <th> Loại </span></th>
                             <th> Sửa </th>
                             <th> Xóa </th>
                             <%--Should be sorted when click on table's header--%>
@@ -219,6 +219,7 @@
         }
         
         function searchStudent() {
+            currentpage=1;
             var key = document.getElementById("search").value;
             var pagename = "../../ManageStudentController?function=search-students&key=" + key;
             if(http){
@@ -234,18 +235,8 @@
                 detail.innerHTML = http.responseText;
             }
         }
-        
-        function sort(sortBy) {
-            var pagename = "../../ManageStudentController?function=sort&by=" + sortBy;
-            if(http){
-                http.open("GET", pagename, true);
-                http.onreadystatechange = handleResponseSearch;
-                http.send(null);
-            }
-        }
-        
         function deleteOneStudent(mssv) {
-            var pagename = "../../ManageStudentController?function=delete-one&mssv=" + mssv;
+            var pagename = "../../ManageStudentController?function=delete-one&mssv=" + mssv + "&currentPage=" + currentpage;
             if(http){
                 http.open("GET", pagename, true);
                 http.onreadystatechange = handleResponseDelete
@@ -361,17 +352,6 @@
                  detail.innerHTML=http.responseText;
              }
          }
-         
-         function sortTrainClass(by, type) {
-             if (http) {
-                http.open("GET", "../../ReportController?action=sort-student-report"
-                    + "&by=" + by
-                    + "&type=" + type, true);
-                http.onreadystatechange = handleResponseStudentReport;
-                http.send(null);
-              }
-         }
-         
-    </script>
+     </script>
     </body>
 </html>
