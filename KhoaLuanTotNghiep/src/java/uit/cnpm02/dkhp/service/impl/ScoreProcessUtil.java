@@ -100,6 +100,8 @@ public class ScoreProcessUtil {
             // Update score into Registration table
             // score for each StudyResult in clazz
             // OK ?
+            if (!processedList.isEmpty())
+                studyResults.addAll(processedList);
             updateScoreForRegistration(clazz, studyResults);
         } catch (Exception ex) {
             Logger.getLogger(ScoreProcessUtil.class.getName()).log(Level.SEVERE, null, ex);
