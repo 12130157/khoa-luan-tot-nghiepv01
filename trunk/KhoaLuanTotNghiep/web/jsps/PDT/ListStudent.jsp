@@ -66,7 +66,7 @@
                     <%--------------Search-------------%>
                     <div id="search-area" style="float: left;">
                         <%--SEARCH FORM--%>
-                        <div id="searchbox" action="#">
+                        <div id="searchbox">
                             <input id="search" type="text" onKeyPress="txtBoxSearchkeypressed()" placeholder="Search" />
                             <input type="button" id="submit" onclick="searchStudent()" value="Tìm kiếm" />
                         </div>
