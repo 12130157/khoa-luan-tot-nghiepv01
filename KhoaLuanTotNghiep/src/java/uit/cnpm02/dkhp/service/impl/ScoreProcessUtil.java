@@ -17,16 +17,20 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
+import uit.cnpm02.dkhp.DAO.RegistrationDAO;
 import uit.cnpm02.dkhp.DAO.StudentDAO;
 import uit.cnpm02.dkhp.DAO.StudyResultDAO;
 import uit.cnpm02.dkhp.DAO.TrainClassDAO;
 import uit.cnpm02.dkhp.controllers.PDT.ImportScoreResult;
+import uit.cnpm02.dkhp.model.Registration;
+import uit.cnpm02.dkhp.model.RegistrationID;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.model.StudyResult;
 import uit.cnpm02.dkhp.model.StudyResultID;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.model.TrainClassID;
 import uit.cnpm02.dkhp.service.IFileUploadService;
+import uit.cnpm02.dkhp.utilities.Log;
 /**
  *
  * @author LocNguyen
@@ -47,7 +51,7 @@ public class ScoreProcessUtil {
         studentDao = DAOFactory.getStudentDao();
     }
     
-    public ImportScoreResult importScore(List<StudyResult> studyResults) {
+    public ImportScoreResult importScore(TrainClass clazz, List<StudyResult> studyResults) {
         ImportScoreResult isr = new ImportScoreResult();
         try {
             List<Student> addedS = new ArrayList<Student>(10);
@@ -92,6 +96,11 @@ public class ScoreProcessUtil {
             if (!inogedS.isEmpty()) {
                 isr.setInoged(inogedS);
             }
+            
+            // Update score into Registration table
+            // score for each StudyResult in clazz
+            // OK ?
+            updateScoreForRegistration(clazz, studyResults);
         } catch (Exception ex) {
             Logger.getLogger(ScoreProcessUtil.class.getName()).log(Level.SEVERE, null, ex);
             return new ImportScoreResult("Lỗi server: " + ex.toString());
@@ -123,48 +132,21 @@ public class ScoreProcessUtil {
             // Step 2: Validate & load data
             List<StudyResult> results = loadData(file, clazz);
             // Step 3: Update
-            isr = importScore(results);
-            /*List<Student> addedS = new ArrayList<Student>(10);
-            List<Student> updatedS = new ArrayList<Student>(10);
-            //List<Student> errorS = new ArrayList<Student>(10);
-            List<Student> inogedS = new ArrayList<Student>(10);
+            isr = importScore(clazz, results);
             
-            List<StudyResult> processedList = new ArrayList<StudyResult>(10);
-            for (StudyResult sr : results) {
-                StudyResult temp = srDao.findById(sr.getId());
-                if (temp != null) {
-                    processedList.add(temp);
-                    Student s = getStudent(sr);
-                    if (temp.getMark() < sr.getMark()) {
-                        srDao.update(sr);
-                        updatedS.add(s);
-                    } else {
-                        inogedS.add(s);
-                    }
-                }
-            }
-            if (!processedList.isEmpty()) {
-                results.removeAll(processedList);
-            }
-            
-            if (!results.isEmpty()) {
-                srDao.addAll(results);
-                for (StudyResult sr : results) {
-                    Student s = getStudent(sr);
-                    if (s != null) {
-                        addedS.add(s);
-                    }
-                }
-            }*/
-            
+            // Update score into Registration table
+            // score for each StudyResult in clazz
+            // OK ?
+            //updateScoreForRegistration(clazz, results);
+
             // Step 4: Turn on flag indicate the class all ready update score
             // O: not updated yet - other: updated
             
             //
             // set flag only all studyresult filled TODO:
             //
-            clazz.setUpdateScore(1);
-            classDao.update(clazz);
+            //clazz.setUpdateScore(1);
+            //classDao.update(clazz);
             
             // Step 5: Move processed file to backup folder
             File backupDir = new File("bk");
@@ -181,6 +163,33 @@ public class ScoreProcessUtil {
         }
         
         return isr;
+    }
+    
+    private void updateScoreForRegistration(TrainClass clazz, List<StudyResult> result) {
+        RegistrationDAO regDao = DAOFactory.getRegistrationDAO();
+        
+        try {
+            List<Registration> regs = new ArrayList<Registration>(10);
+            for (StudyResult sr : result) {
+                RegistrationID id = new RegistrationID(sr.getId().getStudentCode(),
+                        clazz.getId().getClassCode(),
+                        clazz.getId().getSemester(), clazz.getId().getYear());
+
+                    Registration reg = regDao.findById(id);
+                    if (reg != null) {
+                        reg.setMark(sr.getMark());
+                        regs.add(reg);
+                    }
+            }
+            
+            if (!regs.isEmpty()) {
+                regDao.update(regs);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(ScoreProcessUtil.class.getName()).log(Level.SEVERE, null, ex);
+            //Log.getInstance().log(null, null);
+        }
+        
     }
     
     private Student getStudent(StudyResult sr) {
@@ -211,7 +220,6 @@ public class ScoreProcessUtil {
         HSSFRow rowTemp;
         HSSFCell cellTemp;
 
-        int cellType;
         Iterator rowIter = sheet.rowIterator();
         while (rowIter.hasNext()) {
             rowTemp = (HSSFRow) rowIter.next();
@@ -224,11 +232,12 @@ public class ScoreProcessUtil {
             }
 
             cellTemp = rowTemp.getCell(0);
-            cellType = cellTemp.getCellType();
             String firstValue = cellTemp.getStringCellValue();
             boolean firstLine = false;
             try {
-                int value = Integer.parseInt(firstValue);
+                // Validate the first column must be a number
+                // it said, start data validated...
+                Integer.parseInt(firstValue);
                 firstLine = true;
             } catch (Exception ex) {
                 firstLine = false;
