@@ -163,7 +163,7 @@
         }
         function sendRequest(){
             if(http){
-                var key = document.getElementById("search-box").value;
+                var key = document.getElementById("search").value;
                 submitSearchSubject("../../ManageSubjectController?function=Filter&curentPage="+currentpage + "&key=" + key);
             }
         }
@@ -201,7 +201,7 @@
             }
         }
         function deleteSub(subId){
-            var key = document.getElementById("search-box").value;
+            var key = document.getElementById("search").value;
             submitSearchSubject("../../ManageSubjectController?function=delete&subject_code=" + subId +"&curentPage="+currentpage + "&key=" + key);
         }
         
