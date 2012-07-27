@@ -20,7 +20,7 @@
     <head>
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Long management</title>
+        <title>Quản lý thay đổi</title>
         <style media="all" type="text/css">
         </style>
     </head>
