@@ -6,6 +6,7 @@ package uit.cnpm02.dkhp.controllers.PDT;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,6 +23,7 @@ import uit.cnpm02.dkhp.model.Account;
 import uit.cnpm02.dkhp.model.Diary;
 import uit.cnpm02.dkhp.model.type.AccountStatus;
 import uit.cnpm02.dkhp.model.type.AccountType;
+import uit.cnpm02.dkhp.utilities.StringUtils;
 
 /**
  *
@@ -50,9 +52,9 @@ public class DiaryController extends HttpServlet {
                 getUserDetail(request, response);
             } else if(action.equalsIgnoreCase("get-content-detail")) {
                 getContentDetail(request, response);
-            }/* else if (action.equalsIgnoreCase("pre-update-train-prog")) {
-                preUpdateTrainProg(request, response);
-            } else if (action.equalsIgnoreCase("add-subject-to-traing-prog")) {
+            } else if (action.equalsIgnoreCase("search-log")) {
+                searchLogs(request, response);
+            }/* else if (action.equalsIgnoreCase("add-subject-to-traing-prog")) {
                 addSubjectToTrainProg(request, response);
             } else if (action.equalsIgnoreCase("remove-subject-to-traing-prog")) {
                 deleteSubFromTrainProg(request, response);
@@ -167,6 +169,56 @@ public class DiaryController extends HttpServlet {
         } catch (Exception ex) {
             Logger.getLogger(DiaryController.class.getName())
                     .log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void searchLogs(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        String key = request.getParameter("key");
+        if (StringUtils.isEmpty(key)) {
+            return;
+        }
+        
+        PrintWriter out = response.getWriter();
+        
+        List<Diary> diaries = new ArrayList<Diary>(10);
+        try {
+            List<Diary> temp = new ArrayList<Diary>(10);
+            DiaryDAO diaryDao = DAOFactory.getDiaryDao();
+            temp = diaryDao.findByColumName("TaiKhoan", key);
+            if (temp != null && !temp.isEmpty()) {
+                diaries.addAll(temp);
+            }
+            temp = diaryDao.findByColumName("NoiDung", key);
+            if (temp != null && !temp.isEmpty()) {
+                diaries.addAll(temp);
+            }
+            temp = diaryDao.findByColumName("Ngay", key);
+            if (temp != null && !temp.isEmpty()) {
+                diaries.addAll(temp);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(DiaryController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        if (!diaries.isEmpty()) {
+            writeOutListLogs(out, diaries);
+        }
+        
+    }
+
+    private void writeOutListLogs(PrintWriter out, List<Diary> diaries) {
+        out.println("<tr><th>STT</th><th>User</th><th>Nội dung</th><th>Thời gian</th></tr>");
+        
+        for (int i = 0; i < diaries.size(); i ++) {
+            Diary d = diaries.get(i);
+            out.println("<tr>");
+            
+            out.println("<td>" + (i + 1) + "</td>");
+            out.println("<td> <span class=\"atag\" onclick=\"loadUserDetail('" + d.getUserName() + "')\">" +d.getUserName() + "</span> </td>");
+            out.println("<td> <span class=\"atag\" onclick=\"loadContent(" +d.getId()+ ")\">" + d.getContent() +"</span></td>");
+            out.println("<td>" + d.getDate() +" </td>");
+            out.println("</tr>");
         }
     }
 }
