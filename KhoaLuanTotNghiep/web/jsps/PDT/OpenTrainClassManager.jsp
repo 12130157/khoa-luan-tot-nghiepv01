@@ -74,10 +74,10 @@
                         </div>
 
                         <div id="inputvalue">
-                            <form id="searchbox" style="width: 310px;  float: left; text-align: center;" action="">
+                            <div id="searchbox" style="width: 310px;  float: left; text-align: center;">
                                 <input type="text" id="search" onKeyPress="keypressed()" placeholder = "Search" />
-                                <input type="button" id="submit" onclick = "search()" value = "Tìm" />
-                            </form>
+                                <input type="button" id="submit" onclick = "SearchByValue()" value = "Tìm" />
+                            </div>
                         </div>
 
                         <div id="faculty">
@@ -364,18 +364,18 @@
         { 
          if(event.keyCode=='13')
           {
-           search();
+           SearchByValue();
           } 
          }
-        function search(){
+       function SearchByValue(){
            currentpage = 1;
            value= document.getElementById("search").value;
            if(http){
-                http.open("GET", "../../ManageClassController?action=search&value="+value  ,true);
+                http.open("GET", "../../ManageClassController?action=search&value=" + value  ,true);
                 http.onreadystatechange = searchResponeHandler;
                 http.send(null);
              }
         }
-        
+               
     </script>
 </html>
