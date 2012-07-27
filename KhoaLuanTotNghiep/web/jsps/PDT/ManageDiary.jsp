@@ -38,7 +38,15 @@
                 <br /><br />
                 
                 <div id="">
-                    <table class="general-table">
+                    <%--------------Search-------------%>
+                    <div id="search-area" style="float: left;">
+                        <%--SEARCH FORM--%>
+                        <div id="searchbox">
+                            <input id="search" type="text" onKeyPress="searchBoxKeyPressed(event)" placeholder="Search" />
+                            <input type="button" id="submit" onclick="searchLog()" value="Tìm kiếm" />
+                        </div>
+                    </div>
+                    <table class="general-table" id="tbl-list-log">
                         <tr>
                             <th>STT</th>
                             <th>User</th>
@@ -63,6 +71,7 @@
                     popup window...
                 </div>
                 <%--  PAGGING --%>
+                <%--
                 <div id="paggind">
                     <input type="button" value="|<<" onclick="firstPage()" />
                     <input type="button" value="<<" onclick="prePage()" />
@@ -70,6 +79,7 @@
                     <input type="button" value=">>|" onclick="endPage()" /><br />
                     <input type="hidden" value="<%= 1%>" id="numpage" />
                 </div>
+                --%>
                 <h1></h1>
             </div><!--End Contents-->
             <div id="footer"><!--Footer-->
@@ -121,6 +131,37 @@
                         alert("Lỗi gửi yêu cầu tới Server thất bại");
                     }
                 });
+            }
+            
+            function searchBoxKeyPressed(event) {
+                if (event.charCode == '13') {
+                    searchLog();
+                }
+            }
+            
+            function searchLog() {
+                var key = $("#search").val();
+                if (key == '') {
+                    return;
+                }
+                
+                var controller = '../../DiaryController?action=search-log' 
+                                    + '&key=' + key;
+                if(http){
+                    http.open("GET", controller, true);
+                    http.onreadystatechange = searchLogHandler;
+                    http.send(null);
+                } else {
+                    alert("Lỗi gửi yêu cầu tới Server thất bại");
+                }
+            }
+            
+            function searchLogHandler() {
+                if(http.readyState == 4 && http.status == 200){
+                     var detail = document.getElementById("tbl-list-log");
+                     if (http.responseText != '')
+                         detail.innerHTML = http.responseText;
+                }
             }
             
             function firstPage() {
