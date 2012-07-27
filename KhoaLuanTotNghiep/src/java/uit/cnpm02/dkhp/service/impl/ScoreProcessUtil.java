@@ -71,6 +71,9 @@ public class ScoreProcessUtil {
                     } else {
                         inogedS.add(s);
                     }
+                    
+                    // Update score for Registration only
+                    temp.setMark(sr.getMark());
                 }
             }
             if (!processedList.isEmpty()) {
