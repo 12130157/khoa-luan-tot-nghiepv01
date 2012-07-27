@@ -109,10 +109,7 @@ public class ManageLecturerController extends HttpServlet {
             } else if (action.equalsIgnoreCase(ManageLecturerSupport
                     .RETRY_IMPORT_FROM_FILE.getValue())) {
                 doRetryImportFromFile(request, response);
-            } else if (action.equalsIgnoreCase(ManageLecturerSupport
-                    .SORT.getValue())) {
-                doSort(request, response);
-            } else if (action.equalsIgnoreCase(ManageLecturerSupport
+            }  else if (action.equalsIgnoreCase(ManageLecturerSupport
                     .PAGGING.getValue())) {
                 doPaggingData(request, response);
             }
@@ -297,8 +294,16 @@ public class ManageLecturerController extends HttpServlet {
         }
         List<Lecturer> lecturers = lecturerService.search(
                 key, request.getSession().getId());
+        List<Lecturer> result = new ArrayList<Lecturer>(Constants.ELEMENT_PER_PAGE_DEFAULT);
+        if(lecturers.size()> Constants.ELEMENT_PER_PAGE_DEFAULT){
+            for(int i=0; i < Constants.ELEMENT_PER_PAGE_DEFAULT; i++){
+               result.add(lecturers.get(i));
+            }
+            writeOutListLecturers(response.getWriter(), result, 1);
+        }else{
+            writeOutListLecturers(response.getWriter(), lecturers, 1);
+        }
         
-        writeOutListLecturers(response.getWriter(), lecturers);
         
         
     }
@@ -307,28 +312,24 @@ public class ManageLecturerController extends HttpServlet {
      * Write out list lecterers for ajax calling...
      * 
      */
-    private final int slideLimit= 15;
-    private void writeOutListLecturers(PrintWriter out,
-            List<Lecturer> lecturers) {
+     private void writeOutListLecturers(PrintWriter out,
+            List<Lecturer> lecturers, int currentPage) {
         if (lecturers == null) {
             return;
         }
-        if (lecturers.size() > slideLimit) {
-            out.println("<div id=\"sidebar\">");
-        }
-        out.println("<table id=\"tablelistlecturer\" name=\"tablelistlecturer\" class=\"general-table\">");
+       out.println("<table id=\"tablelistlecturer\" name=\"tablelistlecturer\" class=\"general-table\">");
         out.println("<tr>"
                 + "<th><INPUT type=\"checkbox\" name=\"chkAll\" onclick=\"selectAll('tablelistlecturer', 0)\" /></th>"
                 + "<th> STT </th>"
-                + "<th> <span class=\"atag\" onclick=\"sort('MaGV')\" > Mã GV </span></th>"
-                + "<th> <span class=\"atag\" onclick=\"sort('HoTen')\" >  Họ tên </span> </th>"
-                + "<th> <span class=\"atag\" onclick=\"sort('MaKhoa')\" >  Khoa </span> </th>"
-                + "<th> <span class=\"atag\" onclick=\"sort('QueQuan')\" >  Địa chỉ </span> </th>"
-                + "<th> <span class=\"atag\" onclick=\"sort('NgaySinh')\" > Ngày sinh </span> </th>"
-                + "<th> <span class=\"atag\" onclick=\"sort('GioiTinh')\" >  Giới tính </span> </th>"
+                + "<th> Mã GV </span></th>"
+                + "<th> Họ tên </span> </th>"
+                + "<th> Khoa </span> </th>"
+                + "<th> Địa chỉ </span> </th>"
+                + "<th> Ngày sinh </span> </th>"
+                + "<th> Giới tính </span> </th>"
                 /*+ "<th> <span class=\"atag\" onclick=\"sort('Email')\" >  Email </span> </th>"*/
-                + "<th> <span class=\"atag\" onclick=\"sort('HocHam')\" >  Học Hàm </span> </th>"
-                + "<th> <span class=\"atag\" onclick=\"sort('HocVi')\" >  Học Vị </span> </th>"
+                + "<th> Học Hàm </span> </th>"
+                + "<th> Học Vị </span> </th>"
                 + "<th> Sửa </th>"
                 + "<th> Xóa </th>"
                 + "</tr>");
@@ -336,7 +337,7 @@ public class ManageLecturerController extends HttpServlet {
             for (int i = 0; i < lecturers.size(); i++) {
                 out.println("<tr>"
                         + "<td><INPUT type=\"checkbox\" name=\"chk" + i + "\"/></td>"
-                        + "<td>" + (i + 1) + "</td>"
+                        + "<td>" + ((currentPage-1)*Constants.ELEMENT_PER_PAGE_DEFAULT + 1 + i) + "</td>"
                         + "<td>" + lecturers.get(i).getId() + "</td>"
                         + "<td>" + lecturers.get(i).getFullName() + "</td>"
                         + "<td>" + lecturers.get(i).getFacultyCode() + "</td>"
@@ -352,9 +353,7 @@ public class ManageLecturerController extends HttpServlet {
             }
         }
         out.println("</table>");
-        if (lecturers.size() > slideLimit) {
-            out.println("</div>");
-        }
+       
     }
 
     private void doPrepareDataForImportLecturer(HttpSession session,
@@ -374,13 +373,19 @@ public class ManageLecturerController extends HttpServlet {
         String magv = request.getParameter("magv");
         String sessionId = request.getSession().getId();
         ExecuteResult er = lecturerService.deleteLecturer(magv, false, sessionId);
-        
+         try {
+            String page = request.getParameter("currentPage");
+            currentPage = Integer.parseInt(page);
+        } catch(Exception ex) {
+            currentPage = 1;
+        }
         if (!er.isIsSucces()) {
             out.append("error " + er.getMessage());
         } else {
-            List<Lecturer> lecturers = lecturerService.getLecturers(sessionId);
+            List<Lecturer> lecturers = lecturerService
+                .getLecturers(currentPage, sessionId);
             if ((lecturers != null) && !lecturers.isEmpty()) {
-                writeOutListLecturers(out, lecturers);
+                writeOutListLecturers(out, lecturers, currentPage);
             }
         }
     }
@@ -727,25 +732,11 @@ public class ManageLecturerController extends HttpServlet {
         } else {
             lecturers = lecturerService.getLecturers(sessionId);
             if ((lecturers != null) && !lecturers.isEmpty()) {
-                writeOutListLecturers(out, lecturers);
+                writeOutListLecturers(out, lecturers,1);
             }
         }
     }
-
-    private void doSort(HttpServletRequest request,
-            HttpServletResponse response) throws IOException {
-        String by = "MaGV";
-        try {
-            by = request.getParameter("by");
-        } catch (Exception ex) {
-            //
-        }
-        List<Lecturer> lecturers = lecturerService.sort(
-                request.getSession().getId(), by);
-        writeOutListLecturers(response.getWriter(), lecturers);
-    }
-
-    private void doPaggingData(HttpServletRequest request,
+ private void doPaggingData(HttpServletRequest request,
             HttpServletResponse response) throws IOException {
         try {
             String page = request.getParameter("currentpage");
@@ -757,7 +748,7 @@ public class ManageLecturerController extends HttpServlet {
         List<Lecturer> lecturers = lecturerService
                 .getLecturers(currentPage, request.getSession().getId());
         if ((lecturers != null) && !lecturers.isEmpty()) {
-            writeOutListLecturers(response.getWriter(), lecturers);
+            writeOutListLecturers(response.getWriter(), lecturers, currentPage);
         }
     }
     

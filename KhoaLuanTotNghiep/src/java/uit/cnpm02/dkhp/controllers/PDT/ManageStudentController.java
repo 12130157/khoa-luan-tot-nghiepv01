@@ -113,9 +113,6 @@ public class ManageStudentController extends HttpServlet {
                                                 .SEARCH.getValue())) {
                 doSearchStudent(request, response);
             } else if (action.equalsIgnoreCase(ManageStudentSupport
-                                                .SORT.getValue())) {
-                doSortStudent(request, response);
-            } else if (action.equalsIgnoreCase(ManageStudentSupport
                                                 .DELETE_ONE.getValue())) {
                 doDeleteOne(request, response);
             } else if (action.equalsIgnoreCase(ManageStudentSupport
@@ -545,29 +542,33 @@ public class ManageStudentController extends HttpServlet {
         }
         List<Student> students = studentService.search(
                 key, request.getSession().getId());
+        List<Student> result = new ArrayList<Student>(Constants.ELEMENT_PER_PAGE_DEFAULT);
+        if(students.size()> Constants.ELEMENT_PER_PAGE_DEFAULT){
+            for(int i=0; i < Constants.ELEMENT_PER_PAGE_DEFAULT; i++){
+               result.add(students.get(i));
+            }
+            writeOutSearchResult(response.getWriter(), result, 1);
+        }else{
+            writeOutSearchResult(response.getWriter(), students, 1);
+        }
         
-        writeOutSearchResult(response.getWriter(), students);
     }
     
-    private final int slideLimit= 15;
-    private void writeOutSearchResult(PrintWriter out, List<Student> students) {
+      private void writeOutSearchResult(PrintWriter out, List<Student> students, int currentPage) {
         if (students == null) {
             return;
-        }
-        if (students.size() > slideLimit) {
-            out.println("<div id=\"sidebar\">");
         }
         out.println("<table id=\"tableliststudent\" name=\"tableliststudent\" class=\"general-table\">");
         out.println("<tr>"
                 + "<th><INPUT type=\"checkbox\" name=\"chkAll\" onclick=\"selectAll('tableliststudent', 0)\" /></th>"
                 + "<th> STT </th>"
-                + "<th> <span class=\"atag\" onclick=\"sort('MSSV')\" > MSSV </span></th>"
-                + "<th> <span class=\"atag\" onclick=\"sort('HoTen')\" >  Họ tên </span> </th>"
-                + "<th> <span class=\"atag\" onclick=\"sort('MaLop')\" >  Lớp </span> </th>"
-                + "<th> <span class=\"atag\" onclick=\"sort('MaKhoa')\" >  Khoa </span> </th>"
-                + "<th> <span class=\"atag\" onclick=\"sort('NgaySinh')\" > Ngày sinh </span> </th>"
-                + "<th> <span class=\"atag\" onclick=\"sort('GioiTinh')\" >  Giới tính </span> </th>"
-                + "<th> <span class=\"atag\" onclick=\"sort('LoaiHinhHoc')\" >  Loại </span> </th>"
+                + "<th> MSSV </span></th>"
+                + "<th> Họ tên </span> </th>"
+                + "<th> Lớp </span> </th>"
+                + "<th> Khoa </span> </th>"
+                + "<th> Ngày sinh </span> </th>"
+                + "<th> Giới tính </span> </th>"
+                + "<th> Loại </span> </th>"
                 + "<th> Sửa </th>"
                 + "<th> Xóa </th>"
                 + "</tr>");
@@ -575,8 +576,8 @@ public class ManageStudentController extends HttpServlet {
         if (!students.isEmpty()) {
             for (int i = 0; i < students.size(); i++) {
                 out.println("<tr>"
-                        + "<td><INPUT type=\"checkbox\" name=\"chk" + i + "\"/></td>"
-                        + "<td>" + (i + 1) + "</td>"
+                        + "<td><INPUT type=\"checkbox\" name=\"chk" +  i + "\"/></td>"
+                        + "<td>" + ((currentPage-1)*Constants.ELEMENT_PER_PAGE_DEFAULT + 1 + i) + "</td>"
                         + "<td>" + students.get(i).getId() + "</td>"
                         + "<td>" + students.get(i).getFullName() + "</td>"
                         + "<td>" + students.get(i).getClassCode() + "</td>"
@@ -590,9 +591,6 @@ public class ManageStudentController extends HttpServlet {
             }
         }
         out.println("</table>");
-        if (students.size() > slideLimit) {
-            out.println("</div>");
-        }
     }
 
     private void doListStudent(HttpServletRequest request,
@@ -621,24 +619,16 @@ public class ManageStudentController extends HttpServlet {
         response.sendRedirect(path);
     }
 
-    private void doSortStudent(
-            HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-        String by = "MSSV";
-        try {
-            by = request.getParameter("by");
-        } catch (Exception ex) {
-            //
-        }
-        List<Student> students = studentService.sort(
-                request.getSession().getId(), by);
-        writeOutSearchResult(response.getWriter(), students);
-    }
-
     private void doDeleteOne(HttpServletRequest request,
             HttpServletResponse response) throws IOException {
         PrintWriter out = response.getWriter();
         String mssv = request.getParameter("mssv");
+         try {
+            String page = request.getParameter("currentPage");
+            currentPage = Integer.parseInt(page);
+        } catch(Exception ex) {
+            currentPage = 1;
+        }
         String sessionId = request.getSession().getId();
         ExecuteResult er = studentService.deleteStudent(
                             mssv, false, sessionId);
@@ -646,9 +636,10 @@ public class ManageStudentController extends HttpServlet {
         if (!er.isIsSucces()) {
             out.append("error " + er.getMessage());
         } else {
-            List<Student> students = studentService.getStudents(sessionId);
+            List<Student> students = studentService
+                .getStudents(currentPage, sessionId);
             if ((students != null) && !students.isEmpty()) {
-                writeOutSearchResult(out, students);
+                writeOutSearchResult(out, students, currentPage);
             }
         }
     }
@@ -677,7 +668,7 @@ public class ManageStudentController extends HttpServlet {
         } else {
             students = studentService.getStudents(sessionId);
             if ((students != null) && !students.isEmpty()) {
-                writeOutSearchResult(out, students);
+                writeOutSearchResult(out, students,1);
             }
         }
     }
@@ -737,7 +728,7 @@ public class ManageStudentController extends HttpServlet {
         List<Student> students = studentService
                 .getStudents(currentPage, request.getSession().getId());
         if ((students != null) && !students.isEmpty()) {
-            writeOutSearchResult(response.getWriter(), students);
+            writeOutSearchResult(response.getWriter(), students,currentPage);
         }
     }
 
