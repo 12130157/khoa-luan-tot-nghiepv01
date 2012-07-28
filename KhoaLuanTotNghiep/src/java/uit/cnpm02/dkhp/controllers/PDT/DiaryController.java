@@ -241,9 +241,6 @@ public class DiaryController extends HttpServlet {
             if (fromDate == null || toDate == null || fromDate.after(toDate)) {
                 return;
             }
-            fromDate = new Date(fromDate.getTime() - 24*60*60);
-            toDate = new Date(toDate.getTime() + 24*60*60);
-            
         } catch (Exception ex) {
             //Do nothing...
         }
@@ -260,8 +257,8 @@ public class DiaryController extends HttpServlet {
                 
                 for (Diary d : temp) {
                     if ((d.getDate() != null)
-                            && d.getDate().after(fromDate)
-                            && d.getDate().before(toDate)) {
+                            && !d.getDate().before(fromDate)
+                            && !d.getDate().after(toDate)) {
                         
                         diaries.add(d);
                     }
