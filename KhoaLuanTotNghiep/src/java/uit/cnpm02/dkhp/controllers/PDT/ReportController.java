@@ -2,8 +2,8 @@ package uit.cnpm02.dkhp.controllers.PDT;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,13 +14,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
-import uit.cnpm02.dkhp.DAO.FacultyDAO;
 import uit.cnpm02.dkhp.DAO.LecturerDAO;
+import uit.cnpm02.dkhp.DAO.RegistrationDAO;
 import uit.cnpm02.dkhp.DAO.SubjectDAO;
 import uit.cnpm02.dkhp.DAO.TrainClassDAO;
 import uit.cnpm02.dkhp.model.Faculty;
+import uit.cnpm02.dkhp.model.Registration;
+import uit.cnpm02.dkhp.model.ReportBySemester;
+import uit.cnpm02.dkhp.model.Rule;
 import uit.cnpm02.dkhp.model.Student;
-import uit.cnpm02.dkhp.model.Subject;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.service.IReporter;
 import uit.cnpm02.dkhp.service.IStudentService;
@@ -29,7 +31,6 @@ import uit.cnpm02.dkhp.service.impl.ReporterImpl;
 import uit.cnpm02.dkhp.service.impl.StudentServiceImpl;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.Message;
-import uit.cnpm02.dkhp.utilities.StringUtils;
 import uit.cnpm02.dkhp.utilities.filedownload.FileDownloadUtility;
 
 /**
@@ -70,10 +71,7 @@ public class ReportController extends HttpServlet {
         try {
             if (requestAction.equals(ReportFunctionSupported.
                                                 DEFAULT.getValue())) {
-                String path = "./jsps/PDT/Report.jsp";
-                session.setAttribute("faculties", getAllFaculty());
-                response.sendRedirect(path);
-                return;
+                getDefaultReport(request, response);
             } else if (requestAction.equals(ReportFunctionSupported.
                                                 SEARCH_STUDENT.getValue())) {
                 // List existed TrainClass, Pagging setup
@@ -172,14 +170,46 @@ public class ReportController extends HttpServlet {
             out.close();
         }
     }
+    private void getDefaultReport(HttpServletRequest request, HttpServletResponse response){
+        try {
+            List<TrainClass> classList = DAOFactory.getTrainClassDAO().findAll();
+            List<String> yearList = getYear(classList);
+            ReportBySemester report = getReportBySemesterAndYear(1, yearList.get(0));
+            HttpSession session = request.getSession();
+            String path = "./jsps/PDT/Report.jsp";
+            session.setAttribute("yearList", yearList);
+            session.setAttribute("report", report);
+            response.sendRedirect(path);
+            return;
+        } catch (Exception ex) {
+            Logger.getLogger(ReportController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    private List<String> getYear(List<TrainClass> trainClassList) {
+        ArrayList<String> yearList = new ArrayList<String>();
+        for (int i = 0; i < trainClassList.size(); i++) {
+            if (checkStringExist(trainClassList.get(i).getId().getYear(), yearList) == false) {
+                yearList.add(trainClassList.get(i).getId().getYear());
+            }
+        }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+        return yearList;
+    }
+     private boolean checkStringExist(String value, List<String> list) {
+        boolean result = false;
+        for (int i = 0; i < list.size(); i++) {
+            if (value.equalsIgnoreCase(list.get(i))) {
+                result = true;
+            }
+        }
+        return result;
+    }
     /** 
-     * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException 
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -188,11 +218,11 @@ public class ReportController extends HttpServlet {
     }
 
     /** 
-     * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * 
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException 
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -201,13 +231,13 @@ public class ReportController extends HttpServlet {
     }
 
     /** 
-     * Returns a short description of the servlet.
-     * @return a String containing servlet description
+     * 
+     * @return 
      */
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
     private List<Faculty> getAllFaculty() {
         try {
@@ -377,99 +407,101 @@ public class ReportController extends HttpServlet {
         session.setAttribute("trainclass", clazz);
         session.setAttribute("students", students);
     }
-
+    private ReportBySemester getReportBySemesterAndYear(int semester, String year){
+        try {
+                List<Rule> rule = DAOFactory.getRuleDao().findAll();
+                 float markPass = rule.get(0).getValue();
+                 int numOfPassReg=0;
+                 int numOfNotPassReg=0;
+                 int numOfReg=0;
+                 TrainClassDAO classDao = DAOFactory.getTrainClassDAO();
+                 List<TrainClass> listClass = classDao.findAllBySemesterAndYear(semester, year);
+                 if(listClass!= null && !listClass.isEmpty()){
+                 RegistrationDAO regDao = DAOFactory.getRegistrationDAO();
+                 String[] columnName = new String[]{"HocKy", "NamHoc"};
+                 Object[] values = new Object[]{semester, year}; 
+                 List<Registration> regList = regDao.findByColumNames(columnName, values);
+                 TrainClass maxRegClass = listClass.get(0);
+                 TrainClass minRegClass = listClass.get(0);
+                 for(int i =1; i< listClass.size(); i++){
+                     if(listClass.get(i).getNumOfStudentReg()>maxRegClass.getNumOfStudentReg()){
+                         maxRegClass=listClass.get(i);
+                     }
+                     if(listClass.get(i).getNumOfStudentReg()< maxRegClass.getNumOfStudentReg()){
+                         minRegClass=listClass.get(i);
+                     }
+                 }
+                 if(regList!= null && !regList.isEmpty()){
+                     for(int j =0; j<regList.size(); j++){
+                         if(regList.get(j).getMark()>= markPass){
+                             numOfPassReg++;
+                         }else{
+                             numOfNotPassReg++;
+                         }
+                     }
+                     numOfReg= regList.size();
+                 }
+                 ReportBySemester report=new ReportBySemester(listClass.size(), numOfReg, maxRegClass, minRegClass, numOfPassReg, numOfNotPassReg);
+                 return report;
+                 }else{
+                     return null;
+                 }
+        } catch (Exception ex) {
+            Logger.getLogger(ReportController.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
     private void fillTrainClassReport(HttpServletRequest request,
             HttpServletResponse response) throws IOException {
-        PrintWriter out = response.getWriter();
-        String yearStr = request.getParameter("year");
-        String semeterStr = request.getParameter("semeter");
-        String facultyId = request.getParameter("faculty");
-        String status = request.getParameter("status");
-        List<String> columnName = new ArrayList<String>(3);
-        List<Object> values = new ArrayList<Object>(3);
-        if ((yearStr != null) && !yearStr.equalsIgnoreCase("All")) {
-            columnName.add("NamHoc");
-            values.add(yearStr);
-            //columnNames[0] = "NamHoc";
-            //values[0] = yearStr;
-        }
-        if ((semeterStr != null) && !semeterStr.equalsIgnoreCase("All")) {
-            columnName.add("HocKy");
-            values.add(Integer.parseInt(semeterStr));
-        }
-        columnName.add("TrangThai");
-        TrainClassStatus st = TrainClassStatus.getTrainClassStatus(status);
-        if (st != null) {
-            values.add(st.getValue());
-        } else {
-            values.add(st.ALL.getValue());
-        }
+            PrintWriter out = response.getWriter(); 
+            String yearStr = request.getParameter("year");
+            String semeterStr = request.getParameter("semeter");
+            int semester = Integer.parseInt(semeterStr);
+            ReportBySemester report=getReportBySemesterAndYear(semester, yearStr);
+            writeOutTrainClassReport(out, report);
             
-        TrainClassDAO tcDao = DAOFactory.getTrainClassDAO();
-        List<TrainClass> tcs = new ArrayList<TrainClass>(10);
-        try {
-            tcs = tcDao.findByColumNames(
-                    columnName.toArray(new String[columnName.size()]),
-                    values.toArray());
-        } catch (Exception ex) {
-            Logger.getLogger(ReportController.class.getName())
-                    .log(Level.SEVERE, null, ex);
-            out.println("Error load data.");
-            return;
-        }
-        
-        if (facultyId != null && !facultyId.equalsIgnoreCase("All")) {
-            SubjectDAO subDao = DAOFactory.getSubjectDao();
-            List<TrainClass> tobeRemoved = new ArrayList<TrainClass>(10);
-            for (TrainClass tc : tcs) {
-                try {
-                    Subject sub = subDao.findById(tc.getSubjectCode());
-                    if (sub != null && !sub.getFacultyCode().equalsIgnoreCase(facultyId)) {
-                        tobeRemoved.add(tc);
-                    }
-                } catch (Exception ex) {
-                    Logger.getLogger(ReportController.class.getName())
-                            .log(Level.SEVERE, null, ex);
-                }
-            }
-            if (tobeRemoved.size() > 0) {
-                tcs.removeAll(tobeRemoved);
-            }
-        }
-        
-        writeOutTrainClassReport(out, tcs);
-    }
+   }
     
-    private void writeOutTrainClassReport(PrintWriter out, List<TrainClass> tcs) {
-        if (tcs.size() <= 0) {
-            out.println("Không có thông tin.");
-            return;
+    private void writeOutTrainClassReport(PrintWriter out, ReportBySemester report) {
+        if(report!=null){
+            DecimalFormat format = new DecimalFormat("#.##");
+            float ever=  (float)report.getNumOfReg()/report.getNumOfClassOpen();
+            String everstr= format.format(ever);
+            float percentPass = (float)report.getNumOfPassReg()/report.getNumOfReg() *100;
+            String percentPassSrt= format.format(percentPass);
+            float percentNotPass = (float)report.getNumOfNotPassReg()/report.getNumOfReg() *100;
+            String percentNotPassSrt= format.format(percentNotPass);
+            out.println("<tr>");
+            out.println("<td>Số lớp đã mở: </td>");
+            out.println("<td>"+report.getNumOfClassOpen()+"</td>");
+            out.println("</tr>");
+            out.println("<tr>");
+            out.println("<td>Số đăng ký: </td>");
+            out.println("<td>"+report.getNumOfReg()+"</td>");
+            out.println("</tr>");
+            out.println("<tr>");
+            out.println("<td>Trung bình: </td>");
+            out.println("<td>"+everstr+" (ĐK/Lớp)</td>");
+            out.println("</tr>");
+            out.println("<tr>");
+            out.println("<td>Lớp có đăng ký nhiều nhất</td>");
+            out.println("<td>"+report.getMaxRegClass().getId().getClassCode()+"  ("+report.getMaxRegClass().getNumOfStudentReg()+" ĐK)</td>");
+            out.println("</tr>");
+            out.println("<tr>");
+            out.println("<td>Lớp có đăng ký ít nhất</td>");
+            out.println("<td>"+report.getMinRegClass().getId().getClassCode()+"  ("+report.getMinRegClass().getNumOfStudentReg()+" ĐK)</td>");           
+            out.println("</tr>");
+            out.println("<tr>");
+            out.println("<td>Số sinh viên đạt</td>");
+            out.println("<td>"+report.getNumOfPassReg()+"  ("+percentPassSrt+"%)</td>");            
+            out.println("</tr>");
+            out.println("<td>Số sinh viên không đạt</td>");
+            out.println("<td>"+report.getNumOfNotPassReg()+"  ("+percentNotPassSrt+"%)</td>");            
+            out.println("</tr>");
+        }else{
+            out.println("<p>Chưa có thông tin</p>");
         }
-        SubjectDAO subDao = DAOFactory.getSubjectDao();
-        LecturerDAO lecturerDao = DAOFactory.getLecturerDao();
-        out.print("<table class=\"general-table\" style=\"width: 660px; margin-top: 1px;\">");
-        out.print("<tr><th>STT</th><th>Mã lớp</th><th>Tên MH</th><th>SLSV</th></tr>");
-        for (int i = 0; i < tcs.size(); i++) {
-            TrainClass tc = tcs.get(i);
-            String subjectName = tc.getSubjectCode();
-            try {
-                subjectName = subDao.findById(tc.getSubjectCode()).getSubjectName();
-            } catch(Exception ex) {
-            }
-            String lecturerName = tc.getLecturerCode();
-            try {
-                lecturerName = lecturerDao.findById(tc.getLecturerCode()).getFullName();
-            } catch(Exception ex) {
-            }
-            out.print("<tr>");
-            out.print("<td>" + (i + 1) + "</td>");
-            out.print("<td>" + tc.getId().getClassCode() + "</td>");
-            out.print("<td>" + subjectName + "</td>");
-            out.print("<td>" + lecturerName + "</td>");
-            out.print("</tr>");
-            
-        }
-        out.print("</table>");
+        
     }
 
      /**

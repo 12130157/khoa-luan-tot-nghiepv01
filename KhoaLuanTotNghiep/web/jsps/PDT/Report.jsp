@@ -4,6 +4,8 @@
     Author     : LocNguyen
 --%>
 
+<%@page import="java.text.DecimalFormat"%>
+<%@page import="uit.cnpm02.dkhp.model.ReportBySemester"%>
 <%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
 <%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="uit.cnpm02.dkhp.model.Faculty"%>
@@ -13,19 +15,19 @@
 <%
     // Validate Access role
     ClientValidate.validateAcess(AccountType.ADMIN, session, response);
-    
-    List<Faculty> falculties = (List<Faculty>) session.getAttribute("faculties");
+    List<String> yearList = (List<String>) session.getAttribute("yearList");
+    ReportBySemester report = (ReportBySemester) session.getAttribute("report");
 %>
 <html>
     <head>
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Report</title>
+        <title>Thống kê</title>
         <style media="all" type="text/css">
             <%-- CSS definition --%>
         </style>
     </head>
-    
+
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">
@@ -35,7 +37,7 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                
+
                 <div id="main-title">
                     THỐNG KÊ ĐKHP
                 </div>
@@ -43,70 +45,73 @@
                 <div class="clear"></div>
                 <div id="form-search">
                     Năm học 
-                    <select id="select-year" class="input-minwidth" onchange="reloadTrainClass()">
-                        <option> All </option>
+                    <select id="select-year" class="input-minwidth" onchange="reloadReport()">
                         <%
-                        int year = Calendar.getInstance().get(Calendar.YEAR);
-                        int start = 2007;
-                        int numberYear = year - start;
-                        for (int i = numberYear; i > 0; i--) {
-                            String description = (start + i - 1) + " - " + (start + i);
-                            String value = description.replace(" ", "");
-                            %>
-                            <option value="<%= value%>"> <%= description %> </option>
-                            <%
-                        }
+                            for (int i = 0; i < yearList.size(); i++) {
+                        %>
+                        <option value="<%= yearList.get(i)%>"> <%= yearList.get(i)%> </option>
+                        <%
+                            }
                         %>
                     </select>
                     Hoc kỳ 
-                    <select id="select-semeter" onchange="reloadTrainClass()">
-                        <option value="All">All</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                    </select>
-                    Khoa
-                    <select id="select-faculty" onchange="reloadTrainClass()">
-                        <option>All</option>
-                        <%
-                        if ((falculties != null) && !falculties.isEmpty()) {
-                            for (Faculty f : falculties) {
-                        %>
-                        <option value="<%= f.getId()%>"><%= f.getFacultyName() %></option>
-                        <%}}%>
+                    <select id="select-semeter" onchange="reloadReport()">
+                        <option value="1">  1  </option>
+                        <option value="2">  2  </option>
                     </select>
                 </div>
                 <%-- Root panel --%>
                 <div id="result-bound">
                     <%-- Root panel --%>
                     <div class="range">
-                        <h3><span id="btn-open-class" class="atag">
-                            Các lớp đang mở
-                            </span></h3>
-                        <div id="tbl-open-class" style="display: none;">
-                            <%----%>
-                        </div>
+                        <h3>
+                            <span id="btn-open-class" class="atag"> 
+                                Kết quả thống kê
+                            </span>
+                        </h3>
+                        <table id="tableReport" class="general-table" style="width: 660px; margin-top: 1px;">
+                            <%if(report == null){%>
+                            <p>Chưa có thông tin</p>
+                            <%}else{
+                                    DecimalFormat format = new DecimalFormat("#.##");
+                                    float ever = (float) report.getNumOfReg() / report.getNumOfClassOpen();
+                                    String everstr = format.format(ever);
+                                    float percentPass = (float) report.getNumOfPassReg() / report.getNumOfReg() * 100;
+                                    String percentPassSrt = format.format(percentPass);
+                                    float percentNotPass = (float) report.getNumOfNotPassReg() / report.getNumOfReg() * 100;
+                                    String percentNotPassSrt = format.format(percentNotPass);
+                            %>
+                            <tr>
+                                <td>Số lớp đã mở:</td>
+                                <td><%=report.getNumOfClassOpen()%></td> 
+                            </tr>
+                            <tr>
+                                <td>Số đăng ký: </td>
+                                <td><%=report.getNumOfReg()%></td>
+                            </tr>
+                            <tr>
+                                <td>Trung bình: </td>
+                                <td><%=everstr%> (ĐK/Lớp)</td>
+                            </tr>
+                            <tr>
+                                <td>Lớp có đăng ký nhiều nhất: </td>
+                                <td><%=report.getMaxRegClass().getId().getClassCode()%> (<%=report.getMaxRegClass().getNumOfStudentReg()%>)</td>
+                            </tr>
+                            <tr>
+                                <td>Lớp có đăng ký ít nhất: </td>
+                                <td><%=report.getMinRegClass().getId().getClassCode()%> (<%=report.getMinRegClass().getNumOfStudentReg()%>)</td>
+                            </tr>
+                            <tr>
+                                <td>Số sinh viên đạt: </td>
+                                <td><%=report.getNumOfPassReg()%> (<%=percentPassSrt%>%) </td>
+                            </tr>
+                            <tr>
+                                <td>Số sinh viên không đạt: </td>
+                                <td><%=report.getNumOfNotPassReg()%> (<%=percentNotPassSrt%>%) </td>
+                            </tr>
+                            <%}%>
+                         </table>
                     </div>
-                    <%-- Root panel - Closed class --%>
-                    <div class="range">
-                        <h3><span id="btn-close-class" class="atag">
-                            Các lớp đã đóng
-                        </span></h3>
-                        <div id="tbl-close-class" style="display: none;">
-                            a<%----%>
-                        </div>
-                    </div>
-                    <%-- Root panel - Canceled class --%>
-                    <%--
-                    <div class="range">
-                        <h3><span id="btn-cancel-class" class="atag">
-                            Các lớp đã hủy
-                        </span></h3>
-                        <div id="tbl-cancel-class" style="display: none;">
-                            
-                        </div>
-                    </div>
-                    --%>
                 </div>
                 <br /><br />
             </div><!--End Contents-->
@@ -122,74 +127,22 @@
     <script  type = "text/javascript" >
 
         var http = createRequestObject();
-        var http1 = createRequestObject();
-        var loadOpenClass = false;
-        var loadCloseClass = false;
-        var resourceReady = true;
-
-        $("#btn-open-class").click(function () {
-            $('#tbl-open-class').slideToggle(500);
-            if (!loadOpenClass) {
-                doLoadOpenTrainClassList();
-                loadOpenClass = true;
-            }
-        });
-        
-        $("#btn-close-class").click(function () {
-            $('#tbl-close-class').slideToggle(500);
-            if (!loadCloseClass) {
-                doLoadClosedTrainClassList();
-                loadCloseClass = true;
-            }
-        });
-        
-        // ++LOAD OPEN TRAINCLASS
-        function doLoadOpenTrainClassList() {
+              
+        function reloadReport(){
             var year = document.getElementById("select-year").value;
             var semeter = document.getElementById("select-semeter").value;
-            var faculty = document.getElementById("select-faculty").value;
-            var status = "Opened";
             if (http) {
                 http.open("GET", "../../ReportController?action=trainclass-report&year="
-                    + year + "&semeter=" + semeter + "&faculty=" + faculty
-                    + "&status=" + status, true);
-                http.onreadystatechange = loadOpenTrainClassHandler;
+                    + year + "&semeter=" + semeter , true);
+                http.onreadystatechange = loadReportHandler;
                 http.send(null);
-            }
-            
-        }
-        
-        function loadOpenTrainClassHandler() {
+            }  
+        }      
+        function loadReportHandler() {
             if(http.readyState == 4 && http.status == 200){
-                var detail=document.getElementById("tbl-open-class");
+                var detail=document.getElementById("tableReport");
                 detail.innerHTML=http.responseText;
             }
-        }
-        // LOAD CLOSED TRAINCLASS ++
-        function doLoadClosedTrainClassList() {
-            var year = document.getElementById("select-year").value;
-            var semeter = document.getElementById("select-semeter").value;
-            var faculty = document.getElementById("select-faculty").value;
-            var status = "Closed";
-            if (http1) {
-                http1.open("GET", "../../ReportController?action=trainclass-report&year="
-                    + year + "&semeter=" + semeter + "&faculty=" + faculty
-                    + "&status=" + status, true);
-                http1.onreadystatechange = loadCloseTrainClassHandler;
-                http1.send(null);
-            }
-        }
-        
-        function loadCloseTrainClassHandler() {
-            if(http1.readyState == 4 && http1.status == 200){
-                var detail=document.getElementById("tbl-close-class");
-                detail.innerHTML=http1.responseText;
-            }
-        }
-        
-        function reloadTrainClass() {
-            doLoadClosedTrainClassList();
-            doLoadOpenTrainClassList();
         }
     </script>
 </html>

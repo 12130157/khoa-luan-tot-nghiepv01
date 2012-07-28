@@ -1034,7 +1034,7 @@ public class ManageClassController extends HttpServlet {
             int numPage = 0;
             List<TrainClass> classList = getAllClassOpen();
             List<TrainClass> trainClazzs = getClassListByPage(classList, 1);
-            List<String> yearList = getYear(trainClazzs);
+            List<String> yearList = getYear(classList);
             List<Faculty> facultyList = DAOFactory.getFacultyDao().findAll();
             if (classList != null && !classList.isEmpty()) {
                 if (classList.size() % Constants.ELEMENT_PER_PAGE_DEFAULT == 0) {
