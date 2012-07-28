@@ -23,6 +23,7 @@ import uit.cnpm02.dkhp.model.type.AccountType;
 import uit.cnpm02.dkhp.model.type.NewsType;
 import uit.cnpm02.dkhp.model.type.TaskStatus;
 import uit.cnpm02.dkhp.service.IPDTService;
+import uit.cnpm02.dkhp.service.SessionManager;
 import uit.cnpm02.dkhp.service.impl.PDTServiceImpl;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
@@ -37,6 +38,7 @@ import uit.cnpm02.dkhp.utilities.password.PasswordProtector;
 public class HomepageController extends HttpServlet {
     
     private IPDTService pdtService = new PDTServiceImpl();
+    private SessionManager sessionMng = new SessionManager();
     /** 
      * 
      * @param request
@@ -58,10 +60,13 @@ public class HomepageController extends HttpServlet {
         String actor = request.getParameter("actor");
 
         //updatePassword();
-        
+        sessionMng.addSession(session);
         if (session.isNew()) {
-            session.setMaxInactiveInterval(1200);
+            session.setMaxInactiveInterval(1800);// 1200/60
+            //sessionMng.addSession(session);
         }
+        
+        session.setAttribute("user-online", sessionMng.count());
         
         try {
             NewsDAO newsDao = new NewsDAO();
