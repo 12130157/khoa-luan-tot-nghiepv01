@@ -150,7 +150,7 @@
                 <form action="../../RegistryController?action=reRegistry" method="post" id="reRegistry" name="reRegistry">
                     <div style="margin-left: 30%;">
                         <input type="button" class="button-1" value="Đăng ký lại" onclick="reRegistration()"/>
-                        <input type="button" class="button-1" value="Hoàn tất đăng ký" onclick="completeRegistration()"/>
+                        <input type="button" class="button-1" style="width: 124px !important;" value="Hoàn tất đăng ký" onclick="completeRegistration()"/>
                     </div>
                 </form>
                 <br />
