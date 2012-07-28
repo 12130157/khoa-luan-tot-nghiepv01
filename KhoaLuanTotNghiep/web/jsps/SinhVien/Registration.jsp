@@ -75,21 +75,24 @@
                 color: red;
                 font-weight: bold;
                 height: 36px;
-                margin-left: 25%;
-                margin-top: 5%;
-                opacity: 0.75;
-                position: absolute;
+                left: 40%;
+                top: 45%;
+                opacity: 0.85;
+                position: fixed;
                 text-align: center;
                 width: 300px;
+                z-index: 100;
+                text-decoration: blink;
             }
             #popup-lst-student {
                 background: none repeat scroll 0 0 #DDDDFF;
-                margin-left: 5%;
-                margin-top: 5%;
+                left: 30%;
+                top: 20%;
                 min-height: 72%;
                 opacity: 0.85;
-                position: absolute;
                 width: 718px;
+                position: fixed;
+                z-index: 100;
             }
             }
          </style>
@@ -307,7 +310,7 @@
             $("#btn-chkbox_external_trainclass").click(function () {
                 $('#ext-detail').slideToggle(50);
             });
-
+            
             var waringPopupDisplayed = false;
             function validateSelectTrainClass(chb, row) {
                 // validate condition
