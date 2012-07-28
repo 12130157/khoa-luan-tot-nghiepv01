@@ -19,7 +19,7 @@
     
     int userOnline = 1;
     try {
-        userOnline = Integer.parseInt((String) session.getAttribute("user-online"));
+        userOnline = (Integer)session.getAttribute("user-online");
     } catch (Exception ex) {
         
     }
@@ -84,9 +84,6 @@
             <div id="range-1" style="text-align: center;">
                 Đang truy cập: <%= userOnline %>
             </div>
-            <div id="range-1">
-                <canvas id="example" width="200" height="200">Browser not supported!</canvas>
-            </div>
             <%-- Personal schedule --%>
             <%if ((tcs != null) && !tcs.isEmpty()) {
             %>
@@ -101,6 +98,10 @@
             </div>
                 
             <%}%>
+            <%-- Clock --%>
+            <div id="range-1">
+                <canvas id="example" width="200" height="200">Browser not supported!</canvas>
+            </div>
             <%-- A few link to common site --%>
             <div id="range-1" style="">
                 <u><b>Trang liên kết</b></u><br />
