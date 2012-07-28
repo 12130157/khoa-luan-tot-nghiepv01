@@ -168,6 +168,16 @@ public class RegistryController extends HttpServlet {
         return (getNumTCRegistry(registried) < minNumTC);
     }
     
+    private float getRule(String key) {
+        try {
+            return ruleDao.findById(key).getValue();
+        } catch (Exception ex) {
+            Logger.getLogger(RegistryController.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+    
     private boolean isRegTwoClassTrainASubject(List<TrainClass> registries) {
         for (int i = 0; i < registries.size()-1; i++) {
             for (int j = i + 1; j < registries.size(); j++) {
@@ -682,6 +692,12 @@ public class RegistryController extends HttpServlet {
             if (isInTimeRegistry() && regsSub.isEmpty()) {
                 getAllClass(response, session, user);
             }
+            
+            // Set max and min tc
+            int min_tc = (int) getRule("SoTinChiToiThieu");
+            int max_tc = (int) getRule("SoTinChiToiDa");
+            session.setAttribute("min-tc", min_tc);
+            session.setAttribute("max-tc", max_tc);
             
             showRegitration(regsSub, response, session, user);
         } catch (Exception ex) {
