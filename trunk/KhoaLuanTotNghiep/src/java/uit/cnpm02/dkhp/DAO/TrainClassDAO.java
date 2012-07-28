@@ -240,7 +240,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         return results;
     }
 
-    public List<TrainClass> findAllBySemesterAndYear() throws Exception {
+    public List<TrainClass> findAllBySemesterAndYear(int semester, String year) throws Exception {
         checkModelWellDefined();
         TrainClass t = new TrainClass();
         if (t == null) {
@@ -249,8 +249,8 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         }
         ArrayList<TrainClass> results = new ArrayList<TrainClass>();
         String selectQuery = "Select * from " + t.getTableName() 
-                + " where HocKy=" + Constants.CURRENT_SEMESTER 
-                + " and NamHoc='" + Constants.CURRENT_YEAR + "'";
+                + " where HocKy=" + semester 
+                + " and NamHoc='" + year + "'";
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -262,7 +262,7 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
             while (rs.next()) {
                 String classCode = rs.getString("MaLopHoc");
                 TrainClassID trainclassID = new TrainClassID(classCode,
-                        Constants.CURRENT_YEAR, Constants.CURRENT_SEMESTER);
+                        year, semester);
 
                 //TODO: Improve (Ham findById se mo mot Connection moi --> Not Good)
                 // Nen tao ham findById moi, truyen Connection vao

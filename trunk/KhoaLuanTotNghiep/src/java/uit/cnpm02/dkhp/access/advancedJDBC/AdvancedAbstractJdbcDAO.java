@@ -1325,62 +1325,6 @@ public abstract class AdvancedAbstractJdbcDAO<T extends IAdvancedJdbcModel<ID>, 
         }
         return results;
     }
-      public List<T> findClassBySemesterAndYear() throws Exception {
-        checkModelWellDefined();
-        
-        ArrayList<T> results = new ArrayList<T>();
-
-        T t = createModel();
-
-        if (t == null) {
-            throw new Exception("Cannot initialize the " + modelClazz.getName()
-                    + " class");
-        }
-
-        String[] idNames = t.getIdColumnName();
-        if (idNames == null) {
-            throw new Exception("The ID column names is null.");
-        }
-        
-        Object[] idValues = new Object[idNames.length];
-        
-        String selectQuery = LangUtils.bind(SQLUtils.getSql(Queries.SQL_SELECT_ALL), t.getTableName());
-        selectQuery=selectQuery+"  where HocKy="+Constants.CURRENT_SEMESTER+" and NamHoc='"+Constants.CURRENT_YEAR+"'";
-        Connection con = null;
-        PreparedStatement statement = null;
-        ResultSet rs = null;
-        try {
-            con = getConnection();
-            statement = con.prepareStatement(selectQuery);
-            rs = statement.executeQuery();
-
-            while (rs.next()) {
-                T ti = createModel();
-                Object[] obj = new Object[t.getColumnNames().length];
-                for (int i = 0; i < obj.length; i++) {
-                    obj[i] = rs.getObject(ti.getColumnNames()[i]);
-                }
-                
-                for (int k = 0; k < idValues.length; k ++) {
-                    idValues[k] = rs.getObject(idNames[k]); 
-                }
-                
-                ID id = createID();
-                
-                id.setIDValues(idValues);
-
-                ti.setId(id);
-                ti.setColumnValues(obj);
-                results.add(ti);
-            }
-        } catch (SQLException ex) {
-            throw new Exception(ex);
-        } finally {
-            close(rs, statement);
-            close(con);
-        }
-        return results;
-    }
     public List<T> searchByColumNames(String[] columnName, Object[] values)
                                                         throws Exception {
         checkModelWellDefined();
