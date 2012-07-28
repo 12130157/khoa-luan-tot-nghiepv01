@@ -4,6 +4,8 @@
     Author     : LocNguyen
 --%>
 
+<%@page import="java.util.Date"%>
+<%@page import="uit.cnpm02.dkhp.utilities.DateTimeUtil"%>
 <%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
 <%@page import="uit.cnpm02.dkhp.model.Diary"%>
@@ -20,6 +22,7 @@
     <head>
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="../../javascripts/DateTimePicker.js" type="text/javascript"></script>
         <title>Quản lý thay đổi</title>
         <style media="all" type="text/css">
         </style>
@@ -39,13 +42,27 @@
                 
                 <div id="">
                     <%--------------Search-------------%>
+                    <%-- Search normal --%>
                     <div id="search-area" style="float: left;">
-                        <%--SEARCH FORM--%>
-                        <div id="searchbox">
+                        <%--input form--%>
+                        <div id="searchbox" style="float: left;">
                             <input id="search" type="text" onKeyPress="searchBoxKeyPressed(event)" placeholder="Search" />
                             <input type="button" id="submit" onclick="searchLog()" value="Tìm kiếm" />
                         </div>
+                        <%-- Search by date --%>
+                        <div id="searchbox" style="float: left; width: 560; margin-left: 30px;">
+                            <div style="float: left;">
+                                Từ <input type="text" id="from-date" style="max-width: 80px;" readonly="readonly" value="<%=DateTimeUtil.format(new Date())%>" />
+                                <img src="../../imgs/cal.gif" style="cursor: pointer;" onclick="javascript:NewCssCal('from-date','YYMMMDD')" />
+                                Đến <input type="text" id="to-date" style="max-width: 80px;" readonly="readonly" value="<%=DateTimeUtil.format(new Date())%>" />
+                                <img src="../../imgs/cal.gif" style="cursor: pointer;" onclick="javascript:NewCssCal('to-date','YYMMMDD')" />
+                            </div>
+                            <div style="float: left;">
+                                <input type="button" id="submit" onclick="searchLogByDate()" value="Tìm kiếm" />
+                            </div>
+                        </div>
                     </div>
+                    <div class="clear"></div>
                     <table class="general-table" id="tbl-list-log">
                         <tr>
                             <th>STT</th>
@@ -157,6 +174,30 @@
             }
             
             function searchLogHandler() {
+                if(http.readyState == 4 && http.status == 200){
+                     var detail = document.getElementById("tbl-list-log");
+                     if (http.responseText != '')
+                         detail.innerHTML = http.responseText;
+                }
+            }
+            
+            function searchLogByDate() {
+                var fromDate = $("#from-date").val();
+                var toDate = $("#to-date").val();
+                
+                var controller = '../../DiaryController?action=search-log-by-date' 
+                                    + '&fromdate=' + fromDate
+                                    + '&todate=' + toDate;
+                if(http){
+                    http.open("GET", controller, true);
+                    http.onreadystatechange = searchLogByDateHandler;
+                    http.send(null);
+                } else {
+                    alert("Lỗi gửi yêu cầu tới Server thất bại");
+                }
+            }
+            
+            function searchLogByDateHandler() {
                 if(http.readyState == 4 && http.status == 200){
                      var detail = document.getElementById("tbl-list-log");
                      if (http.responseText != '')
