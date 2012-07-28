@@ -82,6 +82,16 @@
                 text-align: center;
                 width: 300px;
             }
+            #popup-lst-student {
+                background: none repeat scroll 0 0 #DDDDFF;
+                margin-left: 5%;
+                margin-top: 5%;
+                min-height: 72%;
+                opacity: 0.85;
+                position: absolute;
+                width: 718px;
+            }
+            }
          </style>
         
     </head>
@@ -115,6 +125,11 @@
                 </form>
                 </div>
                <hr/><hr/>
+               <div class="clear"></div>
+                 <%-- A popup show list of student already registered on a class --%>
+                 <div id="popup-lst-student" style="display: none;" onClick="hideMe('popup-lst-student');">
+                     <img src = '../../imgs/icon/loading.gif' />
+                 </div>
                <form id="formdetail" name="formdetail" action="../../RegistryController?action=registry" method="post">
                     <div id="reg-info" style="float: left; font-size: 12px; font-weight: bold; font-style: italic;">
                         <p>(*) Sinh viên môn học muốn đk và click nút Đăng Ký <br /></p>
@@ -150,13 +165,17 @@
                      <%for(int i = 0; i < trainClass.size(); i++){
                          boolean checked = StringUtils.checkStringExitList(trainClass.get(i).getId().getClassCode(), registried);
                          String clazz = "class='"+ (checked ? "datahighlight" : "") + "'";
+                         TrainClass tc = trainClass.get(i);
                      %>
                      <tr id="tr_main_<%=i%>" <%=clazz%>>
                          
                          <%-- STT --%>
                          <td><%=i+1%></td>
                          <%-- Ma lop --%>
-                         <td><a href="../../RegistryController?action=detail&classCode=<%=trainClass.get(i).getId().getClassCode()%>&semester=<%=trainClass.get(i).getId().getSemester()%>&year=<%=trainClass.get(i).getId().getYear()%>"><%=trainClass.get(i).getId().getClassCode()%></a></td>
+                         <%--<td><a href="../../RegistryController?action=detail&classCode=<%=tc.getId().getClassCode()%>&semester=<%=tc.getId().getSemester()%>&year=<%=tc.getId().getYear()%>"><%=tc.getId().getClassCode()%></a></td>--%>
+                         <td>
+                                <span class="atag" onclick="getListStudentReged('<%=tc.getId().getClassCode()%>',<%=tc.getId().getSemester()%>,'<%=tc.getId().getYear()%>')"><%=tc.getId().getClassCode()%></span>
+                         </td>
                          <td><%=trainClass.get(i).getSubjectName()%></td>
                          <td><%=trainClass.get(i).getNumTC()%></td>
                          <td><%=trainClass.get(i).getLectturerName()%></td>
@@ -218,7 +237,9 @@
                          <%-- STT --%>
                          <td><%=i+1%></td>
                          <%-- Ma lop --%>
-                         <td><a href="../../RegistryController?action=detail&classCode=<%=tcTemp.getId().getClassCode()%>&semester=<%=tcTemp.getId().getSemester()%>&year=<%=tcTemp.getId().getYear()%>"><%=tcTemp.getId().getClassCode()%></a></td>
+                         <td>
+                            <span class="atag" onclick="getListStudentReged('<%=tcTemp.getId().getClassCode()%>',<%=tcTemp.getId().getSemester()%>,'<%=tcTemp.getId().getYear()%>')"><%=tcTemp.getId().getClassCode()%></span>
+                         </td>
                          <td><%=tcTemp.getSubjectName()%></td>
                          <td><%=tcTemp.getNumTC()%></td>
                          <td><%=tcTemp.getLectturerName()%></td>
@@ -267,8 +288,9 @@
                         <input type="submit" class="button-1" style="margin-left: 45%;" value="Đăng ký" />
                     <%}%>
                  </form>
-                     <div class="clear"></div>
-                     <br />
+                 
+                 <div class="clear"></div>
+                 <br />
                 </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
@@ -346,6 +368,31 @@
                 
                 return total;
             }
+            
+            function getListStudentReged(trainclassID, semeter, year) {
+                $('#popup-lst-student').fadeIn('slow', function() {
+                // Animation complete
+                    var controller = '../../RegistryController?action=get-reged-students' 
+                                + '&trainclassid=' + trainclassID
+                                + '&semeter=' + semeter
+                                + '&year=' + year;
+                    if(http){
+                        http.open("GET", controller, true);
+                        http.onreadystatechange = getListStudentRegedHandler;
+                        http.send(null);
+                    } else {
+                        alert("Lỗi gửi yêu cầu tới Server thất bại");
+                    }
+                });
+            }
+            
+            function getListStudentRegedHandler() {
+                if(http.readyState == 4 && http.status == 200){
+                     var detail = document.getElementById("popup-lst-student");
+                     detail.innerHTML = http.responseText;
+                }  
+            }
         </script>
+        
     </body>
  </html>
