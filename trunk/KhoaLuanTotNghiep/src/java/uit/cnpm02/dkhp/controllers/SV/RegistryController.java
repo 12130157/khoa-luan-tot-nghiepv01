@@ -29,6 +29,7 @@ import uit.cnpm02.dkhp.DAO.TrainClassDAO;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.model.Class;
 import uit.cnpm02.dkhp.model.Faculty;
+import uit.cnpm02.dkhp.model.RegistrationID;
 import uit.cnpm02.dkhp.model.RegistrationTime;
 import uit.cnpm02.dkhp.model.RegistrationTimeID;
 import uit.cnpm02.dkhp.model.TrainClass;
@@ -88,6 +89,8 @@ public class RegistryController extends HttpServlet {
                 completeRegistration(response, request);
             } else if (action.equals("detail")) {
                 detailTrainClass(response, request);
+            } else if (action.equalsIgnoreCase("get-reged-students")) {
+                getListStudentRegedOnTrainClass(response, request);
             }
         } finally {
             out.close();
@@ -399,142 +402,6 @@ public class RegistryController extends HttpServlet {
         return new ExecuteResult(regOK, errorMessage);
     }
     
-    /*private void completeRegistration(HttpServletResponse response,
-            HttpServletRequest request) throws Exception {
-        HttpSession session = request.getSession();
-        String path = "";
-        try {
-            String studentCode = (String) session.getAttribute("username");
-            List<TrainClass> registried = (List<TrainClass>) session.getAttribute("registriedClass");
-            ArrayList<String> message = new ArrayList<String>();
-            
-            // DAO initial ++
-            StudentDAO studentDao = DAOFactory.getStudentDao();
-            ClassDAO classDao = DAOFactory.getClassDao();
-            FacultyDAO facultyDao = DAOFactory.getFacultyDao();
-            RuleDAO ruleDao = DAOFactory.getRuleDao();
-            // DAO initial --
-            
-            if (isNotEnoughTC(registried)) {
-                session.setAttribute("error", "Số tín chỉ đăng ký chưa đủ quy định,"
-                        + " tối thiểu là "
-                        + (int) ruleDao.findById("SoTinChiToiThieu").getValue()
-                        + " TC. Xem thêm quy định.");
-                Student student = studentDao.findById(studentCode);
-                Class classes = classDao.findById(student.getClassCode());
-                Faculty faculty = facultyDao.findById(student.getFacultyCode());
-                session.setAttribute("student", student);
-                session.setAttribute("classes", classes);
-                session.setAttribute("faculty", faculty);
-                session.setAttribute("registriedClass", registried);
-                session.setAttribute("semester", Constants.CURRENT_SEMESTER);
-                session.setAttribute("year", Constants.CURRENT_YEAR);
-                path = "./jsps/SinhVien/PreviewRegistration.jsp";
-                response.sendRedirect(path);
-            } else if (isOverTC(registried)) {
-                session.setAttribute("error",
-                        "Số tín chỉ đăng ký quá quy định, tối đa là "
-                        + (int) ruleDao.findById("SoTinChiToiDa").getValue()
-                        + " TC. Xem thêm quy định.");
-                Student student = studentDao.findById(studentCode);
-                Class classes = classDao.findById(student.getClassCode());
-                Faculty faculty = facultyDao.findById(student.getFacultyCode());
-                session.setAttribute("student", student);
-                session.setAttribute("classes", classes);
-                session.setAttribute("faculty", faculty);
-                session.setAttribute("registriedClass", registried);
-                session.setAttribute("semester", Constants.CURRENT_SEMESTER);
-                session.setAttribute("year", Constants.CURRENT_YEAR);
-                path = "./jsps/SinhVien/PreviewRegistration.jsp";
-                response.sendRedirect(path);
-            } else if (!isEnoughRequiredTC(registried)) {
-                session.setAttribute("error",
-                        "Số tín chỉ bắt buộc chưa đủ quy định, tối thiểu là "
-                        + (int) ruleDao.findById("SoTinChiBatBuocToiThieu").getValue()
-                        + " TC. Xem thêm quy định.");
-                Student student = studentDao.findById(studentCode);
-                Class classes = classDao.findById(student.getClassCode());
-                Faculty faculty = facultyDao.findById(student.getFacultyCode());
-                session.setAttribute("student", student);
-                session.setAttribute("classes", classes);
-                session.setAttribute("faculty", faculty);
-                session.setAttribute("registriedClass", registried);
-                session.setAttribute("semester", Constants.CURRENT_SEMESTER);
-                session.setAttribute("year", Constants.CURRENT_YEAR);
-                path = "./jsps/SinhVien/PreviewRegistration.jsp";
-                response.sendRedirect(path);
-            } else if (isRegTwoClassTrainASubject(registried)) {
-                session.setAttribute("error",
-                        "Không thể đăng ký 2 lớp học cùng dạy một môn học trong cùng một học kỳ."
-                        + " Vui lòng kiểm tra lại");
-                Student student = studentDao.findById(studentCode);
-                Class classes = classDao.findById(student.getClassCode());
-                Faculty faculty = facultyDao.findById(student.getFacultyCode());
-                session.setAttribute("student", student);
-                session.setAttribute("classes", classes);
-                session.setAttribute("faculty", faculty);
-                session.setAttribute("registriedClass", registried);
-                session.setAttribute("semester", Constants.CURRENT_SEMESTER);
-                session.setAttribute("year", Constants.CURRENT_YEAR);
-                path = "./jsps/SinhVien/PreviewRegistration.jsp";
-                response.sendRedirect(path);
-            } else if (isRegTwoClassInADay(registried)) {
-                session.setAttribute("error",
-                        "Không thể đăng ký học 2 lớp học được dạy cùng 1 thời điểm."
-                        + " Vui lòng kiểm tra lại");
-                Student student = studentDao.findById(studentCode);
-                Class classes = classDao.findById(student.getClassCode());
-                Faculty faculty = facultyDao.findById(student.getFacultyCode());
-                session.setAttribute("student", student);
-                session.setAttribute("classes", classes);
-                session.setAttribute("faculty", faculty);
-                session.setAttribute("registriedClass", registried);
-                session.setAttribute("semester", Constants.CURRENT_SEMESTER);
-                session.setAttribute("year", Constants.CURRENT_YEAR);
-                path = "./jsps/SinhVien/PreviewRegistration.jsp";
-                response.sendRedirect(path);
-            } else {
-                RegistrationDAO regDao = DAOFactory.getRegistrationDAO();
-                regDao.deleteAllByByStudentCode(studentCode);
-                for (int i = 0; i < registried.size(); i++) {
-                    if (checkNumOfStudentReg(registried.get(i).getId().getClassCode())) {
-                        String mes = "Lớp học "
-                                + registried.get(i).getId().getClassCode()
-                                + " (" + registried.get(i).getSubjectName()
-                                + ") đã đủ số lượng nên không thẻ đăng ký thêm";
-                        message.add(mes);
-                    } else if (isPresubNotComplete(registried.get(i).getSubjectCode(), studentCode)) {
-                        String mes = "Lớp học "
-                                + registried.get(i).getId().getClassCode()
-                                + " (" + registried.get(i).getSubjectName()
-                                + ") không thể đăng ký do chưa hoàn thành môn học tiên quyết của nó."
-                                + " Xem thêm quy định môn học tiên quyết.";
-                        message.add(mes);
-                    } else {
-                        Registration reg = new Registration(
-                                studentCode,
-                                registried.get(i).getId().getClassCode(),
-                                Constants.CURRENT_YEAR,
-                                Constants.CURRENT_SEMESTER,
-                                registried.get(i).getNumOfStudentReg() + 1, 0);
-                        regDao.add(reg);
-                    }
-
-                }
-                if (message.isEmpty()) {
-                    forward(response, session);
-                } else {
-                    session.setAttribute("message", message);
-                    path = "./jsps/SinhVien/ErrorMessage.jsp";
-                    response.sendRedirect(path);
-                }
-            }
-        } catch (Exception ex) {
-            path = "./jsps/Message.jsp";
-            response.sendRedirect(path);
-        }
-
-    }*/
     /**
      * 
      * @param response
@@ -680,15 +547,6 @@ public class RegistryController extends HttpServlet {
             
             // Danh sach mon hoc SV da dk trc (co the null)
             List<Registration> regsSub = regDao.findAllByStudentCode(user);
-            /*if (isInTimeRegistry()) {
-                if (regsSub.isEmpty()) {
-                    getAllClass(response, session, user);
-                } else {
-                    showRegitration(regsSub, response, session, user);
-                }
-            } else {
-                showRegitration(regsSub, response, session, user);
-            }*/
             if (isInTimeRegistry() && regsSub.isEmpty()) {
                 getAllClass(response, session, user);
             }
@@ -715,15 +573,6 @@ public class RegistryController extends HttpServlet {
             Date today = new Date();
             
             return today.before(registrationTime.getEndDate());
-            /*if (registrationTime.getEndDate().getYear() < today.getYear()) {
-                return false;
-            } else if (registrationTime.getEndDate().getMonth() < today.getMonth()) {
-                return false;
-            } else if (registrationTime.getEndDate().getDate() < today.getDate()) {
-                return false;
-            } else {
-                return true;
-            }*/
         } catch (Exception ex) {
             Logger.getLogger(RegistryController.class.getName())
                     .log(Level.SEVERE, null, ex);
@@ -884,5 +733,74 @@ public class RegistryController extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
+    }
+
+    private void getListStudentRegedOnTrainClass(HttpServletResponse response,
+            HttpServletRequest request) throws IOException {
+        
+        PrintWriter out = response.getWriter();
+        String trainClassId = (String) request.getParameter("trainclassid");
+        String semeterStr = (String) request.getParameter("semeter");
+        String year = (String) request.getParameter("year");
+        int semeter = -1;
+        try {
+            semeter = Integer.parseInt(semeterStr);
+        } catch (Exception ex) {
+            out.println("Lỗi, không lấy được thông tin");
+            return;
+        }
+        
+        TrainClassID id = new TrainClassID(trainClassId, year, semeter);
+        List<Registration> registration;
+        try {
+            registration = regDao.findAllByClassCode(id);
+            List<Student> studentList = new ArrayList<Student>();
+            for (int i = 0; i < registration.size(); i++) {
+                Student student = studentDao.findById(registration.get(i).getId().getStudentCode());
+                studentList.add(student);
+            }
+            
+            if (studentList != null) {
+                writeOutListStudent(out, studentList);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(RegistryController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+
+    private int slideLimit = 50;
+    private void writeOutListStudent(PrintWriter out, List<Student> students) {
+        if (students == null) {
+            return;
+        }
+        out.println("<u>DS SV đã đăng ký</u> <br />");
+        if (students.size() > slideLimit) {
+            out.println("<div id=\"sidebar\">");
+        }
+        out.println("<table class=\"general-table\">");
+        out.println("<tr>"
+                + "<th> STT </th>"
+                + "<th> MSSV </th>"
+                + "<th> Họ tên </th>"
+                + "<th> Lớp </th>"
+                + "<th> Khoa </th>"
+                + "</tr>");
+
+        if (!students.isEmpty()) {
+            for (int i = 0; i < students.size(); i++) {
+                out.println("<tr>"
+                        + "<td>" + (i + 1) + "</td>"
+                        + "<td>" + students.get(i).getId() + "</td>"
+                        + "<td>" + students.get(i).getFullName() + "</td>"
+                        + "<td>" + students.get(i).getClassCode() + "</td>"
+                        + "<td>" + students.get(i).getFacultyCode() + "</td>"
+                        + "</tr>");
+            }
+        }
+        out.println("</table>");
+        if (students.size() > slideLimit) {
+            out.println("</div>");
+        }
     }
 }
