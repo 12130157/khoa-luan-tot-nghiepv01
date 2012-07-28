@@ -32,6 +32,9 @@
     // Danh sach lop ma SV da dk
     List<String> registried = (List<String>) session.getAttribute("registriedID");
     boolean nonStudy=(Boolean) session.getAttribute("non-study-student");
+    
+    int min_tc = (Integer) session.getAttribute("min-tc");
+    int max_tc = (Integer) session.getAttribute("max-tc");
 %>
 <html>
     <head>
@@ -67,6 +70,18 @@
             #formdetail{
                 width: 99%;
             }
+            #warning-window {
+                background: none repeat scroll 0 0 #DDDDFF;
+                color: red;
+                font-weight: bold;
+                height: 36px;
+                margin-left: 25%;
+                margin-top: 5%;
+                opacity: 0.75;
+                position: absolute;
+                text-align: center;
+                width: 300px;
+            }
          </style>
         
     </head>
@@ -101,15 +116,24 @@
                 </div>
                <hr/><hr/>
                <form id="formdetail" name="formdetail" action="../../RegistryController?action=registry" method="post">
-                    <div style="float: left; font-size: 12px; font-weight: bold; font-style: italic;">
-                        (*) Sinh viên môn học muốn đk và click nút Đăng Ký
+                    <div id="reg-info" style="float: left; font-size: 12px; font-weight: bold; font-style: italic;">
+                        <p>(*) Sinh viên môn học muốn đk và click nút Đăng Ký <br /></p>
+                        <p>(*) Số TC tối thiểu - Tối đa cho phép đăng ký:<b> [<%= min_tc %> - <%= max_tc%>]</b></p>
+                        <div id="tc-reged"></div>
                     </div>
                    <%--<div id="btn-chkbox_external_trainclass" class="chkbox_external_trainclass">
                        <input type="checkbox" class="button-1" value="Hiển thị lớp thuộc khoa khác" />
                     </div>--%>
                    
                    <div class="clear"></div>
-                    <table id="detail" name="detail" class="general-table" >
+                   <%-- Popup --%>
+                   <input type="hidden" id="min-tc" value="<%= min_tc %>"/>
+                   <input type="hidden" id="max-tc" value="<%= max_tc %>"/>
+                   <div id="warning-window" style="display: none;">
+                       <%----%>
+                   </div>
+                   <div class="clear"></div>
+                   <table id="detail" name="detail" class="general-table" >
                      <tr>
                          <th width="10px">STT</th>
                          <th width="70px">Mã lớp</th>
@@ -262,9 +286,9 @@
                 $('#ext-detail').slideToggle(50);
             });
 
-             function validateSelectTrainClass(chb, row) {
+            var waringPopupDisplayed = false;
+            function validateSelectTrainClass(chb, row) {
                 // validate condition
-                 
                 var trobj = document.getElementById(row);
                  
                 if(chb.checked){
@@ -272,6 +296,55 @@
                 } else {
                     trobj.removeAttribute("class", 'datahighlight');
                 }
+                
+                var min_tc = $('#min-tc').val();
+                var max_tc = $('#max-tc').val();
+                var num_tc = getNumberRegs();
+                var content = '';
+                if (num_tc < min_tc) {
+                    content = 'Số TC chưa đủ';
+                } else if (num_tc > max_tc) {
+                    content = 'Số TC vượt quá qui định';
+                }
+                var popup = $('#warning-window');
+                if (waringPopupDisplayed && content == '') {
+                    //popup.innerHTML = content;
+                    $(popup).slideToggle(100);
+                    waringPopupDisplayed = false;
+                } else if (!waringPopupDisplayed && content != '') {
+                    popup.html(content);
+                    $(popup).slideToggle(100);
+                    waringPopupDisplayed = true;
+                }
+                
+                // Update information
+                var numRegInfo = $('#tc-reged');
+                numRegInfo.html("(*) Tổng số TC đã chọn: " + num_tc);
+                //reg-info
+            }
+            
+            function getNumberRegs() {
+                var num_main = getNumberRegsOnTable('detail');
+                var num_ext = getNumberRegsOnTable('ext-detail');
+                
+                return num_main + num_ext;
+            }
+            
+            function getNumberRegsOnTable(id) {
+                var tbl = document.getElementById(id);
+                var tbSize = tbl.rows.length;
+                var total = 0;
+                for (var i = 1; i < tbSize; i++) {
+                    var cell = tbl.rows[i].cells[10];
+                    var checkbox = cell.getElementsByTagName("input")[0];
+                    if (checkbox.checked) {
+                        var subCell = tbl.rows[i].cells[3]; // get number TC per selected row
+                        var tc = parseInt(subCell.innerHTML);
+                        total += tc;
+                    }
+                }
+                
+                return total;
             }
         </script>
     </body>
