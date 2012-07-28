@@ -7,6 +7,7 @@ package uit.cnpm02.dkhp.controllers.PDT;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,6 +24,7 @@ import uit.cnpm02.dkhp.model.Account;
 import uit.cnpm02.dkhp.model.Diary;
 import uit.cnpm02.dkhp.model.type.AccountStatus;
 import uit.cnpm02.dkhp.model.type.AccountType;
+import uit.cnpm02.dkhp.utilities.DateTimeUtil;
 import uit.cnpm02.dkhp.utilities.StringUtils;
 
 /**
@@ -54,9 +56,9 @@ public class DiaryController extends HttpServlet {
                 getContentDetail(request, response);
             } else if (action.equalsIgnoreCase("search-log")) {
                 searchLogs(request, response);
-            }/* else if (action.equalsIgnoreCase("add-subject-to-traing-prog")) {
-                addSubjectToTrainProg(request, response);
-            } else if (action.equalsIgnoreCase("remove-subject-to-traing-prog")) {
+            } else if (action.equalsIgnoreCase("search-log-by-date")) {
+                searchLogByDate(request, response);
+            }/* else if (action.equalsIgnoreCase("remove-subject-to-traing-prog")) {
                 deleteSubFromTrainProg(request, response);
             } else if (action.equals("delete-train-prog")) {
                 deleteTrainProgram(request, response);
@@ -219,6 +221,58 @@ public class DiaryController extends HttpServlet {
             out.println("<td> <span class=\"atag\" onclick=\"loadContent(" +d.getId()+ ")\">" + d.getContent() +"</span></td>");
             out.println("<td>" + d.getDate() +" </td>");
             out.println("</tr>");
+        }
+    }
+
+    private void searchLogByDate(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        String fromDateStr = request.getParameter("fromdate");
+        String toDateStr = request.getParameter("todate");
+        if (StringUtils.isEmpty(fromDateStr)
+                || StringUtils.isEmpty(toDateStr)) {
+            return;
+        }
+        Date fromDate = null;
+        Date toDate = null;
+        try {
+            fromDate = DateTimeUtil.parse(fromDateStr);
+            toDate = DateTimeUtil.parse(toDateStr);
+            
+            if (fromDate == null || toDate == null || fromDate.after(toDate)) {
+                return;
+            }
+            fromDate = new Date(fromDate.getTime() - 24*60*60);
+            toDate = new Date(toDate.getTime() + 24*60*60);
+            
+        } catch (Exception ex) {
+            //Do nothing...
+        }
+        
+        PrintWriter out = response.getWriter();
+        
+        List<Diary> diaries = new ArrayList<Diary>(10);
+        try {
+            List<Diary> temp = new ArrayList<Diary>(10);
+            DiaryDAO diaryDao = DAOFactory.getDiaryDao();
+            temp = diaryDao.findAll();
+            if (temp != null && !temp.isEmpty()) {
+                //diaries.addAll(temp);
+                
+                for (Diary d : temp) {
+                    if ((d.getDate() != null)
+                            && d.getDate().after(fromDate)
+                            && d.getDate().before(toDate)) {
+                        
+                        diaries.add(d);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(DiaryController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        if (!diaries.isEmpty()) {
+            writeOutListLogs(out, diaries);
         }
     }
 }
