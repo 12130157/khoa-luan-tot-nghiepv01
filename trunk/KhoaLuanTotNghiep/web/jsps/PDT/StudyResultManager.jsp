@@ -25,33 +25,19 @@
                 padding-left: 10px;
                 padding-right: 10px;
                 text-align: center;
-
             }
-            table th {
-                background-color:#00ff00;
-                height: 30px;
-                border-color: black;
-            }
-
             table td {
                 text-align: center;
-                background-color: #5F676D;
             }
-            
             #report-range {
-                /*width: 100%;*/
                 float: left;
                 padding-left: 10px;
                 padding-right: 10px;
                 padding-bottom: 25px;
                 text-align: center;
-
             }
-            
             #list-student {
                 float: left;
-                
-                height:250px;
                 overflow:auto;
             }
             #student-detail {
@@ -63,27 +49,6 @@
             #report-range td {
                 text-align: left;
             }
-            
-            #title{
-                background-color: #2f4e3d;
-                text-align: center;
-                padding-top: 12px;
-                padding-bottom: 10px;
-            }
-            #page{
-                text-align: center;
-            }
-            #sidebar {
-                height:250px;
-                overflow:auto;
-            }
-            a {
-                color: violet;
-            }
-            #createLabel{
-                padding-right: 15px;
-            }
-                      
         </style>
     </head>
     
@@ -102,7 +67,7 @@
                 <div class="clear"></div>
                 <div style="float: left;">
                     <div id="searchbox" action="#">
-                        <input id="search" type="text" onKeyPress="keypressed()" placeholder="Search" />
+                        <input id="search" type="text" onKeyPress="keypressed()" placeholder="Nhập tên SV" />
                         <input type="button" id="submit" onclick="FindStudent()" value="Tìm kiếm" />
                     </div>
                 </div>
@@ -114,8 +79,22 @@
                     </div>
                 </div>
                 <div class="clear"></div>
-                <hr/><hr/><br>
-
+                <div class="range">
+                    <h3><span id="btn-infor-manage" class="atag" >Hướng dẫn</span></h3>
+                    <div id="info-manage">
+                        <br/>
+                        <p>
+                            <b>Cho phép PĐT quản lý thông tin chi tiêt về kết quả học tập của từng Sinh Viên</b> <br />
+                            <i>
+                            <ul>
+                                <li>- PĐT tìm SV cần xem bằng cách nhập gần đúng tên SV</li>
+                                <li>- PĐT xem chi tết kết quả học tập của SV bằng cách click chuột vào tên SV tương ứng</li>
+                            </ul>
+                            </i>
+                        </p>
+                    </div>
+                </div>
+                <br>
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
@@ -123,21 +102,25 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    </body>
+    
     <script src="../../javascripts/AjaxUtil.js"></script>
+    <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
     <script  type = "text/javascript" >
 
         var http = createRequestObject();
+        
+        $("#btn-infor-manage").click(function () {
+            $('#info-manage').slideToggle(500);
+        });
         //
         // Search Student
         //
-        function keypressed()
-    { 
-       if(event.keyCode=='13')
-       {
-           FindStudent();
-       } 
-      }
+        function keypressed() { 
+            if(event.keyCode=='13') {
+                FindStudent();
+            } 
+        }
+        
         function FindStudent(){
             var search = document.getElementById("search").value;
              if (http) {
@@ -152,8 +135,10 @@
              if(http.readyState == 4 && http.status == 200){
                  var detail=document.getElementById("list-studentFind");
                  detail.innerHTML=http.responseText;
+                 
+                 formatGeneralTable();
              }
          }
-         
     </script>
+    </body>
 </html>
