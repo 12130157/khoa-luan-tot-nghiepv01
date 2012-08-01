@@ -24,27 +24,10 @@
                 padding-left: 10px;
                 padding-right: 10px;
                 text-align: center;
-
             }
-            table th {
-                background-color:#00ff00;
-                height: 30px;
-                border-color: black;
-            }
-
             table td {
                 text-align: center;
-                background-color: #5F676D;
             }
-            
-            #report-range {
-                float: left;
-                padding-left: 10px;
-                padding-right: 10px;
-                padding-bottom: 25px;
-                text-align: center;
-            }
-            
             #list-student {
                 float: left;
                 /*min-height:50px;*/
@@ -56,30 +39,6 @@
                 border-width: 1px;
                 border-color: #00ff00;
             }
-            #report-range td {
-                text-align: left;
-            }
-            
-            #title{
-                background-color: #2f4e3d;
-                text-align: center;
-                padding-top: 12px;
-                padding-bottom: 10px;
-            }
-            #page{
-                text-align: center;
-            }
-            #sidebar {
-                height:250px;
-                overflow:auto;
-            }
-            a {
-                color: violet;
-            }
-            #createLabel{
-                padding-right: 15px;
-            }
-                      
         </style>
     </head>
     
