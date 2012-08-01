@@ -81,15 +81,15 @@
                         <tr>
                             <th><INPUT type="checkbox" name="chkAll" onclick="selectAll('tablelistlecturer', 0)" /></th>
                             <th> STT </th>
-                            <th> Mã GV </span></th>
-                            <th> Họ Tên </span></th>
-                            <th> Khoa </span></th>
-                            <th> Địa chỉ </span></th>
-                            <th> Ngày sinh </span></th>
-                            <th> Giới tính </span></th>
+                            <th> Mã GV </th>
+                            <th> Họ Tên </th>
+                            <th> Khoa </th>
+                            <th> Địa chỉ </th>
+                            <th> Ngày sinh </th>
+                            <th> Giới tính </th>
                             <%--<th><span class="atag" onclick="sort('Email')" > Email </span></th>--%>
-                            <th> Học Hàm </span></th>
-                            <th> Học Vị </span></th>
+                            <th> Học Hàm </th>
+                            <th> Học Vị </th>
                             <th> Sửa </th>
                             <th> Xóa </th>
                         <%--Should be sorted when click on table's header ? --%>
@@ -109,7 +109,7 @@
                             <td> <%= listLecturer.get(i).getHocHam() %> </td>
                             <td> <%= listLecturer.get(i).getHocVi() %> </td>
                             <td><a href="../../ManageLecturerController?function=editlecturer&magv=<%= listLecturer.get(i).getId()%>"><img src="../../imgs/icon/edit.png" title="Sửa" alt="Sửa"/></a></td>
-                            <td><span class="atag" onclick="deleteOneLecturer('<%= listLecturer.get(i).getId()%>')"><img src="../../imgs/icon/delete.png" title="Xóa" alt="Xóa"/></a></td>
+                            <td><span class="atag" onclick="deleteOneLecturer('<%= listLecturer.get(i).getId()%>')"><img src="../../imgs/icon/delete.png" title="Xóa" alt="Xóa"/></td>
                         <% }%>
                         </tr>
                         <%}%>
