@@ -38,6 +38,8 @@ import uit.cnpm02.dkhp.utilities.StringUtils;
  */
 @WebServlet(name = "TrainingProgramControler", urlPatterns = {"/TrainingProgramControler"})
 public class TrainingProgramControler extends HttpServlet {
+    
+    TrainProgDetailDAO tpdDao = DAOFactory.getTrainProgDetailDAO();
 
     /** 
      * 
@@ -67,6 +69,8 @@ public class TrainingProgramControler extends HttpServlet {
                 deleteSubFromTrainProg(request, response);
             } else if (action.equals("delete-train-prog")) {
                 deleteTrainProgram(request, response);
+            } else if (action.equalsIgnoreCase("start-traing-prog")) {
+                startTrainProgram(request, response);
             }
         } finally {            
             out.close();
@@ -141,7 +145,7 @@ public class TrainingProgramControler extends HttpServlet {
             return;
         }
         
-        TrainProgDetailDAO tpdDao = DAOFactory.getTrainProgDetailDAO();
+        //TrainProgDetailDAO tpdDao = DAOFactory.getTrainProgDetailDAO();
         try {
             List<TrainProDetail> tps = tpdDao.findByColumName("MaCTDT", trainProgID);
             sortListTrainProDetailBySemeter(tps);
@@ -165,6 +169,12 @@ public class TrainingProgramControler extends HttpServlet {
     private void writeOutTrainProDetail(PrintWriter out,
             List<TrainProDetail> tps, String trainProgId) {
         out.println("Chương trình Đào tạo: <b>" + trainProgId + "</b>");
+        TrainProgram trainProg = null;
+        try {
+            trainProg = DAOFactory.getTrainProgramDAO().findById(trainProgId);
+        } catch (Exception ex) {
+            //
+        }
         if ((tps != null) && !tps.isEmpty()){
             SubjectDAO subDao = DAOFactory.getSubjectDao();
 
@@ -193,10 +203,11 @@ public class TrainingProgramControler extends HttpServlet {
                         + "</div>"*/
                 + "</form>");
         
-        
-        out.println("<div class=\"button-1\">"
+        if (trainProg != null && !trainProg.isIsStarted()) {
+            out.println("<div class=\"button-1\">"
                     + "<span class=\"atag\" onclick=\"updateTrainPro()\" ><img src=\"../../imgs/check.png\"/>Cập nhật</span>"
                     + "</div>");
+        }
     }
 
     private void createNewTrainProg(HttpServletRequest request,
@@ -243,7 +254,6 @@ public class TrainingProgramControler extends HttpServlet {
         }
     }
 
-    TrainProgDetailDAO tpdDao = DAOFactory.getTrainProgDetailDAO();
     private void preUpdateTrainProg(HttpServletRequest request,
             HttpServletResponse response) throws IOException {
         //PrintWriter out = response.getWriter();
@@ -251,6 +261,15 @@ public class TrainingProgramControler extends HttpServlet {
         // Load ds lop trong ctdt
         String trainProgID = request.getParameter("train-prog-ID");
         session.setAttribute("train-prog-ID", trainProgID);
+        if (!StringUtils.isEmpty(trainProgID)) {
+            try {
+                TrainProgram tp = DAOFactory.getTrainProgramDAO().findById(trainProgID);
+                session.setAttribute("trainprog", tp);
+            } catch (Exception ex) {
+                Logger.getLogger(TrainingProgramControler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
         List<String> subIdExisted = new ArrayList<String>(10);
         try {
             List<TrainProDetail> tps = tpdDao.findByColumName("MaCTDT", trainProgID);
@@ -478,11 +497,39 @@ public class TrainingProgramControler extends HttpServlet {
                 out.print("<td><span class=\"atag\" onclick=\"getTrainProgDetail('" + tp.getId() + "')\">" + tp.getId() + "</span></td>");
                 out.print("<td>" + tp.getFacultyCode() + "</td>");
                 out.print("<td>" + tp.getCourseCode() + "</td>");
-                out.print("<td><span class=\"atag\" onclick=\"deleteTrainProg('" + tp.getId() + "')\"><img src=\"../../imgs/icon/delete.png\" alt=\"delete\" title=\"delete\"/></span></td>");
+                out.print("<td>");
+                if (!tp.isIsStarted()) {
+                    out.print("<span class=\"atag\" onclick=\"deleteTrainProg('" + tp.getId() + "')\"><img src=\"../../imgs/icon/delete.png\" alt=\"delete\" title=\"delete\"/></span>");
+                }
+                out.print("</td>");
                 out.print("</tr>");
             }
         }
         
         out.print("</table>");
+    }
+
+    private void startTrainProgram(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        PrintWriter out = response.getWriter();
+        String trainProgId = request.getParameter("trainProgID");
+        TrainProgramDAO tpDao = DAOFactory.getTrainProgramDAO();
+        try {
+            TrainProgram tp = tpDao.findById(trainProgId);
+            if (tp == null) {
+                out.println("NOK");
+                return;
+            }
+            
+            tp.setIsStarted(true);
+            tpDao.update(tp);
+            
+            request.getSession().setAttribute("trainprog", tp);
+        } catch (Exception ex) {
+            Logger.getLogger(TrainingProgramControler.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            out.println("NOK");
+        }
+        out.println("OK");
     }
 }
