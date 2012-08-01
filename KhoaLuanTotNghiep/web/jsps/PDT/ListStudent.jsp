@@ -166,7 +166,6 @@
             </div><!--End footer-->
         </div><!--End Wrapper-->
     
-
     <script src="../../javascripts/UtilTable.js"></script>
     <script src="../../javascripts/AjaxUtil.js"></script>
     <script  type = "text/javascript" >
@@ -233,6 +232,8 @@
             if((http.readyState == 4) && (http.status == 200)){
                 var detail = document.getElementById("list-students");
                 detail.innerHTML = http.responseText;
+                
+                formatGeneralTable();
             }
         }
         function deleteOneStudent(mssv) {
@@ -289,6 +290,7 @@
                 
                 var detail = document.getElementById("list-students");
                 detail.innerHTML = http.responseText;
+                formatGeneralTable();
             }
         }
         
@@ -297,6 +299,7 @@
             if((http.readyState == 4) && (http.status == 200)){
                 var detail = document.getElementById("list-students");
                 detail.innerHTML = http.responseText;
+                formatGeneralTable();
             }
         }
         
@@ -328,8 +331,9 @@
         
          function handleResponseFindStudent() {
              if(http.readyState == 4 && http.status == 200){
-                 var detail=document.getElementById("list-student");
-                 detail.innerHTML=http.responseText;
+                 var detail = document.getElementById("list-student");
+                 detail.innerHTML = http.responseText;
+                 formatGeneralTable();
              }
          }
          
@@ -350,6 +354,7 @@
              if(http.readyState == 4 && http.status == 200){
                  var detail=document.getElementById("student-detail");
                  detail.innerHTML=http.responseText;
+                 formatGeneralTable();
              }
          }
      </script>

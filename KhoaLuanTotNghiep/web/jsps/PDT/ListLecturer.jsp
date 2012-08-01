@@ -59,8 +59,8 @@
                         <%--SEARCH FORM--%>
                         <div id="searchbox" action="#">
                             <%--SEARCH FORM--%>
-                            <input type="text" id="search" onKeyPress="txtBoxSearchLecturerkeypressed()" placeholder="Search" />
-                            <input type="button" id="submit"value="Tìm kiếm" onclick="searchLecturer()" />
+                            <input type="text" id="search" onKeyPress="txtBoxSearchLecturerkeypressed(event)" placeholder="Search" />
+                            <input type="button" id="submit" value="Tìm kiếm" onclick="searchLecturer()" />
                         </div>
                     </div>
                     <%-- BUTTON DELETE SELECT ROW --%>
@@ -133,8 +133,7 @@
             </div><%--End footer--%>
         </div>
         <%--End Wrapper--%>
-    </body>
-
+    
     <script src="../../javascripts/UtilTable.js"></script>
     <script src="../../javascripts/AjaxUtil.js"></script>
     <script  type = "text/javascript" >
@@ -185,6 +184,7 @@
             if((http.readyState == 4) && (http.status == 200)){
                 var detail = document.getElementById("list-lecturers");
                 detail.innerHTML = http.responseText;
+                formatGeneralTable();
             }
         }
         
@@ -225,6 +225,7 @@
                 
                 var detail = document.getElementById("list-lecturers");
                 detail.innerHTML = http.responseText;
+                formatGeneralTable();
             }
         }
         
@@ -272,7 +273,9 @@
                 
                 var detail = document.getElementById("list-lecturers");
                 detail.innerHTML = http.responseText;
+                formatGeneralTable();
             }
         }
     </script>
+    </body>
 </html>
