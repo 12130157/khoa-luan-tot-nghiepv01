@@ -20,9 +20,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Quản lý đăng ký</title>
         <style media="all" type="text/css">
-
             table {
-                /*width: 100%;*/
                 padding-left: 10px;
                 padding-right: 10px;
                 text-align: center;
@@ -40,19 +38,16 @@
             }
             
             #report-range {
-                /*width: 100%;*/
                 float: left;
                 padding-left: 10px;
                 padding-right: 10px;
                 padding-bottom: 25px;
                 text-align: center;
-
             }
             
             #list-student {
                 float: left;
-                
-                height:250px;
+                /*min-height:50px;*/
                 overflow:auto;
             }
             #student-detail {
@@ -101,24 +96,39 @@
                 </div>
                 <div style="float: left;">
                     <div id="searchbox" action="#">
-                        <input id="search" type="text" onKeyPress="keypressed()" placeholder="Search" />
+                        <input id="search" type="text" onKeyPress="keypressed()" placeholder="Nhập tên SV" />
                         <input type="button" id="submit" onclick="FindStudent()" value="Tìm kiếm" />
                     </div>
                 </div>
                 <div class="clear"></div>
                 <div>
+                    <%-- List search result --%>
                     <div id="list-student">
                         <table id ="list-studentFind" name = "list-studentFind" class="general-table">
-                           
                         </table>
                     </div>
+                    <%-- Detail registration for select student --%>
                     <div id="student-detail">
-                        
                     </div>
                 </div>
                 <div class="clear"></div>
-                <hr/><hr/><br>
-
+                <div class="range">
+                    <h3><span id="btn-infor-manage" class="atag" >Hướng dẫn</span></h3>
+                    <div id="info-manage">
+                        <br/>
+                        <p>
+                            <b>Cho phép PĐT quản lý thông tin chi tiêt về tình hình đăng ký học phần của các Sinh Viên</b> <br />
+                            <i>
+                            <ul>
+                                <li>- PĐT tìm SV cần xem bằng cách nhập gần đúng tên SV</li>
+                                <li>- PĐT xem chi tết thông tin đăng ký học phần bằng cách chọn SV tương ứng trong danh sách SV tìm thấy</li>
+                                <li>- Hệ thống hỗ trợ PĐT hủy bỏ một hay nhiều lớp mà SV này đẵ đang ký</li>
+                            </ul>
+                            </i>
+                        </p>
+                    </div>
+                </div>
+                <hr/><br>
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
@@ -126,21 +136,25 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    </body>
+    
     <script src="../../javascripts/AjaxUtil.js"></script>
+    <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
     <script  type = "text/javascript" >
 
         var http = createRequestObject();
+        
+        $("#btn-infor-manage").click(function () {
+            $('#info-manage').slideToggle(500);
+        });
         //
         // Search Student
         //
-        function keypressed()
-    { 
-       if(event.keyCode=='13')
-       {
-           FindStudent();
-       } 
-      }
+        function keypressed() { 
+            if(event.keyCode=='13') {
+                FindStudent();
+           } 
+        }
+    
         function FindStudent(){
             var search = document.getElementById("search").value;
              if (http) {
@@ -153,8 +167,10 @@
         
          function handleResponseFindStudent() {
              if(http.readyState == 4 && http.status == 200){
-                 var detail=document.getElementById("list-studentFind");
-                 detail.innerHTML=http.responseText;
+                 var detail = document.getElementById("list-studentFind");
+                 detail.innerHTML = http.responseText;
+                 
+                 formatGeneralTable();
              }
          }
          
@@ -174,6 +190,7 @@
              if(http.readyState == 4 && http.status == 200){
                  var detail=document.getElementById("student-detail");
                  detail.innerHTML=http.responseText;
+                 formatGeneralTable();
              }
          }
        function deleteTrainClassRegistration(studentCode, classCode){
@@ -184,6 +201,6 @@
                 http.send(null);
               }
        }  
-          
     </script>
+    </body>
 </html>
