@@ -313,7 +313,7 @@
                     +currentpage + "&key=" + key);
             }
         }
-        function keypressed() {
+        function keypressed(event) {
             if(event.keyCode == '13') {
                 searchAccount();
             } 
@@ -336,6 +336,8 @@
             if((http.readyState == 4) && (http.status == 200)){
                 var detail = document.getElementById("accountdetail");
                 detail.innerHTML = http.responseText;
+                
+                formatGeneralTable();
             }
         }
 
@@ -350,6 +352,8 @@
                 
                 var detail = document.getElementById("formdetail");
                 detail.innerHTML = responseText;
+                
+                formatGeneralTable();
             }
         }
 
@@ -441,6 +445,8 @@
             if(http.readyState == 4 && http.status == 200){
                 var detail = document.getElementById("respone-area");
                 detail.innerHTML = http.responseText;
+                
+                formatGeneralTable();
             }
         }
         
@@ -476,6 +482,8 @@
             if(http.readyState == 4 && http.status == 200){
                 var detail = document.getElementById("respone-edit-area");
                 detail.innerHTML = http.responseText;
+                
+                formatGeneralTable();
             }
         }
         // Update account --
