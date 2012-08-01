@@ -205,17 +205,19 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    </body>
-     <script src="../../javascripts/Schedule.js"></script>
-     <script type = "text/javascript">
-        var http = createRequestObject();
-         var date=0;
-        var faculty=0;
-      function reloadData(){
-          date = document.getElementById("date").value;
-          faculty = document.getElementById("faculty").value;
-         ajaxfunction("../../ManageSchedule?action=reload&faculty=" + faculty +"&date=" + date);
-      }  
-      
-     </script>
-   </html>
+    
+         <script src="../../javascripts/AjaxUtil.js"></script>
+         <script src="../../javascripts/Schedule.js"></script>
+         <script type = "text/javascript">
+            var http = createRequestObject();
+             var date=0;
+            var faculty=0;
+          function reloadData(){
+              date = document.getElementById("date").value;
+              faculty = document.getElementById("faculty").value;
+             ajaxfunction("../../ManageSchedule?action=reload&faculty=" + faculty +"&date=" + date);
+          }  
+
+         </script>
+     </body>
+</html>
