@@ -68,7 +68,21 @@ $(document).ready(function(){
     },function(){
         $(this).children().removeClass('mouseover_tr');
     });
+    $('.general-table tr:even:not(th)').addClass('even-row');
+    $('.general-table tr:odd:not').addClass('odd-row');
 });
+
+function formatGeneralTable() {
+    $('.general-table tr').hover(function(){
+        $(this).children().addClass('mouseover_tr');
+    },function(){
+        $(this).children().removeClass('mouseover_tr');
+    });
+    
+    //$('tr:even').addClass('even-row');
+    $('.general-table tr:even').addClass('even-row');
+    $('.general-table tr:odd').addClass('odd-row');
+}
 
 
 /**
