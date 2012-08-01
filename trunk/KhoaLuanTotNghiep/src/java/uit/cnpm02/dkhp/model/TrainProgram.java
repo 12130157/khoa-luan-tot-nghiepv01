@@ -17,6 +17,8 @@ public class TrainProgram extends AbstractJdbcModel<String>{
     /**Course Code**/
     private String courseCode;
     
+    private boolean isStarted = false;
+    
     public TrainProgram() {
         
     }
@@ -26,6 +28,7 @@ public class TrainProgram extends AbstractJdbcModel<String>{
         this.programCode = programCode;
         this.facultyCode= facultyCode;
         this.courseCode = courseCode;
+        this.isStarted = false;
     }
     
     public String getFacultyName() {
@@ -59,11 +62,20 @@ public class TrainProgram extends AbstractJdbcModel<String>{
     public void setCourseCode(String courseCode) {
         this.courseCode = courseCode;
     }
-     @Override
+    
+    public boolean isIsStarted() {
+        return isStarted;
+    }
+
+    public void setIsStarted(boolean isStarted) {
+        this.isStarted = isStarted;
+    }
+    
+    @Override
     public String getIdColumnName() {
         return "MaCTDT";
     }
-     @Override
+    @Override
     public String getTableName() {
         return MapperConstant.DB_NAME
                 + ".ChuongTrinhDaoTao";
@@ -72,7 +84,8 @@ public class TrainProgram extends AbstractJdbcModel<String>{
     public String[] getColumnNames() {
         return new String[]{
                     "MaKhoa",
-                    "MaKhoaHoc"
+                    "MaKhoaHoc",
+                    "DaBatDau"
                };
     }
 
@@ -81,6 +94,7 @@ public class TrainProgram extends AbstractJdbcModel<String>{
         try {
             facultyCode = values[0].toString();
             courseCode = values[1].toString();
+            isStarted = Boolean.parseBoolean(values[2].toString());
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
@@ -89,7 +103,8 @@ public class TrainProgram extends AbstractJdbcModel<String>{
     public Object[] getColumnValues() {
         return new Object[]{
                     facultyCode,
-                    courseCode
+                    courseCode,
+                    isStarted
         };
     }
 
