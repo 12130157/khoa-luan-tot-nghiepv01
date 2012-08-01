@@ -157,7 +157,6 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    </body>
     <script src="../../javascripts/jquery-1.7.1.js"></script>
     <script src="../../javascripts/AjaxUtil.js"></script>
     <script  type = "text/javascript" >
@@ -350,6 +349,8 @@
             if(http.readyState == 4 && http.status == 200){
                 var detail=document.getElementById("table-list-train-class");
                 detail.innerHTML=http.responseText;
+                
+                formatGeneralTable();
             }
         }
          function keypressed()
@@ -370,4 +371,5 @@
         }
         
     </script>
+    </body>
 </html>

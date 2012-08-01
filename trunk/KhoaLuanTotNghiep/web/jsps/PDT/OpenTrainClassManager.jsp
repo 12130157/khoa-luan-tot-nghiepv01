@@ -166,7 +166,6 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    </body>
     <script src="../../javascripts/jquery-1.7.1.js"></script>
     <script src="../../javascripts/AjaxUtil.js"></script>
     <script  type = "text/javascript" >
@@ -197,31 +196,32 @@
        $(yearAndSemester).slideDown(500)
        type = "YAS";
      });
+     
       function closeClass(classCode, classSemester, classYear){
-         if(type=="input"){
+            if(type=="input"){
                 value= document.getElementById("search").value;
-               if(http){
+                if(http){
                     http.open("GET", "../../ManageClassController?action=CloseByInput&value="+value + "&curentPage="+ currentpage + "&classCode="+ classCode + "&classSemester="+ classSemester + "&classYear="+ classYear ,true);
                     http.onreadystatechange = searchResponeHandler;
                     http.send(null);
-                 }
+                }
             }else if(type=="faculty"){
-               value= document.getElementById("facultyValue").value;
-               if(http){
+                value= document.getElementById("facultyValue").value;
+                if(http){
                     http.open("GET", "../../ManageClassController?action=CloseByFaculty&value="+value + "&curentPage="+ currentpage + "&classCode="+ classCode + "&classSemester="+ classSemester + "&classYear="+ classYear  ,true);
                     http.onreadystatechange = searchResponeHandler;
                     http.send(null);
-                 }
+                }
             }else{
-               year=document.getElementById("year").value;
-               semester=document.getElementById("semester").value;
-               if(http){
+                year=document.getElementById("year").value;
+                semester=document.getElementById("semester").value;
+                if(http){
                     http.open("GET", "../../ManageClassController?action=ClosePageByYAS&year="+year+"&semester="+semester + "&curentPage="+ currentpage + "&classCode="+ classCode + "&classSemester="+ classSemester + "&classYear="+ classYear  ,true);
                     http.onreadystatechange = searchResponeHandler;
                     http.send(null);
-                 }
+                }
             }
-      }    
+      }
       function firstPage(){
             currentpage = 1;
             if(currentpage > numpage)
@@ -358,6 +358,8 @@
             if(http.readyState == 4 && http.status == 200){
                 var detail=document.getElementById("table-list-train-class");
                 detail.innerHTML=http.responseText;
+                
+                formatGeneralTable();
             }
         }
          function keypressed()
@@ -378,4 +380,5 @@
         }
                
     </script>
+    </body>
 </html>
