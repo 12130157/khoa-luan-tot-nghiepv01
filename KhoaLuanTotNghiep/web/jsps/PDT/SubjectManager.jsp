@@ -198,6 +198,8 @@
             if(http.readyState == 4 && http.status == 200){
                 var detail=document.getElementById("tablelistsubject");
                 detail.innerHTML=http.responseText;
+                
+                formatGeneralTable();
             }
         }
         function deleteSub(subId){
