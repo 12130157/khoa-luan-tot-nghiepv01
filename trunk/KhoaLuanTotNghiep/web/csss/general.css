@@ -191,12 +191,12 @@ table.general-table th {
 
 table.general-table th{
     font-size: 14px;
-    background:#328aa4 url(../imgs/table/tr_back.gif) repeat-x;color:#fff;
+    background:#328aa4 url(../imgs/table/tr_back.gif) repeat-x;color:#fff !important;
 }
 
 table.general-table td{
     font-size: 13px;
-    background:#e5f1f4;
+    /*background:#e5f1f4;*/
 }
 
 
@@ -286,11 +286,11 @@ a img {
     /*background: #f40f0f;*/
 }
 
-.odd-row {
-    background: #cccccc;
+.odd-row td{
+    background: #E5E5E5;
 }
-.even-row {
-    background: #F9F9F9;
+.even-row td{
+    background: #D5D5D5;
 }
 
 tr:hover .pop-up {
