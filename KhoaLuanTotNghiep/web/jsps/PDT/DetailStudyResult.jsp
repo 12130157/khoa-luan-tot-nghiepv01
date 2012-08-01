@@ -197,6 +197,7 @@
                         <input type="hidden" id="studentCode" name="studentCode" value="<%=student.getId()%>"/>
                     </div>
                 </form>
+                <br />
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
@@ -204,24 +205,26 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    </body>
-    <script src="../../javascripts/jquery-1.7.1.js"></script>
-    <script src="../../javascripts/StudyResult.js"></script>
-    <script  type = "text/javascript" >
-        var http = createRequestObject();
-        var year="2007-2008";
-        var semester=1;
-        var studentCode ="";
-        function reloadResult(){
-             year=document.formstudent.year.value;
-             semester=document.formstudent.semester.value;
-             studentCode= document.getElementById("studentCode").value;
-            SendRequest();
-        }
-        function SendRequest(){
-              if(http){
-              ajaxfunction("../../StudyResultManager?action=reload&studentCode=" + studentCode + "&year="+year+"&semester="+semester );
+    
+        <script src="../../javascripts/AjaxUtil.js"></script>
+        <script src="../../javascripts/jquery-1.7.1.js"></script>
+        <script src="../../javascripts/StudyResult.js"></script>
+        <script  type = "text/javascript" >
+            var http = createRequestObject();
+            var year="2007-2008";
+            var semester=1;
+            var studentCode ="";
+            function reloadResult(){
+                 year=document.formstudent.year.value;
+                 semester=document.formstudent.semester.value;
+                 studentCode= document.getElementById("studentCode").value;
+                SendRequest();
+            }
+            function SendRequest(){
+                  if(http){
+                  ajaxfunction("../../StudyResultManager?action=reload&studentCode=" + studentCode + "&year="+year+"&semester="+semester );
+                 }
              }
-         }
-   </script>
+       </script>
+    </body>
 </html>
