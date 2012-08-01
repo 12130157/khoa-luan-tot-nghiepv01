@@ -20,7 +20,7 @@
             subNames += s.getSubjectName() + "--";
         }
     }
-    TrainProgram tp = (TrainProgram) session.getAttribute("trainprog");
+    TrainProgram tp = (TrainProgram) session.getAttribute("trainprog");tp.isIsStarted();
 %>
 <html>
     <head>
@@ -188,7 +188,7 @@
         <script  type = "text/javascript" >
             window.onload = function() {
                 var isStarted = $('#is-started').val();
-                if (isStarted) {
+                if (isStarted == 'true') {
                     $("#btn-start-trainprog").hide();
                     $("#btn-add-subject").hide();
                     $("#btn-delete-subject").hide();
