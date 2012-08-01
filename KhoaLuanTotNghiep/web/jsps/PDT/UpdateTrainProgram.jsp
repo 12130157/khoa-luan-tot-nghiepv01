@@ -1,3 +1,4 @@
+<%@page import="uit.cnpm02.dkhp.model.TrainProgram"%>
 <%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
 <%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="uit.cnpm02.dkhp.model.Subject"%>
@@ -19,6 +20,7 @@
             subNames += s.getSubjectName() + "--";
         }
     }
+    TrainProgram tp = (TrainProgram) session.getAttribute("trainprog");
 %>
 <html>
     <head>
@@ -33,6 +35,7 @@
     <body onload="addRowFromLast();">
         <!--Div Wrapper-->
         <div id="wrapper">
+            <input type="hidden" id="is-started" value="<%= tp != null ? tp.isIsStarted() : false %>" />
             <input type="hidden" id="trainProgId" value="<%= trainProgID %>" />
             <input type="hidden" id="subIds" value="<%= subIds %>" />
             <input type="hidden" id="subNames" value="<%= subNames %>" />
@@ -53,29 +56,47 @@
                 <div id="form-add-subject-to-train-pro" class="range">
                     <h3><span id="btn-list-existed-class" class="atag">Cập nhật chương trình đào tạo</span></h3> 
                     <div id="list-existed-class">
-                        <div style="font-size: 12px; font-weight: bold; font-style: italic;">
-                            Thêm lớp học vào CTĐT (* lớp trùng nhau sẽ tự động được bỏ)
+                        <div style="float: left;">
+                            <div style="font-size: 12px; font-weight: bold; font-style: italic;">
+                                Thêm lớp học vào CTĐT (* lớp trùng nhau sẽ tự động được bỏ)
+                            </div>
+                            <table id="tbl-add" class="general-table" style="float: left; width: 420px; maring-left: 25px;">
+                                <tr>
+                                    <th>Môn học</th><th>Học kỳ</th><th>Xóa</th>
+                                </tr>
+
+                            </table>
+                            <div class="clear"></div>
+                            <span class="atag" onclick="addRowFromLast()"><img src="../../imgs/icon/add.png" title="add" alt="add"/></span>
+
+                            <%-- Button Add --%>
+                            <div class="clear"></div>
+                            <div id="btn-add-subject" class="button-1" style="padding: 2px !important; float: left; margin-left: 143px;">
+                                <span class="atag" onclick="addSubjectToTrainProg()" ><img src="../../imgs/check.png" />Submit</span>
+                            </div>
+                            <%-- Add subject to training program result --%>
+                            <div class="clear"></div>
+                            <div id="add-subject-to-train-prog-result">
+                                <%----%>
+                            </div>
                         </div>
-                        <table id="tbl-add" class="general-table" style="float: left; width: 420px; maring-left: 25px;">
-                            <tr>
-                                <th>Môn học</th><th>Học kỳ</th><th>Xóa</th>
-                            </tr>
-                            
-                        </table>
-                        <div class="clear"></div>
-                        <span class="atag" onclick="addRowFromLast()"><img src="../../imgs/icon/add.png" title="add" alt="add"/></span>
-                    
-                        <%-- Button Add --%>
-                        <div class="clear"></div>
-                        <div class="button-1" style="padding: 2px !important; float: left; margin-left: 143px;">
-                            <span class="atag" onclick="addSubjectToTrainProg()" ><img src="../../imgs/check.png" />Submit</span>
+                        <%-- Button start Training Program --%>
+                        <div id="btn-start-trainprog" style="float: left; margin-left: 20%; margin-top: 4%;">
+                             <div class="button-1" style="padding: 2px !important;">
+                                <span class="atag" onclick="startTrainProgram('<%=trainProgID%>')" ><img src="../../imgs/check.png" />Hoàn tất</span>
+                             </div>
+                             <div class="clear"></div>
+                            <div class="warning">
+                                <img src="../../imgs/warning.png"/>
+                                <i>
+                                    Sau khi xác nhận Hoàn tất cập cho<br />
+                                    Chương trình đào tạo. User không<br />
+                                    được quyền cập nhật hay hủy bỏ<br />
+                                    chương trình đào tạo này<br />
+                                </i>
+                            </div>
                         </div>
-                        <%-- Add subject to training program result --%>
-                        <div class="clear"></div>
-                        <div id="add-subject-to-train-prog-result">
-                            <%----%>
-                        </div>
-                    </div>
+                     </div>
                 </div>
                 <div class="range">
                     <%-- File from Lecturer --%>
@@ -107,7 +128,7 @@
                         </div>
                         <%-- Button Remove --%>
                         <div class="clear"></div>
-                        <div class="button-1" style="padding: 2px !important; float: left; margin-left: 143px;">
+                        <div id="btn-delete-subject" class="button-1" style="padding: 2px !important; float: left; margin-left: 143px;">
                             <span class="atag" onclick="deleteSubjectFromTrainProg()" ><img src="../../imgs/check.png" />Xóa</span>
                         </div>
                         <div class="clear"></div>
@@ -165,6 +186,15 @@
         <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
         <script src="../../javascripts/jquery-1.7.1.js"></script>
         <script  type = "text/javascript" >
+            window.onload = function() {
+                var isStarted = $('#is-started').val();
+                if (isStarted) {
+                    $("#btn-start-trainprog").hide();
+                    $("#btn-add-subject").hide();
+                    $("#btn-delete-subject").hide();
+                }
+            }
+            
             var http = createRequestObject();
             
             $("#btn-list-existed-class").click(function () {
@@ -314,7 +344,6 @@
                         return;
                     }
                 }
-                
             }
             
             function highLightSelectRow(chb, row) {
@@ -326,6 +355,39 @@
                     trobj.setAttribute("class", 'datahighlight');
                 } else {
                     trobj.removeAttribute("class", 'datahighlight');
+                }
+            }
+            
+            function startTrainProgram(progId) {
+                if (confirm("CTĐT sau khi hoàn tất sẽ không thể cập nhật hay hủy bỏ.\n\
+                            Ấn OK để xác nhận.")) {
+                    var controller = "../../TrainingProgramControler?action=start-traing-prog"
+                        + "&trainProgID=" + progId;
+                    if(http){
+                        http.open("GET", controller, true);
+                        http.onreadystatechange = startTrainProgHandler;
+                        http.send(null);
+                    } else {
+                        alert("Error: http object not found");
+                    }
+                    //alert("OK, TrainProg will be finished.");
+                }
+            }
+            
+            function startTrainProgHandler() {
+                if(http.readyState == 4 && http.status == 200){
+                    var responeText = http.responseText;
+                    if (responeText.indexOf("OK") != -1) {
+                        alert("Cập nhật thành công.");
+                        $("#btn-start-trainprog").hide();
+                        $("#btn-add-subject").hide();
+                        $("#btn-delete-subject").hide();
+                        //
+                    } else if (responeText.indexOf("NOK") != -1) {
+                        alert("Đã có lỗi xảy ra, vui lòng thử lại sau.");
+                    } else {
+                        alert("Unknown respone from server");
+                    }
                 }
             }
         </script>

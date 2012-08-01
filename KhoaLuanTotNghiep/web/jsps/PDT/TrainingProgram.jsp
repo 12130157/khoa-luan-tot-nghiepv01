@@ -66,7 +66,11 @@
                                         <td><span class="atag" onclick="getTrainProgDetail('<%=tp.getId() %>')"> <%= tp.getId()  %></span></td>
                                         <td><%= tp.getFacultyCode() %></td>
                                         <td><%= tp.getCourseCode() %></td>
-                                        <td><span class="atag" onclick="deleteTrainProg('<%=tp.getId()%>')"><img src="../../imgs/icon/delete.png" alt="delete" title="delete"/></span></td>
+                                        <td>
+                                            <% if(!tp.isIsStarted()) {%>
+                                                <span class="atag" onclick="deleteTrainProg('<%=tp.getId()%>')"><img src="../../imgs/icon/delete.png" alt="delete" title="delete"/></span>
+                                            <%} else {}%>
+                                        </td>
                                     </tr>
                                 <%  }
                                 }
@@ -198,6 +202,8 @@
                     } else {
                         var detail = document.getElementById("list-trainprog");
                         detail.innerHTML = responseValue;
+                        
+                        formatGeneralTable();
                     }
                 }
             }
@@ -246,6 +252,7 @@
                 if(http.readyState == 4 && http.status == 200){
                     var detail = document.getElementById("train-class-detail");
                     detail.innerHTML = http.responseText;
+                    formatGeneralTable();
                 }
             }
             
