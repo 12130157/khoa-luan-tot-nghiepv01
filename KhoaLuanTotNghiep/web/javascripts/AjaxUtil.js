@@ -70,6 +70,10 @@ $(document).ready(function(){
     });
     $('.general-table tr:even:not(th)').addClass('even-row');
     $('.general-table tr:odd:not').addClass('odd-row');
+    
+    $('.msg-response').live('click', function() {
+       $('.msg-response').hide('slow') ;
+    });
 });
 
 function formatGeneralTable() {
