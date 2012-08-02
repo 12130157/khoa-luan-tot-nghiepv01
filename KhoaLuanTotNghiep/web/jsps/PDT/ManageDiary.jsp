@@ -176,8 +176,10 @@
             function searchLogHandler() {
                 if(http.readyState == 4 && http.status == 200){
                      var detail = document.getElementById("tbl-list-log");
-                     if (http.responseText != '')
+                     if (http.responseText != '') {
                          detail.innerHTML = http.responseText;
+                         formatGeneralTable();
+                     }
                 }
             }
             
@@ -200,25 +202,11 @@
             function searchLogByDateHandler() {
                 if(http.readyState == 4 && http.status == 200){
                      var detail = document.getElementById("tbl-list-log");
-                     if (http.responseText != '')
+                     if (http.responseText != '') {
                          detail.innerHTML = http.responseText;
+                         formatGeneralTable();
+                     }
                 }
-            }
-            
-            function firstPage() {
-                alert("Tobe implemented...");
-            }
-            
-            function endPage() {
-                alert("Tobe implemented...");
-            }
-            
-            function nextPage() {
-                alert("Tobe implemented...");
-            }
-            
-            function prePage() {
-                alert("Tobe implemented...");
             }
         </script>
     </body>
