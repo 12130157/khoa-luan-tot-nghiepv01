@@ -58,10 +58,6 @@
                 width: 200px;
                 text-align: left;
             }
-           a{
-                color: #0000ff;
-            }
-            
             #info{
                 width: 100%;
             }
@@ -168,6 +164,7 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
+    <script src="../../javascripts/AjaxUtil.js"></script>
     <script>
         
     </script>
