@@ -200,7 +200,7 @@ public class DetailTrainManager extends HttpServlet {
         out.println("<tr>"
                 + "<th> STT </th>"
                 + "<th>Mã GV</th>"
-                + "<th width = 200px> Họ và tên </th>"
+                + "<th> Họ và tên </th>"
                 + "<th>Mã khoa</th>"
                 + "</tr>");
         for (int i = 0; i < datas.size(); i++) {

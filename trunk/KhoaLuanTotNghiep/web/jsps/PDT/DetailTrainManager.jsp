@@ -20,25 +20,6 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Chi tiết giảng dạy</title>
         <style media="all" type="text/css">
-
-            table {
-                /*width: 100%;*/
-                padding-left: 10px;
-                padding-right: 10px;
-                text-align: center;
-
-            }
-            table th {
-                background-color:#00ff00;
-                height: 30px;
-                border-color: black;
-            }
-
-            table td {
-                text-align: center;
-                background-color: #5F676D;
-            }
-
             #report-range {
                 /*width: 100%;*/
                 float: left;
@@ -46,13 +27,10 @@
                 padding-right: 10px;
                 padding-bottom: 25px;
                 text-align: center;
-
             }
-
             #list-Lecturer {
                 float: left;
-
-                height:250px;
+                max-height:350px;
                 overflow:auto;
             }
             #Lecturer-detail {
@@ -64,27 +42,6 @@
             #report-range td {
                 text-align: left;
             }
-
-            #title{
-                background-color: #2f4e3d;
-                text-align: center;
-                padding-top: 12px;
-                padding-bottom: 10px;
-            }
-            #page{
-                text-align: center;
-            }
-            #sidebar {
-                height:250px;
-                overflow:auto;
-            }
-            a {
-                color: violet;
-            }
-            #createLabel{
-                padding-right: 15px;
-            }
-
         </style>
     </head>
 
@@ -101,35 +58,50 @@
                 </div>
                 <div style="float: left;">
                     <div id="searchbox" action="#">
-                        <input id="search" type="text" onKeyPress="keypressed()" placeholder="Search" />
+                        <input id="search" type="text" onKeyPress="keypressed()" placeholder="Nhập tên GV" />
                         <input type="button" id="submit" onclick="FindLecturer()" value="Tìm kiếm" />
                     </div>
                 </div>
                 <div class="clear"></div>
                 <div>
-                    <div id="list-Lecturer">
-                        <br>
+                    <div id="list-Lecturer" style="float: left;">
+                        <br />
                         <table id ="list-LecturerFind" name = "list-LecturerFind" class="general-table">
-
                         </table>
                     </div>
-                    <div id="Lecturer-detail">
-
+                    
+                    <div id="Lecturer-detail" style="float: left; margin-left: 15px;">
                     </div>
                 </div>
                 <div class="clear"></div>
-                <br><hr/><hr/>
-
+                <div class="range">
+                    <h3><span id="btn-infor-manage" class="atag" >Hướng dẫn</span></h3>
+                    <div id="info-manage">
+                        <br/>
+                        <p>
+                            <b>Cho phép PĐT quản lý thông tin thông tin giảng dạy của GV</b> <br />
+                            <i>
+                            <ul>
+                                <li>- PĐT tìm GV cần xem bằng cách nhập gần đúng tên GV</li>
+                                <li>- PĐT xem chi tết thông tin đăng ký học phần bằng cách chọn SV tương ứng trong danh sách SV tìm thấy</li>
+                                <li>- Hệ thống hỗ trợ PĐT cập nhật môn học phụ trách của GV</li>
+                            </ul>
+                            </i>
+                        </p>
+                    </div>
+                </div>
             </div><!--End Contents-->
-
             <div id="footer"><!--Footer-->
                 <%@include file="../Footer.jsp" %>
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    </body>
     <script src="../../javascripts/AjaxUtil.js"></script>
+    <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
     <script  type = "text/javascript" >
+        $("#btn-infor-manage").click(function () {
+            $('#info-manage').slideToggle(500);
+        });
 
         var http = createRequestObject();
         //
@@ -154,8 +126,9 @@
         
         function handleResponseFindStudent() {
             if(http.readyState == 4 && http.status == 200){
-                var detail=document.getElementById("list-LecturerFind");
-                detail.innerHTML=http.responseText;
+                var detail = document.getElementById("list-LecturerFind");
+                detail.innerHTML = http.responseText;
+                formatGeneralTable();
             }
         }
          
@@ -173,12 +146,14 @@
         }
         function handleResponseStudentReport() {
             if(http.readyState == 4 && http.status == 200){
-                var detail=document.getElementById("Lecturer-detail");
-                detail.innerHTML=http.responseText;
+                var detail = document.getElementById("Lecturer-detail");
+                detail.innerHTML = http.responseText;
+                formatGeneralTable();
             }
         }
         function updateDetailTrain(){
            document.forms["form-update"].submit();
         }
      </script>
+    </body>
 </html>
