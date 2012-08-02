@@ -68,9 +68,7 @@
                             %>
                         </table>
                     </div>
-                        <div id="msg-response">
-                            
-                        </div>
+                        <div id="msg-response" class="msg-response"> </div>
                 </div>
 
                 <div class="clear"></div>
@@ -109,7 +107,7 @@
                             <span class="atag" onclick="createNewCourse()" ><img src="../../imgs/check.png"/>Submit</span>
                         </div>
                         <div class="clear"></div>
-                        <div id="message-handler"></div>
+                        <div id="message-handler" class="msg-response"></div>
                     </div>
                 </div>
                  <br />
@@ -174,8 +172,10 @@
             function createNewClassHandler() {
                 //
                 if(http.readyState == 4 && http.status == 200){
+                    $('#message-handler').show('slow');
                     var detail = document.getElementById("message-handler");
                     detail.innerHTML = http.responseText;
+                    setTimeOut("message-handler", AjaxConstants.SHORT_DELAY);
                 }
             }
 
@@ -193,8 +193,10 @@
             
             function deleteCourseHandler() {
                 if(http.readyState == 4 && http.status == 200){
+                    $('#msg-response').show('slow');
                     var detail = document.getElementById("msg-response");
                     detail.innerHTML = http.responseText;
+                    setTimeOut("msg-response", AjaxConstants.SHORT_DELAY);
                 }
             }
        </script>
