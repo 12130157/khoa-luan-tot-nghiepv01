@@ -107,6 +107,7 @@
                                 <input type="text" id="search" />
                                 <input type="button" id="submit" value="Tìm" onclick="search()" />
                             </div>
+                            <!--
                             <div id="pre-sub-filter">
                                 <%--Filter by faculty--%>
                                 Tìm theo khoa
@@ -117,6 +118,7 @@
                                     <option value="ktmt">Thuộc khoa KTMT</option>
                                 </select>
                             </div>
+                            -->
                         </div>
                         <div class="clear"></div>
                         <div id = "list-pre-sub" name="list-pre-sub">
@@ -256,6 +258,7 @@
             if(http.readyState == 4 && http.status == 200){
                 var detail = document.getElementById("list-pre-sub");
                 detail.innerHTML = http.responseText;
+                formatGeneralTable();
             }
         }
         
