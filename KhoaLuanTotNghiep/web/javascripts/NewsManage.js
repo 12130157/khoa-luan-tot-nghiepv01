@@ -25,7 +25,8 @@ function ajaxfunction(pagename){
 
 function handleResponse(){
     if(http.readyState == 4 && http.status == 200){
-        var detail=document.getElementById("Newsdetail");
-        detail.innerHTML=http.responseText;
+        var detail = document.getElementById("Newsdetail");
+        detail.innerHTML = http.responseText;
+        formatGeneralTable();
     }
 }

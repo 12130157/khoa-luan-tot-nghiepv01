@@ -39,12 +39,18 @@
                     Quản lý tin tức hệ thống
                 </div>
                 
-                <br><h3>Danh sách các tin tức:</h3>
-                   <a href="CreateNews.jsp">Đăng tin mới</a>
-                 <hr/><hr/><br>
+                <hr/><hr/>
+                <br>
+                <div style="float: left;">
+                    <u><b>Danh sách các tin tức</b></u>
+                </div>
+                <div style="float: right; margin-right: 15px;">
+                    <a href="CreateNews.jsp"><img src="../../imgs/icon/add.png"/>Đăng tin mới</a>
+                </div>
+                <div class="clear"></div>
                 <div id="NewsList">
                 <form id="formdetail" name="formdetail">
-                    <table id="Newsdetail" class="general-table" name="Newsdetail" border="2" bordercolor="yellow" >
+                    <table id="Newsdetail" class="general-table" name="Newsdetail">
                         <tr>
                             <th>STT</th><th>Ngày đăng</th><th >Tiêu đề</th><th>Tình trạng</th><th>Sửa</th><th>Xem</th><th>Xóa</th>
                         </tr>
@@ -91,6 +97,7 @@
         </div>
         <!--End Wrapper-->
     
+         <script src="../../javascripts/AjaxUtil.js"></script>
          <script src="../../javascripts/NewsManage.js"></script>
          <script  type = "text/javascript" >
              var currentpage=1;
