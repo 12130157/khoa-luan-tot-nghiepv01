@@ -24,24 +24,6 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Quản lý comment</title>
         <style media="all" type="text/css">
-
-            #formdetail table{
-                width: 100%;
-                padding-left: 10px;
-                padding-right: 10px;
-                text-align: center;
-
-            }
-            #formdetail table th{
-                background-color:#00ff00;
-                height: 30px;
-                border-color: black;
-            }
-
-            #formdetail table td{
-                text-align: center;
-                background-color: #5F676D;
-            }
         </style>
     </head>
     <body>
@@ -53,15 +35,15 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <div id="title">
-                    <u>Quản lý tin ý kiến</u>
+                <div id="main-title">
+                    Quản lý tin ý kiến
                 </div>
                 <br><h3>Danh sách các ý kiến:</h3>
                 <br>
                  <hr/><hr/><br>
                 <div id="NewsList">
                 <form id="formdetail" name="formdetail">
-                    <table id="Commentdetail" name="Commentdetail" border="2" bordercolor="yellow" >
+                    <table id="Commentdetail" class="general-table" name="Commentdetail">
                         <tr>
                             <th>STT</th><th>Người gủi</th><th >Nội dung</th><th>Ngày gửi</th><th>Tình trạng</th><th>Xem</th><th>Xóa</th>
                         </tr>
@@ -103,7 +85,7 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    </body>
+    <script src="../../javascripts/AjaxUtil.js"> </script>
     <script src="../../javascripts/CommentManager.js"> </script>
      <script  type = "text/javascript" >
          var currentpage=1;
@@ -133,4 +115,5 @@
              }
          }
     </script>
+    </body>
 </html>
