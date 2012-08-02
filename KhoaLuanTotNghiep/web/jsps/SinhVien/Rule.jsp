@@ -105,6 +105,7 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
+        <script src="../../javascripts/AjaxUtil.js"></script>
     </body>
    
 </html>
