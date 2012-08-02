@@ -791,6 +791,10 @@ public class ManageScoreController extends HttpServlet {
     
     private void writeOutListStudyResult(PrintWriter out,
             List<Registration> regs, TrainClass tc) {
+        if (tc.getUpdateScore() == TrainClass.SCORE_UPDATED) {
+            out.println("Lớp đã đóng.");
+            return;
+        }
         StudentDAO studentDao = DAOFactory.getStudentDao();
         StudyResultDAO studyResultDao = DAOFactory.getStudyResultDao();
         //out.println("<input type=\"checkbox\"/> Ẩn SV đã có điểm");
