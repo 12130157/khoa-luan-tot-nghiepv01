@@ -254,7 +254,7 @@
                     $('#message-handler').show('slow');
                     var detail = document.getElementById("message-handler");
                     detail.innerHTML = http.responseText;
-                    setTimeOut("message-handler", 15);
+                    setTimeOut("message-handler", AjaxConstants.SHORT_DELAY);
                 }
             }
 
@@ -296,7 +296,7 @@
                     var detail = document.getElementById("msg-response");
                     detail.innerHTML = http.responseText;
                     
-                    setTimeOut("msg-response", 15);
+                    setTimeOut("msg-response", AjaxConstants.SHORT_DELAY);
                 }
             }
             function loadDataToEdit(classID) {
@@ -343,7 +343,7 @@
                 $('#respone-edit-area').show('slow');
                 var detail = document.getElementById("respone-edit-area");
                 detail.innerHTML = http.responseText;
-                setTimeOut("respone-edit-area", 15);
+                setTimeOut("respone-edit-area", AjaxConstants.SHORT_DELAY);
             }
         }
         // Update account --
