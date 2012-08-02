@@ -84,9 +84,7 @@
                             %>
                         </table>
                     </div>
-                        <div id="msg-response">
-                            
-                        </div>
+                    <div id="msg-response" class="msg-response"> </div>
                 </div>
 
                 <div class="clear"></div>
@@ -162,7 +160,7 @@
                             <span class="atag" onclick="createNewClass()" ><img src="../../imgs/check.png"/>Submit</span>
                         </div>
                         <div class="clear"></div>
-                        <div id="message-handler"></div>
+                        <div id="message-handler" class="msg-response"></div>
                     </div>
                 </div>
                  <div class="range" id="edit-account-range">
@@ -172,11 +170,11 @@
                         <br/>
                         <div id="form-edit-class">
                             <br />
-                            <u>
+                            <ul>
                                 <li>
                                     Để thay đổi thông tin lớp học, vui long click vào biểu tượng <img src="../../imgs/icon/edit.png" title="Sửa" alt="Sửa"/> tương ứng vơi lớp.
                                 </li>
-                            </u>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -248,14 +246,15 @@
                 } else {
                     alert("Error: http object not found");
                 }
-                
             }
             
             function createNewClassHandler() {
                 //
                 if(http.readyState == 4 && http.status == 200){
+                    $('#message-handler').show('slow');
                     var detail = document.getElementById("message-handler");
                     detail.innerHTML = http.responseText;
+                    setTimeOut("message-handler", 15);
                 }
             }
 
@@ -293,8 +292,11 @@
             
             function deleteStudentClassHandler() {
                 if(http.readyState == 4 && http.status == 200){
+                    $('#msg-response').show('slow');
                     var detail = document.getElementById("msg-response");
                     detail.innerHTML = http.responseText;
+                    
+                    setTimeOut("msg-response", 15);
                 }
             }
             function loadDataToEdit(classID) {
@@ -338,8 +340,10 @@
         }
         function updateResponseHandler() {
             if(http.readyState == 4 && http.status == 200){
+                $('#respone-edit-area').show('slow');
                 var detail = document.getElementById("respone-edit-area");
                 detail.innerHTML = http.responseText;
+                setTimeOut("respone-edit-area", 15);
             }
         }
         // Update account --
