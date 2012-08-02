@@ -128,3 +128,8 @@ function setTimeOut(id, seconds) {
         $(object).fadeOut('slow');
     }, seconds * 1000); // <-- time in milliseconds
 }
+
+AjaxConstants = {
+    SHORT_DELAY : 15,
+    LONG_DELAY : 30
+};
