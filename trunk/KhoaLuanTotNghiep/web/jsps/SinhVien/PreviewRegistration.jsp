@@ -162,6 +162,7 @@
         </div>
         <!--End Wrapper-->
     
+        <script src="../../javascripts/AjaxUtil.js"></script>
         <script  type = "text/javascript" >
             function reRegistration(){
                 document.forms["reRegistry"].submit();
