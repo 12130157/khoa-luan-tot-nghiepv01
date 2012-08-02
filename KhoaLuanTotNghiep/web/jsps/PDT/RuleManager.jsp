@@ -113,8 +113,6 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    </body>
-
     <script src="../../javascripts/AjaxUtil.js"></script>
     <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
     <script  type = "text/javascript" >
@@ -210,8 +208,9 @@
         
         function listRoleResponeHandler() {
             if(http.readyState == 4 && http.status == 200){
-                var detail=document.getElementById("list-rules");
-                detail.innerHTML=http.responseText;
+                var detail = document.getElementById("list-rules");
+                detail.innerHTML = http.responseText;
+                formatGeneralTable();
             }
         }
 
@@ -225,15 +224,15 @@
         
         function responeHandler() {
             if(http.readyState == 4 && http.status == 200){
-                var detail=document.getElementById("some-id");
-                detail.innerHTML=http.responseText;
+                var detail = document.getElementById("some-id");
+                detail.innerHTML = http.responseText;
             }
         }
         
         function addRoleResponeHandler() {
             if(http.readyState == 4 && http.status == 200){
-                var detail=document.getElementById("add-rule-resule");
-                detail.innerHTML=http.responseText;
+                var detail = document.getElementById("add-rule-resule");
+                detail.innerHTML = http.responseText;
             }
         }
         
@@ -243,6 +242,6 @@
                 detail.innerHTML=http.responseText;
             }*/
         }
-        
     </script>
+    </body>
 </html>
