@@ -442,6 +442,10 @@
             
             // Mark a trainclass is updated score
             function markClassToUpdatedScore(classID) {
+                if (!confirm("Sau khi chọn đóng lớp, user không thể thực hiện cập nhật điểm.\n\
+                        Nhấn OK để xác nhận.")) {
+                    return;
+                }
                 var controller = "../../ManageScoreController?function=score-updated"
                     + "&trainclss_id=" + classID;
                 if(http){
@@ -457,6 +461,7 @@
                 if(http.readyState == 4 && http.status == 200){
                     var detail = document.getElementById("close-class-msg");
                     detail.innerHTML = http.responseText;
+                    $('.button-1 span').hide('slow');
                 }
             }
             // On handler: remove butn, show msg
