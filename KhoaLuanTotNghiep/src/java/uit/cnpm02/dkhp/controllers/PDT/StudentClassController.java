@@ -168,7 +168,7 @@ public class StudentClassController extends HttpServlet {
             out.print("</div>");
             out.print("<div class=\"clear\"></div>");
             out.print("<br/>");
-            out.print("<div id=\"respone-edit-area\"></div>");
+            out.print("<div id=\"respone-edit-area\" class=\"msg-response\"></div>");
         } catch (Exception ex) {
             Logger.getLogger(StudentClassController.class.getName()).log(Level.SEVERE, null, ex);
         }
