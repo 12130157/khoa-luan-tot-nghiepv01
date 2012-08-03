@@ -137,14 +137,15 @@
                             </div>
                         </div>
                         <%-- Import data for training class --%>
-                        <div id="form-new-train-prog-update" style="float: left; padding-left: 12px;">
-                            Chi tiết chương trình đào tạo
+                        <div id="form-new-train-prog-update" style="padding-left: 12px; margin-left: 25px; float: left; font-weight: bold; font-size: 12px;">
                         </div>
                         <div class="clear"> <br /> </div>
+                        <%--
                         <div class="button-1">
                             <span class="atag" onclick="createNewTrainPro()" ><img src="../../imgs/check.png"/>Submit</span>
                         </div>
                         <div class="clear"></div>
+                        --%>
                         <div id="message-handler"></div>
                     </div>
                 </div>
@@ -233,7 +234,9 @@
             function createNewTrainProHandler() {
                 if(http.readyState == 4 && http.status == 200){
                     var detail = document.getElementById("form-new-train-prog-update");
+                    $(detail).fadeIn('slow');
                     detail.innerHTML = http.responseText;
+                    setTimeOut('form-new-train-prog-update', AjaxConstants.SHORT_DELAY);
                 }
             }
             
