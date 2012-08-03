@@ -211,8 +211,7 @@
                             <div class="clear"></div>
                             <br/>
                             <%-- Response Area for Update --%>
-                            <div id="respone-area">
-                            </div>
+                            <div id="respone-area" class="msg-response"> </div>
                         </div>
                     </div>
                 </div>
@@ -243,7 +242,6 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    </body>
 
     <script src="../../javascripts/AccountManager.js"></script>
     <script src="../../javascripts/AjaxUtil.js"></script>
@@ -349,7 +347,6 @@
                     alert("Error: " + error);
                     return;
                 }
-                
                 var detail = document.getElementById("formdetail");
                 detail.innerHTML = responseText;
                 
@@ -357,19 +354,6 @@
             }
         }
 
-        /*function deleteUser(username) {
-            alert("Ham 1" + username);
-            return;
-            var pagename = "../../AccountController?action=delete&username=" + username;
-            if(http){
-                http.open("GET", pagename, true);
-                http.onreadystatechange = searchHandler;
-                http.send(null);
-            } else {
-                alert("Error: Could not create http object.");
-            }
-        }*/
-        
         function sort(by) {
             var pagename = "../../AccountController?action=sort&by=" + by;
             if(http){
@@ -441,15 +425,16 @@
                 alert("Error: http object not found");
             }
         }
+        
         function createNewResponseHandler() {
             if(http.readyState == 4 && http.status == 200){
                 var detail = document.getElementById("respone-area");
+                $(detail).show('slow');
                 detail.innerHTML = http.responseText;
-                
+                setTimeOut("respone-area", AjaxConstants.SHORT_DELAY);
                 formatGeneralTable();
             }
         }
-        
         
         function update() {
             var username = document.getElementById("txtUsername_edit").value;
@@ -478,14 +463,17 @@
                 alert("Error: http object not found");
             }
         }
+        
         function updateResponseHandler() {
             if(http.readyState == 4 && http.status == 200){
                 var detail = document.getElementById("respone-edit-area");
+                $(detail).show('slow');
                 detail.innerHTML = http.responseText;
-                
+                setTimeOut("respone-edit-area", AjaxConstants.SHORT_DELAY);
                 formatGeneralTable();
             }
         }
         // Update account --
     </script>
+    </body>
 </html>
