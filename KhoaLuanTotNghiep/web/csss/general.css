@@ -95,6 +95,16 @@ ol, ul{
     padding-bottom: 12px;
     text-align: center;
 }
+#paggind input {
+    border: solid 1px #100;
+    background: #EB5F80;
+    border-radius: 5px;
+    width: 38px;
+}
+#paggind input:hover {
+    background: #dd3;
+    cursor: pointer;
+}
 
 #title {
     background-color: #fff;
@@ -513,6 +523,7 @@ tr:hover .pop-up {
 }
 .button-1:hover {
     background: #FD2;
+    cursor: pointer;
 }
 .button-2 {
     background: #328AA4;
