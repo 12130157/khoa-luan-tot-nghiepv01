@@ -97,9 +97,11 @@ ol, ul{
 }
 #paggind input {
     border: solid 1px #100;
-    background: #EB5F80;
+    background: #AFC7C7;
     border-radius: 5px;
     width: 38px;
+    font-weight: bold;
+    opacity: 0.8;
 }
 #paggind input:hover {
     background: #dd3;
