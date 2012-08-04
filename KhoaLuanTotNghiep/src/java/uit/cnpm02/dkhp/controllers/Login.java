@@ -65,6 +65,8 @@ public class Login extends HttpServlet {
                     login(request, response);
                 } else if (function.equals("logout")) {
                     logOut(session, response);
+                } else if (function.equals("redirect")) {
+                    redirectToPath(request, response);
                 }
             } else {
                 session.setAttribute("error", "Lỗi hệ thống. Vui lòng quay lại sau.");
@@ -94,16 +96,21 @@ public class Login extends HttpServlet {
         String textPass = request.getParameter("txtPassword");
         String pass = PasswordProtector.getMD5(textPass);
         AccountBO accBo = new AccountBO();
+        PrintWriter out = response.getWriter();
         String path = "";
         if (accBo.Login(user, pass)) {
             if (accBo.isLogined(user)) {
-                session.setAttribute("error",
-                        "Tài khoản của bạn đang được đăng nhập ở một máy khác!");
-                path = "./jsps/Login.jsp";
+                //session.setAttribute("error",
+                //        "Tài khoản của bạn đang được đăng nhập ở một máy khác!");
+                //path = "./jsps/Login.jsp";
+                out.println("Tài khoản đang đăng nhập ở máy khác.");
+                return;
             } else if (accBo.isLock(user)) {
-                session.setAttribute("error",
-                        "Tài khoản của bạn đang bị khóa vui lòng liên hệ quản lý khoa để giải quyết!");
-                path = "./jsps/Login.jsp";
+                //session.setAttribute("error",
+                //        "Tài khoản của bạn đang bị khóa vui lòng liên hệ quản lý khoa để giải quyết!");
+                //path = "./jsps/Login.jsp";
+                out.println("Tài khoản đang bị khóa.");
+                return;
             } else {
                 session.setAttribute("username", user);
                 session.setAttribute("logineduser", user);
@@ -116,29 +123,32 @@ public class Login extends HttpServlet {
                 
                 if (acc.getType() == AccountType.ADMIN.value()) {
                     getRemindTask(request);
-                    path = "./jsps/PDT/PDTStart.jsp";
+                    path = "jsps/PDT/PDTStart.jsp";
                 } else if (acc.getType() == AccountType.STUDENT.value()) {
                     getRemindTask(request);
                     List<TrainClass> tcs = getStudentSchedule(user);
                     if ((tcs != null) && !tcs.isEmpty()) {
                         session.setAttribute(SCHEDULE_CK, tcs);
                     }
-                    path = "./jsps/SinhVien/SVStart.jsp";
+                    path = "jsps/SinhVien/SVStart.jsp";
                 } else if (acc.getType() == AccountType.LECTUTER.value()) {
                     getRemindTask(request);
                     List<TrainClass> tcs = getLecturerSchedule(user);
                     if ((tcs != null) && !tcs.isEmpty()) {
                         session.setAttribute(SCHEDULE_CK, tcs);
                     }
-                    path = "./jsps/GiangVien/GVStart.jsp";
+                    path = "jsps/GiangVien/GVStart.jsp";
                 }
             }
         } else {
-            session.setAttribute("error", "Tên đăng nhập hoặc mật khẩu không hợp lệ");
-            path = "./jsps/Login.jsp";
+            //session.setAttribute("error", "Tên đăng nhập hoặc mật khẩu không hợp lệ");
+            //path = "./jsps/Login.jsp";
+            out.println("Tên đăng nhập hoặc mật khẩu không hợp lệ");
+            return;
         }
 
-        response.sendRedirect(path);
+        //response.sendRedirect(path);
+        out.println("OK - " + path);
     }
 
     private void logOut(HttpSession session, HttpServletResponse response)
@@ -296,5 +306,11 @@ public class Login extends HttpServlet {
                 return (o1.getStudyDate() - o2.getStudyDate());
             }
         });
+    }
+
+    private void redirectToPath(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        String path = request.getParameter("path");
+        response.sendRedirect(path.trim());
     }
 }

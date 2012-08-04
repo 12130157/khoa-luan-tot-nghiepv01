@@ -143,11 +143,14 @@
                 
                 //Define gradients for 3D / shadow effect
                 var grad1 = c2d.createLinearGradient(0, 0, width, height);
-                grad1.addColorStop(0, "#D83040");
-                grad1.addColorStop(1, "#801020");
+                //grad1.addColorStop(0, "#D83040");
+                //grad1.addColorStop(1, "#801020");
+                grad1.addColorStop(0, "#72978D");
+                grad1.addColorStop(1, "#A29E67");
                 var grad2 = c2d.createLinearGradient(0, 0, width, height);
                 grad2.addColorStop(0, "#801020");
-                grad2.addColorStop(1, "#D83040");
+                //  grad2.addColorStop(1, "#D83040");
+                grad2.addColorStop(1, "#37A2D2");
                 c2d.font = "Bold 20px Arial";
                 c2d.textBaseline = "middle";
                 c2d.textAlign = "center";
