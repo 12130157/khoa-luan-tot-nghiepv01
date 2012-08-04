@@ -62,7 +62,7 @@
             </tr>
         </table>
         <%-- Error handler --%>
-        <div id="login-error">
+        <div id="login-error" style="text-align: center; font-size: 11px; font-style: bold; background: #502f90; color: #ffffff;">
             
         </div>
         <div id="btn-forward">
