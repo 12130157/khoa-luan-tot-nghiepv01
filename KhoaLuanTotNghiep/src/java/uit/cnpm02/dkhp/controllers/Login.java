@@ -269,8 +269,8 @@ public class Login extends HttpServlet {
             String year = Constants.CURRENT_YEAR;
             // Cac lop SV da dk (trong hoc ki hien tai)
             List<Registration> regs = regDao.findByColumNames(
-                    new String[] {"MSSV", "HocKy", "NamHoc", "TrangThai"},
-                    new Object[] {studentId, semeter, year, TrainClassStatus.OPEN.getValue()});
+                    new String[] {"MSSV", "HocKy", "NamHoc"},
+                    new Object[] {studentId, semeter, year});
             List<TrainClassID> tcIDs = new ArrayList<TrainClassID>(10);
             if ((regs == null) || regs.isEmpty()) {
                 return null;
