@@ -209,11 +209,16 @@ public class DiaryController extends HttpServlet {
         
     }
 
+    public static final int SHORT_CONTENT_LENGHT = 80; // char
     private void writeOutListLogs(PrintWriter out, List<Diary> diaries) {
         out.println("<tr><th>STT</th><th>User</th><th>Nội dung</th><th>Thời gian</th></tr>");
         
         for (int i = 0; i < diaries.size(); i ++) {
             Diary d = diaries.get(i);
+            String content = d.getContent();
+            if (content.length() > SHORT_CONTENT_LENGHT) {
+                content = content.substring(0, SHORT_CONTENT_LENGHT) + "...";
+            }
             out.println("<tr>");
             
             out.println("<td>" + (i + 1) + "</td>");
