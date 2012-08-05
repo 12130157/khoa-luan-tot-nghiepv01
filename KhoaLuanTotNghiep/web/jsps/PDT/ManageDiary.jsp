@@ -4,6 +4,7 @@
     Author     : LocNguyen
 --%>
 
+<%@page import="uit.cnpm02.dkhp.controllers.PDT.DiaryController"%>
 <%@page import="java.util.Date"%>
 <%@page import="uit.cnpm02.dkhp.utilities.DateTimeUtil"%>
 <%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
@@ -73,11 +74,16 @@
                         <%
                             if (diaries != null && !diaries.isEmpty()) {
                                 for (int i = 0; i < diaries.size(); i++) {
-                                    Diary d = diaries.get(i);%>
+                                    Diary d = diaries.get(i);
+                                    String content = d.getContent();
+                                    if (content.length() > DiaryController.SHORT_CONTENT_LENGHT) {
+                                        content = content.substring(0, DiaryController.SHORT_CONTENT_LENGHT) + "...";
+                                    }
+                                %>
                                 <tr>
                                     <td> <%= (i + 1) %> </td>
                                     <td> <span class="atag" onclick="loadUserDetail('<%=d.getUserName() %>')"><%= d.getUserName() %></span> </td>
-                                    <td> <span class="atag" onclick="loadContent(<%=d.getId()%>)"><%= d.getContent() %></span></td>
+                                    <td> <span class="atag" onclick="loadContent(<%=d.getId()%>)"><%= content %></span></td>
                                     <td> <%= d.getDate() %> </td>
                                 </tr>
                             <%}}%>

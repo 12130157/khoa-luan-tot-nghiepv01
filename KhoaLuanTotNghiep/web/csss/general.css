@@ -507,6 +507,7 @@ tr:hover .pop-up {
     text-transform: uppercase;
     text-align: center;
     font-weight: bold;
+    font-size: 20px;
 }
 #control-range {
     border: 1px solid #DDDD22;
@@ -622,6 +623,7 @@ input[type="file"] {
     border: 1px solid #dde;
     min-height: 120px;
     min-width: 320px;
+    max-width: 520px;
     position: absolute;
     background: #E3E4FA;
     z-index: 120;
