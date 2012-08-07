@@ -523,6 +523,7 @@ tr:hover .pop-up {
     padding: 7px;
     margin: auto;
     font-weight: bold;
+    z-index: 1001;
 }
 .button-1:hover {
     background: #FD2;
@@ -664,6 +665,9 @@ input[type="file"] {
     text-align: center;
     border-radius: 5px;
 }
+.msg-response:hover {
+    cursor: pointer;
+}
 
 .hover{
     cursor: pointer;
@@ -694,4 +698,15 @@ input[type="file"] {
 }
 .border-warning {
     border: 1px solid red;
+}
+
+#popup-process-task {
+    background: none repeat scroll 0 0 #DDDDFF;
+    left: 30%;
+    top: 20%;
+    min-height: 72%;
+    opacity: 0.85;
+    width: 718px;
+    position: fixed;
+    z-index: 100;
 }
