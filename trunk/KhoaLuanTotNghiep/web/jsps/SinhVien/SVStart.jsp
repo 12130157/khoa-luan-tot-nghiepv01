@@ -21,6 +21,11 @@
     <head>
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <style media="all" type="text/css">
+            .max-width-content {
+                width: 450px;
+            }
+        </style>
         <title>Trang sinh viên</title>
     </head>
     <body>
@@ -36,10 +41,10 @@
                     if ((tasks != null) && !tasks.isEmpty()) {
                     %>
                     <u><b>Tin quan trọng:</b></u>
-                    <table class="general-table">
+                    <table class="general-table" style="width: 800px;">
                         <tr>
                             <th> STT </th>
-                            <th> Nội dung </th>
+                            <th class="max-width-content"> Nội dung </th>
                             <th> Người gửi </th>
                             <th> Ngày gửi </th>
                         </tr>
@@ -47,10 +52,14 @@
                         for (int i = 0; i < tasks.size(); i++) {
                             Task t = tasks.get(i);
                             SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_PARTERM_DEFAULT);
+                            String content = t.getContent();
+                            if (content.length() > 200) {
+                                content = content.substring(0, 200) + "...";
+                            }
                         %>
                             <tr>
                                 <td> <%= (i + 1) %> </td>
-                                <td> <%= t.getContent() %> </td>
+                                <td> <span class="atag" onclick="showTaskProcess(<%= t.getId() %>);"> <%= content %> </span></td>
                                 <td> <%= t.getSender() %> </td>
                                 <td> <%= sdf.format(t.getCreated()) %> </td>
                             </tr>
@@ -58,6 +67,15 @@
                         }
                         %>
                     </table>
+                    <%-- Msg process result --%>
+                    <div class="clear"></div>
+                    <div id="msg-process-task-response" class="msg-response">
+                    </div>
+                    <%-- A popup show option process task --%>
+                    <div class="clear"></div>
+                    <div id="popup-process-task" style="border: solid 1px #ff0; border-radius: 5px; display: none;" onClick="hideMe('popup-process-task');">
+                        <img src = '../../imgs/icon/loading.gif' />
+                    </div>
                     <div class="clear"></div>
                     <%
                     }
@@ -71,16 +89,62 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    </body>
-
+    
     <script src="../javascripts/News.js"></script>
+    <script src="../../javascripts/AjaxUtil.js"></script>
+    <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
     <script  type = "text/javascript" >
-        action="search";
+        action = "search";
         var http = createRequestObject();
         function search(){
             name=document.getElementById("subname").value;
             ajaxfunction("../servSubject?action="+action+"&name="+name);
         }
-       
+        
+        function showTaskProcess(taskId) {
+            $('#popup-process-task').fadeIn('slow', function() {
+                // Animation complete
+                var controller = '../../RegistryController?action=student-process-task' 
+                            + '&taskid=' + taskId;
+                if(http){
+                    http.open("GET", controller, true);
+                    http.onreadystatechange = showTaskProcessHandler;
+                    http.send(null);
+                } else {
+                    alert("Lỗi gửi yêu cầu tới Server thất bại");
+                }
+            });
+        }
+        function showTaskProcessHandler() {
+            if(http.readyState == 4 && http.status == 200){
+                 var detail = document.getElementById("popup-process-task");
+                 detail.innerHTML = http.responseText;
+            }
+        }
+        
+        function confirm(taskid, agree) {
+            var controller = '../../RegistryController?action=student-confirm-process-task' 
+                            + '&taskid=' + taskid
+                            + '&yesno=' + agree;
+            alert(controller);
+            if(http){
+                http.open("GET", controller, true);
+                http.onreadystatechange = confirmHandler;
+                http.send(null);
+            } else {
+                alert("Lỗi gửi yêu cầu tới Server thất bại");
+            }
+        }
+        
+        function confirmHandler() {
+            if(http.readyState == 4 && http.status == 200){
+                $('#msg-process-task-response').show('slow');
+                var detail = document.getElementById("msg-process-task-response");
+                detail.innerHTML = http.responseText;
+                setTimeOut("msg-process-task-response", AjaxConstants.SHORT_DELAY);
+            }
+        }
+        //msg-process-task-response
     </script>
+    </body>
 </html>
