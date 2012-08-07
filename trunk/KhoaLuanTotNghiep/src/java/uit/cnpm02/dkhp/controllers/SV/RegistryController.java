@@ -25,6 +25,7 @@ import uit.cnpm02.dkhp.DAO.RegistrationDAO;
 import uit.cnpm02.dkhp.DAO.RuleDAO;
 import uit.cnpm02.dkhp.DAO.StudentDAO;
 import uit.cnpm02.dkhp.DAO.SubjectDAO;
+import uit.cnpm02.dkhp.DAO.TaskDAO;
 import uit.cnpm02.dkhp.DAO.TrainClassDAO;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.model.Class;
@@ -32,9 +33,12 @@ import uit.cnpm02.dkhp.model.Faculty;
 import uit.cnpm02.dkhp.model.RegistrationID;
 import uit.cnpm02.dkhp.model.RegistrationTime;
 import uit.cnpm02.dkhp.model.RegistrationTimeID;
+import uit.cnpm02.dkhp.model.Task;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.model.TrainClassID;
 import uit.cnpm02.dkhp.model.type.StudentStatus;
+import uit.cnpm02.dkhp.model.type.TaskStatus;
+import uit.cnpm02.dkhp.model.type.TaskType;
 import uit.cnpm02.dkhp.service.TrainClassStatus;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
@@ -91,6 +95,10 @@ public class RegistryController extends HttpServlet {
                 detailTrainClass(response, request);
             } else if (action.equalsIgnoreCase("get-reged-students")) {
                 getListStudentRegedOnTrainClass(response, request);
+            } else if(action.equalsIgnoreCase("student-process-task")) {
+                showTaskProcessPopup(request, response);
+            } else if (action.equalsIgnoreCase("student-confirm-process-task")) {
+                processTaskConfirm(request, response);
             }
         } finally {
             out.close();
@@ -352,8 +360,8 @@ public class RegistryController extends HttpServlet {
                             registried.get(i).getNumOfStudentReg() + 1, 0);
                     regDao.add(reg);
                 }
-
-            }
+            
+                }
             if (message.isEmpty()) {
                 forward(response, session);
             } else {
@@ -774,7 +782,7 @@ public class RegistryController extends HttpServlet {
         if (students == null) {
             return;
         }
-        out.println("<u>DS SV đã đăng ký</u> <br />");
+        out.println("<div id=\"popup-title\">DS SV đã đăng ký</div> <br />");
         if (students.size() > slideLimit) {
             out.println("<div id=\"sidebar\">");
         }
@@ -801,6 +809,92 @@ public class RegistryController extends HttpServlet {
         out.println("</table>");
         if (students.size() > slideLimit) {
             out.println("</div>");
+        }
+    }
+
+    // Show task process popup
+    // Task id get from request object
+    private void showTaskProcessPopup(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        PrintWriter out = response.getWriter();
+        String taskId = (String) request.getParameter("taskid");
+        int id = Integer.parseInt(taskId);
+        TaskDAO taskDao = DAOFactory.getTaskDAO();
+        Task task = null;
+        try {
+            task = taskDao.findById(id);
+        } catch (Exception ex) {
+            Logger.getLogger(RegistryController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (task == null) {
+            out.println("Không có yêu cầu nào tương ứng");
+            return;
+        }
+        boolean yes_no = false;
+        if (task.getTaskType() == TaskType.MOVE_STUDENT_TO_TC) {
+            yes_no = true;
+        }
+        
+        out.println("<div id=\"popup-title\">Thông tin phản hồi</div> <br />");
+        out.println("Nội dung thông báo: " + task.getContent() + "<br /> <br />");
+        
+        if (yes_no) {
+            out.println("<br />SV click vào nút <b>Đồng ý</b> để đồng ý với quyết định của PĐT hoặc "
+                    + "click vào nut <b>Hủy</b> để yêu cầu hủy bỏ thao tác của PĐT <br /> <br />");
+        }
+
+        // Button Yes - No
+        out.println("<div class=\"button-1\" style=\"padding: 2px !important; margin-top: 13px; float: left; margin-left: 25px;\">");
+        out.println("<span class=\"atag\" onclick=\"confirm("+ task.getId()+", 'OK'" +")\" ><img src=\"../../imgs/check.png\" />Đồng ý</span>");
+        out.println("</div>");
+        
+        // Is cancel button displayed ?
+        if (yes_no) { /** or some else allow user cancel **/
+            out.println("<div class=\"button-1\" style=\"padding: 2px !important; margin-top: 13px; float: left; margin-left: 25px;\">");
+            out.println("<span class=\"atag\" onclick=\"confirm("+ task.getId()+", 'NOK'" +")\" ><img src=\"../../imgs/check.png\" />Hủy</span>");
+            out.println("</div>");
+        }
+    }
+
+    private void processTaskConfirm(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        PrintWriter out = response.getWriter();
+        String taskId = (String) request.getParameter("taskid");
+        String YES_NO = (String) request.getParameter("yesno");
+        
+        if (YES_NO.equals("OK")) { // OK, task accepted, no need to do anything else
+            out.println("Xác nhận thành công");
+        } else {
+            int id = Integer.parseInt(taskId);
+            TaskDAO taskDao = DAOFactory.getTaskDAO();
+            try {
+                Task task = taskDao.findById(id);
+                if (task.getTaskType() == TaskType.MOVE_STUDENT_TO_TC) { //OH, that student cancel admin decicion
+                                                                    // OK, I'll rollback his registration.
+                    // Task processed
+                    task.setStatus(TaskStatus.PROCESSED);
+                    taskDao.update(task);
+                    
+                    // Rollback registration
+                    String content = task.getContent();
+                    String data = content.substring(1, content.indexOf("]"));
+                    String[] regIdData = data.split(";");
+                    
+                    String mssv = regIdData[0];
+                    String trainClassId = regIdData[1];
+                    String year = regIdData[2];
+                    String semeter = regIdData[3];
+                    RegistrationID regId = new RegistrationID(mssv, trainClassId, Integer.parseInt(semeter), year);
+                    Registration reg = regDao.findById(regId);
+                    regDao.delete(reg);
+                    
+                    out.println("Hoàn tất, việc chuyển lớp đã được hủy bỏ.");
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(RegistryController.class.getName())
+                        .log(Level.SEVERE, null, ex);
+                out.println("Trong quá trình xử lý đã có lỗi xảy ra, PĐT sẽ xem xét lại trường hợp này");
+            }
         }
     }
 }
