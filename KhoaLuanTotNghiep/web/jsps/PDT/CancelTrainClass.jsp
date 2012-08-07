@@ -24,23 +24,6 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Quản lý lớp học</title>
         <style media="all" type="text/css">
-
-            #title{
-                background-color: #2f4e3d;
-                text-align: center;
-                padding-top: 12px;
-                padding-bottom: 10px;
-            }
-            #page{
-                text-align: center;
-            }
-            #sidebar {
-                height:250px;
-                overflow:auto;
-            }
-            a {
-                color: #0000ff;
-            }
             #createLabel{
                 padding-right: 15px;
             }
@@ -52,8 +35,8 @@
                 text-align: left;
             }
             #message{
-                text-align: left;
-                width: 100%;
+                text-align: center;
+                max-width: 500px;
              }
         </style>
     </head>
@@ -69,10 +52,7 @@
                 <div id="main-title">
                     Hủy lớp học <%=trainClass.getId().getClassCode()%>
                 </div>
-                <br/><br/>
-                <div id="message">
-                    
-                </div><br />
+                <br/>
                 <u>Chi tiết lớp học:</u>
                 <table id="detailclass">
                     <tr>
@@ -91,11 +71,14 @@
                 <div class="button-1" style="padding: 2px !important; margin-top: 13px;">
                     <span class="atag" onclick="autoCancelClass('<%=trainClass.getId().getClassCode()%>',<%=trainClass.getId().getSemester()%>,'<%=trainClass.getId().getYear()%>')" ><img src="../../imgs/check.png" />Hủy lớp</span>
                 </div>
-                
+                <br />
+                <%-- Response message when cancel train class --%>
+                <div id="message" class="msg-response" style="width: 500px;">
+                </div>
                <br><hr>  
                 <%--Form add new Train subject--%>
                 <%if(studentList.size()>0 && sameClass.size()>0){%>
-                <u>Danh sách sinh viên đăng  ký lớp học: <%=studentList.size()%></u>
+                <u>Danh sách sinh viên đăng  ký lớp học: <%=studentList.size()%> (SV)</u>
                 <div id = "list-train-class">
                     <form id="trainclaslist">
                     <table id ="table-list-train-class" name = "table-list-train-class" class="general-table">
@@ -122,8 +105,6 @@
                                </select>
                             </td>
                             <td><input type="button" value="  Chuyển  " onclick="moveEachStudent('<%=studentList.get(i).getId()%>','<%=trainClass.getId().getClassCode()%>','<%=i%>', '<%=trainClass.getId().getSemester()%>','<%=trainClass.getId().getYear()%>')" /></td>
-                            
-                                
                        </tr>
                         <%}%>
                         
@@ -144,33 +125,42 @@
         <script  type = "text/javascript" >
             var http = createRequestObject();
             function autoCancelClass(classCode, classSemester, classYear){
-             if(http){
-                http.open("GET", "../../ManageClassController?action=autoCancel&classCode="+ classCode + "&classSemester="+ classSemester + "&classYear="+ classYear  ,true);
-                http.onreadystatechange = cancelResponeHandler;
-                http.send(null);
-             }
-          }  
-          function cancelResponeHandler() {
+                if(http){
+                    http.open("GET", "../../ManageClassController?action=autoCancel&classCode=" + classCode
+                        + "&classSemester="+ classSemester
+                        + "&classYear="+ classYear, true);
+                    http.onreadystatechange = cancelResponeHandler;
+                    http.send(null);
+                 }
+            }  
+            function cancelResponeHandler() {
                 if(http.readyState == 4 && http.status == 200){
-                    var detail=document.getElementById("message");
-                    detail.innerHTML=http.responseText;
+                    $('#message').show('slow');
+                    var detail = document.getElementById("message");
+                    detail.innerHTML = http.responseText;
+                    setTimeOut("message", AjaxConstants.SHORT_DELAY);
                 }
             }
-
-          function moveEachStudent(studenttCode, sourceClass, id, classSemester, classYear){
-              var desClass = document.getElementById(id).value;
-              if(http){
-                    http.open("GET", "../../ManageClassController?action=moveStudent&studentCode="+ studenttCode + "&sourceClass="+ sourceClass + "&desClass="+ desClass + "&semester="+ classSemester + "&year="+ classYear  ,true);
+    
+            function moveEachStudent(studenttCode, sourceClass, id, classSemester, classYear){
+                var desClass = document.getElementById(id).value;
+                if(http){
+                    http.open("GET", "../../ManageClassController?action=moveStudent&studentCode="+ studenttCode
+                        + "&sourceClass="+ sourceClass
+                        + "&desClass="+ desClass
+                        + "&semester="+ classSemester
+                        + "&year="+ classYear, true);
                     http.onreadystatechange = moveResponeHandler;
                     http.send(null);
-             }
-           }
-          function moveResponeHandler() {
-                if(http.readyState == 4 && http.status == 200){
-                    var detail=document.getElementById("table-list-train-class");
-                    detail.innerHTML=http.responseText;
                 }
-            }  
+            }
+            
+            function moveResponeHandler() {
+                if(http.readyState == 4 && http.status == 200){
+                    var detail = document.getElementById("table-list-train-class");
+                    detail.innerHTML = http.responseText;
+                }
+            }
         </script>
     </body>
 </html>
