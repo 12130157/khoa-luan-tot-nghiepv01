@@ -126,7 +126,6 @@
             var controller = '../../RegistryController?action=student-confirm-process-task' 
                             + '&taskid=' + taskid
                             + '&yesno=' + agree;
-            alert(controller);
             if(http){
                 http.open("GET", controller, true);
                 http.onreadystatechange = confirmHandler;
