@@ -19,7 +19,9 @@ import uit.cnpm02.dkhp.DAO.DetailTrainDAO;
 import uit.cnpm02.dkhp.DAO.FacultyDAO;
 import uit.cnpm02.dkhp.DAO.LecturerDAO;
 import uit.cnpm02.dkhp.DAO.RegistrationDAO;
+import uit.cnpm02.dkhp.DAO.StudentDAO;
 import uit.cnpm02.dkhp.DAO.SubjectDAO;
+import uit.cnpm02.dkhp.DAO.TaskDAO;
 import uit.cnpm02.dkhp.DAO.TrainClassDAO;
 import uit.cnpm02.dkhp.model.DetailTrain;
 import uit.cnpm02.dkhp.model.Faculty;
@@ -28,8 +30,11 @@ import uit.cnpm02.dkhp.model.Registration;
 import uit.cnpm02.dkhp.model.RegistrationID;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.model.Subject;
+import uit.cnpm02.dkhp.model.Task;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.model.TrainClassID;
+import uit.cnpm02.dkhp.model.type.TaskStatus;
+import uit.cnpm02.dkhp.model.type.TaskType;
 import uit.cnpm02.dkhp.model.web.LecturerWeb;
 import uit.cnpm02.dkhp.model.web.SubjectWeb;
 import uit.cnpm02.dkhp.service.ITrainClassService;
@@ -38,6 +43,7 @@ import uit.cnpm02.dkhp.service.impl.TrainClassServiceImpl;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.DateTimeUtil;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
+import uit.cnpm02.dkhp.utilities.Log;
 import uit.cnpm02.dkhp.utilities.StringUtils;
 
 /**
@@ -55,10 +61,11 @@ public class ManageClassController extends HttpServlet {
     private TrainClassDAO classDAO = DAOFactory.getTrainClassDAO();
     private SubjectDAO subjectDAO = DAOFactory.getSubjectDao();
     private LecturerDAO lectureDAO = DAOFactory.getLecturerDao();
+    private StudentDAO studentDAO = DAOFactory.getStudentDao();
     private FacultyDAO facultyDAO = DAOFactory.getFacultyDao();
     private RegistrationDAO regDAO = DAOFactory.getRegistrationDAO();
     private ITrainClassService trainClassService = new TrainClassServiceImpl();
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+    //private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -155,10 +162,10 @@ public class ManageClassController extends HttpServlet {
             moveOneStudentToSameClass(studentCode, sourceClass, desClass, semester, classYear);
             // get student list registry
             TrainClassID id = new TrainClassID(sourceClass, classYear, semester);
-            List<Registration> registration = DAOFactory.getRegistrationDAO().findAllByClassCode(id);
+            List<Registration> registration = regDAO.findAllByClassCode(id);
             List<Student> studentList = new ArrayList<Student>();
-            for (int i = 0; i < registration.size(); i++) {
-                Student student = DAOFactory.getStudentDao().findById(registration.get(i).getId().getStudentCode());
+            for (Registration reg : registration) {
+                Student student = studentDAO.findById(reg.getId().getStudentCode());
                 studentList.add(student);
             }
             //print respone
@@ -171,20 +178,19 @@ public class ManageClassController extends HttpServlet {
                     + "<th> Lớp cùng môn </th>"
                     + "<th> Chuyển </th>"
                     + "</tr>");
-            if (studentList != null && !studentList.isEmpty() && sameClass != null & !sameClass.isEmpty()) {
+            if (!studentList.isEmpty() && sameClass != null && !sameClass.isEmpty()) {
                 for (int i = 0; i < studentList.size(); i++) {
                     out.println("<tr><td>" + (i + 1) + "</td>");
                     out.println("<td>" + studentList.get(i).getId() + "</td>");
                     out.println("<td>" + studentList.get(i).getFullName() + "</td>");
                     out.println("<td>" + studentList.get(i).getClassCode() + "</td>");
                     out.println("<td><select id=" + i + ">");
-                    for (int j = 0; j < sameClass.size(); j++) {
-                        out.println("<option value='" + sameClass.get(j).getId().getClassCode() + "'>" + sameClass.get(j).getId().getClassCode() + "</option>");
+                    for (TrainClass tc : sameClass) {
+                        out.println("<option value='" + tc.getId().getClassCode() + "'>" + tc.getId().getClassCode() + "</option>");
                     }
                     out.println("</select></td>");
                     out.println("<td><input type='button' value='  Chuyển  ' onclick=\"moveEachStudent('" + studentList.get(i).getId() + "','" + sourceClass + "','" + i + "','" + semester + "','" + classYear + "')\"/></td>");
                     out.println("</tr>");
-
                 }
             }
         } catch (Exception ex) {
@@ -192,13 +198,29 @@ public class ManageClassController extends HttpServlet {
         }
     }
 
-    private void moveOneStudentToSameClass(String studentCode, String sourceClass, String desClass, int semester, String year) {
+    private void moveOneStudentToSameClass(String studentCode, String sourceClass,
+                                        String desClass, int semester, String year) {
         try {
-            RegistrationID currentRegID = new RegistrationID(studentCode, sourceClass, semester, year);
+            RegistrationID currentRegID = 
+                    new RegistrationID(studentCode, sourceClass, semester, year);
             Registration currentReg = regDAO.findById(currentRegID);
             regDAO.delete(currentReg);
             currentReg.getId().setClassCode(desClass);
             regDAO.add(currentReg);
+            
+            String ident = currentReg.getId().getStudentCode() +
+                            ";" + currentReg.getId().getClassCode() +
+                            ";" + currentReg.getId().getYear() +
+                            ";" + currentReg.getId().getSemester();
+            String content = "[" + ident + "] PĐT thông bao hủy lớp " + sourceClass
+                        + " SV " + studentCode
+                        + " được chuyển qua lớp " + desClass + " Vui lòng"
+                        + " click vào link này để xác nhận hay hủy bỏ";
+            Task t = new Task("admin", studentCode, content, new Date(), TaskStatus.TOBE_PROCESS, TaskType.MOVE_STUDENT_TO_TC);
+                
+            TaskDAO taskDao = DAOFactory.getTaskDAO();
+            taskDao.add(t);
+            Log.getInstance().log("admin", "Chuyển SV " + studentCode + " từ lớp " + sourceClass +" to " + desClass);
         } catch (Exception ex) {
             Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -240,8 +262,20 @@ public class ManageClassController extends HttpServlet {
             return "";
         }
     }
-    private void moveAllStudentToSameClass(TrainClass trainclass, List<Registration> registration, List<TrainClass> sameClass) {
-        while (registration != null && !registration.isEmpty()) {
+    
+    /**
+     * Move a set of registration to another TrainClass
+     * @param registration
+     * @param sameClass 
+     */
+    private void moveAllStudentToSameClass(String fromTrainClass, List<Registration> registration, List<TrainClass> sameClass) {
+        // Do nothing if no registration existed.
+        if (registration == null)
+            return;
+        
+        List<Task> taskSendBackForStudents = new ArrayList<Task>(10);
+        Date today = new Date();
+        while (!registration.isEmpty()) {
             try {
                 int moveReg = registration.size() - 1;
                 Registration temp = registration.get(moveReg);
@@ -250,57 +284,80 @@ public class ManageClassController extends HttpServlet {
                 temp.getId().setClassCode(newClassCode);
                 regDAO.add(temp);
                 registration.remove(moveReg);
+                
+                String ident = temp.getId().getStudentCode() +
+                            ";" + temp.getId().getClassCode() +
+                            ";" + temp.getId().getYear() +
+                            ";" + temp.getId().getSemester();
+                String content = "[" + ident + "] PĐT thông bao hủy lớp " + fromTrainClass
+                        + " SV " + temp.getId().getStudentCode() + "sẽ tự động"
+                        + " được chuyển qua lớp " + newClassCode + " Vui lòng"
+                        + " click vào link này để xác nhận hay hủy bỏ";
+                Task t = new Task("admin", temp.getId().getStudentCode(), content, today, TaskStatus.TOBE_PROCESS, TaskType.MOVE_STUDENT_TO_TC);
+                taskSendBackForStudents.add(t);
             } catch (Exception ex) {
                 Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        /*for (int j = 0; j < sameClass.size(); j++) {
+        if (!taskSendBackForStudents.isEmpty()) {
+            try {
+                TaskDAO taskDao = DAOFactory.getTaskDAO();
+                taskDao.addAll(taskSendBackForStudents);
+            } catch (Exception ex) {
+                Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
+                Log.getInstance().log("admin", "Hủy lớp " 
+                        + fromTrainClass 
+                        + " - Chuyển SV sang lớp khác không thành công: "
+                        + ex.toString());
+            }
+        }
+            /*for (int j = 0; j < sameClass.size(); j++) {
             int k = 0;
             int l = 0;
             if (registration != null && !registration.isEmpty()) {
-                l = registration.size() - 1;
-                int numAllow = sameClass.get(j).getNumOfStudent() - sameClass.get(j).getNumOfStudentReg();
-                if (numAllow > 0) {
-                    while (l > 0 && k < numAllow) {
-                        try {
-                            Registration temp = registration.get(l);
-                            regDAO.delete(temp);
-                            temp.getId().setClassCode(sameClass.get(j).getId().getClassCode());
-                            regDAO.add(temp);
-                            registration.remove(l);
-                            k++;
-                            l--;
-                        } catch (Exception ex) {
-                            Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
-                }
-            } else {
-                try {
-                    classDAO.delete(trainclass);
-                    return;
-                } catch (Exception ex) {
-                    Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-        int desClass = 0;
-        while (registration != null && !registration.isEmpty()) {
+            l = registration.size() - 1;
+            int numAllow = sameClass.get(j).getNumOfStudent() - sameClass.get(j).getNumOfStudentReg();
+            if (numAllow > 0) {
+            while (l > 0 && k < numAllow) {
             try {
-                int moveReg = registration.size() - 1;
-                Registration temp = registration.get(moveReg);
-                regDAO.delete(temp);
-                temp.getId().setClassCode(sameClass.get(desClass).getId().getClassCode());
-                regDAO.add(temp);
-                registration.remove(moveReg);
-                desClass++;
-                if (desClass >= sameClass.size() - 1) {
-                    desClass = 0;
-                }
+            Registration temp = registration.get(l);
+            regDAO.delete(temp);
+            temp.getId().setClassCode(sameClass.get(j).getId().getClassCode());
+            regDAO.add(temp);
+            registration.remove(l);
+            k++;
+            l--;
             } catch (Exception ex) {
-                Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }*/
+            }
+            }
+            } else {
+            try {
+            classDAO.delete(trainclass);
+            return;
+            } catch (Exception ex) {
+            Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            }
+            }
+            int desClass = 0;
+            while (registration != null && !registration.isEmpty()) {
+            try {
+            int moveReg = registration.size() - 1;
+            Registration temp = registration.get(moveReg);
+            regDAO.delete(temp);
+            temp.getId().setClassCode(sameClass.get(desClass).getId().getClassCode());
+            regDAO.add(temp);
+            registration.remove(moveReg);
+            desClass++;
+            if (desClass >= sameClass.size() - 1) {
+            desClass = 0;
+            }
+            } catch (Exception ex) {
+            Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            }*/
     }
 
     private void autoCancelClass(HttpServletRequest request, HttpServletResponse response) {
@@ -317,27 +374,33 @@ public class ManageClassController extends HttpServlet {
             } else {
                 trainclass.setSubjectName(subjectDAO.findById(trainclass.getSubjectCode()).getSubjectName());
                 trainclass.setLectturerName(lectureDAO.findById(trainclass.getLecturerCode()).getFullName());
-                List<Registration> registration = DAOFactory.getRegistrationDAO().findAllByClassCode(id);
-                int numReg = registration.size();
+                List<Registration> registration = regDAO.findAllByClassCode(id);
+                
                 if (registration == null || registration.isEmpty()) {
                     classDAO.delete(trainclass);
                     out.println("Hủy lớp thành công (Lớp không có sinh viên nào đăng ký)");
                 } else {
+                    int numReg = registration.size();
                     List<TrainClass> sameClass = getSameClassAsSubject(id);
                     if (sameClass == null || sameClass.isEmpty()) {
-                        for (int i = 0; i < registration.size(); i++) {
+                        /*for (int i = 0; i < registration.size(); i++) {
                             regDAO.delete(registration.get(i));
-                        }
+                        }*/
+                        // First: Delete all registration in TrainClass
+                        regDAO.delete(registration);
+                        // Then delete specified TrainClass
                         classDAO.delete(trainclass);
-                        out.println("Lớp có " + registration.size() + " sinh viên đăng ký.");
+                        
+                        // Write back responcse
+                        out.println("Lớp có " + numReg + " sinh viên đăng ký.");
                         out.println("<br>");
                         out.println("Không có lớp học khác dạy môn học " + trainclass.getSubjectName() + ".");
                         out.println("<br>");
-                        out.println("Đã hủy đăng ký của " + registration.size() + " sinh viên.");
+                        out.println("Đã hủy đăng ký của " + numReg + " sinh viên.");
                         out.println("<br>");
                         out.println("Đã hủy lớp thành công.");
                     } else {
-                        moveAllStudentToSameClass(trainclass, registration, sameClass);
+                        moveAllStudentToSameClass(trainclass.getId().getClassCode(), registration, sameClass);
                         classDAO.delete(trainclass);
                         out.println("Lớp có " + numReg + " sinh viên đăng ký.");
                         out.println("<br>");
@@ -393,10 +456,10 @@ public class ManageClassController extends HttpServlet {
             int semester = Integer.parseInt(request.getParameter("semester"));
             String year = request.getParameter("year");
             TrainClassID id = new TrainClassID(classCode, year, semester);
-            List<Registration> registration = DAOFactory.getRegistrationDAO().findAllByClassCode(id);
+            List<Registration> registration = regDAO.findAllByClassCode(id);
             List<Student> studentList = new ArrayList<Student>();
             for (int i = 0; i < registration.size(); i++) {
-                Student student = DAOFactory.getStudentDao().findById(registration.get(i).getId().getStudentCode());
+                Student student = studentDAO.findById(registration.get(i).getId().getStudentCode());
                 studentList.add(student);
             }
             List<TrainClass> sameClass = getSameClassAsSubject(id);
@@ -1002,8 +1065,8 @@ public class ManageClassController extends HttpServlet {
         }
 
         try {
-            RegistrationDAO regDao = DAOFactory.getRegistrationDAO();
-            List<Registration> regs = regDao.findByColumNames(new String[]{"MaLopHoc", "HocKy", "NamHoc"},
+            //RegistrationDAO regDao = DAOFactory.getRegistrationDAO();
+            List<Registration> regs = regDAO.findByColumNames(new String[]{"MaLopHoc", "HocKy", "NamHoc"},
                     new Object[] {trainClassID, semeter, year});
             if (regs == null || regs.isEmpty()) {
                 return null;
@@ -1013,7 +1076,7 @@ public class ManageClassController extends HttpServlet {
             for (Registration reg : regs) {
                 studentIds.add(reg.getId().getStudentCode());
             }
-            return DAOFactory.getStudentDao().findByIds(studentIds);
+            return studentDAO.findByIds(studentIds);
             
         } catch (Exception ex) {
             Logger.getLogger(ManageClassController.class.getName()).log(Level.SEVERE, null, ex);
