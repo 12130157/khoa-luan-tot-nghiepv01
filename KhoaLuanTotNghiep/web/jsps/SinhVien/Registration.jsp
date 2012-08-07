@@ -130,7 +130,7 @@
                <hr/><hr/>
                <div class="clear"></div>
                  <%-- A popup show list of student already registered on a class --%>
-                 <div id="popup-lst-student" style="display: none;" onClick="hideMe('popup-lst-student');">
+                 <div id="popup-lst-student" style="border: solid 1px #ff0; border-radius: 5px; display: none;" onClick="hideMe('popup-lst-student');">
                      <img src = '../../imgs/icon/loading.gif' />
                  </div>
                <form id="formdetail" name="formdetail" action="../../RegistryController?action=registry" method="post">
@@ -179,35 +179,35 @@
                          <td>
                                 <span class="atag" onclick="getListStudentReged('<%=tc.getId().getClassCode()%>',<%=tc.getId().getSemester()%>,'<%=tc.getId().getYear()%>')"><%=tc.getId().getClassCode()%></span>
                          </td>
-                         <td><%=trainClass.get(i).getSubjectName()%></td>
-                         <td><%=trainClass.get(i).getNumTC()%></td>
-                         <td><%=trainClass.get(i).getLectturerName()%></td>
-                         <td><%=trainClass.get(i).getStudyDate()%></td>
+                         <td><%=tc.getSubjectName()%></td>
+                         <td><%=tc.getNumTC()%></td>
+                         <td><%=tc.getLectturerName()%></td>
+                         <td><%=tc.getStudyDate()%></td>
                          <%-- Ca hoc cua lop <Sang/Chieu> --%>
-                         <%if(trainClass.get(i).getShift()==1){%>
+                         <%if(tc.getShift() == 1){%>
                              <td>Sáng</td>
                              <%}else{%>
                              <td>Chiều</td>
                          <%}%>
                          <%-- Phon hoc --%>
-                         <td><%=trainClass.get(i).getClassRoom()%></td>
+                         <td><%=tc.getClassRoom()%></td>
                          <%-- SLSV toi da cua lop --%>
-                         <td><%=trainClass.get(i).getNumOfStudent()%></td>
+                         <td><%=tc.getNumOfStudent()%></td>
                          <%-- SLSV da dang ky cua lop --%>
-                         <td><%=trainClass.get(i).getNumOfStudentReg()%></td>
+                         <td><%=tc.getNumOfStudentReg()%></td>
                          <%-- Check box cho phep SV chon co dk hoc lop nay hay khong
                             SV ko dc dang ky neu SLSV da dk vuot qua SLSV toi da
                             SV ko dc dang ky neu ko du cac dk theo qui che Tin Chi: ...
                          --%>
                          <%if(checked){%>
                              <td width="10px">
-                                 <input type="checkbox" name="check" checked="true" value="<%=trainClass.get(i).getId().getClassCode()%>" onclick="validateSelectTrainClass(this, 'tr_main_<%=i%>')"/>
+                                 <input type="checkbox" name="check" checked="true" value="<%=tc.getId().getClassCode()%>" onclick="validateSelectTrainClass(this, 'tr_main_<%=i%>')"/>
                              </td>
                          <%}else {
-                             if(trainClass.get(i).getNumOfStudentReg() >= trainClass.get(i).getNumOfStudent()){%>
-                             <td width="10px"><input type="checkbox" disabled name="check" value="<%=trainClass.get(i).getId().getClassCode()%>"/></td>
+                             if(tc.getNumOfStudentReg() >= tc.getNumOfStudent()){%>
+                             <td width="10px"><input type="checkbox" disabled name="check" value="<%=tc.getId().getClassCode()%>"/></td>
                              <%}else{%>
-                             <td width="10px"><input type="checkbox" name="check" value="<%=trainClass.get(i).getId().getClassCode()%>" onclick="validateSelectTrainClass(this, 'tr_main_<%=i%>')"/></td>
+                             <td width="10px"><input type="checkbox" name="check" value="<%=tc.getId().getClassCode()%>" onclick="validateSelectTrainClass(this, 'tr_main_<%=i%>')"/></td>
                              <%}
                          }%>
                      </tr>
