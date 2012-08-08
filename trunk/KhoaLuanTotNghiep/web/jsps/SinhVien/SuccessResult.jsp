@@ -6,7 +6,6 @@
 
 <%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
 <%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
-<%@include file="MenuSV.jsp"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 <%
@@ -23,6 +22,7 @@
     <body>
         <!--Div Wrapper-->
         <div id="wrapper">            
+            <%@include file="MenuSV.jsp"%>
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
@@ -38,5 +38,4 @@
         </div>
         <!--End Wrapper-->
     </body>
-    </script>
   </html>
