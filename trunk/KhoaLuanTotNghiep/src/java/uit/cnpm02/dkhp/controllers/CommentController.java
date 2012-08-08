@@ -21,6 +21,7 @@ import uit.cnpm02.dkhp.DAO.CommentDao;
 import uit.cnpm02.dkhp.model.Comment;
 import java.util.List;
 import uit.cnpm02.dkhp.utilities.Constants;
+import uit.cnpm02.dkhp.utilities.StringUtils;
 
 /**
  *
@@ -70,11 +71,17 @@ public class CommentController extends HttpServlet {
         if (commentList.isEmpty() == false) {
             out.println("<tr><th>STT</th><th>Người gửi</th><th>Nội dung</th><th>Ngày gửi</th><th>Tình trạng</th><th>Xem</th><th>Xóa</th></tr>");
             for (int i = 0; i < commentList.size(); i++) {
+                Comment n = commentList.get(i);
+                String content = n.getContent();
+                if (content != null && content.length()>200) {
+                    content = content.substring(0, 150) + "...";
+                    content = StringUtils.StripHTML(content);
+                }
                 StringBuffer str = new StringBuffer();
                 str.append("<tr><td>").append((currentPage - 1) * Constants.ELEMENT_PER_PAGE_DEFAULT + 1 + i).append("</td>");
-                str.append("<td>").append(commentList.get(i).getAuthor()).append("</td>");
-                str.append("<td>").append(commentList.get(i).getContent()).append("</td>");
-                str.append("<td>").append(commentList.get(i).getCreateDate()).append("</td>");
+                str.append("<td>").append(n.getAuthor()).append("</td>");
+                str.append("<td>").append(content).append("</td>");
+                str.append("<td>").append(n.getCreateDate()).append("</td>");
                 if (commentList.get(i).getStatus() == 1) {
                     str.append("<td>Đã xem</td>");
                 } else {
