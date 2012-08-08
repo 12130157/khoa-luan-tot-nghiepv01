@@ -98,4 +98,9 @@ public class StringUtils {
         
         return false;
     }
+    
+    public static String StripHTML(String source) {
+        return source.replaceAll("\\<.*?>", "");
+        //source.replaceAll("\<.*?>", "");
+}
 }
