@@ -18,8 +18,7 @@
 %>
 <html>
     <head>
-        <link href="../../csss/general.css.css" rel="stylesheet" type="text/css" media="screen">
-        <link href="../../csss/comment.css" rel="stylesheet" type="text/css" media="screen">
+        <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
         <link rel="stylesheet" type="text/css" href="clientscript/editor.css">
         <meta http-equiv="Pragma" content="No-cache">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -37,7 +36,7 @@
                 width: 500px;
             }
             #viettype{
-                background-color: aquamarine;       
+                background-color: aquamarine;
             }
        </style>
     </head>
@@ -69,7 +68,7 @@
                     </div>
                     <table id="editor" width="50%" height="100%" border="0" cellspacing="1" cellpadding="0">
                         <tr>
-                            <td colspan="2" align="center" bgcolor="#ffffff">
+                            <td colspan="2" align="center">
                                 <span id="postArea"><br><br><br><br> Loading...</span>	
                                 <script type="text/javascript">
                                     RTE=new Editor('RTE','postArea','',600, 350);
