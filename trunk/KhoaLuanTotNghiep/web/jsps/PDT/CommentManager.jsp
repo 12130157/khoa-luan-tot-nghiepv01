@@ -4,6 +4,7 @@
     Author     : ngloc_it
 --%>
 
+<%@page import="uit.cnpm02.dkhp.utilities.StringUtils"%>
 <%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
 <%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="java.util.List"%>
@@ -51,11 +52,16 @@
                         if (listComment != null) {
                            for (int i = 0; i < listComment.size(); i++) {
                             Comment n = listComment.get(i);
+                            String content = n.getContent();
+                            if (content != null && content.length()>200) {
+                                content = content.substring(0, 150) + "...";
+                                content = StringUtils.StripHTML(content);
+                            }
                       %>
                       <tr>
                           <td><%=i + 1%></td>
                           <td><%=n.getAuthor() %></td>
-                          <td><%=n.getContent()%></td>
+                          <td><%=content%></td>
                           <td><%=n.getCreateDate()%></td>
                           <%if (n.getStatus()== 1) {%>
                             <td>Ðã xem</td>
