@@ -7,9 +7,7 @@ html, body, div, span, h1, h2, h3, h4, strong, ol, ul, li{
     font-size: 14px;
     color: #000;
     vertical-align: baseline;
-
-    /*background: url("../imgs/background.jpg") repeat fixed center center #474C52;*/
-    background: url("../imgs/bgr/earthrisechopped.jpg") fixed center bottom no-repeat #fff;
+    /*background: url("../imgs/bgr/earthrisechopped.jpg") fixed center bottom no-repeat #fff;*/
 }
 
 body{
