@@ -15,13 +15,18 @@
     // Validate Access role
     ClientValidate.validateAcess(AccountType.ADMIN, session, response);
 
-    List<News> listNews = (List<News>) session.getAttribute("newsList");
+    // List<News> listNews = (List<News>) session.getAttribute("newsList");
 
  %>
 <html>
     <head>
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
+        <link rel="stylesheet" type="text/css" href="../../editor/editor.css">
+        <meta http-equiv="Pragma" content="No-cache">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="Description" content="">
+        <meta name="keywords" content="">
+        <script type="text/javascript" src="../../editor/editor.js"></script>
         <title>Tạo tin mới</title>
         <style media="all" type="text/css">
 
@@ -54,11 +59,46 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
-                <div id="title">
-                    <u>Quản lý tin tức hệ thống</u>
+                <div id="main-title">
+                    Quản lý tin tức hệ thống
                 </div>
                 <br><h3>Đăng tin mới:</h3>
-                 <hr/><hr/><br>
+                <hr/><hr/>
+                <form id="myform" name="myform" method="post" action="../../NewsController?action=insert">
+                    <div id="Info">
+                        <table style="margin-left: 28px;">
+                            <tr>
+                                <td>Tiêu đề:</td>
+                                <td><input type="text"  name="NewsTiltle" id="NewsTiltle" size="100"></td>
+                            </tr>
+                            <tr>
+                                <td>Loại:</td>
+                                <td>
+                                    <select id="Type" name="Type">
+                                        <option value="1">Đăng ngay</option>
+                                        <option value="0">Chưa đăng</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    
+                    <table id="editor" width="90%" height="100%" border="0" cellspacing="1" cellpadding="0">
+                        <tr>
+                            <td colspan="2" align="center">
+                                <span id="postArea"><br><br><br><br> Loading...</span>	
+                                <script type="text/javascript">
+                                    RTE=new Editor('RTE','postArea','',800, 350);
+                                    RTE.display();
+                                </script>
+                                <script type="text/javascript" src="../../editor/avim.js"></script>
+                            </td>
+                        </tr>
+                    </table>
+                    </div>
+                    <input type="hidden" id="content" name="content" value="">
+            </form>
+                <%--
+                 <br>
                 <div id="NewsList">
                     <form id="formdetail" name="formdetail" action="../../NewsController?action=insert" method="post">
                     <table>
@@ -86,6 +126,7 @@
                     </table>
                 </form>
                </div>      
+                --%>
             </div><!--End Contents-->
 
             <div id="footer"><!--Footer-->
@@ -93,20 +134,18 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    </body>
-
     <script type = "text/javascript">
          function addNews(){
-           var content = document.formdetail.newscontent.value;
-            var title = document.formdetail.NewsTiltle.value;
-           if(title.length==0){
-                alert("Chưa có tiêu đề thông báo");
-            }
-            else if(content.length==0){
-                alert("Chưa có nội dung thông báo");
-            }else{
-                document.forms["formdetail"].submit();
-            }
-        }
+             var content = document.formdetail.newscontent.value;
+             var title = document.formdetail.NewsTiltle.value;
+             if(title.length==0){
+                 alert("Chưa có tiêu đề thông báo");
+             } else if(content.length==0){
+                 alert("Chưa có nội dung thông báo");
+             }else{
+                 document.forms["formdetail"].submit();
+             }
+         }
     </script>
+    </body>
 </html>

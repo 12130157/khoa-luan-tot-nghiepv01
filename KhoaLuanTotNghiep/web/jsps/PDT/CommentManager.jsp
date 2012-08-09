@@ -54,7 +54,10 @@
                             Comment n = listComment.get(i);
                             String content = n.getContent();
                             if (content != null && content.length()>200) {
-                                content = content.substring(0, 150) + "...";
+                                content = content.substring(0, 200) + "...";
+                                
+                            }
+                            if (content != null && !content.isEmpty()) {
                                 content = StringUtils.StripHTML(content);
                             }
                       %>
