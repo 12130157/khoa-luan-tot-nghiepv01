@@ -19,14 +19,13 @@
 <html>
     <head>
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
-        <link rel="stylesheet" type="text/css" href="clientscript/editor.css">
+        <link rel="stylesheet" type="text/css" href="../../editor/editor.css">
         <meta http-equiv="Pragma" content="No-cache">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="Description" content="">
         <meta name="keywords" content="">
         <title>Ý kiến</title>
-        <link rel="stylesheet" type="text/css" href="clientscript/editor.css">
-        <script type="text/javascript" src="clientscript/editor.js"></script>
+        <script type="text/javascript" src="../../editor/editor.js"></script>
        <style media="all" type="text/css">
             #editor{
                 padding-left: 150px;
@@ -74,7 +73,7 @@
                                     RTE=new Editor('RTE','postArea','',600, 350);
                                     RTE.display();
                                 </script>
-                                <script type="text/javascript" src="clientscript/avim.js"></script>
+                                <script type="text/javascript" src="../../editor/avim.js"></script>
                             </td>
                         </tr>
                     </table>
