@@ -43,7 +43,7 @@
                  </ul>
              </li>
              <li><a href="../../AccountController?action=manager"> Quản lý tài khoản </a></li>
-             <li><a href="#"> Quản lý học vụ </a>
+             <li><a href=""> Quản lý học vụ </a>
                  <ul>
                      <li><a href="../../ManageSchedule?action=view"> Thời khóa biểu</a></li>
                      <li><a href="../../ManageSubjectController?function=list_subject&ajax=false"> Quản lý môn học</a></li>
@@ -81,6 +81,7 @@
              <%}%>
              <li><a href="../../Login?function=logout"> Đăng xuất</a></li>
          </ul>
-    </div>       
+    </div>
+     <script src="../../javascripts/AjaxUtil.js"></script>
 </body>
 </html>
