@@ -10,12 +10,10 @@
     "http://www.w3.org/TR/html4/loose.dtd">
 
 <html>
-    <style media="all" type="text/css">
-
-    </style>
     <head>
+        <style media="all" type="text/css">
+        </style>
         <link href="../../csss/menu.css" rel="stylesheet" type="text/css" media="screen">
-
     </head>
     <body>
     <MARQUEE onmouseover="this.stop();" onmouseout="this.start();" HEIGHT=25 BGCOLOR=transparent BEHAVIOR=scroll SCROLLAMOUNT="4">
@@ -40,7 +38,7 @@
             <li><a href="../../FileUploadController?function=default"> Gửi bảng điểm </a></li>
             <li><a href="../../LecturerPrivateController?function=load-persional-infor"> Trang cá nhân </a></li>
             <li><a href="../../Login?function=logout"> Đăng xuất </a></li>
-            <li><a href="../ServHompage?action=view"> Liên hệ </a></li>
+            <li><a href="../../LecturerPrivateController?function=lecturer-create-comment"> Liên hệ </a></li>
         </ul>
     </div>       
 </body>
