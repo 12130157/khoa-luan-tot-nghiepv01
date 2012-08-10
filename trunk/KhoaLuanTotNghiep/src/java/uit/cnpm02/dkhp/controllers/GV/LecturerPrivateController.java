@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import uit.cnpm02.dkhp.DAO.DAOFactory;
+import uit.cnpm02.dkhp.model.Comment;
 import uit.cnpm02.dkhp.model.Lecturer;
 import uit.cnpm02.dkhp.model.Task;
 import uit.cnpm02.dkhp.model.TrainClass;
@@ -69,6 +71,12 @@ public class LecturerPrivateController extends HttpServlet {
             } else if (action.equalsIgnoreCase(LecturerPrivateSupport
                     .GET_CLOSED_TRAIN_CLASS.getValue())) {
                 doLoadClosedTrainClassForLecturer(request, response);
+            } else if (action.equalsIgnoreCase(LecturerPrivateSupport
+                    .REQUEST_SEND_COMMENT.getValue())) {
+                comment(response, session);
+            } else if (action.equalsIgnoreCase(LecturerPrivateSupport
+                    .SUBMIT_SEND_REQUEST.getValue())) {
+                sendComment(request, response);
             }
         } catch (Exception ex) {
             out.println("Đã xảy ra sự cố: </br>" + ex);
@@ -302,6 +310,41 @@ public class LecturerPrivateController extends HttpServlet {
         
         writeOutListTrainClass(response.getWriter(), trainClasses);
     }
+    
+    private void comment(HttpServletResponse response, HttpSession session) throws IOException {
+        String path = "";
+        try {
+            String user = (String) session.getAttribute("username");
+            Lecturer lecturer = DAOFactory.getLecturerDao().findById(user);
+            session.setAttribute("lecturer", lecturer);
+            path = "./jsps/GiangVien/SendComment.jsp";
+        } catch (Exception ex) {
+            path = "./jsps/Message.jsp";
+        }
+        response.sendRedirect(path);
+    }
+    
+    private void sendComment(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        String path = "";
+        try {
+            Date todayD = new Date(System.currentTimeMillis());
+            SimpleDateFormat dayFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String createDate = dayFormat.format(todayD.getTime());
+            String content = request.getParameter("content");
+            String author = request.getParameter("txtEmail");
+            int id = DAOFactory.getCommentDao().getMaxID() + 1;
+            Comment coment = new Comment(id, content, author, createDate, 0);
+            DAOFactory.getCommentDao().add(coment);
+            
+            HttpSession session = request.getSession();
+            session.setAttribute("msg", "Gửi thành công");
+            path = "./jsps/GiangVien/SendComment.jsp";
+        } catch (Exception ex) {
+            path = "./jsps/Message.jsp";
+        }
+        response.sendRedirect(path);
+    }
 //#############################################
     public enum LecturerPrivateSupport {
         DEFAULT("default"),
@@ -309,7 +352,9 @@ public class LecturerPrivateController extends HttpServlet {
         LOAD_PERSIONAL_INFO("load-persional-infor"),
         UPDATE("update"),
         SEND_REQUEST("send-request"),
-        GET_CLOSED_TRAIN_CLASS("get-closed-train-class");        
+        GET_CLOSED_TRAIN_CLASS("get-closed-train-class"),
+        REQUEST_SEND_COMMENT("lecturer-create-comment"),
+        SUBMIT_SEND_REQUEST("submit-sent-comment");
         
         
         private String description;
