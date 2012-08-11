@@ -83,7 +83,7 @@
                     <input type="hidden" id="content" name="content" value="">
             </form>
             <div class="clear"></div>
-            <div class="msg-response" style="text-align: center; display: block;">
+            <div <% if (msg != null && !msg.isEmpty()) {%> class="msg-response"<%}%> style="text-align: center; display: block;">
                 <% if (msg != null && !msg.isEmpty()) {%> 
                     <%= msg %>
                 <%}%>
