@@ -3,6 +3,7 @@
     Created on : 26-04-2011, 21:12:12
     Author     : ngloc_it
 --%>
+<%@page import="java.util.Calendar"%>
 <%@page import="java.util.List"%>
 <%@page import="uit.cnpm02.dkhp.model.TrainClass"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -42,6 +43,9 @@
         }
         #schedule-detail:hover{
             background: #5CB3FF;
+        }
+        .currentday_schedule {
+            background: #dd2;
         }
         
     </style>
@@ -89,8 +93,10 @@
             %>
             <div id="range-1" style="text-align: center;">
                 <div id="schedule-title">Thời khóa biểu</div>
-                <%for (int k = 0; k < tcs.size(); k++) {%>
-                <div id="schedule-detail">
+                <%
+                int weekday = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+                for (int k = 0; k < tcs.size(); k++) {%>
+                <div id="schedule-detail" <%if(tcs.get(k).getStudyDate() == weekday){%>class="currentday_schedule"<%}%>>
                     <u>Thứ <%= tcs.get(k).getStudyDate()%></u>, ca <%= tcs.get(k).getShift()%>
                     - môn <%= tcs.get(k).getSubjectName()%> - phòng <%= tcs.get(k).getClassRoom()%>
                 </div>
