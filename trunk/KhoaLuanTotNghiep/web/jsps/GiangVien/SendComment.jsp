@@ -55,7 +55,7 @@
                     Trang gửi ý kiến của bạn
                 </div>
                 <br /><br />
-                <form id="myform" name="myform" method="post" action="../../LecturerPrivateController?action=submit-sent-comment">
+                <form id="myform" name="myform" method="post" action="../../LecturerPrivateController?function=submit-sent-comment">
                     <div id="Info">
                         <table>
                             <tr>
@@ -83,11 +83,12 @@
                     <input type="hidden" id="content" name="content" value="">
             </form>
             <div class="clear"></div>
-            <div style="text-align: center;">
+            <div class="msg-response" style="text-align: center; display: block;">
                 <% if (msg != null && !msg.isEmpty()) {%> 
                     <%= msg %>
                 <%}%>
             </div>
+            <br />
         </div><!--End Contents-->
 
         <div id="footer"><!--Footer-->
