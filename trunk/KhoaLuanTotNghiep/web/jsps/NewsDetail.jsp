@@ -3,6 +3,7 @@
     Created on : Apr 23, 2011, 10:59:14 PM
     Author     : ngloc_it
 --%>
+<%@page import="uit.cnpm02.dkhp.utilities.StringUtils"%>
 <%@page import="java.util.List"%>
 <%@page import="uit.cnpm02.dkhp.model.News"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -35,17 +36,22 @@
                 <%
                     if (newsDetail != null) {
                         %>
-                        <h1><%=newsDetail.getTitle()%></h1><br>
-                        <%=newsDetail.getContent()%>
+                        <div class="news-title"><%=newsDetail.getTitle()%></div>
+                        <div class="clear"></div>
+                        <div class="news-content">
+                            <%=newsDetail.getContent()%>
+                        </div>
+                        <% if (!StringUtils.isEmpty(newsDetail.getFile())) { %>
+                        <div class="file-download"><a href="../DownloadController?action=download-news-attached-file&filename=<%= newsDetail.getFile() %>"><%= newsDetail.getFile() %></a></div>
+                        <%}%>
                    <% }
-                        
                 %>
             </div><!--End Contents-->
-
             <div id="footer"><!--Footer-->
                 <%@include file="Footer.jsp" %>
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
+        
     </body>
 </html>

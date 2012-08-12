@@ -80,8 +80,8 @@
 #logo{
     width: 100%;
     height: 158px;
-    margin-left: -10px;
-    border: 10px solid #73726E;
+    /*margin-left: -10px;*/
+    /*border: 10px solid #73726E;*/
     border-bottom: none;
     -moz-border-radius:6px 6px 0 0;
     background: url("../imgs/topbanner.jpg") repeat-x transparent;

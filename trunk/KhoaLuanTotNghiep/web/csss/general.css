@@ -708,3 +708,18 @@ input[type="file"] {
     position: fixed;
     z-index: 100;
 }
+.news-title {
+    font-size: 24px;
+    font-weight: bold;
+    padding-top: 25px;
+}
+.news-content{
+
+}
+.file-download{
+    font-size: 12px;
+    font-style: italic;
+    padding-right: 25px;
+    padding-top: 25px;
+    text-align: right;
+}

@@ -4,6 +4,7 @@
  */
 package uit.cnpm02.dkhp.controllers;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -20,7 +21,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import uit.cnpm02.dkhp.DAO.NewsDAO;
 import uit.cnpm02.dkhp.model.News;
+import uit.cnpm02.dkhp.service.impl.FileUploadServiceImpl;
 import uit.cnpm02.dkhp.utilities.Constants;
+import uit.cnpm02.dkhp.utilities.MultipartMap;
+import uit.cnpm02.dkhp.utilities.StringUtils;
 
 /**
  *
@@ -45,15 +49,15 @@ public class NewsController extends HttpServlet {
         try {
             String action = request.getParameter("action");
             if(action.equalsIgnoreCase("detail"))
-                NewsDetail(response, request, session);
+                NewsDetail(response, request);
             else if(action.equalsIgnoreCase("manager"))
                 NewsManeger(response, session);
             else if(action.equalsIgnoreCase("update"))
-                updateNews(response, request, session);
+                updateNews(response, request);
             else if(action.equalsIgnoreCase("delete"))
-                deleteNews(response, request, session);
+                deleteNews(response, request);
             else if(action.equalsIgnoreCase("insert"))
-                insertNew(response, request, session);
+                insertNew(response, request);
             else if(action.equalsIgnoreCase("Filter"))
                 filterNews(request, response);
          } finally {            
@@ -93,18 +97,30 @@ public class NewsController extends HttpServlet {
      * @param session
      * @throws Exception 
      */
-    private void insertNew(HttpServletResponse response, HttpServletRequest request, HttpSession session) throws Exception{
+    private void insertNew(HttpServletResponse response, HttpServletRequest request) throws Exception{
+        
+        // Validate and retrieve attached file
+        MultipartMap multiPart = new MultipartMap(request, this);
         NewsDAO newsDao = new NewsDAO();
         int id = newsDao.getMaxID()+1;
-        String tille = request.getParameter("NewsTiltle");
-        String content=request.getParameter("content");
-        int type = Integer.parseInt(request.getParameter("Type"));
+        String tille = multiPart.getParameter("NewsTiltle");
+        String content = multiPart.getParameter("content");
+        int type = Integer.parseInt(multiPart.getParameter("Type"));
+        HttpSession session = request.getSession();
         String author = (String) session.getAttribute("username");
         Date todayD = new Date();
         SimpleDateFormat dayFormat = new SimpleDateFormat("yyyy-MM-dd");
         String createDate = dayFormat.format(todayD.getTime());
         News news = new News(id, tille, content, author, createDate, type);
-        newsDao.add(news);
+        String filename = multiPart.getParameter("txtPath");
+        //FileUploadServiceImpl fuService = new FileUploadServiceImpl();
+        //File f = fuService.getFile(filename);
+        //File newfile = new File("news_" +id +"_" + f.getName());
+
+        //f.renameTo(newfile);
+        
+        news.setFile(filename);
+        id = newsDao.add(news);
         NewsManeger(response, session);
     }
     /**
@@ -114,11 +130,12 @@ public class NewsController extends HttpServlet {
      * @param session
      * @throws Exception 
      */
-    private void deleteNews(HttpServletResponse response, HttpServletRequest request, HttpSession session) throws Exception{
+    private void deleteNews(HttpServletResponse response, HttpServletRequest request) throws Exception{
         int id= Integer.parseInt(request.getParameter("Id"));
         NewsDAO newsDao=new NewsDAO();
         try {
             newsDao.deleteNewsByID(id);
+            HttpSession session = request.getSession();
             NewsManeger(response, session);
         } catch (SQLException ex) {
             Logger.getLogger(NewsController.class.getName()).log(Level.SEVERE, null, ex);
@@ -130,11 +147,12 @@ public class NewsController extends HttpServlet {
      * @param request
      * @param session 
      */
-    private void updateNews(HttpServletResponse response, HttpServletRequest request, HttpSession session){
+    private void updateNews(HttpServletResponse response, HttpServletRequest request){
         int id= Integer.parseInt(request.getParameter("Id"));
         NewsDAO newsDao=new NewsDAO();
         try {
             newsDao.updateNewsStatus(id);
+            HttpSession session = request.getSession();
             NewsManeger(response, session);
         } catch (Exception ex) {
             Logger.getLogger(NewsController.class.getName()).log(Level.SEVERE, null, ex);
@@ -146,15 +164,18 @@ public class NewsController extends HttpServlet {
      * @param response
      * @param session 
      */
-    private void NewsManeger(HttpServletResponse response, HttpSession session) throws Exception{
-        NewsDAO newsDao=new NewsDAO();
-        int rows=newsDao.getRowsCount();
-        int numpage=0;
-        if(rows%Constants.ELEMENT_PER_PAGE_DEFAULT==0) numpage=rows/Constants.ELEMENT_PER_PAGE_DEFAULT;
-        else numpage=rows/Constants.ELEMENT_PER_PAGE_DEFAULT+1;
-        String path="./jsps/PDT/NewsManager.jsp";
+    private void NewsManeger(HttpServletResponse response, HttpSession session) throws Exception {
+        NewsDAO newsDao = new NewsDAO();
+        int rows = newsDao.getRowsCount();
+        int numpage = 0;
+        if (rows % Constants.ELEMENT_PER_PAGE_DEFAULT == 0) {
+            numpage = rows / Constants.ELEMENT_PER_PAGE_DEFAULT;
+        } else {
+            numpage = rows / Constants.ELEMENT_PER_PAGE_DEFAULT + 1;
+        }
+        String path = "./jsps/PDT/NewsManager.jsp";
         try {
-            List<News> newsList=newsDao.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, 1, "NgayTao", "DESC");
+            List<News> newsList = newsDao.findAll(Constants.ELEMENT_PER_PAGE_DEFAULT, 1, "NgayTao", "DESC");
             session.setAttribute("newsList", newsList);
             session.setAttribute("numpage", numpage);
             response.sendRedirect(path);
@@ -169,23 +190,25 @@ public class NewsController extends HttpServlet {
      * @param session
      * @throws Exception 
      */
-private void NewsDetail(HttpServletResponse response, HttpServletRequest request, HttpSession session) throws Exception{
-     int id= Integer.parseInt(request.getParameter("Id"));
-    String actor=request.getParameter("Actor");
-    String path="";
-    NewsDAO newsDao=new NewsDAO();
-    News news=newsDao.findById(id);
-    session.setAttribute("newsdetail", news);
-    if(actor.equalsIgnoreCase("normal"))
-         path = "./jsps/NewsDetail.jsp";
-    else if(actor.equalsIgnoreCase("Student"))
-        path = "./jsps/SinhVien/NewsDetail.jsp";
-    else if(actor.equalsIgnoreCase("Lecturer"))
-        path = "./jsps/GiangVien/NewsDetail.jsp";
-    else if(actor.equalsIgnoreCase("PDT"))
-        path = "./jsps/PDT/NewsDetail.jsp";
-     response.sendRedirect(path);
-}
+    private void NewsDetail(HttpServletResponse response, HttpServletRequest request) throws Exception {
+        int id = Integer.parseInt(request.getParameter("Id"));
+        String actor = request.getParameter("Actor");
+        String path = "";
+        NewsDAO newsDao = new NewsDAO();
+        News news = newsDao.findById(id);
+        HttpSession session = request.getSession();
+        session.setAttribute("newsdetail", news);
+        if (actor.equalsIgnoreCase("normal")) {
+            path = "./jsps/NewsDetail.jsp";
+        } else if (actor.equalsIgnoreCase("Student")) {
+            path = "./jsps/SinhVien/NewsDetail.jsp";
+        } else if (actor.equalsIgnoreCase("Lecturer")) {
+            path = "./jsps/GiangVien/NewsDetail.jsp";
+        } else if (actor.equalsIgnoreCase("PDT")) {
+            path = "./jsps/PDT/NewsDetail.jsp";
+        }
+        response.sendRedirect(path);
+    }
 
 
 
