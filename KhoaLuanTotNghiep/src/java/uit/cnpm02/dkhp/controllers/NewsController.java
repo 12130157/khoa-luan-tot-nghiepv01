@@ -94,16 +94,16 @@ public class NewsController extends HttpServlet {
      * @throws Exception 
      */
     private void insertNew(HttpServletResponse response, HttpServletRequest request, HttpSession session) throws Exception{
-        NewsDAO newsDao=new NewsDAO();
-        int id=newsDao.getMaxID()+1;
-        String tille=request.getParameter("NewsTiltle");
-        String content=request.getParameter("newscontent");
-        int type=Integer.parseInt(request.getParameter("Type"));
-        String author = (String)session.getAttribute("username");
-        Date todayD = new Date(System.currentTimeMillis());
+        NewsDAO newsDao = new NewsDAO();
+        int id = newsDao.getMaxID()+1;
+        String tille = request.getParameter("NewsTiltle");
+        String content=request.getParameter("content");
+        int type = Integer.parseInt(request.getParameter("Type"));
+        String author = (String) session.getAttribute("username");
+        Date todayD = new Date();
         SimpleDateFormat dayFormat = new SimpleDateFormat("yyyy-MM-dd");
         String createDate = dayFormat.format(todayD.getTime());
-        News news=new News(id, tille, content, author, createDate, type);
+        News news = new News(id, tille, content, author, createDate, type);
         newsDao.add(news);
         NewsManeger(response, session);
     }
