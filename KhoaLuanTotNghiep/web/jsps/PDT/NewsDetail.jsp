@@ -4,6 +4,7 @@
     Author     : ngloc_it
 --%>
 
+<%@page import="uit.cnpm02.dkhp.utilities.StringUtils"%>
 <%@page import="uit.cnpm02.dkhp.utilities.ClientValidate"%>
 <%@page import="uit.cnpm02.dkhp.model.type.AccountType"%>
 <%@page import="java.util.List"%>
@@ -38,14 +39,19 @@
             <div id="mainNav"><!--Main Navigation-->
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
-            <div id="content"><!--Main Contents-->
+            <div id="content">
                 <%
                     if (newsDetail != null) {
                         %>
-                        <h1><%=newsDetail.getTitle()%></h1><br>
-                        <%=newsDetail.getContent()%>
+                        <div class="news-title"><%=newsDetail.getTitle()%></div>
+                        <div class="clear"></div>
+                        <div class="news-content">
+                            <%=newsDetail.getContent()%>
+                        </div>
+                        <% if (!StringUtils.isEmpty(newsDetail.getFile())) { %>
+                        <div class="file-download"><a href="../../DownloadController?action=download-news-attached-file&filename=<%= newsDetail.getFile() %>"><%= newsDetail.getFile() %></a></div>
+                        <%}%>
                    <% }
-                        
                 %>
             </div><!--End Contents-->
 

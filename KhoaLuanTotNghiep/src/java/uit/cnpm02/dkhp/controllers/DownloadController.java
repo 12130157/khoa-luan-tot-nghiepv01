@@ -89,6 +89,8 @@ public class DownloadController extends HttpServlet {
             } else if (action.equalsIgnoreCase("download-list-student-in-trainclass")) {
                 // Download file include list student in specified trainclass
                 downloadListStudentInTrainClass(request, response);
+            } else if (action.equalsIgnoreCase("download-news-attached-file")) {
+                downloadNewsAttachedFile(request, response);
             }
         } finally {
         }
@@ -819,6 +821,19 @@ public class DownloadController extends HttpServlet {
             hwb.write(fileOut);
             fileOut.close();
             downloadFile("DSSV-" + classId + ".xls", resp);
+        } catch (Exception ex) {
+            //String path = "./jsps/Message.jsp";
+            //resp.sendRedirect(path);
+        }
+    }
+
+    private void downloadNewsAttachedFile(HttpServletRequest request,
+            HttpServletResponse response) {
+        try {
+            String filename = request.getParameter("filename");
+            File file = fuService.getFile(filename);
+            if (file != null)
+                downloadFile(file, response);
         } catch (Exception ex) {
             //String path = "./jsps/Message.jsp";
             //resp.sendRedirect(path);

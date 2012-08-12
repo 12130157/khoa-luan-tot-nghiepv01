@@ -64,7 +64,7 @@
                 </div>
                 <br><h3>Đăng tin mới:</h3>
                 <hr/><hr/>
-                <form id="myform" name="myform" method="post" action="../../NewsController?action=insert">
+                <form id="myform" name="myform" method="post" action="../../NewsController?action=insert" enctype="multipart/form-data">
                     <div id="Info">
                         <table style="margin-left: 28px;">
                             <tr>
@@ -94,6 +94,12 @@
                             </td>
                         </tr>
                     </table>
+                    <%-- File attached --%>
+                    <u>File đính kèm</u>
+                    <div class="clear" style="text-align: center;"> </div>
+                    <input type="file" name="txtPath" id="txtPath" />
+                    <div class="clear"> </div>
+                    <br />
                     </div>
                     <input type="hidden" id="content" name="content" value="">
             </form>
