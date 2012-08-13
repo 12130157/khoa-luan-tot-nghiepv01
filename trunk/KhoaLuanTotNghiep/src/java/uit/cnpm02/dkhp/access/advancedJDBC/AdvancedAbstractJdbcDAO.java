@@ -16,7 +16,6 @@ import javax.naming.NamingException;
 import uit.cnpm02.dkhp.access.mapper.Queries;
 import uit.cnpm02.dkhp.access.mapper.SQLUtils;
 import uit.cnpm02.dkhp.communication.database.ConnectionServer;
-import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.LangUtils;
 
 /**
