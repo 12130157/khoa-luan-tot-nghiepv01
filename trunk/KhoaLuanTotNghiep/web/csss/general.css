@@ -732,3 +732,15 @@ input[type="file"] {
     padding-top: 25px;
     text-align: right;
 }
+
+/*Make sure your page contains a valid doctype at the top*/
+#simplegallery1{ /*CSS for Simple Gallery Example 1*/
+    position: relative; /*keep this intact*/
+    visibility: hidden; /*keep this intact*/
+    /*border: 10px solid gray;
+    border-radius: 5px;*/
+}
+#simplegallery1 .gallerydesctext{ /*CSS for description DIV of Example 1 (if defined)*/
+    text-align: left;
+    padding: 2px 5px;
+}
