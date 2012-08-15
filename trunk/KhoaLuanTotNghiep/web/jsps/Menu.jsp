@@ -36,10 +36,10 @@
             <li><a href="../HomepageController?action=view&actor=All"> Trang chủ</a></li>
             <li><a href="introduce.jsp"> Giới thiệu</a></li>
             <li><a href="se.jsp"> Công Nghệ Phần Mềm</a></li>
-            <li><a href="cs.jsp"> Khoa Học Máy Tính</a></li>
             <li><a href="ce.jsp">Kỹ Thuật Máy Tính</a></li>
             <li><a href="cn.jsp">Mạng Máy Tính</a></li>
             <li><a href="si.jsp">Hệ Thống Thông Tin</a></li>
+            <li><a href="cs.jsp"> Khoa Học Máy Tính</a></li>
             <li class="login"><a onclick="showLoginForm();">Đăng nhập</a></li>
             <li><a href="jspLienHe.jsp" class="no-border">Liên Hệ</a></li>
          </ul>

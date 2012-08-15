@@ -113,13 +113,19 @@
                 <u><b>Trang liên kết</b></u><br />
                 <div style="font-size: 11px;">
                     <p>
-                        <a href="http://uit.edu.vn/">Website trường ĐH CNTT</a>
+                        <a href="http://uit.edu.vn/">Trường ĐH CNTT</a>
                     </p>
                     <p>
                         <a href="http://www.vnulib.edu.vn/?PageID=PublicPage">Thư viên trung tâm</a>
                     </p>
                     <p>
-                        <a href="http://www.thongtincongnghe.com/">Trang công nghệ thông tin</a>
+                        <a href="http://uits.vn/doantn/">Đoàn thanh niên</a>
+                    </p>
+                    <p>
+                        <a href="http://forum.uit.edu.vn/">Diễn đàn sinh viên</a>
+                    </p>
+                    <p>
+                        <a href="http://www.citd.edu.vn/">Trung tâm phát triển CNTT</a>
                     </p>
                 </div>
             </div>
