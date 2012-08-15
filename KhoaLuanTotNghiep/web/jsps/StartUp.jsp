@@ -39,12 +39,14 @@
         <script type="text/javascript">
             var mygallery = new simpleGallery({
                 wrapperid: "simplegallery1", //ID of main gallery container,
-                dimensions: ['99%', 343], //width/height of gallery in pixels. Should reflect dimensions of the images exactly
+                dimensions: ['97.5%', 343], //width/height of gallery in pixels. Should reflect dimensions of the images exactly
                     imagearray: [
                         ["../imgs/gallery/BoNhiemHT.jpg", "", "new", "Hoi nghi cap cao UIT"],
                         ["../imgs/gallery/HoatDong_8_3_2012.jpg", "", "", "Hoat dong chao mung 8.3"],
                         ["../imgs/gallery/HoiThaoCanTho.jpg", "", "", "Tham gia hoi thao o Can Tho"],
                         ["../imgs/gallery/TS2012_TX.png", "", "", "Thong tin tuyen sinh dai hoc he chinh qui 2012"],
+                        ["../imgs/gallery/LeTNDot1-2012.jpg", "", "", "Le tot nghiep dot 1-2012 He ky su"],
+                        ["../imgs/gallery/NgayNhaGiao.jpg", "", "", "Ngay nha giao viet nam 20-11-2012"],
                         ["../imgs/gallery/TruongUIT.jpg", "", "", "TRUONG DAI HOC CONG NGHE THONG TIN"]
                     ],
                 autoplay: [true, 4500, 2], //[auto_play_boolean, delay_btw_slide_millisec, cycles_before_stopping_int]
