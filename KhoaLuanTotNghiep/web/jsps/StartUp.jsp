@@ -39,7 +39,7 @@
         <script type="text/javascript">
             var mygallery = new simpleGallery({
                 wrapperid: "simplegallery1", //ID of main gallery container,
-                dimensions: ['99%', 380], //width/height of gallery in pixels. Should reflect dimensions of the images exactly
+                dimensions: ['99%', 343], //width/height of gallery in pixels. Should reflect dimensions of the images exactly
                     imagearray: [
                         ["../imgs/gallery/BoNhiemHT.jpg", "", "new", "Hoi nghi cap cao UIT"],
                         ["../imgs/gallery/HoatDong_8_3_2012.jpg", "", "", "Hoat dong chao mung 8.3"],
