@@ -1,4 +1,4 @@
-html, body, div, span, h1, h2, h3, h4, strong, ol, ul, li{
+html, body {
     margin-left: 0;
     padding: 0;
     border: 0;
@@ -7,7 +7,7 @@ html, body, div, span, h1, h2, h3, h4, strong, ol, ul, li{
     font-size: 14px;
     color: #000;
     vertical-align: baseline;
-    /*background: url("../imgs/bgr/earthrisechopped.jpg") fixed center bottom no-repeat #fff;*/
+    /*background: url("../imgs/bgr/bg1.gif") repeat-x repeat-y;*/
 }
 
 body{
@@ -22,10 +22,12 @@ ol, ul{
 #wrapper{
     width: 1200px;
     margin: 0 auto;
-    border: 10px solid #73726E;
-    border-top: 30px solid #73726E;
+    border: 4px solid #73B6FF;
+    border-top: 25px solid #73B6FF;
+    border-style: groove;
     -moz-border-radius:0 0 6px 6px;
-    background: transparent; 
+    background: transparent;
+    background: url("../imgs/bgr/dropbox.jpg") fixed center bottom no-repeat #fff;
 }
 #header{
     margin-top: -140px;
@@ -35,10 +37,10 @@ ol, ul{
 }
 
 #mainNav{
-    background: url("../imgs/opaque_10.png") repeat-x scroll 0 0 transparent;
-    border-right: 1px solid #5F676D;
-    padding-top: 11px;
-    width: 210px;
+    /*background: url("../imgs/opaque_10.png") repeat-x scroll 0 0 transparent;*/
+    /*border-right: 1px solid #5F676D;*/
+    /*padding-top: 11px;*/
+    width: 212px;
     float: left;
 }
 #mainNav li{
@@ -393,13 +395,20 @@ tr:hover .pop-up {
 
 /** Main nav css ++**/
 #range-1 {
+    background: none repeat scroll 0 0 #FFE5FF;
+    border: 1px solid #2D5F86;
+    border-radius: 9px 9px 0 0;
+    margin-top: 5px;
+    width: 100%;
+}
+/*#range-1 {
     margin-top: 5px;
     width: 98%;
     border: 3px solid #2D5F86;
     border-radius: 5px;
     background: url("../imgs/bgtitle.gif") repeat;
-    /*background-color: #dfd;*/
-}
+    
+}*/
 #range-1 img {
     vertical-align: bottom;
 }
