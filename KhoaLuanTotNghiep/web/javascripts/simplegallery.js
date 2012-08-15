@@ -8,9 +8,9 @@
 //** May 16th, 11'- Updated to v 1.4: Adds ability to show image gallery only after all images within gallery has been loaded. Requires jQuery 1.5+
 
 var simpleGallery_navpanel={
-	loadinggif: 'ajaxload.gif', //full path or URL to loading gif image
+	loadinggif: '../javascripts/gallery_imgs/ajaxload.gif', //full path or URL to loading gif image
 	panel: {height:'45px', opacity:0.5, paddingTop:'5px', fontStyle:'bold 11px Verdana'}, //customize nav panel container
-	images: [ 'left.gif', 'play.gif', 'right.gif', 'pause.gif'], //nav panel images (in that order)
+	images: [ '../javascripts/gallery_imgs/left.gif', '../javascripts/gallery_imgs/play.gif', '../javascripts/gallery_imgs/right.gif', '../javascripts/gallery_imgs/pause.gif'], //nav panel images (in that order)
 	imageSpacing: {offsetTop:[-4, 0, -4], spacing:10}, //top offset of left, play, and right images, PLUS spacing between the 3 images
 	slideduration: 500 //duration of slide up animation to reveal panel
 }
