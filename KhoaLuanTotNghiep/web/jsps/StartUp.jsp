@@ -10,11 +10,12 @@
 <html>
     <head>
         <link href="../csss/general.css" rel="stylesheet" type="text/css" media="screen">
+        <script src="../javascripts/simplegallery.js" type="text/javascript"></script>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Trang Chủ</title>
         <style media="all" type="text/css">
             
-           </style>
+        </style>
     </head>
     <body>
         <!--Div Wrapper-->
@@ -24,6 +25,9 @@
                 <%@include file="MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
+                <div id="simplegallery1">
+                    
+                </div>
                 <%@include file="News.jsp" %>
             </div><!--End Contents-->
 
@@ -32,5 +36,29 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
+        <script type="text/javascript">
+            var mygallery = new simpleGallery({
+                wrapperid: "simplegallery1", //ID of main gallery container,
+                dimensions: ['99%', 380], //width/height of gallery in pixels. Should reflect dimensions of the images exactly
+                    imagearray: [
+                        ["../imgs/gallery/BoNhiemHT.jpg", "", "new", "Hoi nghi cap cao UIT"],
+                        ["../imgs/gallery/HoatDong_8_3_2012.jpg", "", "", "Hoat dong chao mung 8.3"],
+                        ["../imgs/gallery/HoiThaoCanTho.jpg", "", "", "Tham gia hoi thao o Can Tho"],
+                        ["../imgs/gallery/TS2012_TX.png", "", "", "Thong tin tuyen sinh dai hoc he chinh qui 2012"],
+                        ["../imgs/gallery/TruongUIT.jpg", "", "", "TRUONG DAI HOC CONG NGHE THONG TIN"]
+                    ],
+                autoplay: [true, 4500, 2], //[auto_play_boolean, delay_btw_slide_millisec, cycles_before_stopping_int]
+                persist: false, //remember last viewed slide and recall within same session?
+                fadeduration: 1000, //transition duration (milliseconds)
+                oninit:function(){ //event that fires when gallery has initialized/ ready to run
+                    //Keyword "this": references current gallery instance (ie: try this.navigate("play/pause"))
+                },
+                onslide:function(curslide, i){ //event that fires after each slide is shown
+                    //Keyword "this": references current gallery instance
+                    //curslide: returns DOM reference to current slide's DIV (ie: try alert(curslide.innerHTML)
+                    //i: integer reflecting current image within collection being shown (0=1st image, 1=2nd etc)
+                }
+            })
+        </script>
     </body>
 </html>
