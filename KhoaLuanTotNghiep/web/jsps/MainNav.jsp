@@ -52,7 +52,9 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link href="../csss/general.css" rel="stylesheet" type="text/css" media="screen">
+        <link href="../csss/jquery-ui-1.8.22.custom.css" rel="stylesheet" type="text/css" media="screen">
         <script type="text/javascript" src="../javascripts/calendar/utils.js"></script>
+        <script type="text/javascript" src="../javascripts/jquery-ui.min.js"></script>
     </head>
     <body>
         <div id="main-navi">
@@ -129,11 +131,25 @@
                     </p>
                 </div>
             </div>
+            <div id="range-1">
+                <div id="datepicker">
+		</div>
+            </div>
         </div>
     </body>
     <script src="../../javascripts/AjaxUtil.js"></script>
     <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
     <script  type = "text/javascript" >
+        // Date picker
+        window.onload = function() {
+            try {
+                $('#datepicker').datepicker({
+                    inline: true
+                });
+            } catch(err) {
+                console.log('can not load date picker');
+            }
+        }
         var http = createRequestObject();
         
         $("#icon-mailbox").click(function () {
