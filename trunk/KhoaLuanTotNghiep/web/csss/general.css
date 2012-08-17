@@ -691,7 +691,7 @@ input[type="file"] {
     width: 320px;
     height: 120px;
     display: none;
-    z-index: 100;
+    z-index: 9999;
 }
 
 #btn-forward {
@@ -737,6 +737,7 @@ input[type="file"] {
 #simplegallery1{ /*CSS for Simple Gallery Example 1*/
     position: relative; /*keep this intact*/
     visibility: hidden; /*keep this intact*/
+    z-index: 1;
     /*border: 10px solid gray;
     border-radius: 5px;*/
 }
