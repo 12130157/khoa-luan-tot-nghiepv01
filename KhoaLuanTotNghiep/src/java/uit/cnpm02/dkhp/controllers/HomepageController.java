@@ -3,6 +3,11 @@ package uit.cnpm02.dkhp.controllers;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -70,9 +75,20 @@ public class HomepageController extends HttpServlet {
         
         try {
             NewsDAO newsDao = new NewsDAO();
-            //List<News> news = newsDao.findAll();
             List<News> news = newsDao.findByColumName("Loai", NewsType.IMPORTANT.value());
-            news.addAll(newsDao.findByColumName("Loai", NewsType.OPEN.value()));
+            List<News> others = newsDao.findByColumName("Loai", NewsType.OPEN.value());
+            
+            if (news != null) {
+                sortNewsByDate(news);
+            } else {
+                news = new ArrayList<News>();
+            }
+
+            //Arrays.sort(news, out);
+            if (others != null && !others.isEmpty()) {
+                sortNewsByDate(others);
+                news.addAll(others);
+            }
             
             if((news != null) && (news.size() > 0)) {
                 session.setAttribute("news", news);
@@ -101,7 +117,24 @@ public class HomepageController extends HttpServlet {
             out.close();
         }
     }
+    
+    private void sortNewsByDate(List<News> news) {
+        Collections.sort(news, new Comparator<News>() {
 
+            @Override
+            public int compare(News o1, News o2) {
+                try {
+                    SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATETIME_PARTERM_DEFAULT);
+                    Date d1 =  sdf.parse(o1.getCreatedDate());
+                    Date d2 =  sdf.parse(o2.getCreatedDate());
+                    return d1.before(d2) ? 1 : -1;
+                }catch(Exception ex) {
+                    return 1;
+                }
+            }
+        });
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
      * Handles the HTTP <code>GET</code> method.
