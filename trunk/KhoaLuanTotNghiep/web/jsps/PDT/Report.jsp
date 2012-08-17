@@ -71,7 +71,6 @@
                         </h3>
                         <table id="tableReport" class="general-table" style="width: 660px; margin-top: 1px;">
                             <%if(report == null){%>
-                            <p>Chưa có thông tin</p>
                             <%}else{
                                     DecimalFormat format = new DecimalFormat("#.##");
                                     float ever = (float) report.getNumOfReg() / report.getNumOfClassOpen();
