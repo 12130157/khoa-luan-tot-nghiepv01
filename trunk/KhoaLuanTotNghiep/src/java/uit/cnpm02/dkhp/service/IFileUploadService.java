@@ -29,4 +29,5 @@ public interface IFileUploadService {
     List<FileInfo> getSheetFileFromLecturer();
 
     public File getFile(String fileName);
+    public File getNewsAttachedFile(String fileName);
 }
