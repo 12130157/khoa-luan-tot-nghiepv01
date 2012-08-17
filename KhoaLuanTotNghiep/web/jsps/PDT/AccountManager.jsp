@@ -61,7 +61,7 @@
                     <%--------------Search-------------%>
                     <div id="search-area">
                         <div id="searchbox">
-                            <input id="search" type="text" placeholder="Search" onKeyPress="keypressed()">
+                            <input id="search" type="text" placeholder="Search" onKeyPress="keypressed()" />
                             <input type="button" id="submit" onclick="searchAccount();" value="Tìm kiếm">
                         </div>
                         <%--
@@ -311,13 +311,12 @@
                     +currentpage + "&key=" + key);
             }
         }
-        function keypressed(event) {
-            if(event.keyCode == '13') {
-                searchAccount();
+        function keypressed() {
+           if(event.keyCode == '13') {
+              searchAccount();
             } 
         }
-        
-        function searchAccount() {
+       function searchAccount() {
             currentpage = 1;
             var key = document.getElementById("search").value;
             var pagename = "../../AccountController?action=search&key=" + key;

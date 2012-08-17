@@ -133,7 +133,7 @@
                 </form>
                 <br /><br />
                 <%-- Thogn ke theo SV --%>
-                <div class="range">
+<!--                <div class="range">
                     <h3><span id="btn-student-report" class="atag" >Tìm kiếm SV</span></h3>
                     <div id="form-student-report">
                         <div style="clear: both; margin-top: 10px;">
@@ -159,7 +159,7 @@
                     </div>
                 <div class="clear"></div>
                 <br /><br />
-                </div>
+                </div>-->
             </div>
             <div id="footer"><!--Footer-->
                 <%@include file="../Footer.jsp" %>
