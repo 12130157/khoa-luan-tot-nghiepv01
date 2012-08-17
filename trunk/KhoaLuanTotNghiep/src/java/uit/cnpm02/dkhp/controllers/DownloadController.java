@@ -831,7 +831,7 @@ public class DownloadController extends HttpServlet {
             HttpServletResponse response) {
         try {
             String filename = request.getParameter("filename");
-            File file = fuService.getFile(filename);
+            File file = fuService.getNewsAttachedFile(filename);
             if (file != null)
                 downloadFile(file, response);
         } catch (Exception ex) {
