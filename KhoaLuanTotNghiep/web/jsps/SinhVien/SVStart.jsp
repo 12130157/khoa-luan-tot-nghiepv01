@@ -57,7 +57,7 @@
                                 content = content.substring(0, 200) + "...";
                             }
                         %>
-                            <tr>
+                            <tr id="<%= t.getId() %>">
                                 <td> <%= (i + 1) %> </td>
                                 <td> <span class="atag" onclick="showTaskProcess(<%= t.getId() %>);"> <%= content %> </span></td>
                                 <td> <%= t.getSender() %> </td>
@@ -133,6 +133,23 @@
             } else {
                 alert("Lỗi gửi yêu cầu tới Server thất bại");
             }
+            
+            // Display the task table
+            var tblTask = document.getElementById('important-task').getElementsByTagName('table')[0];
+            var tblLength = tblTask.rows.length;
+
+            for (var i = 1; i < tblLength; i++) {
+                var id = tblTask.rows[i].id;
+                if (id == taskid) {
+                    tblTask.deleteRow(i);
+                    tblLength--;
+                    break;
+                }
+            }
+            if (tblLength <= 1) {
+                document.getElementById('important-task').style.display = 'none';
+            }
+            
         }
         
         function confirmHandler() {
