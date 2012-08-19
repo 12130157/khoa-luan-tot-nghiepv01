@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import uit.cnpm02.dkhp.model.Account;
 import uit.cnpm02.dkhp.model.Registration;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,7 +17,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import uit.cnpm02.dkhp.DAO.AccountDAO;
 import uit.cnpm02.dkhp.DAO.ClassDAO;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.FacultyDAO;
@@ -38,7 +36,6 @@ import uit.cnpm02.dkhp.model.RegistrationTimeID;
 import uit.cnpm02.dkhp.model.Task;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.model.TrainClassID;
-import uit.cnpm02.dkhp.model.type.AccountType;
 import uit.cnpm02.dkhp.model.type.StudentStatus;
 import uit.cnpm02.dkhp.model.type.TaskStatus;
 import uit.cnpm02.dkhp.model.type.TaskType;
@@ -911,8 +908,6 @@ public class RegistryController extends HttpServlet {
         String generalUsername = "";
         try {
             username = (String) session.getAttribute("username");
-            AccountDAO accDao = DAOFactory.getAccountDao();
-            Account acc = accDao.findById(username);
             generalUsername = "student";
         } catch (Exception ex) {
             //
