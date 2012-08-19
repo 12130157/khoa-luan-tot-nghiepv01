@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import uit.cnpm02.dkhp.model.Account;
 import uit.cnpm02.dkhp.model.Registration;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import uit.cnpm02.dkhp.DAO.AccountDAO;
 import uit.cnpm02.dkhp.DAO.ClassDAO;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.FacultyDAO;
@@ -36,6 +38,7 @@ import uit.cnpm02.dkhp.model.RegistrationTimeID;
 import uit.cnpm02.dkhp.model.Task;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.model.TrainClassID;
+import uit.cnpm02.dkhp.model.type.AccountType;
 import uit.cnpm02.dkhp.model.type.StudentStatus;
 import uit.cnpm02.dkhp.model.type.TaskStatus;
 import uit.cnpm02.dkhp.model.type.TaskType;
@@ -861,20 +864,15 @@ public class RegistryController extends HttpServlet {
         PrintWriter out = response.getWriter();
         String taskId = (String) request.getParameter("taskid");
         String YES_NO = (String) request.getParameter("yesno");
-        
-        if (YES_NO.equals("OK")) { // OK, task accepted, no need to do anything else
-            out.println("Xác nhận thành công");
-        } else {
-            int id = Integer.parseInt(taskId);
-            TaskDAO taskDao = DAOFactory.getTaskDAO();
-            try {
-                Task task = taskDao.findById(id);
+        int id = Integer.parseInt(taskId);
+        TaskDAO taskDao = DAOFactory.getTaskDAO();
+        try {
+            Task task = taskDao.findById(id);
+            if (YES_NO.equals("OK")) { // OK, task accepted, no need to do anything else
+                out.println("Xác nhận thành công");
+            } else {
                 if (task.getTaskType() == TaskType.MOVE_STUDENT_TO_TC) { //OH, that student cancel admin decicion
                                                                     // OK, I'll rollback his registration.
-                    // Task processed
-                    task.setStatus(TaskStatus.PROCESSED);
-                    taskDao.update(task);
-                    
                     // Rollback registration
                     String content = task.getContent();
                     String data = content.substring(1, content.indexOf("]"));
@@ -886,15 +884,52 @@ public class RegistryController extends HttpServlet {
                     String semeter = regIdData[3];
                     RegistrationID regId = new RegistrationID(mssv, trainClassId, Integer.parseInt(semeter), year);
                     Registration reg = regDao.findById(regId);
-                    regDao.delete(reg);
+                    if (reg != null) // The reg existed
+                        regDao.delete(reg);
                     
                     out.println("Hoàn tất, việc chuyển lớp đã được hủy bỏ.");
                 }
-            } catch (Exception ex) {
-                Logger.getLogger(RegistryController.class.getName())
-                        .log(Level.SEVERE, null, ex);
-                out.println("Trong quá trình xử lý đã có lỗi xảy ra, PĐT sẽ xem xét lại trường hợp này");
             }
+            // Task processed
+            task.setStatus(TaskStatus.PROCESSED);
+            taskDao.update(task);
+            // Update Task list
+            List<Task> tasks = getRemindTask(request);
+            request.getSession().setAttribute("tasks", tasks);
+        } catch (Exception ex) {
+            Logger.getLogger(RegistryController.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            out.println("Trong quá trình xử lý đã có lỗi xảy ra, PĐT sẽ xem xét lại trường hợp này");
         }
+    }
+    
+    private List<Task> getRemindTask(HttpServletRequest request) {
+        TaskDAO taskDao = DAOFactory.getTaskDAO();
+        HttpSession session = request.getSession();
+        session.removeAttribute("tasks");
+        String username = "";
+        String generalUsername = "";
+        try {
+            username = (String) session.getAttribute("username");
+            AccountDAO accDao = DAOFactory.getAccountDao();
+            Account acc = accDao.findById(username);
+            generalUsername = "student";
+        } catch (Exception ex) {
+            //
+        }
+        try {
+            List<Task> tasks = taskDao.findByColumNames(
+                    new String[] {"NguoiNhan", "TrangThai"},
+                    new Object[] {username, TaskStatus.TOBE_PROCESS.value()});
+            if (!username.equals(generalUsername))
+                tasks.addAll(taskDao.findByColumNames(
+                    new String[] {"NguoiNhan", "TrangThai"},
+                    new Object[] {generalUsername, TaskStatus.TOBE_PROCESS.value()}));
+            return tasks;
+        } catch (Exception ex) {
+            Logger.getLogger(RegistryController.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 }
