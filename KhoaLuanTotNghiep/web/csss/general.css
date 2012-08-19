@@ -713,7 +713,7 @@ input[type="file"] {
     left: 30%;
     top: 20%;
     min-height: 72%;
-    opacity: 0.85;
+    opacity: 0.95;
     width: 718px;
     position: fixed;
     z-index: 100;
