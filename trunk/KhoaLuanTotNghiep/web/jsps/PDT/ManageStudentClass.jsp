@@ -188,7 +188,7 @@
         </div>
         <!--End Wrapper-->
         <script src="../../javascripts/AjaxUtil.js"> </script>
-        <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
+        <%--<script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>--%>
         <script  type = "text/javascript" >
             var http = createRequestObject();
             $("#btn-to-edite-class").click(function () {
