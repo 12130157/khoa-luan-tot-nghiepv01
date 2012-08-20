@@ -200,6 +200,10 @@ public class ManageStudentController extends HttpServlet {
             HSSFCell cellTemp = null;
 
             cellTemp = rowTemp.getCell(1);
+            //MSSV must be a string
+            if(cellTemp.getCellType() != HSSFCell.CELL_TYPE_STRING){
+                cellTemp.setCellType(HSSFCell.CELL_TYPE_STRING);
+            }
             String mssv = cellTemp.getStringCellValue();
             s.setId(mssv);
 

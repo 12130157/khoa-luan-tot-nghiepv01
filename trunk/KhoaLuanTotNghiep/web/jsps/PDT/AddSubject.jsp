@@ -172,6 +172,7 @@
                         + faculty + ";"
                         + subType + ";"
                         + preSubject;
+                  
             if(http){
                 http.open("GET", "../../ManageSubjectController?function=add_subject&data="
                     + data ,true);

@@ -322,9 +322,9 @@ public class AccountController extends HttpServlet {
         if (accounts == null) {
             return;
         }
-        if (accounts.size() > slideLimit) {
-            out.println("<div id=\"sidebar\">");
-        }
+        //if (accounts.size() > slideLimit) {
+           // out.println("<div id=\"sidebar\">");
+        //}
         out.println("<table id=\"accountdetail\" name=\"accountdetail\" class=\"general-table\">");
         out.println("<tr>"
                     + "<th> STT </th>"
@@ -362,9 +362,9 @@ public class AccountController extends HttpServlet {
             }
         }
         out.println("</table>");
-        if (accounts.size() > slideLimit) {
-            out.println("</div>");
-        }
+        //if (accounts.size() > slideLimit) {
+        // //   out.println("</div>");
+        //}
      }
 
     private void doSearch(HttpServletRequest request,

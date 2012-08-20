@@ -22,7 +22,7 @@ public class Constants {
     public static int STUDENT_STATUS_reservations = 1;
     //...
     /**Define number row tobe showed on a page**/
-    public static int ELEMENT_PER_PAGE_DEFAULT = 10;
+    public static int ELEMENT_PER_PAGE_DEFAULT = 20;
     public static int OPEN_CLASS_STATUS = 1;
     public static int CLOSE_CLASS_STATUS = 0;
    public static int CURRENT_SEMESTER = 2;

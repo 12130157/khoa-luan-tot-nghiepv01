@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
+import uit.cnpm02.dkhp.DAO.DetailTrainDAO;
 import uit.cnpm02.dkhp.DAO.LecturerDAO;
 import uit.cnpm02.dkhp.DAO.RuleDAO;
 import uit.cnpm02.dkhp.DAO.SubjectDAO;
 import uit.cnpm02.dkhp.DAO.TrainClassDAO;
 import uit.cnpm02.dkhp.DAO.TrainProgramDAO;
+import uit.cnpm02.dkhp.model.DetailTrain;
 import uit.cnpm02.dkhp.model.Rule;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.model.TrainClassID;
@@ -171,12 +173,14 @@ public class TrainClassServiceImpl implements ITrainClassService {
             //
             String subjectCode = obj.getSubjectCode();
             if(subjectDAO.findById(subjectCode).getType()==0){
-            String facultyCode= subjectDAO.findById(subjectCode).getFacultyCode();
-            List<String> proCodeList = getListProCodeByFaculty(facultyCode);
-            List<TrainProDetail> detailTrainProList = DAOFactory.getTrainProgDetailDAO().findByColumNameAndValueList("MaCTDT", proCodeList);
-            if(checkSubjectInListProgram(subjectCode, detailTrainProList)==false){
+            List<TrainProDetail> listDetailTrain = DAOFactory.getTrainProgDetailDAO().findByColumName("MaMH", subjectCode);    
+            //String facultyCode= subjectDAO.findById(subjectCode).getFacultyCode();
+            //List<String> proCodeList = getListProCodeByFaculty(facultyCode);
+            //List<TrainProDetail> detailTrainProList = DAOFactory.getTrainProgDetailDAO().findByColumNameAndValueList("MaCTDT", proCodeList);
+            //if(checkSubjectInListProgram(subjectCode, detailTrainProList)==false){
+            if(listDetailTrain == null || listDetailTrain.isEmpty()){
               String message = "<b>Lớp không hợp lệ: Môn học " + subjectCode
-                        + " không thuộc chương trình đào tạo nào của khoa "+facultyCode+"</b>";
+                        + " không thuộc chương trình đào tạo nào</b>";
                         //result.setMessage(Message.ADD_TRAINCLASS_ERROR_ROOM_DUPLECATE);
                 return new ExecuteResult(false, message);
             }
