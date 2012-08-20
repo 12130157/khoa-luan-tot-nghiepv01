@@ -237,7 +237,7 @@
     
     <script src="../../javascripts/DateTimePicker.js" type="text/javascript"></script>
     <script src="../../javascripts/AjaxUtil.js"></script>
-    <script src="../../javascripts/jquery-1.7.1.js"></script>
+    <%--<script src="../../javascripts/jquery-1.7.1.js"></script>--%>
     <SCRIPT language="javascript">
         var http = createRequestObject();
         var loadTrainClassOfLecturer = false;
