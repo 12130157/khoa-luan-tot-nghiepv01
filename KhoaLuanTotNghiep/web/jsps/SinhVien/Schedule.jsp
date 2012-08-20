@@ -184,8 +184,6 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    
-        <script src="../../javascripts/jquery-1.7.1.js"></script>
         <script src="../../javascripts/Schedule.js"></script>
         <script type = "text/javascript">
             var http = createRequestObject();
