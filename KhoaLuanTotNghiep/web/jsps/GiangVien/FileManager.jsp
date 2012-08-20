@@ -126,10 +126,8 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    
-    </body>
     <script src="../../javascripts/AjaxUtil.js"></script>
-    <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
+    <%--<script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script> --%>
     <SCRIPT language="javascript">
         var http = createRequestObject();
         var loadTrainClassOfLecturer = false;
@@ -210,4 +208,5 @@
         }
         
     </script>
+    </body>
 </html>
