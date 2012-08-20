@@ -240,13 +240,13 @@ public abstract class AbstractJdbcDAO<T extends IJdbcModel<ID>, ID extends Seria
 
         int i, j;
 
-        Long firstId = null;
+        Integer firstId = null;
         T t = lEntities.get(0);
         boolean isAutoIncreament = false;
         if (t.isIdAutoIncrement()
                 && (t.getIdType() == IModel.INT_ID_TYPE || t.getIdType() == IModel.LONG_ID_TYPE)) {
             isAutoIncreament = true;
-            firstId = (Long) _getMaxID(t);
+            firstId = (Integer) _getMaxID(t);
 
             if (firstId == null) {
                 throw new Exception("Unable to get the first id.");

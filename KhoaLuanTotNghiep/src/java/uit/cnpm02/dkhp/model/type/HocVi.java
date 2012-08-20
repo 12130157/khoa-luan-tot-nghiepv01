@@ -10,10 +10,11 @@ import java.util.Map;
  */
 public enum HocVi {
     NOTHING(0, "X"),
-    TS(1, "Tiến sĩ"),
-    TSKH(2, "TS Khoa học"),
-    CN(3, "Cử nhân"),
-    CH(4, "Cao học");
+    ThS(1, "Thạc sỹ"),
+    TS(2, "Tiến sĩ"),
+    TSKH(3, "TS Khoa học"),
+    CN(4, "Cử nhân"),
+    CH(5, "Cao học");
     //..
     private int value;
     private String description;
