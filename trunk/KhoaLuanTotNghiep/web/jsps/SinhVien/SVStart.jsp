@@ -67,10 +67,6 @@
                         }
                         %>
                     </table>
-                    <%-- Msg process result --%>
-                    <div class="clear"></div>
-                    <div id="msg-process-task-response" class="msg-response">
-                    </div>
                     <%-- A popup show option process task --%>
                     <div class="clear"></div>
                     <div id="popup-process-task" style="border: solid 1px #ff0; border-radius: 5px; display: none;" onClick="hideMe('popup-process-task');">
@@ -80,6 +76,10 @@
                     <%
                     }
                     %>
+                </div>
+                <%-- Msg process result --%>
+                <div class="clear"></div>
+                <div id="msg-process-task-response" class="msg-response">
                 </div>
                 <%@include file="News.jsp" %>
             </div><!--End Contents-->
@@ -92,7 +92,6 @@
     
     <script src="../javascripts/News.js"></script>
     <script src="../../javascripts/AjaxUtil.js"></script>
-    <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
     <script  type = "text/javascript" >
         action = "search";
         var http = createRequestObject();
