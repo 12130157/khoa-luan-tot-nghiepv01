@@ -51,10 +51,11 @@
     </style>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
         <link href="../csss/general.css" rel="stylesheet" type="text/css" media="screen">
-        <link href="../csss/jquery-ui-1.8.22.custom.css" rel="stylesheet" type="text/css" media="screen">
+        <link href="http://localhost:8080/KhoaLuanTotNghiep/csss/jquery-ui-1.8.22.custom.css" rel="stylesheet" type="text/css" media="screen">
         <script type="text/javascript" src="../javascripts/calendar/utils.js"></script>
-        <script type="text/javascript" src="../javascripts/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="http://localhost:8080/KhoaLuanTotNghiep/javascripts/jquery-ui.min.js"></script>
     </head>
     <body>
         <div id="main-navi">
@@ -138,7 +139,6 @@
         </div>
     </body>
     <script src="../../javascripts/AjaxUtil.js"></script>
-    <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
     <script  type = "text/javascript" >
         // Date picker
         window.onload = function() {
@@ -148,6 +148,11 @@
                 });
             } catch(err) {
                 console.log('can not load date picker');
+                setTimeout(function() {
+                    $('#datepicker').datepicker({
+                    inline: true
+                });
+                }, 10000);
             }
         }
         var http = createRequestObject();
