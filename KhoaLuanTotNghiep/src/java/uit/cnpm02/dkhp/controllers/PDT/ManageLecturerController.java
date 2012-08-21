@@ -347,7 +347,7 @@ public class ManageLecturerController extends HttpServlet {
                         /*+ "<td>" + lecturers.get(i).getEmail() + "</td>"*/
                         + "<td>" + lecturers.get(i).getHocHam() + "</td>"
                         + "<td>" + lecturers.get(i).getHocVi() + "</td>"
-                        + "<td>" + "<a href=\"../../ManageLecturerController?function=edit&magv=" + lecturers.get(i).getId() + "\"><img src=\"../../imgs/icon/edit.png\" title=\"Sửa\" alt=\"Sửa\"/></a></td>"
+                        + "<td>" + "<a href=\"../../ManageLecturerController?function=editlecturer&magv=" + lecturers.get(i).getId() + "\"><img src=\"../../imgs/icon/edit.png\" title=\"Sửa\" alt=\"Sửa\"/></a></td>"
                         + "<td><span class=\"atag\" onclick=\"deleteOneLecturer('" + lecturers.get(i).getId() + "')\"><img src=\"../../imgs/icon/delete.png\" title=\"Xóa\" alt=\"Xóa\"/></span></td>"
                         + "</tr>");
             }
