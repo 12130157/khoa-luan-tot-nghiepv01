@@ -356,8 +356,12 @@ public class AccountController extends HttpServlet {
                         + "<td>" + acc.getFullName() + "</td>"
                         + "<td>" + statusImg + "</td>"
                         + "<td>" + accountType + "</td>"
-                        + "<td> <a href=\"../../AccountController?action=editaccount&username=" + acc.getId() + "\">" + editImg + "</a> </td>"
-                        + "<td> <span class=\"atag\" onclick=\"deleteUser('" + acc.getId() + "')\">" + deleteImg + "</span></td>"
+                        + "<td>"
+                            + " <span class=\"atag\" onclick=\"loadDataToEdit('" + acc.getId() + "')\">" + editImg + "</span>"
+                        + "</td>"
+                        + "<td>"
+                            + " <span class=\"atag\" onclick=\"deleteUser('" + acc.getId() + "')\">" + deleteImg + "</span>"
+                        + "</td>"
                         + "</tr>");
             }
         }
