@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import uit.cnpm02.dkhp.model.Registration;
@@ -17,10 +18,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import uit.cnpm02.dkhp.DAO.ClassDAO;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.FacultyDAO;
 import uit.cnpm02.dkhp.DAO.LecturerDAO;
+import uit.cnpm02.dkhp.DAO.PreSubjectDAO;
 import uit.cnpm02.dkhp.DAO.RegistrationDAO;
 import uit.cnpm02.dkhp.DAO.RuleDAO;
 import uit.cnpm02.dkhp.DAO.StudentDAO;
@@ -30,6 +34,7 @@ import uit.cnpm02.dkhp.DAO.TrainClassDAO;
 import uit.cnpm02.dkhp.model.Student;
 import uit.cnpm02.dkhp.model.Class;
 import uit.cnpm02.dkhp.model.Faculty;
+import uit.cnpm02.dkhp.model.PreSubject;
 import uit.cnpm02.dkhp.model.RegistrationID;
 import uit.cnpm02.dkhp.model.RegistrationTime;
 import uit.cnpm02.dkhp.model.RegistrationTimeID;
@@ -40,6 +45,7 @@ import uit.cnpm02.dkhp.model.type.StudentStatus;
 import uit.cnpm02.dkhp.model.type.TaskStatus;
 import uit.cnpm02.dkhp.model.type.TaskType;
 import uit.cnpm02.dkhp.service.TrainClassStatus;
+import uit.cnpm02.dkhp.utilities.BOUtils;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
 
@@ -99,7 +105,14 @@ public class RegistryController extends HttpServlet {
                 showTaskProcessPopup(request, response);
             } else if (action.equalsIgnoreCase("student-confirm-process-task")) {
                 processTaskConfirm(request, response);
+            } else if (action.equalsIgnoreCase("doLoadListPreSubject")) {
+                supportLoadListPreSubject(request, response);
+            } else if (action.equalsIgnoreCase("doLoadSubjectHistory")) {
+                supportLoadSubjectHistory(request, response);
+            } else if (action.equalsIgnoreCase("doLoadLecturerHistory")) {
+                supportLoadLecturerHistory(request, response);
             }
+            
         } finally {
             out.close();
         }
@@ -926,5 +939,141 @@ public class RegistryController extends HttpServlet {
                     .log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+
+    private void supportLoadListPreSubject(HttpServletRequest request,
+            HttpServletResponse response) {
+        String subjectId = request.getParameter("data");
+        JSONArray jsons = new JSONArray();
+        
+        PreSubjectDAO preDao = DAOFactory.getPreSubDao();
+        List<PreSubject> preSubs = null;
+        try {
+            preSubs = preDao.findByColumName("MaMH", subjectId);
+        } catch (Exception ex) {
+            Logger.getLogger(RegistryController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (preSubs != null && !preSubs.isEmpty()){
+            for (PreSubject ps : preSubs) {
+                JSONObject json = new JSONObject();
+                String preSubId = ps.getId().getPreSudId();
+                String subName = "";
+                try {
+                    subName = subjectDao.findById(preSubId).getSubjectName();
+                } catch (Exception ex) {
+                    Logger.getLogger(RegistryController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                json.put("id", preSubId);
+                json.put("name", subName);
+                
+                jsons.add(json);
+            }
+        }
+        BOUtils.writeResponse(jsons.toString(), request, response);
+    }
+
+    private void supportLoadSubjectHistory(HttpServletRequest request,
+            HttpServletResponse response) {
+        String subjectId = request.getParameter("data");
+        JSONArray jsons = new JSONArray();
+        List<TrainClass> trainClasses = null;
+        try {
+            trainClasses = tcDao.findByColumNames(
+                    new String[]{"MaMH", "CapNhatDiem"},
+                    new Object[]{subjectId, true});
+        } catch (Exception ex) {
+            Logger.getLogger(RegistryController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        /*if (trainClasses != null && !trainClasses.isEmpty()) {
+            for(TrainClass tc : trainClasses) {
+                JSONObject json = new JSONObject();
+                //
+                // Need? HOc ky, nam hoc, SLSV đk GV, ti le qua
+                //
+                String lecturer = "";
+                float pass = 0f; // Dua vao bang dang ky hoc phan de dem sl dau
+                int numberStudentPass = countNumberPassed(tc);
+                try {
+                    lecturer = lecturerDao.findById(tc.getLecturerCode()).getFullName();
+                } catch (Exception ex) {
+                    Logger.getLogger(RegistryController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                pass = (numberStudentPass/tc.getNumOfStudentReg()) * 100;
+                json.put("year", tc.getId().getYear());
+                json.put("semeter", tc.getId().getSemester());
+                json.put("tcId", tc.getId().getClassCode());
+                json.put("numStudent", tc.getNumOfStudent());
+                json.put("numStudentReg", tc.getNumOfStudentReg());
+                json.put("lecturer", lecturer);
+                json.put("passInPercent", pass);
+                
+                jsons.add(json);
+            }
+        }*/
+        jsons = getSubjectVirtualData();
+        BOUtils.writeResponse(jsons.toString(), request, response);
+    }
+    
+    private JSONArray getSubjectVirtualData() {
+        JSONArray jsons = new JSONArray();
+        
+        Random r = new Random();
+        for (int i = 0; i < 5; i++) {
+            JSONObject json = new JSONObject();
+            String lecturer = "Giang vien " + (i+1);
+            int numberStudentPass = r.nextInt(100) + 50;
+            int numStudentReg = 150;
+            float pass = (100*numberStudentPass)/numStudentReg;
+            
+            json.put("year", 2010 + i);
+            json.put("semeter", 1 + r.nextInt(3));
+            json.put("tcId", "TranClass" + i);
+            json.put("numStudent", 120);
+            json.put("numStudentReg", numStudentReg);
+            json.put("lecturer", lecturer);
+            json.put("passInPercent", pass);
+
+            jsons.add(json);
+        }
+        return jsons;
+    }
+
+    private int countNumberPassed(TrainClass tc) {
+        Random r = new Random();
+        int numPass = r.nextInt(100);
+        //TODO:
+        try {
+            //numPass = regDao.findByColumNames(
+            //        new String[] {""},
+            //        new Object[]{});
+        } catch (Exception ex) {
+            Logger.getLogger(RegistryController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return numPass;
+    }
+
+    private void supportLoadLecturerHistory(HttpServletRequest request,
+            HttpServletResponse response) {
+        JSONArray jsons = getLecturerVirtualData();
+        BOUtils.writeResponse(jsons.toString(), request, response);
+    }
+    
+    private JSONArray getLecturerVirtualData() {
+        JSONArray jsons = new JSONArray();
+        
+        Random r = new Random();
+        for (int i = 0; i < 5; i++) {
+            JSONObject json = new JSONObject();
+            int numberStudentPass = r.nextInt(100) + 50;
+            int numStudentReg = 150;
+            float pass = (100*numberStudentPass)/numStudentReg;
+        
+            json.put("year", 2010 + i);
+            json.put("subjectName", "Tên môn học " + i);
+            json.put("passInPercent", pass);
+
+            jsons.add(json);
+        }
+        return jsons;
     }
 }
