@@ -223,6 +223,13 @@ table.general-table td{
     color: #0000ff;
     background: none !important;
 }
+.atag1 {
+    cursor: pointer;
+    color: #0000ff;
+}
+.atag1:hover{
+    text-decoration: none;
+}
 a img {
     vertical-align: bottom;
 }
@@ -549,7 +556,22 @@ tr:hover .pop-up {
     padding: 3px 5px;
     width: 90px;
 }
-
+.button-3 {
+    width: 110px;
+    background: #7a5 !important;
+    border-radius: 6px;
+    text-align: center;
+    padding: 7px;
+    margin: auto;
+    font-weight: bold;
+    z-index: 1001;
+}
+.button-3:hover {
+    background: gray !important;
+}
+.option-selected{
+    background: gray !important;
+}
 #search-area {
     float: left;
 }
@@ -745,4 +767,44 @@ input[type="file"] {
 #simplegallery1 .gallerydesctext{ /*CSS for description DIV of Example 1 (if defined)*/
     text-align: left;
     padding: 2px 5px;
+}
+.hide{
+    display: none;
+}
+#warning-window {
+    background: none repeat scroll 0 0 #DDDDFF;
+    color: red;
+    font-weight: bold;
+    height: 36px;
+    left: 40%;
+    top: 45%;
+    opacity: 0.85;
+    position: fixed;
+    text-align: center;
+    width: 300px;
+    z-index: 100;
+    text-decoration: blink;
+}
+#popup-reg-support {
+    background: none repeat scroll 0 0 #DDDDFF;
+    left: 30%;
+    top: 20%;
+    min-height: 72%;
+    /*opacity: 0.85;*/
+    width: 718px;
+    position: fixed;
+    z-index: 100;
+}
+#tbl-support-control{
+    bottom: 8px;
+    position: absolute;
+    right: 5px;
+}
+.support-data ul li {
+    margin-left: 50px;
+    font-weight: bold;
+}
+.support-chart{
+    position: absolute;
+    bottom: 80px;
 }
