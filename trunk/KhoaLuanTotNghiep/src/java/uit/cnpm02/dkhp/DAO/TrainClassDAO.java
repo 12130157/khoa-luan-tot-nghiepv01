@@ -6,7 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import uit.cnpm02.dkhp.access.advancedJDBC.AdvancedAbstractJdbcDAO;
+import uit.cnpm02.dkhp.model.Rule;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.model.TrainClassID;
 import uit.cnpm02.dkhp.service.TrainClassStatus;
@@ -583,4 +586,50 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
             trainClass.get(i).setNumTC(subjectDao.findById(trainClass.get(i).getSubjectCode()).getnumTC());
         }
     }
+    /**
+     * 
+     * @param classCode: ClassID
+     * @param semester: semester when class is opened
+     * @param year: year when class is opened
+     * @param type: type is Pass or Fail
+     * @return  number of registry in class have result is pass/fail
+     */
+    public int getNumberOfRegByClassAndType(String classCode, int semester, String year, String type){
+        int result = 0;
+        float markPass=0;
+        try {
+            List<Rule> rule = DAOFactory.getRuleDao().findAll();
+            try{
+                 markPass = rule.get(0).getValue();
+            }catch(Exception e){
+                markPass=5;
+            }
+            Connection con = null;
+            PreparedStatement statement = null;
+            ResultSet rs = null;
+            String selectQuery = "";
+            if (type.equalsIgnoreCase(Constants.PASS)) {
+                selectQuery = "Select Count(MSSV) from khoaluantotnghiep.dangkyhocphan where dangkyhocphan.MaLopHoc = ? and HocKy =? and NamHoc = ? and dangkyhocphan.Diem > ?";
+            } else if (type.equalsIgnoreCase(Constants.FAIL)) {
+                selectQuery = "Select Count(MSSV) from khoaluantotnghiep.dangkyhocphan where dangkyhocphan.MaLopHoc = ? and HocKy =? and NamHoc = ? and dangkyhocphan.Diem < ?";
+            } else {
+                return 0;
+            }
+            con = getConnection();
+            statement = con.prepareStatement(selectQuery);
+            statement.setObject(1, classCode);
+            statement.setObject(2, semester);
+            statement.setObject(3, year);
+            statement.setObject(4, markPass);
+            rs = statement.executeQuery();
+            while (rs.next()) {
+                result++;
+            }
+            return result;
+        } catch (Exception ex) {
+            Logger.getLogger(TrainClassDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return 0;
+        }
+    }
+            
 }
