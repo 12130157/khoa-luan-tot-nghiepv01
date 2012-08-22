@@ -8,21 +8,36 @@ function bindSupportEvent(subjectId, lecturerId) {
     var loadListPreSubject = false;
     var loadSubjectHistory = false;
     var loadLecturerHistory = false;
+    var lastDisplay = $('#lst-student-reg');
     // Bind event
-   $('#hide-support').bind('click', function(){
+   $('#hide-support').live('click', function(){
+       $('#tbl-support-control span').removeClass('option-selected');
+       $('#lst-reg-student span').addClass('option-selected');
+       $('.support').hide();
+       $('#lst-student-reg').show();
+       lastDisplay = $('#lst-student-reg');
        hideMe('popup-reg-support');
    });
    $('#lst-reg-student').live('click', function() {
-       $('#popup-reg-support .support').fadeOut('fast');
+       //$('#popup-reg-support .support').fadeOut('fast');
+       if (lastDisplay != null)
+           $(lastDisplay).fadeOut('fast');
        $('#lst-student-reg').fadeIn('slow');
+       lastDisplay = $('#lst-student-reg');
+       return;
    });
    $('#lst-pre-subject').live('click', function() {
        if (!loadListPreSubject) {
            doLoadListPreSubject(subjectId);
            loadListPreSubject = true;
        }
-       $('#popup-reg-support .support').fadeOut('fast');
+       
+       //$('#popup-reg-support .support').fadeOut('fast');
+       if (lastDisplay != null)
+           $(lastDisplay).fadeOut('fast');
        $('#lst-pre-subject').fadeIn('slow');
+       lastDisplay = $('#lst-pre-subject');
+       return;
    });
    $('#subject-history').live('click', function() {
        //test();
@@ -30,27 +45,37 @@ function bindSupportEvent(subjectId, lecturerId) {
            doLoadSubjectHistory(subjectId);
            loadSubjectHistory = true;
        }
-       $('#popup-reg-support .support').fadeOut('fast');
+       //$('#popup-reg-support .support').fadeOut('fast');
+       if (lastDisplay != null)
+           $(lastDisplay).fadeOut('fast');
        $('#chart-subject').fadeIn('slow');
+       lastDisplay = $('#chart-subject');
+       return;
    });
    $('#subject-lecturer-history').live('click', function() {
        if (!loadLecturerHistory) {
            doLoadLecturerHistory(lecturerId);
            loadLecturerHistory = true;
        }
-       $('#popup-reg-support .support').fadeOut('fast');
+       //$('#popup-reg-support .support').fadeOut('fast');
+       if (lastDisplay != null)
+           $(lastDisplay).fadeOut('fast');
        $('#chart-lecturer-subject').fadeIn('slow');
+       lastDisplay = $('#chart-lecturer-subject');
+       return;
    });
 
    $('#tbl-support-control .atag1').live('click', function() {
        $('#tbl-support-control .atag1').removeClass('option-selected');
-       $(this).addClass('option-selected');
+       if ($(this).attr('id') != 'hide-support')
+           $(this).addClass('option-selected');
+       return;
    });
 }
 
 function doLoadListPreSubject(subjectId) {
    var json = getJSON_SYNC(JSON_CALLBACK_URL, {
-        action : "doLoadPreSubject",
+        action : "doLoadListPreSubject",
         data : subjectId
    });
    
@@ -112,6 +137,14 @@ function drawLecturerChart(json) {
     drawChart("lecturer_chart", data, chartLabels, toolTips);
 }
 function drawChart(canvasId, data, chartLabels, toolTips) {
+    // Clear canvas
+    /*var c = document.getElementById(canvasId);
+    var ctx = c.getContext("2d");
+    ctx.beginPath();
+    ctx.rect(0, 0, c.width, c.height);
+    ctx.fillStyle = '#ddf';
+    ctx.fill();
+    */
     // Create the Line chart object. The arguments are the canvas ID and the data array.
     var line = new RGraph.Line(canvasId, data);
 
@@ -131,8 +164,10 @@ function drawChart(canvasId, data, chartLabels, toolTips) {
     line.Set('chart.gutter.bottom', 50);
     line.Set('chart.gutter.left', 50);
     line.Set('chart.labels', chartLabels);
-    
+    line.Set('chart.axesontop', true);
+    //
     // Now call the .Draw() method to draw the chart.
+    //RGraph.Redraw();
     line.Draw();
 }
 
