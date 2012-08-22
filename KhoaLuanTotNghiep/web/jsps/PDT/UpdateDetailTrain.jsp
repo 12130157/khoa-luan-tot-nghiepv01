@@ -77,9 +77,9 @@
                         <div id="lecturerSub_Show">
                             <div id="button">
                                 <div id="AddRemove">
-                               <br><br><br><br>
+                               <br /><br /><br />
                                <input type="button" value="    >>    " onclick="AddSubjectToLecSubList()"/>
-                               <br><br><br>
+                               <br /><br /><br />
                                <input type="button" value="    <<    " onclick="RemoveSubjectToLecSubList()"/>
                                </div>
                             </div>
@@ -94,17 +94,17 @@
                         </div>
                     </div>
                 </div>
-            <br><br>
-            </div><!--End Contents-->
-            <br><br><br><br><br><br><br><br><br><br><br><br><br><br>            
-            <br><br><br><br><br><br>
-            <div id="message">
-            </div>
+           <div class="clear"></div>
+            <br />
             <div class="button-1">
-                    <span class="atag" onclick="updateDetailTrain()" ><img src="../../imgs/check.png"/>Cập nhật</span>
-                    <input type="hidden" value="<%=lecturer.getId()%>" id="lecCode" />
+                <span class="atag" onclick="updateDetailTrain()" ><img src="../../imgs/check.png"/>Cập nhật</span>
+                <input type="hidden" value="<%=lecturer.getId()%>" id="lecCode" />
             </div>
-            
+            <br />
+            <div id="message" class="msg-response">
+            </div>
+
+            </div><!--End Contents-->
             <br><br>
             <!--Footer-->
             <div id="footer">
@@ -113,7 +113,7 @@
         </div>
         <!--End Wrapper-->
         <script src="../../javascripts/AjaxUtil.js"> </script>
-        <script src="../../javascripts/jquery-1.7.1.js"></script>
+        <%--<script src="../../javascripts/jquery-1.7.1.js"></script>--%>
         <script  type = "text/javascript" >
             var http = createRequestObject();
              var subjectCodeAdd="";
@@ -166,8 +166,10 @@
         }
         function handleResponseUpdateComplete() {
             if(http.readyState == 4 && http.status == 200){
-                var detail=document.getElementById("message");
-                detail.innerHTML=http.responseText;
+                $('#message').show('slow');
+                var detail = document.getElementById("message");
+                detail.innerHTML = http.responseText;
+                setTimeOut("message", AjaxConstants.SHORT_DELAY);
             }
         }
         </script>
