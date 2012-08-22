@@ -14,6 +14,8 @@ public class Constants {
     public static int ACCOUNT_TYPE_PDT = 1;
     public static int ACCOUNT_TYPE_STUDENT = 3;
     public static String DATETIME_PARTERM_DEFAULT = "yyyy-MM-dd";
+    public static String PASS = "Pass";
+    public static String FAIL = "Fail";
     /**News's type**/
     public static int NEWS_TYPE_READ = 0;
     public static int NEWS_TYPE_UNREAD = 1;
