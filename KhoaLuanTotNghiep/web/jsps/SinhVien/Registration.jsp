@@ -40,9 +40,14 @@
     <head>
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="../../javascripts/chart/RGraph.common.core.js"> </script>
+        <script src="../../javascripts/chart/RGraph.common.dynamic.js"> </script>
+        <script src="../../javascripts/chart/RGraph.common.effects.js"> </script>
+        <script src="../../javascripts/chart/RGraph.common.key.js"> </script>
+        <script src="../../javascripts/chart/RGraph.common.tooltips.js"> </script>
+        <script src="../../javascripts/chart/RGraph.line.js"> </script>
         <title>Đăng ký môn học</title>
         <style media="all" type="text/css">
-
             #formstudent{
                 margin-left: 20px;
                 margin-top: 10px;
@@ -70,33 +75,7 @@
             #formdetail{
                 width: 99%;
             }
-            #warning-window {
-                background: none repeat scroll 0 0 #DDDDFF;
-                color: red;
-                font-weight: bold;
-                height: 36px;
-                left: 40%;
-                top: 45%;
-                opacity: 0.85;
-                position: fixed;
-                text-align: center;
-                width: 300px;
-                z-index: 100;
-                text-decoration: blink;
-            }
-            #popup-lst-student {
-                background: none repeat scroll 0 0 #DDDDFF;
-                left: 30%;
-                top: 20%;
-                min-height: 72%;
-                opacity: 0.85;
-                width: 718px;
-                position: fixed;
-                z-index: 100;
-            }
-            }
          </style>
-        
     </head>
     <body>
         <!--Div Wrapper-->
@@ -130,9 +109,53 @@
                <hr/><hr/>
                <div class="clear"></div>
                  <%-- A popup show list of student already registered on a class --%>
-                 <div id="popup-lst-student" style="border: solid 1px #ff0; border-radius: 5px; display: none;" onClick="hideMe('popup-lst-student');">
-                     <img src = '../../imgs/icon/loading.gif' />
-                 </div>
+                 <div id="popup-reg-support" style="border: solid 2px #666; border-radius: 5px; display: none;">
+                     <%--onClick="hideMe('popup-reg-support');"--%>
+                     <%-- List student registered --%>
+                     <div id="lst-student-reg" class="support">
+                        <img src = '../../imgs/icon/loading.gif' />
+                    </div>
+                     <div class="clear"></div>
+                     <%-- List pre subject of selected subject --%>
+                     <div id="lst-pre-subject" class="support hide">
+                         <div id="popup-title">DS Môn học tiên quyết</div> <br />
+                         <div class="support-data">
+                             <ul>
+                             </ul>
+                         </div>
+                    </div>
+                     <div class="clear"></div>
+                     <%-- The chart report the subject's history --%>
+                     <div id="chart-subject" class="support hide">
+                         <div id="popup-title">Lịch sử môn học</div> <br />
+                        <canvas id="sub_history_chart" class="support-chart" width="700" height="280">
+                            Your browser does not support the HTML5 canvas tag.
+                        </canvas>
+                     </div>
+                     <div class="clear"></div>
+                     <%-- The chart report the lecturer & subject 's history --%>
+                     <div id="chart-lecturer-subject" class="support hide">
+                         <div id="popup-title">Một vài thống kê theo GV</div> <br />
+                         <canvas id="lecturer_chart" class="support-chart" width="700" height="280">
+                            Your browser does not support the HTML5 canvas tag.
+                        </canvas>
+
+                     </div>
+                     <div class="clear"></div>
+                     <%-- Control table --%>
+                     <div id="tbl-support-control">
+                         <table>
+                             <tr>
+                                 <td><span id="lst-reg-student" class="atag1 button-3 option-selected">DS SV đã ĐK</span></td>
+                                 <td><span id="lst-pre-subject" class="atag1 button-3">Môn học TQ</span></td>
+                                 <td><span id="subject-history" class="atag1 button-3">Lịch sử môn học</span></td>
+                                 <td><span  id="subject-lecturer-history" class="atag1 button-3">Thống kể theo GV</span></td>
+                                 <td><span  id="hide-support" class="atag1 button-3">Ẩn</span></td>
+                             </tr>
+                         </table>
+                     </div>
+                </div>
+                 <%-- Main form --%>
                <form id="formdetail" name="formdetail" action="../../RegistryController?action=registry" method="post">
                     <div id="reg-info" style="float: left; font-size: 12px; font-weight: bold; font-style: italic;">
                         <p>(*) Sinh viên môn học muốn đk và click nút Đăng Ký <br /></p>
@@ -177,7 +200,7 @@
                          <%-- Ma lop --%>
                          <%--<td><a href="../../RegistryController?action=detail&classCode=<%=tc.getId().getClassCode()%>&semester=<%=tc.getId().getSemester()%>&year=<%=tc.getId().getYear()%>"><%=tc.getId().getClassCode()%></a></td>--%>
                          <td>
-                                <span class="atag" onclick="getListStudentReged('<%=tc.getId().getClassCode()%>',<%=tc.getId().getSemester()%>,'<%=tc.getId().getYear()%>')"><%=tc.getId().getClassCode()%></span>
+                                <span class="atag" onclick="getListStudentReged('<%=tc.getSubjectCode() %>', '<%=tc.getLecturerCode() %>', '<%=tc.getId().getClassCode()%>',<%=tc.getId().getSemester()%>,'<%=tc.getId().getYear()%>')"><%=tc.getId().getClassCode()%></span>
                          </td>
                          <td><%=tc.getSubjectName()%></td>
                          <td><%=tc.getNumTC()%></td>
@@ -303,6 +326,7 @@
         <!--End Wrapper-->
     
         <script src="../../javascripts/AjaxUtil.js"> </script>
+        <script src="../../javascripts/Registration.js"> </script>
         <%--<script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>--%>
         <script  type = "text/javascript" >
             //var http = createRequestObject();
@@ -310,6 +334,11 @@
             $("#btn-chkbox_external_trainclass").click(function () {
                 $('#ext-detail').slideToggle(50);
             });
+            
+            window.onload = function() {
+               // The data for the Line chart. Multiple lines are specified as seperate arrays.
+                
+            }
             
             var waringPopupDisplayed = false;
             function validateSelectTrainClass(chb, row) {
@@ -372,8 +401,9 @@
                 return total;
             }
             
-            function getListStudentReged(trainclassID, semeter, year) {
-                $('#popup-lst-student').fadeIn('slow', function() {
+            function getListStudentReged(subId, lecturerId, trainclassID, semeter, year) {
+                bindSupportEvent(subId, lecturerId);
+                $('#popup-reg-support').fadeIn('slow', function() {
                 // Animation complete
                     var controller = '../../RegistryController?action=get-reged-students' 
                                 + '&trainclassid=' + trainclassID
@@ -391,7 +421,7 @@
             
             function getListStudentRegedHandler() {
                 if(http.readyState == 4 && http.status == 200){
-                     var detail = document.getElementById("popup-lst-student");
+                     var detail = document.getElementById("lst-student-reg");
                      detail.innerHTML = http.responseText;
                 }  
             }
