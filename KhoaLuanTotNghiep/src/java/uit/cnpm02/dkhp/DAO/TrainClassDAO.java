@@ -594,19 +594,20 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
      * @param type: type is Pass or Fail
      * @return  number of registry in class have result is pass/fail
      */
-    public int getNumberOfRegByClassAndType(String classCode, int semester, String year, String type){
+    public int getNumberOfRegByClassAndType(
+            String classCode, int semester, String year, String type) {
         int result = 0;
-        float markPass=0;
+        float markPass = 0;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        Connection con = null;
         try {
             List<Rule> rule = DAOFactory.getRuleDao().findAll();
-            try{
-                 markPass = rule.get(0).getValue();
-            }catch(Exception e){
-                markPass=5;
+            try {
+                markPass = rule.get(0).getValue();
+            } catch (Exception e) {
+                markPass = 5;
             }
-            Connection con = null;
-            PreparedStatement statement = null;
-            ResultSet rs = null;
             String selectQuery = "";
             if (type.equalsIgnoreCase(Constants.PASS)) {
                 selectQuery = "Select Count(MSSV) from khoaluantotnghiep.dangkyhocphan where dangkyhocphan.MaLopHoc = ? and HocKy =? and NamHoc = ? and dangkyhocphan.Diem > ?";
@@ -629,6 +630,9 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
         } catch (Exception ex) {
             Logger.getLogger(TrainClassDAO.class.getName()).log(Level.SEVERE, null, ex);
             return 0;
+        } finally {
+            close(rs, statement);
+            close(con);
         }
     }
             
