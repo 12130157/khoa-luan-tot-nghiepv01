@@ -6,16 +6,15 @@ package uit.cnpm02.dkhp.utilities;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 /**
  *
@@ -53,6 +52,9 @@ public class BOUtils {
 
                 currentSemeter = Integer.parseInt(config.get(CURRENT_SEMETER).toString());
                 currentYear = config.get(CURRENT_YEAR).toString();
+                
+                // All other
+                System.setProperties(config);
             } catch (IOException ex) {
                 Logger.getLogger(BOUtils.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -60,6 +62,19 @@ public class BOUtils {
             doLoadConfig = true;
         }
         
+    }
+    
+    public static boolean getBooleanValue(String key, boolean defauleValue) {
+        try {
+            String value = System.getProperty(key);
+            return Boolean.parseBoolean(value);
+        } catch (Exception ex) {
+            return defauleValue;
+        }
+    }
+    
+    public static boolean getBooleanValue(String key) {
+        return getBooleanValue(key, false);
     }
     
     public static void reLoadConfig() {
@@ -87,6 +102,26 @@ public class BOUtils {
     public static String getCurrentYear(String defaultValues) {
         loadConfig();
         return currentYear.isEmpty() ? defaultValues : currentYear;
+    }
+    
+    public static void writeResponse(String jsonData, ServletRequest req, ServletResponse res) {
+
+        PrintWriter printer;
+        try {
+            printer = res.getWriter();
+            res.setContentType("application/x-javascript; charset=utf-8");
+            String callback = req.getParameter("jsoncallback");
+            if (callback != null) {
+                printer.write(callback + "(");
+            }
+            printer.write(jsonData);
+            if (callback != null) {
+                printer.write(")");
+            }
+            printer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
 }
