@@ -984,7 +984,7 @@ public class RegistryController extends HttpServlet {
         } catch (Exception ex) {
             Logger.getLogger(RegistryController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        /*if (trainClasses != null && !trainClasses.isEmpty()) {
+        if (trainClasses != null && !trainClasses.isEmpty()) {
             for(TrainClass tc : trainClasses) {
                 JSONObject json = new JSONObject();
                 //
@@ -1009,8 +1009,8 @@ public class RegistryController extends HttpServlet {
                 
                 jsons.add(json);
             }
-        }*/
-        jsons = getSubjectVirtualData();
+        }
+        //jsons = getSubjectVirtualData();
         BOUtils.writeResponse(jsons.toString(), request, response);
     }
     
