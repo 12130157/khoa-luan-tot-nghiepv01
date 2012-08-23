@@ -44,9 +44,14 @@ public class SessionManager {
             if (!sessionsMapper.containsKey(session.getId())) {
                 sessionsMapper.put(session.getId(), session);
             }
-            for (String key : sessionsMapper.keySet()) {
-                HttpSession s = sessionsMapper.get(key);
-                s.setAttribute("user-online", sessionsMapper.size());
+            try {
+                for (String key : sessionsMapper.keySet()) {
+                    HttpSession s = sessionsMapper.get(key);
+                    if ((System.currentTimeMillis() - s.getCreationTime()) < s.getMaxInactiveInterval())
+                        s.setAttribute("user-online", sessionsMapper.size());
+                }
+            } catch(Exception ex) {
+                //
             }
         }
     }
