@@ -1073,9 +1073,11 @@ public class RegistryController extends HttpServlet {
         for (int i = 0; i < trainClassList.size(); i++) {
             JSONObject json = new JSONObject();
             int numberStudentPass = tcDao.getNumberOfRegByClassAndType(trainClassList.get(i).getId().getClassCode(), trainClassList.get(i).getId().getSemester(), trainClassList.get(i).getId().getYear(), Constants.PASS);
+            float pass= 0.0F;
+            if(numberStudentPass!=0){
             DecimalFormat format = new DecimalFormat("#.##");
-            float pass=  (float)100*numberStudentPass/trainClassList.get(i).getNumOfStudentReg();
-                       
+            pass=  (float)100*numberStudentPass/trainClassList.get(i).getNumOfStudentReg();
+            }
             json.put("subjectName", trainClassList.get(i).getSubjectName());
             json.put("passInPercent", pass);
             if(trainClassList.get(i).getStatus()== TrainClassStatus.CLOSE){
