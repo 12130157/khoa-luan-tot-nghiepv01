@@ -15,6 +15,8 @@ public interface ITrainClassService {
     
     List<TrainClass> SearchCloseClassByColumName(String columnName, String values);
     
+    List<TrainClass> getClassListByLecturerAndYear(String lecturerID, String year);
+    
     List<TrainClass> getAllClassOpenByYearAndSemester(String year, int semester);
     
     List<TrainClass> getAllClassCloseByYearAndSemester(String year, int semester);

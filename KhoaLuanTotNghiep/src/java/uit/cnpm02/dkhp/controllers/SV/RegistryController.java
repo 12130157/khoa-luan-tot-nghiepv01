@@ -2,6 +2,7 @@ package uit.cnpm02.dkhp.controllers.SV;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,7 +45,9 @@ import uit.cnpm02.dkhp.model.TrainClassID;
 import uit.cnpm02.dkhp.model.type.StudentStatus;
 import uit.cnpm02.dkhp.model.type.TaskStatus;
 import uit.cnpm02.dkhp.model.type.TaskType;
+import uit.cnpm02.dkhp.service.ITrainClassService;
 import uit.cnpm02.dkhp.service.TrainClassStatus;
+import uit.cnpm02.dkhp.service.impl.TrainClassServiceImpl;
 import uit.cnpm02.dkhp.utilities.BOUtils;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.ExecuteResult;
@@ -67,6 +70,7 @@ public class RegistryController extends HttpServlet {
     private TrainClassDAO tcDao = DAOFactory.getTrainClassDAO();
     private LecturerDAO lecturerDao = DAOFactory.getLecturerDao();
     private SubjectDAO subjectDao = DAOFactory.getSubjectDao();
+    private ITrainClassService trainClassService = new TrainClassServiceImpl();
     // DAO initial --
     /** 
      * 
@@ -1061,16 +1065,24 @@ public class RegistryController extends HttpServlet {
     
     private JSONArray getLecturerData(String lecturerID, String year) {
         JSONArray jsons = new JSONArray();
-        
-        Random r = new Random();
-        for (int i = 0; i < 5; i++) {
+        List<TrainClass> trainClassList = trainClassService.getClassListByLecturerAndYear(lecturerID, year);
+        if(trainClassList != null && !trainClassList.isEmpty()){
+        for (int i = 0; i < trainClassList.size(); i++) {
             JSONObject json = new JSONObject();
-            float pass = 0.0f;
+            int numberStudentPass = tcDao.getNumberOfRegByClassAndType(trainClassList.get(i).getId().getClassCode(), trainClassList.get(i).getId().getSemester(), trainClassList.get(i).getId().getYear(), Constants.PASS);
+            DecimalFormat format = new DecimalFormat("#.##");
+            float pass=  (float)numberStudentPass/trainClassList.get(i).getNumOfStudentReg();
+            String passStr= format.format(pass);
             
-            json.put("subjectName", "Tên môn học " + i);
-            json.put("passInPercent", pass);
-
+            json.put("subjectName", trainClassList.get(i).getSubjectName());
+            json.put("passInPercent", passStr);
+            if(trainClassList.get(i).getStatus()== TrainClassStatus.CLOSE){
+            json.put("closed", true);
+            }else{
+                json.put("closed", false);
+            }
             jsons.add(json);
+            }
         }
         return jsons;
     }

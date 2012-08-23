@@ -641,4 +641,57 @@ public class TrainClassServiceImpl implements ITrainClassService {
         });
     }
 
+    @Override
+    public List<TrainClass> getClassListByLecturerAndYear(String lecturerID, String year) {
+        List<TrainClass> results = new ArrayList<TrainClass>(10);
+        try {
+           try {
+                List<String> columnName = new ArrayList<String>(10);
+                List<Object> values = new ArrayList<Object>(10);
+
+                if ((lecturerID != null)
+                        && !lecturerID.isEmpty()) {
+                    columnName.add("MaGV");
+                    values.add(lecturerID);
+                }
+                if ((year != null)
+                        && !year.isEmpty()) {
+                    columnName.add("NamHoc");
+                    values.add(year);
+                }
+                columnName.add(classStatus);
+                values.add(TrainClassStatus.OPEN.getValue());
+                String[] strColumnNames = (String[]) columnName.toArray(
+                        new String[columnName.size()]);
+
+                if ((strColumnNames == null) || (strColumnNames.length <= 0)) {
+                    results = getAllClassOpen();
+                } else {
+                    results = classDAO.findByColumNames(
+                            strColumnNames, values.toArray());
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(
+                        ReporterImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            // Update External Information
+            if ((results != null) && !results.isEmpty()) {
+                try {
+                    for (TrainClass t : results) {
+                        String subName = subjectDAO.findById(t.getSubjectCode()).getSubjectName();
+                        String lecturerName = lectureDAO.findById(t.getLecturerCode()).getFullName();
+
+                        t.setSubjectName(subName);
+                        t.setLectturerName(lecturerName);
+                    }
+                } catch (Exception ex) {
+                    Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(TrainClassServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return results;
+    }
+
 }
