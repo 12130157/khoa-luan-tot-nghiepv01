@@ -139,7 +139,19 @@
                          <canvas id="lecturer_chart" class="support-chart" width="700" height="280">
                             Your browser does not support the HTML5 canvas tag.
                         </canvas>
-
+                         <%-- Select year --%>
+                         <div style="position: absolute; right: 52px; bottom: 63px;">
+                             <%
+                             int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+                             %>
+                             <select id="select-year" style="width: 120px;">
+                                 <%for (int i = 0; i < 5; i++) {
+                                     String yearStr = (currentYear-i-1) +"-" + (currentYear-i);
+                                     %>
+                                 <option value="<%= yearStr %>"><%= yearStr %></option> 
+                                 <%}%>
+                             </select>
+                         </div>
                      </div>
                      <div class="clear"></div>
                      <%-- Control table --%>
