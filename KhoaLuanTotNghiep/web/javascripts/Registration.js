@@ -71,6 +71,9 @@ function bindSupportEvent(subjectId, lecturerId) {
            $(this).addClass('option-selected');
        return;
    });
+   $('#select-year').live('change', function() {
+       doLoadLecturerHistory(lecturerId);
+   })
 }
 
 function doLoadListPreSubject(subjectId) {
@@ -102,8 +105,14 @@ function doLoadSubjectHistory(subjectId) {
 }
 
 function doLoadLecturerHistory(lecturerId) {
+    // get selected year
+    var year = $('#select-year').val();
+    console.log('Year selected: ' +year);
+    
+    // search cac mon do GV day nam gan nhat de ve bieu do
     var json = getJSON_SYNC(JSON_CALLBACK_URL, {
         action : "doLoadLecturerHistory",
+        year : year,
         data : lecturerId
    });
    if (json != null) {
