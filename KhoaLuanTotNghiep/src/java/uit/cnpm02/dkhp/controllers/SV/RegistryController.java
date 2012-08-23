@@ -992,7 +992,16 @@ public class RegistryController extends HttpServlet {
                 //
                 String lecturer = "";
                 float pass = 0f; // Dua vao bang dang ky hoc phan de dem sl dau
-                int numberStudentPass = countNumberPassed(tc);
+                
+                int numberStudentPass = 0;
+                try {
+                    numberStudentPass = tcDao.getNumberOfRegByClassAndType(
+                        tc.getId().getClassCode(),
+                        tc.getId().getSemester(),
+                        tc.getId().getYear(), Constants.PASS); //countNumberPassed(tc);
+                }catch(Exception ex) {
+                    
+                }
                 try {
                     lecturer = lecturerDao.findById(tc.getLecturerCode()).getFullName();
                 } catch (Exception ex) {
