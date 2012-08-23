@@ -610,9 +610,9 @@ public class TrainClassDAO extends AdvancedAbstractJdbcDAO<TrainClass, TrainClas
             }
             String selectQuery = "";
             if (type.equalsIgnoreCase(Constants.PASS)) {
-                selectQuery = "Select Count(MSSV) from khoaluantotnghiep.dangkyhocphan where dangkyhocphan.MaLopHoc = ? and HocKy =? and NamHoc = ? and dangkyhocphan.Diem > ?";
+                selectQuery = "Select * from khoaluantotnghiep.dangkyhocphan where dangkyhocphan.MaLopHoc = ? and HocKy =? and NamHoc = ? and dangkyhocphan.Diem > ?";
             } else if (type.equalsIgnoreCase(Constants.FAIL)) {
-                selectQuery = "Select Count(MSSV) from khoaluantotnghiep.dangkyhocphan where dangkyhocphan.MaLopHoc = ? and HocKy =? and NamHoc = ? and dangkyhocphan.Diem < ?";
+                selectQuery = "Select * from khoaluantotnghiep.dangkyhocphan where dangkyhocphan.MaLopHoc = ? and HocKy =? and NamHoc = ? and dangkyhocphan.Diem < ?";
             } else {
                 return 0;
             }
