@@ -1059,7 +1059,10 @@ public class RegistryController extends HttpServlet {
 
     private void supportLoadLecturerHistory(HttpServletRequest request,
             HttpServletResponse response) {
-        JSONArray jsons = getLecturerVirtualData();
+        String lecturerId = request.getParameter("data");
+        String year = request.getParameter("year");
+        //JSONArray jsons = getLecturerVirtualData();
+        JSONArray jsons = getLecturerData(lecturerId, year);
         BOUtils.writeResponse(jsons.toString(), request, response);
     }
     
@@ -1071,7 +1074,7 @@ public class RegistryController extends HttpServlet {
             JSONObject json = new JSONObject();
             int numberStudentPass = tcDao.getNumberOfRegByClassAndType(trainClassList.get(i).getId().getClassCode(), trainClassList.get(i).getId().getSemester(), trainClassList.get(i).getId().getYear(), Constants.PASS);
             DecimalFormat format = new DecimalFormat("#.##");
-            float pass=  (float)numberStudentPass/trainClassList.get(i).getNumOfStudentReg();
+            float pass=  (float)100*numberStudentPass/trainClassList.get(i).getNumOfStudentReg();
                        
             json.put("subjectName", trainClassList.get(i).getSubjectName());
             json.put("passInPercent", pass);
