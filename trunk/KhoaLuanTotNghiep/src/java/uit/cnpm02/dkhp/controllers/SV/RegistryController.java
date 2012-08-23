@@ -1050,14 +1050,6 @@ public class RegistryController extends HttpServlet {
     private int countNumberPassed(TrainClass tc) {
         Random r = new Random();
         int numPass = r.nextInt(100);
-        //TODO:
-        try {
-            //numPass = regDao.findByColumNames(
-            //        new String[] {""},
-            //        new Object[]{});
-        } catch (Exception ex) {
-            Logger.getLogger(RegistryController.class.getName()).log(Level.SEVERE, null, ex);
-        }
         return numPass;
     }
 
@@ -1067,6 +1059,21 @@ public class RegistryController extends HttpServlet {
         BOUtils.writeResponse(jsons.toString(), request, response);
     }
     
+    private JSONArray getLecturerData(String lecturerID, String year) {
+        JSONArray jsons = new JSONArray();
+        
+        Random r = new Random();
+        for (int i = 0; i < 5; i++) {
+            JSONObject json = new JSONObject();
+            float pass = 0.0f;
+            
+            json.put("subjectName", "Tên môn học " + i);
+            json.put("passInPercent", pass);
+
+            jsons.add(json);
+        }
+        return jsons;
+    }
     private JSONArray getLecturerVirtualData() {
         JSONArray jsons = new JSONArray();
         
@@ -1077,7 +1084,7 @@ public class RegistryController extends HttpServlet {
             int numStudentReg = 150;
             float pass = (100*numberStudentPass)/numStudentReg;
         
-            json.put("year", 2010 + i);
+            //json.put("year", 2010 + i);
             json.put("subjectName", "Tên môn học " + i);
             json.put("passInPercent", pass);
 
