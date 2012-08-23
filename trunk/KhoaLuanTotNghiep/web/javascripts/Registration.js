@@ -151,7 +151,7 @@ function setupChart() {
     lecturerHistory.Set('chart.ymax', 100);
     lecturerHistory.Set('chart.labels.above', true);
     //lecturerHistory.Set('chart.labels.ingraph', toolTips);
-    lecturerHistory.Set('chart.title.xaxis', 'năm học');
+    lecturerHistory.Set('chart.title.xaxis', 'môn học');
     lecturerHistory.Set('chart.title.yaxis', 'tỉ lệ đậu (%)');
     lecturerHistory.Set('chart.gutter.bottom', 50);
     lecturerHistory.Set('chart.gutter.left', 50);
@@ -175,8 +175,8 @@ function drawLecturerChart(json) {
     var toolTips = [];
     for (var i = 0; i < json.length; i++) {
         data[i] = json[i].passInPercent;
-        chartLabels[i] = json[i].year;
-        toolTips[i] = json[i].subjectName;
+        chartLabels[i] = json[i].subjectName;
+        //toolTips[i] = json[i].subjectName;
     }
     clearCanvase('lecturer_chart');
     drawChart(lecturerHistory, data, chartLabels, toolTips);
