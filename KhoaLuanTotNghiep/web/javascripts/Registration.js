@@ -113,6 +113,40 @@ function doLoadLecturerHistory(lecturerId) {
    }
 }
 
+var subHistoryChart = new RGraph.Line('sub_history_chart', []);
+var lecturerHistory = new RGraph.Line('lecturer_chart', []);
+var chartSetup = false;
+function setupChart() {
+    subHistoryChart.Set('chart.background.barcolor1', 'white');
+    subHistoryChart.Set('chart.background.barcolor2', 'white');
+    subHistoryChart.Set('chart.background.grid.color', 'rgba(238,238,238,1)');
+    subHistoryChart.Set('chart.colors', ['#666']);
+    subHistoryChart.Set('chart.linewidth', 2);
+    subHistoryChart.Set('chart.filled', false);
+    subHistoryChart.Set('chart.hmargin', 10);
+    subHistoryChart.Set('chart.ymax', 100);
+    subHistoryChart.Set('chart.labels.above', true);
+    //subHistoryChart.Set('chart.labels.ingraph', toolTips);
+    subHistoryChart.Set('chart.title.xaxis', 'Học kỳ / năm học');
+    subHistoryChart.Set('chart.title.yaxis', 'tỉ lệ đậu (%)');
+    subHistoryChart.Set('chart.gutter.bottom', 50);
+    subHistoryChart.Set('chart.gutter.left', 50);
+    
+    lecturerHistory.Set('chart.background.barcolor1', 'white');
+    lecturerHistory.Set('chart.background.barcolor2', 'white');
+    lecturerHistory.Set('chart.background.grid.color', 'rgba(238,238,238,1)');
+    lecturerHistory.Set('chart.colors', ['#666']);
+    lecturerHistory.Set('chart.linewidth', 2);
+    lecturerHistory.Set('chart.filled', false);
+    lecturerHistory.Set('chart.hmargin', 10);
+    lecturerHistory.Set('chart.ymax', 100);
+    lecturerHistory.Set('chart.labels.above', true);
+    //lecturerHistory.Set('chart.labels.ingraph', toolTips);
+    lecturerHistory.Set('chart.title.xaxis', 'năm học');
+    lecturerHistory.Set('chart.title.yaxis', 'tỉ lệ đậu (%)');
+    lecturerHistory.Set('chart.gutter.bottom', 50);
+    lecturerHistory.Set('chart.gutter.left', 50);
+}
 function drawSubjectChart(json) {
     var data = [];
     var chartLabels = [];
@@ -122,7 +156,8 @@ function drawSubjectChart(json) {
         chartLabels[i] = json[i].semeter +"/"+json[i].year;
         toolTips[i] = json[i].lecturer;
     }
-    drawChart("sub_history_chart", data, chartLabels, toolTips);
+    clearCanvase('sub_history_chart');
+    drawChart(subHistoryChart, data, chartLabels, toolTips);
 }
 
 function drawLecturerChart(json) {
@@ -134,41 +169,40 @@ function drawLecturerChart(json) {
         chartLabels[i] = json[i].year;
         toolTips[i] = json[i].subjectName;
     }
-    drawChart("lecturer_chart", data, chartLabels, toolTips);
+    clearCanvase('lecturer_chart');
+    drawChart(lecturerHistory, data, chartLabels, toolTips);
 }
-function drawChart(canvasId, data, chartLabels, toolTips) {
+
+function clearCanvase(canvasId) {
     // Clear canvas
-    /*var c = document.getElementById(canvasId);
+    var c = document.getElementById(canvasId);
     var ctx = c.getContext("2d");
     ctx.beginPath();
     ctx.rect(0, 0, c.width, c.height);
     ctx.fillStyle = '#ddf';
     ctx.fill();
-    */
+}
+
+function drawChart(lineChart, data, chartLabels, toolTips) {
+    if (chartSetup == false) {
+        setupChart();
+        chartSetup = true;
+    }
     // Create the Line chart object. The arguments are the canvas ID and the data array.
-    var line = new RGraph.Line(canvasId, data);
+    //var line = new RGraph.Line(canvasId, data);
 
     // Configure the chart to appear as you wish.
-    line.Set('chart.background.barcolor1', 'white');
-    line.Set('chart.background.barcolor2', 'white');
-    line.Set('chart.background.grid.color', 'rgba(238,238,238,1)');
-    line.Set('chart.colors', ['#666']);
-    line.Set('chart.linewidth', 2);
-    line.Set('chart.filled', false);
-    line.Set('chart.hmargin', 10);
-    line.Set('chart.ymax', 100);
-    line.Set('chart.labels.above', true);
-    line.Set('chart.labels.ingraph', toolTips);
-    line.Set('chart.title.xaxis', 'Học kỳ / năm học');
-    line.Set('chart.title.yaxis', 'tỉ lệ đậu (%)');
-    line.Set('chart.gutter.bottom', 50);
-    line.Set('chart.gutter.left', 50);
-    line.Set('chart.labels', chartLabels);
-    line.Set('chart.axesontop', true);
+    
+    lineChart.properties['chart.labels'] = chartLabels;
+    //lineChart.properties['chart.labels'] = chartLabels;
+    lineChart.properties['chart.labels.ingraph'] = toolTips;
+    lineChart.reSetData(data);
+    //line.Set('chart.labels', chartLabels);
+    //line.Set('chart.axesontop', true);
     //
     // Now call the .Draw() method to draw the chart.
     //RGraph.Redraw();
-    line.Draw();
+    lineChart.Draw();
 }
 
 function getJSON_SYNC(url, data) {

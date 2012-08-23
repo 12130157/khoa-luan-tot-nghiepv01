@@ -267,6 +267,19 @@
         RGraph.Register(this);
     }
 
+    RGraph.Line.prototype.reSetData = function() {
+        this.original_data = [];
+
+            for (var i=0; i<arguments.length; i++) {
+                this.original_data[i] = RGraph.array_clone(arguments[i]);
+            }
+
+            /**
+            * Store the data here as one big array
+            */
+            this.data_arr = RGraph.array_linearize(this.original_data);
+
+    }
 
     /**
     * An all encompassing accessor
