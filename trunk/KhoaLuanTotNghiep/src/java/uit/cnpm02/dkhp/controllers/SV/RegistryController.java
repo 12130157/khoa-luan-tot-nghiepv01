@@ -1072,10 +1072,9 @@ public class RegistryController extends HttpServlet {
             int numberStudentPass = tcDao.getNumberOfRegByClassAndType(trainClassList.get(i).getId().getClassCode(), trainClassList.get(i).getId().getSemester(), trainClassList.get(i).getId().getYear(), Constants.PASS);
             DecimalFormat format = new DecimalFormat("#.##");
             float pass=  (float)numberStudentPass/trainClassList.get(i).getNumOfStudentReg();
-            String passStr= format.format(pass);
-            
+                       
             json.put("subjectName", trainClassList.get(i).getSubjectName());
-            json.put("passInPercent", passStr);
+            json.put("passInPercent", pass);
             if(trainClassList.get(i).getStatus()== TrainClassStatus.CLOSE){
             json.put("closed", true);
             }else{
