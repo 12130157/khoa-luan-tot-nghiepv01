@@ -264,7 +264,7 @@
                          <td><%=i+1%></td>
                          <%-- Ma lop --%>
                          <td>
-                            <span class="atag" onclick="getListStudentReged('<%=tcTemp.getId().getClassCode()%>',<%=tcTemp.getId().getSemester()%>,'<%=tcTemp.getId().getYear()%>')"><%=tcTemp.getId().getClassCode()%></span>
+                            <span class="atag" onclick="getListStudentReged('<%=tcTemp.getSubjectCode() %>', '<%=tcTemp.getLecturerCode() %>','<%=tcTemp.getId().getClassCode()%>',<%=tcTemp.getId().getSemester()%>,'<%=tcTemp.getId().getYear()%>')"><%=tcTemp.getId().getClassCode()%></span>
                          </td>
                          <td><%=tcTemp.getSubjectName()%></td>
                          <td><%=tcTemp.getNumTC()%></td>
