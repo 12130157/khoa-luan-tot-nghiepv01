@@ -46,8 +46,9 @@
                     Mở lớp học mới
                 </div>
                 <br />
-                <form id="addclassform" method="post">
-                   <table id="table_mh">
+                
+                <form id="addclassform" method="post" style="border: 1px solid #698; border-radius: 5px; padding: 13px 14px; margin: 11px 21px 5px 8px;">
+                    <table id="table_mh">
                         <tr>
                         <td> Khoa: </td>
                         <td>
@@ -134,12 +135,11 @@
                                 <img src="../../imgs/cal.gif" style="cursor: pointer;" onclick="javascript:NewCssCal('endDate','YYMMMDD')" /> 
                             </td> 
                         </tr>
-                        </tr>
                         <tr>
                              <td></td>
                              <td>
                                  <br />
-                                <div class="button-1" style="padding: 2px !important; float: left;">
+                                <div class="button-1" style="padding: 2px !important; float: left;margin-right: 13px !important;">
                                     <span class="atag" onclick="CheckClass()" ><img src="../../imgs/check.png" />Kiểm tra</span>
                                 </div>
                                  <div class="button-1" style="padding: 2px !important; float: left;">
@@ -148,12 +148,18 @@
                              </td>
                         </tr>
                     </table>
+                    <div style="border: 1px solid #698;width: 177px;margin-right: 18px;padding: 5px 5px;font-size: 11px;background: #FFD;border-radius: 5px;margin-top: 3px;position: absolute;top: 388px;right: 109px;opacity: 0.7;">
+                        Để mở lớp học mới, vui lòng cung cấp đầy đủ thông tin về lớp học trong form 
+                        bên dưới (Khoa, mã lớp, giảng viên, ....) <br />
+                        Có thể kiểm tra trước tính hợp lệ của lớp sẽ được mở bắng cách click vào button
+                        <b>kiểm tra</b> <br />
+                    </div>
                     <br />
-                    <div id="error">
+                    <div id="error" class="msg-response">
                         
                     </div>
                              
-                    <div id="createNew-result">
+                    <div id="createNew-result" class="msg-response" style="margin-left: 10%; width: 80%;">
                         
                     </div>
 
@@ -165,7 +171,6 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    </body>
     <script src="../../javascripts/AjaxUtil.js"></script>
     <script  type = "text/javascript" >
 
@@ -238,6 +243,7 @@
  
         function handleResponseForCreateNew() {
              if(http.readyState == 4 && http.status == 200){
+                 $('#createNew-result').show('slow');
                  var detail=document.getElementById("createNew-result");
                  detail.innerHTML=http.responseText;
              }
@@ -245,6 +251,7 @@
         
          function handleResponse() {
              if(http.readyState == 4 && http.status == 200){
+                 $('#error').show('slow');
                  var detail=document.getElementById("error");
                  detail.innerHTML=http.responseText;
              }
@@ -289,5 +296,5 @@
              }
          }
     </script>
-    
+    </body>
 </html>
