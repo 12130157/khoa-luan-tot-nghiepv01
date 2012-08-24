@@ -237,7 +237,8 @@ a img {
     vertical-align: bottom;
 }
 .atag:hover {
-    text-decoration: underline;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 #sidebar {
@@ -543,6 +544,7 @@ tr:hover .pop-up {
 .button-1:hover {
     background: #FD2;
     cursor: pointer;
+    text-decoration: none;
 }
 .button-2 {
     background: #328AA4;
@@ -826,4 +828,8 @@ input[type="file"] {
 .chart-info td{
     font-size: 12px;
     font-weight: bold;
+}
+.img-info{
+    margin-left: 50px;
+    font-size: 11px;
 }
