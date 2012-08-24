@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -13,6 +14,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.LecturerDAO;
 import uit.cnpm02.dkhp.DAO.RegistrationDAO;
@@ -23,12 +26,14 @@ import uit.cnpm02.dkhp.model.Registration;
 import uit.cnpm02.dkhp.model.ReportBySemester;
 import uit.cnpm02.dkhp.model.Rule;
 import uit.cnpm02.dkhp.model.Student;
+import uit.cnpm02.dkhp.model.Subject;
 import uit.cnpm02.dkhp.model.TrainClass;
 import uit.cnpm02.dkhp.service.IReporter;
 import uit.cnpm02.dkhp.service.IStudentService;
 import uit.cnpm02.dkhp.service.TrainClassStatus;
 import uit.cnpm02.dkhp.service.impl.ReporterImpl;
 import uit.cnpm02.dkhp.service.impl.StudentServiceImpl;
+import uit.cnpm02.dkhp.utilities.BOUtils;
 import uit.cnpm02.dkhp.utilities.Constants;
 import uit.cnpm02.dkhp.utilities.Message;
 import uit.cnpm02.dkhp.utilities.filedownload.FileDownloadUtility;
@@ -162,7 +167,10 @@ public class ReportController extends HttpServlet {
             } else if (requestAction.equals("trainclass-report")) {
                 fillTrainClassReport(request, response);
                 return;
-            }//
+            } else if (requestAction.equals("doGetReportPassFailData")) {
+                //loadPassFailData(request, response);
+                loadVirtualPassFailData(request, response);
+            }
         } catch(Exception ex) {
             Logger.getLogger(ReportController.class.getName()).
                                                 log(Level.SEVERE, null, ex);
@@ -504,6 +512,144 @@ public class ReportController extends HttpServlet {
         
     }
 
+    private void loadPassFailData(HttpServletRequest request,
+            HttpServletResponse response) {
+        JSONArray jsons = new JSONArray();
+        String startYear = (String) request.getParameter("startYear");
+        String endYear = (String) request.getParameter("endYear");
+        String time = (String) request.getParameter("time");
+        int course = Integer.parseInt(time);
+        int start = Integer.parseInt(startYear);
+        int end = Integer.parseInt(endYear);
+        if (end < start) {
+            return;
+        }
+        
+        TrainClassDAO tcDao = DAOFactory.getTrainClassDAO();
+        SubjectDAO subDao = DAOFactory.getSubjectDao();
+        //JSONObject[] json = new JSONObject[5];
+        int CNPM = 0, KTMT = 1, MMT = 2, HTTT = 3, KHMT = 4;
+        /*for (int i = 0; i < 5; i++) {
+            json[i] = new JSONObject();
+        }*/
+        for (int i = 0; i <= (end-start); i++) { // for each year
+            String year = (start+i)+"-"+(start+i+1);
+            List<TrainClass> trainClass = null;
+            
+            try {
+                if (course == 0) { // all semeter
+                    trainClass = tcDao.findByColumName("NamHoc", year);
+                } else {
+                    trainClass = tcDao.findAllBySemesterAndYear(course, year);
+                }
+                if ((trainClass != null) && !trainClass.isEmpty()) {
+                    JSONObject json = new JSONObject();
+                    json.put("year", year);
+                    int pass[] = new int[5];
+                    int fail[] = new int[5];
+                    for (TrainClass tc : trainClass) { // for each subject of year
+                        String subjectId = tc.getSubjectCode();
+                        Subject sub = subDao.findById(subjectId);
+                        String facultyId = sub.getFacultyCode();
+                        
+                        int currentPass = tcDao.getNumberOfRegByClassAndType(
+                                    tc.getId().getClassCode(), tc.getId().getSemester(), year, Constants.PASS);
+                        int currentFail = tcDao.getNumberOfRegByClassAndType(
+                                    tc.getId().getClassCode(), tc.getId().getSemester(), year, Constants.FAIL);
+                        if (facultyId.equals("CNPM")) {
+                            pass[CNPM] += currentPass;
+                            fail[CNPM] += currentFail;
+                        } else if (facultyId.equals("KHMT")) {
+                            pass[KHMT] += currentPass;
+                            fail[KHMT] += currentFail;
+                        } else if (facultyId.equals("MMT")) {
+                            pass[MMT] += currentPass;
+                            fail[MMT] += currentFail;
+                        } else if (facultyId.equals("KTMT")) {
+                            pass[KTMT] += currentPass;
+                            fail[KTMT] += currentFail;
+                        } else if (facultyId.equals("HTTT")) {
+                            pass[HTTT] += currentPass;
+                            fail[HTTT] += currentFail;
+                        }
+                    }
+                    int cnpm_pass = (pass[CNPM] + fail[CNPM]) > 0 ? (100*pass[CNPM]) / (pass[CNPM] + fail[CNPM]) : 0;
+                    int mmt_pass = (pass[MMT] + fail[MMT]) > 0 ? (100*pass[MMT]) / (pass[MMT] + fail[MMT]) : 0;
+                    int ktmt_pass = (pass[KTMT] + fail[KTMT]) > 0 ? (100*pass[KTMT]) / (pass[KTMT] + fail[KTMT]) : 0;
+                    int httt_pass = (pass[HTTT] + fail[HTTT]) > 0 ? (100*pass[HTTT]) / (pass[HTTT] + fail[HTTT]) : 0;
+                    int khmt_pass = (pass[KHMT] + fail[KHMT]) > 0 ? (100*pass[KHMT]) / (pass[KHMT] + fail[KHMT]) : 0;
+                    json.put("cnpm_pass", cnpm_pass);
+                    json.put("mmt_pass", mmt_pass);
+                    json.put("ktmt_pass", ktmt_pass);
+                    json.put("httt_pass", httt_pass);
+                    json.put("khmt_pass", khmt_pass);
+                    
+                    jsons.add(json);
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(ReportController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        BOUtils.writeResponse(jsons.toString(), request, response);
+    }
+    
+    private void loadVirtualPassFailData(HttpServletRequest request,
+            HttpServletResponse response) {
+        JSONArray jsons = new JSONArray();
+        String startYear = (String) request.getParameter("startYear");
+        String endYear = (String) request.getParameter("endYear");
+        String time = (String) request.getParameter("time");
+        int course = Integer.parseInt(time);
+        int start = Integer.parseInt(startYear);
+        int end = Integer.parseInt(endYear);
+        if (end < start) {
+            return;
+        }
+        
+        int CNPM = 0, KTMT = 1, MMT = 2, HTTT = 3, KHMT = 4;
+        Random r = new Random();
+        for (int i = 0; i <= (end-start); i++) { // for each year
+            String year = (start+i)+"-"+(start+i+1);
+            JSONObject json = new JSONObject();
+            json.put("year", year);
+            int pass[] = new int[5];
+            int fail[] = new int[5];
+            
+            pass[CNPM] += r.nextInt(25);
+            fail[CNPM] += r.nextInt(25);
+
+            pass[KHMT] += r.nextInt(25);
+            fail[KHMT] += r.nextInt(25);
+
+            pass[MMT] += r.nextInt(25);
+            fail[MMT] += r.nextInt(25);
+
+            pass[KTMT] += r.nextInt(25);
+            fail[KTMT] += r.nextInt(25);
+
+            pass[HTTT] += r.nextInt(25);
+            fail[HTTT] += r.nextInt(25);
+                        
+                    
+            int cnpm_pass = (pass[CNPM] + fail[CNPM]) > 0 ? (100*pass[CNPM]) / (pass[CNPM] + fail[CNPM]) : 0;
+            int mmt_pass = (pass[MMT] + fail[MMT]) > 0 ? (100*pass[MMT]) / (pass[MMT] + fail[MMT]) : 0;
+            int ktmt_pass = (pass[KTMT] + fail[KTMT]) > 0 ? (100*pass[KTMT]) / (pass[KTMT] + fail[KTMT]) : 0;
+            int httt_pass = (pass[HTTT] + fail[HTTT]) > 0 ? (100*pass[HTTT]) / (pass[HTTT] + fail[HTTT]) : 0;
+            int khmt_pass = (pass[KHMT] + fail[KHMT]) > 0 ? (100*pass[KHMT]) / (pass[KHMT] + fail[KHMT]) : 0;
+            json.put("cnpm_pass", cnpm_pass);
+            json.put("mmt_pass", mmt_pass);
+            json.put("ktmt_pass", ktmt_pass);
+            json.put("httt_pass", httt_pass);
+            json.put("khmt_pass", khmt_pass);
+
+            jsons.add(json);
+            
+        }
+        
+        BOUtils.writeResponse(jsons.toString(), request, response);
+    }
+    
      /**
      * An enum define all supported function of serverlet
      * .
