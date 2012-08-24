@@ -135,6 +135,7 @@ function setupChart() {
     subHistoryChart.Set('chart.hmargin', 10);
     subHistoryChart.Set('chart.ymax', 100);
     subHistoryChart.Set('chart.labels.above', true);
+    subHistoryChart.Set('chart.units.post', '%');
     //subHistoryChart.Set('chart.labels.ingraph', toolTips);
     subHistoryChart.Set('chart.title.xaxis', 'Học kỳ / năm học');
     subHistoryChart.Set('chart.title.yaxis', 'tỉ lệ đậu (%)');
@@ -150,6 +151,7 @@ function setupChart() {
     lecturerHistory.Set('chart.hmargin', 10);
     lecturerHistory.Set('chart.ymax', 100);
     lecturerHistory.Set('chart.labels.above', true);
+    lecturerHistory.Set('chart.units.post', '%');
     //lecturerHistory.Set('chart.labels.ingraph', toolTips);
     lecturerHistory.Set('chart.title.xaxis', 'môn học');
     lecturerHistory.Set('chart.title.yaxis', 'tỉ lệ đậu (%)');
@@ -205,7 +207,7 @@ function drawChart(lineChart, data, chartLabels, toolTips) {
     lineChart.properties['chart.labels'] = chartLabels;
     //lineChart.properties['chart.labels'] = chartLabels;
     lineChart.properties['chart.labels.ingraph'] = toolTips;
-    lineChart.reSetData(data);
+    lineChart.reSetData(false, data);
     //line.Set('chart.labels', chartLabels);
     //line.Set('chart.axesontop', true);
     //
