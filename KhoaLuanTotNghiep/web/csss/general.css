@@ -808,3 +808,22 @@ input[type="file"] {
     position: absolute;
     bottom: 80px;
 }
+.left{
+    float: left;
+}
+.right{
+    float: right;
+}
+.chart-info {
+    background: #FDD;
+    padding: 11px 15px 11px;
+    margin: 9px 32px auto;
+    border: 3px solid #DDE;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: bold;
+}
+.chart-info td{
+    font-size: 12px;
+    font-weight: bold;
+}
