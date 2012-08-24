@@ -268,16 +268,39 @@
     }
 
     RGraph.Line.prototype.reSetData = function() {
+        /**
+        * Store the original data. Thiss also allows for giving arguments as one big array.
+        */
         this.original_data = [];
 
-            for (var i=0; i<arguments.length; i++) {
-                this.original_data[i] = RGraph.array_clone(arguments[i]);
-            }
+        for (var i=1; i<arguments.length; ++i) {
+            if (arguments[1] && typeof(arguments[1]) == 'object' && arguments[1][0] && typeof(arguments[1][0]) == 'object' && arguments[1][0].length) {
 
-            /**
-            * Store the data here as one big array
-            */
-            this.data_arr = RGraph.array_linearize(this.original_data);
+                var tmp = [];
+
+                for (var i=0; i<arguments[1].length; ++i) {
+                    tmp[i] = RGraph.array_clone(arguments[1][i]);
+                }
+
+                for (var j=0; j<tmp.length; ++j) {
+                    this.original_data[j] = RGraph.array_clone(tmp[j]);
+                }
+
+            } else {
+                this.original_data[i - 1] = RGraph.array_clone(arguments[i]);
+            }
+        }
+
+        // Check for support
+        if (!this.canvas) {
+            alert('[LINE] Fatal error: no canvas support');
+            return;
+        }
+        
+        /**
+        * Store the data here as one big array
+        */
+        this.data_arr = RGraph.array_linearize(this.original_data);
 
     }
 
