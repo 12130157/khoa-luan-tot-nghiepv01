@@ -193,7 +193,7 @@
                     </div>
                     <%-- Update personal information respond --%>
                     <div class="clear"></div> <br />
-                    <div id="update-info-respond" class="error-1" style="width: 30%;">
+                    <div id="update-info-respond" class="msg-response" style="width: 30%;">
                     </div>
                 </div>
                 <div class="range">
@@ -250,7 +250,7 @@
                     </div>
                     <%-- Update password respond --%>
                     <div class="clear"></div> <br />
-                    <div id="update-pwd-respond" class="error-1" style="width: 30%;">
+                    <div id="update-pwd-respond" class="msg-response" style="width: 30%;">
                     </div>
                 </div>
                    
@@ -308,10 +308,11 @@
 
             function updatePwdHandler() {
                 if(http.readyState == 4 && http.status == 200){
+                    $('#update-pwd-respond').show('slow');
                     var detail = document.getElementById("update-pwd-respond");
                     detail.innerHTML = http.responseText;
 
-                    $('#update-pwd-respond').fadeIn(10000).fadeOut('slow'); 
+                    //$('#update-pwd-respond').fadeIn(10000).fadeOut('slow'); 
                 }
             }
 
@@ -348,9 +349,10 @@
             function updateInforHandler() {
                 if(http.readyState == 4 && http.status == 200){
                     var detail = document.getElementById("update-info-respond");
+                    $('#update-info-respond').show('slow');
                     detail.innerHTML = http.responseText;
 
-                    $('#update-info-respond').fadeIn(10000).fadeOut('slow'); 
+                    //$('#update-info-respond').fadeIn(10000).fadeOut('slow'); 
                 }
             }
 
