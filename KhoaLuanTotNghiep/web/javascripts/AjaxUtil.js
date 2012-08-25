@@ -74,6 +74,9 @@ $(document).ready(function(){
     $('.msg-response').live('click', function() {
        $('.msg-response').hide('slow') ;
     });
+    $('.hint-box').live('click', function() {
+       $(this).hide('slow') ;
+    });
 });
 
 function formatGeneralTable() {
