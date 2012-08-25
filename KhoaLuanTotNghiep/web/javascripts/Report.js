@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-var JSON_CALLBACK_URL = 'http://localhost:8080/KhoaLuanTotNghiep/ReportController?jsoncallback=?';
+var JSON_CALLBACK_URL = 'http://' + Config.serverAddress + ':8080/KhoaLuanTotNghiep/ReportController?jsoncallback=?';
 function bindSupportEvent() {
 }
 
