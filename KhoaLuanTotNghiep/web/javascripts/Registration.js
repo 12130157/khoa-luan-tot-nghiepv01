@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-var JSON_CALLBACK_URL = 'http://localhost:8080/KhoaLuanTotNghiep/RegistryController?jsoncallback=?';
+var JSON_CALLBACK_URL = 'http://' + Config.serverAddress + ':8080/KhoaLuanTotNghiep/RegistryController?jsoncallback=?';
 function bindSupportEvent(subjectId, lecturerId) {
     //var loadListStudent = true; // This load by default
     var loadListPreSubject = false;
@@ -74,6 +74,125 @@ function bindSupportEvent(subjectId, lecturerId) {
    $('#select-year').live('change', function() {
        doLoadLecturerHistory(lecturerId);
    })
+}
+
+/**
+*   Update status (number student registrated) for each trainclass
+* This should be call every 10 s
+* {TrainClass}: tcs list trainclass need to update
+* tcs[i]: [tcId, semester, year]
+* 
+* Return: tcsStatus as an array
+* tcsStatus[i]: [tcId, semester, year, numberRegistrated]
+*/
+function updateNumberRegistrationStatus(tcs) {
+   var json = getJSON_SYNC(JSON_CALLBACK_URL, {
+        action : "doUpdateNumberRegistrated",
+        data : JSON.stringify(tcs) // an json array, share be parse at server side
+   });
+   
+   if (json != null) {
+       updateNumberRegistratedDisplay(json);
+       console.log('Data recived' + json);
+   } else {
+       console.log('No data received');
+   }
+}
+
+/**
+ * After data received from server
+ * the page should be updated
+ */
+function updateNumberRegistratedDisplay(json) {
+   var row1 = $('#detail tr:gt(0)');
+   var row2 = $('#ext-detail tr:gt(0)');
+   var rows = $.merge(row1, row2);
+   for (var i = 0; i < json.length; i++) {
+       for (var j = 0; j < rows.length; j++) {
+       //rows.each(function() {
+           var selectTc = {
+                tcId: '',
+                semester: 0,
+                year: ''
+            };
+        
+            // find data on each row
+            //selectTc.tcId = $(this).find('.tcId').val();
+            selectTc.tcId = $(rows[j]).find('.tcId').val();
+            selectTc.semester = $(rows[j]).find('.semester').val();
+            selectTc.year = $(rows[j]).find('.year').val();
+        
+            if ((json[i].tcId == selectTc.tcId)
+                    && (json[i].semester == selectTc.semester)
+                    && (json[i].year == selectTc.year)) {
+                var newValue = json[i].registrated;
+                $(rows[j]).find('.current_number_reg').html(newValue);
+                
+                // if max --> disable checkbox (do if and only if I've not registered this yes)
+                var maxNumber = $(rows[j]).find('.number_max').html();
+                if (isTCRegByMe(selectTc.tcId) == false) {
+                    if (newValue >= maxNumber) {
+                        $(rows[j]).find('input:checkbox').attr("checked", false);
+                        $(rows[j]).find('input:checkbox').attr("disabled", true);
+                    } else {
+                        $(rows[j]).find('input:checkbox').attr("disabled", false);
+                    }
+                }
+                
+                break;
+            }
+       }
+   }
+}
+
+function isTCRegByMe(tc) {
+    var myListStr = $('#my_list').val();
+    if (myListStr == null || myListStr.length==0) {
+        return false;
+    }
+    var length = myListStr.length;
+    myListStr = myListStr.substring(1, length-1);
+    var myList = myListStr.split(',');
+    if (myList != null && myList.length > 0) {
+        for (var i = 0; i < myList.length; i++) {
+            if (myList[i].trim() == tc) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+/**
+ * Retrieved current number registrated status
+ */
+function getNumberRegistrated() {
+    var jsons = new Array();
+    // Find on main table
+    //<input type="hidden" class="tcId" value="<%=tc.getId().getClassCode() %>"/>
+    //<input type="hidden" class="semester" value="<%=tc.getId().getSemester() %>"/>
+    //<input type="hidden" class="year" value="<%=tc.getId().getYear() %>"/>
+    var row1 = $('#detail tr:gt(0)');
+    var row2 = $('#ext-detail tr:gt(0)');
+    var rows = $.merge(row1, row2);
+    var count = 0;
+    rows.each(function() {
+        var tc = {
+          tcId: '',
+          semester: 0,
+          year: ''
+        };
+        
+        // find data on each row
+        tc.tcId = $(this).find('.tcId').val();
+        tc.semester = $(this).find('.semester').val();
+        tc.year = $(this).find('.year').val();
+        
+        jsons[count] = tc;
+        count++;
+    });
+    
+    return jsons;
 }
 
 function doLoadListPreSubject(subjectId) {

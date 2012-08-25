@@ -136,3 +136,7 @@ AjaxConstants = {
     SHORT_DELAY : 15,
     LONG_DELAY : 30
 };
+
+Config = {
+  serverAddress: 'localhost'
+};
