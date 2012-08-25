@@ -168,8 +168,8 @@ public class ReportController extends HttpServlet {
                 fillTrainClassReport(request, response);
                 return;
             } else if (requestAction.equals("doGetReportPassFailData")) {
-                //loadPassFailData(request, response);
-                loadVirtualPassFailData(request, response);
+                loadPassFailData(request, response);
+                //loadVirtualPassFailData(request, response);
             }
         } catch(Exception ex) {
             Logger.getLogger(ReportController.class.getName()).
