@@ -40,6 +40,7 @@
     <head>
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
         <script src="../../javascripts/chart/RGraph.common.core.js"> </script>
         <script src="../../javascripts/chart/RGraph.common.dynamic.js"> </script>
         <script src="../../javascripts/chart/RGraph.common.effects.js"> </script>
@@ -344,7 +345,6 @@
     
         <script src="../../javascripts/AjaxUtil.js"> </script>
         <script src="../../javascripts/Registration.js"> </script>
-        <%--<script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>--%>
         <script  type = "text/javascript" >
             //var http = createRequestObject();
             
