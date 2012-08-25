@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.json.simple.parser.ParseException;
 import uit.cnpm02.dkhp.model.Registration;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import uit.cnpm02.dkhp.DAO.ClassDAO;
 import uit.cnpm02.dkhp.DAO.DAOFactory;
 import uit.cnpm02.dkhp.DAO.FacultyDAO;
@@ -115,7 +117,10 @@ public class RegistryController extends HttpServlet {
                 supportLoadSubjectHistory(request, response);
             } else if (action.equalsIgnoreCase("doLoadLecturerHistory")) {
                 supportLoadLecturerHistory(request, response);
+            } else if (action.equalsIgnoreCase("doUpdateNumberRegistrated")) {
+                refressNumberRegistratedStatus(request, response);
             }
+            
             
         } finally {
             out.close();
@@ -1121,5 +1126,42 @@ public class RegistryController extends HttpServlet {
             jsons.add(json);
         }
         return jsons;
+    }
+
+    /**
+     * data attached from request:
+     * json array: json[i] : [tcId, semeter, year]
+     * @param request
+     * @param response 
+     */
+    private void refressNumberRegistratedStatus(HttpServletRequest request,
+            HttpServletResponse response) {
+        String jsonsData = request.getParameter("data");
+        JSONParser parser = new JSONParser();
+        JSONArray jsonRespone = new JSONArray();
+        try {
+            JSONArray jsonArrayData = (JSONArray) parser.parse(jsonsData);
+            for (int i = 0; i < jsonArrayData.size(); i++) {
+                JSONObject json = (JSONObject) jsonArrayData.get(i);
+                String tcId = (String) json.get("tcId");
+                String semester = (String) json.get("semester");
+                String year = (String) json.get("year");
+                
+                TrainClassID ID = new TrainClassID(tcId, year, Integer.parseInt(semester));
+                TrainClass tc;
+                try {
+                    tc = tcDao.findById(ID);
+                    if (tc != null) {
+                        json.put("registrated", tc.getNumOfStudentReg());
+                    }
+                    jsonRespone.add(json);
+                } catch (Exception ex) {
+                    Logger.getLogger(RegistryController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } catch (ParseException ex) {
+            Logger.getLogger(RegistryController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        BOUtils.writeResponse(jsonRespone.toJSONString(), request, response);
     }
 }
