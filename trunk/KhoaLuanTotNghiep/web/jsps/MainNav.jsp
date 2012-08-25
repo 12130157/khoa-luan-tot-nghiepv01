@@ -3,6 +3,7 @@
     Created on : 26-04-2011, 21:12:12
     Author     : ngloc_it
 --%>
+<%@page import="uit.cnpm02.dkhp.utilities.Constants"%>
 <%@page import="java.util.Calendar"%>
 <%@page import="java.util.List"%>
 <%@page import="uit.cnpm02.dkhp.model.TrainClass"%>
@@ -52,10 +53,10 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link href="../csss/general.css" rel="stylesheet" type="text/css" media="screen">
-        <script type="text/javascript" src="http://localhost:8080/KhoaLuanTotNghiep/javascripts/jquery-1.7.1.js"></script>
-        <link href="http://localhost:8080/KhoaLuanTotNghiep/csss/jquery-ui-1.8.22.custom.css" rel="stylesheet" type="text/css" media="screen">
+        <script type="text/javascript" src="http://<%= Constants.SERVER_ADDRESS %>:8080/KhoaLuanTotNghiep/javascripts/jquery-1.7.1.js"></script>
+        <link href="http://<%= Constants.SERVER_ADDRESS %>:8080/KhoaLuanTotNghiep/csss/jquery-ui-1.8.22.custom.css" rel="stylesheet" type="text/css" media="screen">
         <script type="text/javascript" src="../javascripts/calendar/utils.js"></script>
-        <script type="text/javascript" src="http://localhost:8080/KhoaLuanTotNghiep/javascripts/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="http://<%= Constants.SERVER_ADDRESS %>:8080/KhoaLuanTotNghiep/javascripts/jquery-ui.min.js"></script>
     </head>
     <body>
         <div id="main-navi">
