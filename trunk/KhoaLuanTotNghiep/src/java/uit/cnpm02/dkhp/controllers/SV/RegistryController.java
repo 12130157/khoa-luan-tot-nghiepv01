@@ -786,7 +786,16 @@ public class RegistryController extends HttpServlet {
             }
             
             if (studentList != null) {
-                writeOutListStudent(out, studentList);
+                String subName = "";
+                String lecturereName = "";
+                try {
+                    TrainClass tc = tcDao.findById(id);
+                    subName = subjectDao.findById(tc.getSubjectCode()).getSubjectName();
+                    lecturereName = lecturerDao.findById(tc.getLecturerCode()).getFullName();
+                } catch(Exception ex) {
+                    //
+                }
+                writeOutListStudent(trainClassId, subName, lecturereName, out, studentList);
             }
         } catch (Exception ex) {
             Logger.getLogger(RegistryController.class.getName()).log(Level.SEVERE, null, ex);
@@ -794,12 +803,17 @@ public class RegistryController extends HttpServlet {
         
     }
 
-    private int slideLimit = 50;
-    private void writeOutListStudent(PrintWriter out, List<Student> students) {
+    private int slideLimit = 20;
+    private void writeOutListStudent(String tcId, String subName, String lecturerName,
+            PrintWriter out, List<Student> students) {
         if (students == null) {
             return;
         }
-        out.println("<div id=\"popup-title\">DS SV đã đăng ký</div> <br />");
+        out.println("<div id=\"popup-title\">DS SV đã đăng ký</div>");
+        out.println("<div id=\"tc-info\">Mã lớp học: " + tcId +"<br />"
+                + "Môn học: " + subName + "<br />"
+                + "Giảng viên: " + lecturerName
+                + "</div> <br />");
         if (students.size() > slideLimit) {
             out.println("<div id=\"sidebar\">");
         }
@@ -949,7 +963,6 @@ public class RegistryController extends HttpServlet {
             HttpServletResponse response) {
         String subjectId = request.getParameter("data");
         JSONArray jsons = new JSONArray();
-        
         PreSubjectDAO preDao = DAOFactory.getPreSubDao();
         List<PreSubject> preSubs = null;
         try {
@@ -1074,9 +1087,9 @@ public class RegistryController extends HttpServlet {
             JSONObject json = new JSONObject();
             int numberStudentPass = tcDao.getNumberOfRegByClassAndType(trainClassList.get(i).getId().getClassCode(), trainClassList.get(i).getId().getSemester(), trainClassList.get(i).getId().getYear(), Constants.PASS);
             float pass= 0.0F;
-            if(numberStudentPass!=0){
-            DecimalFormat format = new DecimalFormat("#.##");
-            pass=  (float)100*numberStudentPass/trainClassList.get(i).getNumOfStudentReg();
+            if(trainClassList.get(i).getNumOfStudentReg() != 0){
+                //DecimalFormat format = new DecimalFormat("#.##");
+                pass = (float)100*numberStudentPass/trainClassList.get(i).getNumOfStudentReg();
             }
             json.put("subjectName", trainClassList.get(i).getSubjectName());
             json.put("passInPercent", pass);
