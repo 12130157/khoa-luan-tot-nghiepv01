@@ -40,7 +40,7 @@
     <head>
         <link href="../../csss/general.css" rel="stylesheet" type="text/css" media="screen">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>
+        <%--<script type="text/javascript" src="../../javascripts/jquery-1.7.1.js"></script>--%>
         <script src="../../javascripts/chart/RGraph.common.core.js"> </script>
         <script src="../../javascripts/chart/RGraph.common.dynamic.js"> </script>
         <script src="../../javascripts/chart/RGraph.common.effects.js"> </script>
@@ -118,6 +118,43 @@
                         <img src = '../../imgs/icon/loading.gif' />
                     </div>
                      <div class="clear"></div>
+                     <%-- Huong dan --%>
+                     <div id="help-desk" class="hide">
+                         <div class="first"> Hướng dẫn đăng ký học phần </div>
+                         <p>
+                             <b>Thông tin</b>
+                         Danh sách các lớp học cho phép SV đk được chia thành 2 phần
+                         - Phần 1: các lớp SV được phép đăng ký thuộc khoa SV đang theo học
+                         - Phần 2: các lớp SV được phép đăng ký, không thuộc khoa mình theo học
+                         Mặc đinh, các lớp học thuộc phần 1 được hiển thị khi SV truy cập trang
+                         đăng ký học phần, các lớp thuộc phần 2 sẽ bị ẩn đi, SV click vào link 
+                         <span class="atag">danh sách mở rộng </span> để danh sách mở rộng được
+                         hiển thị.
+                         </p>
+                         <p>
+                             <b>Qui định</b>
+                             <ul>
+                                - SV check chọn lớp học cần đăng ký.
+                                - Tổng số tín chỉ đăng ký phải nằm trong giới hạn cho phép
+                                (khi số tín chỉ được chọn vượt quá hoặc chưa đủ, hệ thống sẽ
+                                có thông báo)
+                                - Không được đăng ký 2 lớp cùng học một môn
+                                - Không được đăng ký 2 lớp học trùng giờ
+                            </ul>
+                         </p>
+                         <p>
+                             <b>Trợ giúp</b>
+                             Nhằm tạo điều kiện thuận lợi cho quá trình đăng ký, hệ thông cung cấp 
+                             một số tính năng sau:
+                             - Liên tục cập nhật thông tin về số lượng sv đã đăng ký trong
+                             từng lớp.
+                             - Nhiều thông tin liên quan đến lớp học (click vào mã lớp tương ứng để xem chi tiết):
+                                + Danh sách sinh viên đã đăng ký trong lớp
+                                + Danh sách các môn học tiên quyết của môn học
+                                + Tỉ lệ đậu/rớt của các lớp có cùng môn
+                                + Tỉ lệ đậu/rớt của các lớp cung giảng viên
+                         </p>
+                     </div>
                      <%-- List pre subject of selected subject --%>
                      <div id="lst-pre-subject" class="support hide">
                          <div id="popup-title">DS Môn học tiên quyết</div> <br />
