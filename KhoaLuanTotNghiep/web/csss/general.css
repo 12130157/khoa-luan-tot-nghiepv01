@@ -540,7 +540,7 @@ tr:hover .pop-up {
     background: #DD2;
     border-radius: 6px;
     text-align: center;
-    padding: 7px;
+    padding: 2px;
     margin: auto;
     font-weight: bold;
     z-index: 1001;
@@ -700,6 +700,8 @@ input[type="file"] {
     min-height: 30px;
     text-align: center;
     border-radius: 5px;
+    padding-top: 5px;
+    margin-top: 12px;
 }
 .msg-response:hover {
     cursor: pointer;
@@ -858,4 +860,14 @@ input[type="file"] {
 }
 .small {
     font-size: 11px;
+}
+.btn-refresh {
+    float: right;
+    font-size: 10px;
+    font-weight: bold;
+    margin-right: 8px;
+    margin-top: 12px;
+}
+.btn-refresh img{
+    vertical-align: middle;
 }
