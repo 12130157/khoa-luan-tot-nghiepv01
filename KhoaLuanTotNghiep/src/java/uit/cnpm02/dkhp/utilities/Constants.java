@@ -55,4 +55,5 @@ public class Constants {
     
     public final static String FILEUPLOAD_DIR = "upload";
     public final static String SERVER_ADDRESS = "localhost";
+    //public final static String SERVER_ADDRESS = "192.168.1.103";
 }
