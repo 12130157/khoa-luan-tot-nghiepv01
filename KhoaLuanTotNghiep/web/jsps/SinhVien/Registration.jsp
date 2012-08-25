@@ -85,6 +85,7 @@
                 <%@include file="../MainNav.jsp" %>
             </div><!--End Navigation-->
             <div id="content"><!--Main Contents-->
+                <input type="hidden" id="my_list" value="<%= registried.toString() %>"/>
                 <div id="main-title">Đăng ký học phần hoc kỳ <%=semester%> năm học <%=year%></div>
                 <div class="clear"></div>
                 <br />
@@ -153,7 +154,6 @@
                              </select>
                          </div>
                      </div>
-                     <div class="clear"></div>
                      <%-- Control table --%>
                      <div id="tbl-support-control">
                          <table>
@@ -174,20 +174,20 @@
                         <p>(*) Số TC tối thiểu - Tối đa cho phép đăng ký:<b> [<%= min_tc %> - <%= max_tc%>]</b></p>
                         <div id="tc-reged"></div>
                     </div>
-                   <%--<div id="btn-chkbox_external_trainclass" class="chkbox_external_trainclass">
-                       <input type="checkbox" class="button-1" value="Hiển thị lớp thuộc khoa khác" />
-                    </div>--%>
-                   
-                   <div class="clear"></div>
-                   <%-- Popup --%>
-                   <input type="hidden" id="min-tc" value="<%= min_tc %>"/>
-                   <input type="hidden" id="max-tc" value="<%= max_tc %>"/>
-                   <div id="warning-window" style="display: none;">
+                    <%-- Popup --%>
+                    <input type="hidden" id="min-tc" value="<%= min_tc %>"/>
+                    <input type="hidden" id="max-tc" value="<%= max_tc %>"/>
+                    <div id="warning-window" style="display: none;">
                        <%----%>
-                   </div>
-                   <div class="clear"></div>
-                   <table id="detail" name="detail" class="general-table" >
-                     <tr>
+                    </div>
+                    <div class="btn-refresh">
+                       <img src="../../imgs/icon/refresh.gif"/>
+                       <input type="hidden" id="remaining-time" value="30"/>
+                       <span id="remaining-time-display">(30 s)</span>
+                    </div>
+                    <div class="clear"></div>
+                    <table id="detail" name="detail" class="general-table" >
+                        <tr>
                          <th width="10px">STT</th>
                          <th width="70px">Mã lớp</th>
                          <th width="200px">Môn học</th>
@@ -206,13 +206,15 @@
                          TrainClass tc = trainClass.get(i);
                      %>
                      <tr id="tr_main_<%=i%>" <%=clazz%>>
-                         
+                         <input type="hidden" class="tcId" value="<%=tc.getId().getClassCode() %>"/>
+                         <input type="hidden" class="semester" value="<%=tc.getId().getSemester() %>"/>
+                         <input type="hidden" class="year" value="<%=tc.getId().getYear() %>"/>
                          <%-- STT --%>
                          <td><%=i+1%></td>
                          <%-- Ma lop --%>
                          <%--<td><a href="../../RegistryController?action=detail&classCode=<%=tc.getId().getClassCode()%>&semester=<%=tc.getId().getSemester()%>&year=<%=tc.getId().getYear()%>"><%=tc.getId().getClassCode()%></a></td>--%>
                          <td>
-                                <span class="atag" onclick="getListStudentReged('<%=tc.getSubjectCode() %>', '<%=tc.getLecturerCode() %>', '<%=tc.getId().getClassCode()%>',<%=tc.getId().getSemester()%>,'<%=tc.getId().getYear()%>')"><%=tc.getId().getClassCode()%></span>
+                             <span class="atag" onclick="getListStudentReged('<%=tc.getSubjectCode() %>', '<%=tc.getLecturerCode() %>', '<%=tc.getId().getClassCode()%>',<%=tc.getId().getSemester()%>,'<%=tc.getId().getYear()%>')"><%=tc.getId().getClassCode()%></span>
                          </td>
                          <td><%=tc.getSubjectName()%></td>
                          <td><%=tc.getNumTC()%></td>
@@ -227,9 +229,9 @@
                          <%-- Phon hoc --%>
                          <td><%=tc.getClassRoom()%></td>
                          <%-- SLSV toi da cua lop --%>
-                         <td><%=tc.getNumOfStudent()%></td>
+                         <td class="number_max"><%=tc.getNumOfStudent()%></td>
                          <%-- SLSV da dang ky cua lop --%>
-                         <td><%=tc.getNumOfStudentReg()%></td>
+                         <td class="current_number_reg"><%=tc.getNumOfStudentReg()%></td>
                          <%-- Check box cho phep SV chon co dk hoc lop nay hay khong
                             SV ko dc dang ky neu SLSV da dk vuot qua SLSV toi da
                             SV ko dc dang ky neu ko du cac dk theo qui che Tin Chi: ...
@@ -272,6 +274,9 @@
                          String clazz = "class='"+ (checked1 ? "datahighlight" : "") + "'";
                          %>
                          <tr id="tr_<%=i%>" <%=clazz%>>
+                             <input type="hidden" class="tcId" value="<%=tcTemp.getId().getClassCode() %>"/>
+                            <input type="hidden" class="semester" value="<%=tcTemp.getId().getSemester() %>"/>
+                            <input type="hidden" class="year" value="<%=tcTemp.getId().getYear() %>"/>
                          <%-- STT --%>
                          <td><%=i+1%></td>
                          <%-- Ma lop --%>
@@ -291,9 +296,9 @@
                          <%-- Phon hoc --%>
                          <td><%=tcTemp.getClassRoom()%></td>
                          <%-- SLSV toi da cua lop --%>
-                         <td><%=tcTemp.getNumOfStudent()%></td>
+                         <td class="number_max"><%=tcTemp.getNumOfStudent()%></td>
                          <%-- SLSV da dang ky cua lop --%>
-                         <td><%=tcTemp.getNumOfStudentReg()%></td>
+                         <td class="current_number_reg"><%=tcTemp.getNumOfStudentReg()%></td>
                          <%-- Check box cho phep SV chon co dk hoc lop nay hay khong
                             SV ko dc dang ky neu SLSV da dk vuot qua SLSV toi da
                             SV ko dc dang ky neu ko du cac dk theo qui che Tin Chi: ...
@@ -348,10 +353,31 @@
             });
             
             window.onload = function() {
-               // The data for the Line chart. Multiple lines are specified as seperate arrays.
-                
+                refressNumberRegistrated();
             }
-            
+
+            var time_counter = 30;
+            function refressNumberRegistrated() {
+                setTimeout(function() {
+                    refressNumberRegistrated();
+                    
+                    var remainingTime = $('#remaining-time').val();
+                    if (remainingTime <= 0) {
+                        var json = getNumberRegistrated();
+                        if ((json != null) && (json.length > 0)) {
+                            updateNumberRegistrationStatus(json);
+                        }
+                        
+                        remainingTime = 30;
+                    } else {
+                        remainingTime--;
+                    }
+                    //console.log(remainingTime);
+                    $('#remaining-time').val(remainingTime);
+                    $('#remaining-time-display').html('(' +remainingTime + ' s)');
+                }, 1000);
+            }
+
             var waringPopupDisplayed = false;
             function validateSelectTrainClass(chb, row) {
                 // validate condition
