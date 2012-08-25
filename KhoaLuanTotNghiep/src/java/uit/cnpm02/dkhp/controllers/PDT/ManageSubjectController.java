@@ -418,6 +418,12 @@ private void filterSubjectList(PrintWriter out ,String sessionId, int currentPag
             result.setMessage(Message.ADD_SUBJECT_ERROR);
         } else {
             try {
+                if (subjectService.findById(sub.getId()) != null) {
+                    result.setIsSucces(false);
+                    result.setMessage("Lỗi: Môn học đã tồn tại");
+                    return result;
+                }
+                
                 sub = subjectService.addSubject(sub);
                 result.setData(sub);
             } catch (Exception ex) {
