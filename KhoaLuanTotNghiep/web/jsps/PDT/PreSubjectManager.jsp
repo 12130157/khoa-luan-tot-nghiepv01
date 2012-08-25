@@ -92,7 +92,7 @@
                             <span class="atag" onclick="addPreSub()"><img src="../../imgs/check.png"/>Thêm</span>
                         </div>
                         <div class="clear"></div> <br />
-                        <div id="check-respone">
+                        <div id="check-respone" class="msg-response" style="width: 517px;">
                         </div>
                     </div>
                 </div>
@@ -197,6 +197,7 @@
         
         function checkSubExistedRespone() {
             if(http.readyState == 4 && http.status == 200){
+                $('#check-respone').show('slow');
                 var detail = document.getElementById("check-respone");
                 detail.innerHTML = http.responseText;
             }
