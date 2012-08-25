@@ -110,6 +110,44 @@
                 </div>
                <hr/><hr/>
                <div class="clear"></div>
+               <%-- Huong dan --%>
+                 <div id="help-desk" class="popup-help-desk hide">
+                     <div class="first" style="text-align: center;font-weight: bold;font-size: 24px;"> Hướng dẫn đăng ký học phần </div>
+                     <p>
+                         <div style="height:370px;overflow:auto;font-size: 12px;">
+                         <b>Thông tin</b><br />
+                         Danh sách các lớp học cho phép SV đk được chia thành 2 phần
+                         <br />- Phần 1: các lớp SV được phép đăng ký thuộc khoa SV đang theo học
+                         <br />- Phần 2: các lớp SV được phép đăng ký, không thuộc khoa mình theo học
+                         <br />Mặc đinh, các lớp học thuộc phần 1 được hiển thị khi SV truy cập trang
+                         đăng ký học phần, các lớp thuộc phần 2 sẽ bị ẩn đi, SV click vào link 
+                         <span class="atag">danh sách mở rộng </span> để danh sách mở rộng được
+                         hiển thị.
+                         </p>
+                         <p>
+                             <b>Qui định</b>
+                                <br />- SV check chọn lớp học cần đăng ký.
+                                <br />- Tổng số tín chỉ đăng ký phải nằm trong giới hạn cho phép
+                                (khi số tín chỉ được chọn vượt quá hoặc chưa đủ, hệ thống sẽ
+                                có thông báo)
+                                <br />- Không được đăng ký 2 lớp cùng học một môn
+                                <br />- Không được đăng ký 2 lớp học trùng giờ
+                         </p>
+                         <p>
+                             <b>Trợ giúp</b>
+                             <br />Nhằm tạo điều kiện thuận lợi cho quá trình đăng ký, hệ thông cung cấp 
+                             một số tính năng sau:
+                             <br />- Liên tục cập nhật thông tin về số lượng sv đã đăng ký trong
+                             từng lớp.
+                             <br />- Nhiều thông tin liên quan đến lớp học (click vào mã lớp tương ứng để xem chi tiết):
+                                <br />+ Danh sách sinh viên đã đăng ký trong lớp
+                                <br />+ Danh sách các môn học tiên quyết của môn học
+                                <br />+ Tỉ lệ đậu/rớt của các lớp có cùng môn
+                                <br />+ Tỉ lệ đậu/rớt của các lớp cung giảng viên
+                         </p>
+                         </div>
+                     <span class="atag" style="bottom: 8px; position: absolute; right: 5px;" onclick="hideMe('help-desk')"> Ẩn </span>
+                 </div>
                  <%-- A popup show list of student already registered on a class --%>
                  <div id="popup-reg-support" style="border: solid 2px #666; border-radius: 5px; display: none;">
                      <%--onClick="hideMe('popup-reg-support');"--%>
@@ -118,43 +156,6 @@
                         <img src = '../../imgs/icon/loading.gif' />
                     </div>
                      <div class="clear"></div>
-                     <%-- Huong dan --%>
-                     <div id="help-desk" class="hide">
-                         <div class="first"> Hướng dẫn đăng ký học phần </div>
-                         <p>
-                             <b>Thông tin</b>
-                         Danh sách các lớp học cho phép SV đk được chia thành 2 phần
-                         - Phần 1: các lớp SV được phép đăng ký thuộc khoa SV đang theo học
-                         - Phần 2: các lớp SV được phép đăng ký, không thuộc khoa mình theo học
-                         Mặc đinh, các lớp học thuộc phần 1 được hiển thị khi SV truy cập trang
-                         đăng ký học phần, các lớp thuộc phần 2 sẽ bị ẩn đi, SV click vào link 
-                         <span class="atag">danh sách mở rộng </span> để danh sách mở rộng được
-                         hiển thị.
-                         </p>
-                         <p>
-                             <b>Qui định</b>
-                             <ul>
-                                - SV check chọn lớp học cần đăng ký.
-                                - Tổng số tín chỉ đăng ký phải nằm trong giới hạn cho phép
-                                (khi số tín chỉ được chọn vượt quá hoặc chưa đủ, hệ thống sẽ
-                                có thông báo)
-                                - Không được đăng ký 2 lớp cùng học một môn
-                                - Không được đăng ký 2 lớp học trùng giờ
-                            </ul>
-                         </p>
-                         <p>
-                             <b>Trợ giúp</b>
-                             Nhằm tạo điều kiện thuận lợi cho quá trình đăng ký, hệ thông cung cấp 
-                             một số tính năng sau:
-                             - Liên tục cập nhật thông tin về số lượng sv đã đăng ký trong
-                             từng lớp.
-                             - Nhiều thông tin liên quan đến lớp học (click vào mã lớp tương ứng để xem chi tiết):
-                                + Danh sách sinh viên đã đăng ký trong lớp
-                                + Danh sách các môn học tiên quyết của môn học
-                                + Tỉ lệ đậu/rớt của các lớp có cùng môn
-                                + Tỉ lệ đậu/rớt của các lớp cung giảng viên
-                         </p>
-                     </div>
                      <%-- List pre subject of selected subject --%>
                      <div id="lst-pre-subject" class="support hide">
                          <div id="popup-title">DS Môn học tiên quyết</div> <br />
@@ -217,6 +218,9 @@
                     <input type="hidden" id="max-tc" value="<%= max_tc %>"/>
                     <div id="warning-window" style="display: none;">
                        <%----%>
+                    </div>
+                    <div id="show-help-desk" style="float: left; margin-left:250px;">
+                        <img src="../../imgs/icon/help.png" alt="Trợ giúp" title="Trợ giúp"/>
                     </div>
                     <div class="btn-refresh">
                        <img src="../../imgs/icon/refresh.gif"/>
@@ -369,7 +373,7 @@
                         <input type="submit" class="button-1" style="margin-left: 45%;" value="Đăng ký" />
                     <%}%>
                  </form>
-                 
+                
                  <div class="clear"></div>
                  <br />
                 </div><!--End Contents-->
@@ -387,6 +391,9 @@
             
             $("#btn-chkbox_external_trainclass").click(function () {
                 $('#ext-detail').slideToggle(50);
+            });
+            $("#show-help-desk").click(function () {
+                $('#help-desk').slideToggle(250);
             });
             
             window.onload = function() {
