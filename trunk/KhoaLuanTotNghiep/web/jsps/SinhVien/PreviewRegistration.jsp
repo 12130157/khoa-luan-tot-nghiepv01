@@ -62,8 +62,11 @@
             }
             #message{
                 text-align: center;
+                color: blue;
+                font-size: 18px;
+                background: #DFF;
             }
-            h1{
+            h3{
                  color: #0000ff;
             }
         </style>
@@ -102,8 +105,8 @@
                                 session.removeAttribute("error");
                         %>
                         <br>
-                        <div id="message">
-                            <h1> <%=error%></h1>
+                        <div id="message" class="wrapper-border">
+                            <%=error%>
                         </div>
                         <br />
                         <%
