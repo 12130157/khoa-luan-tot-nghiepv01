@@ -47,7 +47,7 @@
                 </div>
                 <br />
                 
-                <form id="addclassform" method="post" style="border: 1px solid #698; border-radius: 5px; padding: 13px 14px; margin: 11px 21px 5px 8px;">
+                <form id="addclassform" method="post" class="wrapper-border">
                     <table id="table_mh">
                         <tr>
                         <td> Khoa: </td>
@@ -148,7 +148,7 @@
                              </td>
                         </tr>
                     </table>
-                    <div style="border: 1px solid #698;width: 177px;margin-right: 18px;padding: 5px 5px;font-size: 11px;background: #FFD;border-radius: 5px;margin-top: 3px;position: absolute;top: 388px;right: 109px;opacity: 0.7;">
+                    <div class="hint-box">
                         Để mở lớp học mới, vui lòng cung cấp đầy đủ thông tin về lớp học trong form 
                         bên dưới (Khoa, mã lớp, giảng viên, ....) <br />
                         Có thể kiểm tra trước tính hợp lệ của lớp sẽ được mở bắng cách click vào button

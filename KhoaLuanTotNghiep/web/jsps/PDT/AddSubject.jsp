@@ -39,7 +39,7 @@
                 </div>
                 <br /><br />
                 
-                <div id="add-subject">
+                <div id="add-subject" class="wrapper-border">
                     <table>
                         <tr>
                             <td> Mã MH </td>
@@ -108,23 +108,31 @@
                         </tr>
                         
                     </table>
+                    <div class="hint-box">
+                        Form nhập thông tin môn học mới, người dùng vui lòng cung cấp thông tin về môn học
+                        như: mã, tên, khoa, môn học tiên quyết...
+                        <br /> Mặc đinh, hệ thống hỗ trợ thêm 3 môn tiên quyết, các môn trùng nhau sẽ bị
+                        loại bỏ, chọn X để bỏ qua.
+                        <br /> Để thêm môn tiên quyết khác, vui lòng truy cập trang quản lý môn học
+                        <br />
+                    </div>
                     <div style="margin-left: 5px; width: 265px;">
                         <div id="btn-check-add-one-student" style="float: left;">
-                            <div class="button-1">
+                            <div class="button-1" style="padding: 2px 2px;margin-top: 15px;">
                                 <span class="atag" onclick="addSubject()" ><img src="../../imgs/check.png" />Thêm</span>
                             </div>
                         </div>
                         <div id="btn-add-one-student" style="float: left; padding-left: 12px;">
-                            <div class="button-1">
+                            <div class="button-1" style="padding: 2px 2px;margin-top: 15px;">
                                 <span class="atag" onclick="moveBack()" ><img src="../../imgs/check.png" />Quay lại</span>
                             </div>
                         </div>
                     </div>
                     <br /><br />
-                </div>
-                    <div id="add-result">
-                        
+                    <div id="add-result" class="msg-response" style="margin-left: 10%; width: 80%; margin-top: 22px;">
                     </div>
+                </div>
+                    
             </div><!--End Contents-->
             <form id="back" action="../../ManageSubjectController?function=list_subject&ajax=false" method="post">
                 
@@ -134,8 +142,8 @@
             </div><!--End footer-->
         </div>
         <!--End Wrapper-->
-    </body>
-    <script src="../../javascripts/AjaxUtil.js"></script>
+    
+    <%--<script src="../../javascripts/AjaxUtil.js"></script>--%>
     <script type = "text/javascript">
         var http = createRequestObject();
         function addSubject() {
@@ -190,6 +198,7 @@
         
         function addSubjectRespone() {
             if(http.readyState == 4 && http.status == 200){
+                $('#add-result').show('slow');
                 var detail=document.getElementById("add-result");
                 detail.innerHTML=http.responseText;
             }
@@ -204,4 +213,5 @@
 	return true;
         }
     </script>
+    </body>
 </html>
