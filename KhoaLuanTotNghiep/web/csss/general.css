@@ -808,6 +808,18 @@ input[type="file"] {
 #popup-reg-support table tr{
     font-size: 11px;
 }
+.popup-help-desk {
+    left: 30%;
+    top: 17%;
+    height: 72%;
+    width: 718px;
+    position: fixed;
+    z-index: 100;
+    background: #DDF;
+    border: 2px solid #666;
+    border-radius: 5px;
+    padding: 12px 20px 11px 17px;
+}
 #tbl-support-control{
     bottom: 8px;
     position: absolute;
