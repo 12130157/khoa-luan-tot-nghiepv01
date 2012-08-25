@@ -803,7 +803,7 @@ public class RegistryController extends HttpServlet {
         
     }
 
-    private int slideLimit = 20;
+    private int slideLimit = 15;
     private void writeOutListStudent(String tcId, String subName, String lecturerName,
             PrintWriter out, List<Student> students) {
         if (students == null) {
@@ -814,8 +814,9 @@ public class RegistryController extends HttpServlet {
                 + "Môn học: " + subName + "<br />"
                 + "Giảng viên: " + lecturerName
                 + "</div> <br />");
+        out.println("<div class=\"clear\"></div>");
         if (students.size() > slideLimit) {
-            out.println("<div id=\"sidebar\">");
+            out.println("<div id=\"sidebar1\">");
         }
         out.println("<table class=\"general-table\">");
         out.println("<tr>"

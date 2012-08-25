@@ -245,6 +245,10 @@ a img {
     height:500px;
     overflow:auto;
 }
+#sidebar1 {
+    height:370px;
+    overflow:auto;
+}
 
 .short_sidebar {
     height:250px;
@@ -790,12 +794,17 @@ input[type="file"] {
 #popup-reg-support {
     background: none repeat scroll 0 0 #DDDDFF;
     left: 30%;
-    top: 20%;
-    min-height: 72%;
+    top: 17%;
+    height: 72%;
     /*opacity: 0.85;*/
     width: 718px;
     position: fixed;
     z-index: 100;
+}
+#popup-reg-support table{
+}
+#popup-reg-support table tr{
+    font-size: 11px;
 }
 #tbl-support-control{
     bottom: 8px;
@@ -846,4 +855,7 @@ input[type="file"] {
 }
 .hint-box {
     border: 1px solid #698;width: 177px;margin-right: 18px;padding: 5px 5px;font-size: 11px;background: #FFD;border-radius: 5px;margin-top: 3px;position: absolute;top: 388px;right: 109px;opacity: 0.7;
+}
+.small {
+    font-size: 11px;
 }
