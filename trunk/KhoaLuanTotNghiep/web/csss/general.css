@@ -870,4 +870,5 @@ input[type="file"] {
 }
 .btn-refresh img{
     vertical-align: middle;
+    opacity: 0.5;
 }
