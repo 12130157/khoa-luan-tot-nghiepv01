@@ -70,7 +70,7 @@
                     <h3><span id="btn-open-form-import-lecturer" class="atag">
                             Thêm GV
                     </span></h3>
-                    <div id="import-lecturer-one">
+                    <div id="import-lecturer-one" class="wrapper-border">
                         <b><u>Phần nhập thông tin GV</u></b></br></br>
                         <div class="clear"></div>
                         <%-- Persional information input range --%>
@@ -192,7 +192,7 @@
                         <%--div id="error"></div--%>
                         <div id="add-from-table-result"></div>
                         <div class="clear"></div>
-                        <div id="add-one-result" style="padding-top: 12px;">
+                        <div id="add-one-result" class="msg-response" style="width: 600px;">
                             <%-- 
                                 After submit to add one lecturer from form
                                 User expect to see result here
@@ -208,7 +208,7 @@
                     <h3><span id="btn-import-lecturer-from-file" class="atag">
                         Thêm từ file 
                     </span></h3>
-                    <div id="form-import-lecturer-from-file">
+                    <div id="form-import-lecturer-from-file" class="wrapper-border">
                         <form id="importFromFile" 
                               action="../../ManageLecturerController?function=importfromfile&import-as-possible=false"
                               method="post" name="importFromFile" enctype="multipart/form-data">
@@ -300,6 +300,7 @@
                                 <img src="../../imgs/form_format/import_lecturer_format_file.PNG"/>
                             </div>
                         </div>
+                        <div class="clear"></div>
                     </div>
                 </div>
             </div><!--End Contents-->
@@ -484,6 +485,7 @@
         
         function addOneLecturerResponseHandler() {
             if(http.readyState == 4 && http.status == 200){
+                $('#add-one-result').show('live');
                 var detail = document.getElementById("add-one-result");
                 detail.innerHTML = http.responseText;
             }
