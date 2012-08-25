@@ -357,7 +357,7 @@ public class AccountController extends HttpServlet {
                         + "<td>" + statusImg + "</td>"
                         + "<td>" + accountType + "</td>"
                         + "<td>"
-                            + " <span class=\"atag\" onclick=\"loadDataToEdit('" + acc.getId() + "')\">" + editImg + "</span>"
+                            + " <a href=\"#edit-account-range\" onclick=\"loadDataToEdit('" + acc.getId() + "')\">" + editImg + "</span>"
                         + "</td>"
                         + "<td>"
                             + " <span class=\"atag\" onclick=\"deleteUser('" + acc.getId() + "')\">" + deleteImg + "</span>"
